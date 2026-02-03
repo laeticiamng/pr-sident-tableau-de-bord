@@ -47,6 +47,9 @@ import SupportPage from "@/pages/hq/SupportPage";
 import AuditPage from "@/pages/hq/AuditPage";
 import EntreprisePage from "@/pages/hq/EntreprisePage";
 import DiagnosticsPage from "@/pages/hq/DiagnosticsPage";
+import RHPage from "@/pages/hq/RHPage";
+import ConformitePage from "@/pages/hq/ConformitePage";
+import DataAnalyticsPage from "@/pages/hq/DataAnalyticsPage";
 
 import NotFound from "@/pages/NotFound";
 
@@ -110,6 +113,9 @@ const App = () => (
                   <Route path="/hq/audit" element={<AuditPage />} />
                   <Route path="/hq/entreprise" element={<EntreprisePage />} />
                   <Route path="/hq/diagnostics" element={<DiagnosticsPage />} />
+                  <Route path="/hq/rh" element={<RHPage />} />
+                  <Route path="/hq/conformite" element={<ConformitePage />} />
+                  <Route path="/hq/data" element={<DataAnalyticsPage />} />
                 </Route>
               </Route>
 

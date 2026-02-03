@@ -14,3 +14,9 @@ verify_jwt = false
 
 [functions.platform-monitor]
 verify_jwt = false
+
+[functions.scheduled-runs]
+verify_jwt = false
+
+[functions.stripe-kpis]
+verify_jwt = false

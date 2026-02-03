@@ -1,6 +1,7 @@
 import { ExecutiveCockpit } from "@/components/hq/ExecutiveCockpit";
 import { AutopilotControl } from "@/components/hq/AutopilotControl";
 import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
+import { SchedulerPanel } from "@/components/hq/SchedulerPanel";
 
 export default function CockpitPage() {
   return (
@@ -12,8 +13,11 @@ export default function CockpitPage() {
         </p>
       </div>
 
-      {/* Autopilot Control */}
-      <AutopilotControl />
+      {/* Control Row */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <AutopilotControl />
+        <SchedulerPanel />
+      </div>
 
       {/* Executive Cockpit */}
       <ExecutiveCockpit />
