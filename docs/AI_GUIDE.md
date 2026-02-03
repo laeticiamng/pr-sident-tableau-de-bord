@@ -25,6 +25,112 @@ Le HQ utilise une **architecture multi-modèles** pour optimiser chaque type de 
 
 ---
 
+## 💰 Coûts et gouvernance IA
+
+### Estimation des coûts par modèle
+
+| Modèle | Coût estimé/1M tokens | Usage type | Budget mensuel estimé |
+|--------|----------------------|------------|----------------------|
+| `gemini-2.5-pro` | ~$1.25-$5.00 | Briefings, audits | ~$50-150/mois |
+| `gemini-2.5-flash` | ~$0.075 | Synthèses rapides | ~$10-30/mois |
+| `gemini-3-flash-preview` | ~$0.04 | Tâches simples | ~$5-15/mois |
+| `gpt-5.2` | ~$10-30 | Code generation | ~$30-100/mois (rare) |
+| `perplexity-sonar-pro` | $5/1000 requêtes | Veille stratégique | ~$25-50/mois |
+
+**Budget total estimé : 120€ - 350€/mois** selon l'intensité d'utilisation.
+
+### Limites quotidiennes recommandées
+
+| Type de Run | Limite suggérée | Justification |
+|------------|-----------------|---------------|
+| DAILY_EXECUTIVE_BRIEF | 1/jour | Briefing quotidien suffisant |
+| SECURITY_AUDIT_RLS | 1/semaine | Audit hebdomadaire suffisant |
+| PLATFORM_STATUS_REVIEW | 5/jour | Monitoring ad-hoc |
+| MARKETING_WEEK_PLAN | 1/semaine | Planification hebdomadaire |
+| COMPETITIVE_ANALYSIS | 2/mois | Analyse stratégique mensuelle |
+
+### Configuration de la gouvernance des coûts
+
+```typescript
+// Recommandation : ajouter dans system_config
+{
+  "ai_cost_limits": {
+    "daily_budget_eur": 15,
+    "monthly_budget_eur": 350,
+    "alert_threshold_percent": 80,
+    "emergency_cutoff_percent": 100
+  }
+}
+```
+
+---
+
+## 🔄 Modèles de fallback
+
+En cas de défaillance ou de dépassement de quota, le système utilise des modèles de repli :
+
+### Stratégie de fallback
+
+| Modèle principal | Fallback 1 | Fallback 2 | Fallback 3 (open-source) |
+|------------------|------------|------------|--------------------------|
+| `gemini-2.5-pro` | `gemini-2.5-flash` | `gemini-3-flash-preview` | `llama-3.1-70b` |
+| `gpt-5.2` | `gemini-2.5-pro` | `gemini-2.5-flash` | `codellama-34b` |
+| `perplexity-sonar-pro` | `perplexity-sonar` | Cache local + summarize | Brave Search API |
+
+### Alternatives open-source (réduction des coûts)
+
+Pour réduire significativement les coûts, considérer ces alternatives auto-hébergées :
+
+| Tâche | Alternative open-source | Hébergement | Coût estimé |
+|-------|------------------------|-------------|-------------|
+| Raisonnement | `Llama 3.1 70B` | Hugging Face / Replicate | $0.50-1.00/1M tokens |
+| Code | `CodeLlama 34B` | Together AI | $0.40/1M tokens |
+| Embedding | `bge-large-en-v1.5` | Self-hosted | ~0€ (compute) |
+| Search | Brave Search API | SaaS | $5/1000 queries |
+
+### Implémentation du fallback
+
+```typescript
+// supabase/functions/executive-run/index.ts
+const FALLBACK_CHAIN = {
+  "google/gemini-2.5-pro": [
+    "google/gemini-2.5-flash",
+    "google/gemini-3-flash-preview",
+  ],
+  "openai/gpt-5.2": [
+    "google/gemini-2.5-pro",
+    "google/gemini-2.5-flash",
+  ],
+};
+
+async function callWithFallback(model: string, payload: any) {
+  const chain = [model, ...(FALLBACK_CHAIN[model] || [])];
+  
+  for (const fallbackModel of chain) {
+    try {
+      const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, model: fallbackModel }),
+      });
+      
+      if (response.ok) {
+        console.log(`[AI] Success with model: ${fallbackModel}`);
+        return await response.json();
+      }
+      
+      console.warn(`[AI] Model ${fallbackModel} failed: ${response.status}`);
+    } catch (e) {
+      console.error(`[AI] Model ${fallbackModel} error:`, e);
+    }
+  }
+  
+  throw new Error("All AI models failed");
+}
+```
+
+---
+
 ## 🎯 Stratégie de routage des modèles
 
 | Tâche | Modèle choisi | Justification |
@@ -57,6 +163,8 @@ const MODEL_CONFIG = {
 
 **Modèle**: `gemini-2.5-pro` (raisonnement)
 
+**Coût estimé**: ~0.05-0.15€ par run
+
 **Sources de données**:
 - ✅ GitHub API (commits, issues, PRs des 5 repos)
 - ✅ Perplexity (veille marché SaaS France)
@@ -82,32 +190,6 @@ Ton : professionnel, direct, factuel. Standard HEC/Polytechnique.
 Ne jamais inventer de données - indique "Données non disponibles" si nécessaire.
 ```
 
-**Exemple de sortie**:
-```markdown
-# 🎯 Briefing Exécutif — 3 février 2026
-
-## Résumé Exécutif
-Les 5 plateformes sont opérationnelles avec un uptime moyen de 99.2%.
-Le MRR affiche une croissance de +8.2% ce mois. 
-Une PR critique attend validation sur EmotionsCare.
-
-## 📊 Statut RAG des Plateformes
-
-| Plateforme | Status | Issues | PRs | Dernier Commit |
-|------------|--------|--------|-----|----------------|
-| EmotionsCare | 🟢 | 5 | 2 | 02/02 - feat: dashboard |
-| Med MNG | 🟡 | 8 | 1 | 01/02 - fix: auth bug |
-| ...
-
-## ⚡ Top 3 Priorités
-1. Valider PR #42 sur EmotionsCare (critique)
-2. Résoudre 3 issues bloquantes sur Med MNG
-3. Préparer release v2.1 de System Compass
-
-## 📈 Veille Stratégique
-Le marché SaaS santé français croît de 15% en 2026...
-```
-
 ---
 
 ### 2. SECURITY_AUDIT_RLS
@@ -116,22 +198,9 @@ Le marché SaaS santé français croît de 15% en 2026...
 
 **Modèle**: `gemini-2.5-pro` (raisonnement rigoureux)
 
+**Coût estimé**: ~0.10-0.25€ par run
+
 **Sources**: Perplexity (best practices sécurité)
-
-**System Prompt**:
-```
-Tu es le CISO (Directeur Sécurité) effectuant un audit RLS complet.
-
-Génère un rapport d'audit structuré:
-1. 📋 TABLES ANALYSÉES
-2. 🔒 POLITIQUES RLS en place
-3. 🔴 VULNÉRABILITÉS potentielles détectées
-4. ✅ CONFORMITÉ (OK/NOK par table)
-5. 🛠️ RECOMMANDATIONS de remédiation prioritaires
-6. 🎯 SCORE DE SÉCURITÉ GLOBAL (/100)
-
-Adopte une approche rigoureuse et exhaustive de type audit Big4.
-```
 
 ---
 
@@ -141,9 +210,7 @@ Adopte une approche rigoureuse et exhaustive de type audit Big4.
 
 **Modèle**: `gemini-2.5-flash` (synthèse rapide)
 
-**Sources**: GitHub API (commits, issues, PRs du repo)
-
-**Paramètre requis**: `platform_key`
+**Coût estimé**: ~0.01-0.03€ par run
 
 ---
 
@@ -153,7 +220,7 @@ Adopte une approche rigoureuse et exhaustive de type audit Big4.
 
 **Modèle**: `gemini-3-flash-preview` (créativité + rapidité)
 
-**Sources**: Perplexity + Firecrawl (scraping concurrents)
+**Coût estimé**: ~0.02-0.05€ par run
 
 ---
 
@@ -163,7 +230,7 @@ Adopte une approche rigoureuse et exhaustive de type audit Big4.
 
 **Modèle**: `gemini-2.5-pro` (analyse stratégique)
 
-**Sources**: Perplexity + Firecrawl
+**Coût estimé**: ~0.15-0.30€ par run (utilise Perplexity + Firecrawl)
 
 ---
 
@@ -173,7 +240,7 @@ Adopte une approche rigoureuse et exhaustive de type audit Big4.
 
 **Modèle**: `gemini-2.5-pro` (décision critique)
 
-**Sources**: GitHub API (PRs, tests, issues)
+**Coût estimé**: ~0.08-0.15€ par run
 
 ---
 
@@ -209,32 +276,9 @@ sequenceDiagram
     EF->>AI: Chat completion (modèle routé)
     AI-->>EF: Rapport généré
     
-    EF->>DB: Insert run record
-    EF-->>UI: { success, executive_summary }
+    EF->>DB: Insert run record + cost tracking
+    EF-->>UI: { success, executive_summary, cost_estimate }
 ```
-
----
-
-## 🔧 Configuration des prompts
-
-### Principes de conception
-
-1. **Persona claire**: Chaque prompt définit un rôle précis (CEO, CISO, CMO...)
-2. **Structure imposée**: Format de sortie explicite avec sections numérotées
-3. **Données réelles obligatoires**: Interdiction d'inventer, mention explicite des données manquantes
-4. **Standard qualité**: Référence "HEC/Polytechnique" pour le niveau d'exigence
-
-### Variables dynamiques
-
-Les prompts utilisent des variables injectées au runtime:
-
-| Variable | Description | Exemple |
-|----------|-------------|---------|
-| `{{date}}` | Date/heure courante formatée | "lundi 3 février 2026, 14h30" |
-| `{{platform_key}}` | Clé plateforme ciblée | "emotionscare" |
-| `{{github_data}}` | Données GitHub collectées | Commits, issues, PRs |
-| `{{perplexity_data}}` | Résultats de veille | Insights + citations |
-| `{{context_data}}` | Contexte personnalisé | JSON libre |
 
 ---
 
@@ -248,6 +292,7 @@ console.log(`[Executive Run] Fetching GitHub data...`);
 console.log(`[Executive Run] Calling AI model: ${model}`);
 console.log(`[Executive Run] AI response: ${response.length} chars`);
 console.log(`[Executive Run] Completed with sources: ${sources.join(", ")}`);
+console.log(`[Executive Run] Estimated cost: ${costEstimate}€`);
 ```
 
 ### Métriques collectées
@@ -259,6 +304,7 @@ console.log(`[Executive Run] Completed with sources: ${sources.join(", ")}`);
 | `data_sources` | Sources de données consultées |
 | `execution_time_ms` | Temps d'exécution total |
 | `tokens_used` | Tokens consommés (estimation) |
+| `cost_estimate_eur` | Coût estimé en euros |
 
 ---
 
@@ -269,42 +315,8 @@ console.log(`[Executive Run] Completed with sources: ${sources.join(", ")}`);
 | Code | Message | Action |
 |------|---------|--------|
 | `429` | Rate limit | Retry avec backoff exponentiel |
-| `402` | Crédits insuffisants | Notification admin |
+| `402` | Crédits insuffisants | Notification admin + fallback |
 | `500` | Erreur modèle | Fallback vers modèle alternatif |
-
-### Fallback automatique
-
-```typescript
-// Si gemini-2.5-pro échoue, fallback vers flash
-const fallbackModels = {
-  "google/gemini-2.5-pro": "google/gemini-2.5-flash",
-  "openai/gpt-5.2": "google/gemini-2.5-pro",
-};
-```
-
----
-
-## 🎛️ Configuration avancée
-
-### Paramètres de génération
-
-```typescript
-{
-  model: "google/gemini-2.5-pro",
-  temperature: 0.7,        // Créativité modérée
-  max_tokens: 3000,        // Limite de sortie
-  top_p: 0.9,              // Nucleus sampling
-}
-```
-
-### Personnalisation par run type
-
-| Run Type | Temperature | Max Tokens | Focus |
-|----------|-------------|------------|-------|
-| DAILY_EXECUTIVE_BRIEF | 0.7 | 3000 | Synthèse équilibrée |
-| SECURITY_AUDIT_RLS | 0.3 | 4000 | Précision maximale |
-| MARKETING_WEEK_PLAN | 0.8 | 2500 | Créativité |
-| COMPETITIVE_ANALYSIS | 0.5 | 3500 | Analyse rigoureuse |
 
 ---
 
@@ -314,8 +326,9 @@ const fallbackModels = {
 
 1. **Pas de PII dans les prompts**: Les données personnelles ne sont jamais envoyées aux modèles
 2. **Validation des sorties**: Sanitization avant stockage en DB
-3. **Audit trail**: Chaque run est loggé avec son contexte
+3. **Audit trail**: Chaque run est loggé avec son contexte et coût
 4. **Rate limiting**: Protection contre l'abus
+5. **Budget caps**: Limites quotidiennes et mensuelles
 
 ### Secrets nécessaires
 
@@ -330,15 +343,32 @@ const fallbackModels = {
 ## 📈 Évolutions prévues
 
 ### Court terme
-- [ ] Streaming des réponses IA
-- [ ] Cache des requêtes Perplexity
-- [ ] Métriques de coût par run
+- [x] Streaming des réponses IA
+- [x] Cache des requêtes Perplexity
+- [x] Métriques de coût par run
+- [ ] Dashboard de suivi des crédits
 
 ### Moyen terme
 - [ ] Fine-tuning sur données EMOTIONSCARE
+- [ ] Migration vers modèles open-source
 - [ ] Agents autonomes avec validation
-- [ ] Intégration vision (analyse screenshots)
 
 ---
 
-*Dernière mise à jour: 03/02/2026 — v1.0*
+## 📦 Intégrations en construction
+
+Les intégrations suivantes sont planifiées mais **non implémentées** :
+
+| Intégration | Statut | ETA | Priorité |
+|-------------|--------|-----|----------|
+| HubSpot CRM | 🔴 Planifié | Q2 2026 | Haute |
+| Pipedrive | 🔴 Planifié | Q2 2026 | Moyenne |
+| Google Analytics | 🔴 Planifié | Q2 2026 | Haute |
+| Zendesk | 🔴 Planifié | Q3 2026 | Moyenne |
+| Jira/Linear | 🔴 Planifié | Q3 2026 | Basse |
+
+**Note importante** : Ces intégrations nécessitent des licences tierces et des développements supplémentaires.
+
+---
+
+*Dernière mise à jour: 03/02/2026 — v2.0*
