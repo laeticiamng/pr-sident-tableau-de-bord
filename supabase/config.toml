@@ -1,4 +1,16 @@
 project_id = "hjoylhxakijxpihwrqny"
 
 [functions.executive-run]
-verify_jwt = true
+verify_jwt = false
+
+[functions.github-sync]
+verify_jwt = false
+
+[functions.intelligence-search]
+verify_jwt = false
+
+[functions.web-scraper]
+verify_jwt = false
+
+[functions.platform-monitor]
+verify_jwt = false
