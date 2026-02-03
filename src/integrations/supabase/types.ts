@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      role_permissions: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          resource: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          resource: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          resource?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -150,6 +174,17 @@ export type Database = {
         }[]
       }
       get_hq_system_config: { Args: { config_key: string }; Returns: Json }
+      get_user_permissions: {
+        Args: { _user_id: string }
+        Returns: {
+          action: string
+          resource: string
+        }[]
+      }
+      has_permission: {
+        Args: { _action: string; _resource: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -175,7 +210,15 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "owner" | "admin"
+      app_role:
+        | "owner"
+        | "admin"
+        | "finance"
+        | "marketing"
+        | "support"
+        | "product"
+        | "engineering"
+        | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -303,7 +346,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["owner", "admin"],
+      app_role: [
+        "owner",
+        "admin",
+        "finance",
+        "marketing",
+        "support",
+        "product",
+        "engineering",
+        "viewer",
+      ],
     },
   },
 } as const
