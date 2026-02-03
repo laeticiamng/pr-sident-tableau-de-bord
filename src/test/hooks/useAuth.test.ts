@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, waitFor, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 // Mock Supabase client at module level
@@ -44,6 +44,11 @@ describe("useAuth", () => {
     
     const { result } = renderHook(() => useAuth());
 
+    // Wait for state updates to complete
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
+
     // Check initial structure
     expect(result.current).toHaveProperty("user");
     expect(result.current).toHaveProperty("session");
@@ -55,6 +60,10 @@ describe("useAuth", () => {
     const { useAuth } = await import("@/hooks/useAuth");
     
     const { result } = renderHook(() => useAuth());
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     expect(typeof result.current.signOut).toBe("function");
   });
@@ -70,6 +79,10 @@ describe("useRequireAuth", () => {
     const { useRequireAuth } = await import("@/hooks/useAuth");
     
     const { result } = renderHook(() => useRequireAuth());
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 50));
+    });
 
     expect(result.current).toHaveProperty("user");
     expect(result.current).toHaveProperty("loading");
