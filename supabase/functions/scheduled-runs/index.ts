@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 /**
@@ -74,16 +74,159 @@ serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
       throw new Error("Configuration Supabase manquante");
     }
 
+    const { action } = await req.json().catch(() => ({}));
+
+    // Action: cron_trigger - Special case for pg_cron (no auth needed for internal calls)
+    // This is triggered by pg_cron internally and should be secured by network policies
+    if (action === "cron_trigger") {
+      // For cron triggers, we need to verify this is an internal call
+      // In production, this should be secured by network policies or a shared secret
+      const cronSecret = req.headers.get("X-Cron-Secret");
+      const expectedSecret = Deno.env.get("CRON_SECRET");
+      
+      // If CRON_SECRET is set, validate it
+      if (expectedSecret && cronSecret !== expectedSecret) {
+        console.error("[Scheduler] Invalid cron secret");
+        return new Response(
+          JSON.stringify({ error: "Accès non autorisé" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log("[Scheduler] CRON trigger received");
+      
+      const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentDay = now.getDay(); // 0 = Dimanche
+      
+      // Trouver les jobs à exécuter maintenant
+      const jobsToRun = SCHEDULED_JOBS.filter(job => {
+        if (!job.enabled) return false;
+        
+        const [, hour, , , dayOfWeek] = job.cronExpression.split(" ");
+        const targetHour = parseInt(hour);
+        const targetDays = dayOfWeek === "*" ? [0, 1, 2, 3, 4, 5, 6] : 
+                          dayOfWeek.includes("-") ? 
+                            Array.from(
+                              { length: parseInt(dayOfWeek.split("-")[1]) - parseInt(dayOfWeek.split("-")[0]) + 1 },
+                              (_, i) => parseInt(dayOfWeek.split("-")[0]) + i
+                            ) : [parseInt(dayOfWeek)];
+        
+        return targetHour === currentHour && targetDays.includes(currentDay);
+      });
+
+      console.log(`[Scheduler] Found ${jobsToRun.length} jobs to run`);
+
+      const results = [];
+      for (const job of jobsToRun) {
+        try {
+          // For scheduled runs, we call executive-run with service role key
+          const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/executive-run`, {
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              run_type: job.runType,
+              context_data: {
+                triggered_by: "scheduler",
+                job_key: job.key,
+                scheduled_time: new Date().toISOString(),
+              },
+            }),
+          });
+          
+          const result = await execResponse.json();
+          
+          // Log the run
+          if (execResponse.ok) {
+            await supabaseAdmin.rpc("insert_hq_run", {
+              p_run_type: job.runType,
+              p_owner_requested: false,
+              p_status: "completed",
+              p_executive_summary: result.executive_summary,
+              p_detailed_appendix: {
+                triggered_by: "scheduler",
+                job_key: job.key,
+                model_used: result.model_used,
+                data_sources: result.data_sources,
+              },
+            });
+          }
+          
+          results.push({ job: job.key, success: execResponse.ok, result });
+        } catch (e) {
+          results.push({ job: job.key, success: false, error: (e as Error).message });
+        }
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, executed: results }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ============================================
+    // AUTHENTICATION & AUTHORIZATION CHECK (for user-initiated actions)
+    // ============================================
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("[Scheduler] Missing or invalid authorization header");
+      return new Response(
+        JSON.stringify({ error: "Authorization requise" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+
+    if (claimsError || !claimsData?.claims) {
+      console.error("[Scheduler] Invalid token:", claimsError?.message);
+      return new Response(
+        JSON.stringify({ error: "Token invalide ou expiré" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log(`[Scheduler] Authenticated user: ${userId}`);
+
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const { job_key, action } = await req.json();
+    const { data: hasOwnerRole, error: roleError } = await supabaseAdmin.rpc("has_role", {
+      _user_id: userId,
+      _role: "owner"
+    });
+
+    if (roleError || !hasOwnerRole) {
+      console.error(`[Scheduler] User ${userId} lacks owner role`);
+      return new Response(
+        JSON.stringify({ error: "Permissions insuffisantes - rôle owner requis" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`[Scheduler] User ${userId} authorized as owner`);
+    // ============================================
+    // END AUTHENTICATION CHECK
+    // ============================================
+
+    const requestBody = await req.json().catch(() => ({}));
+    const { job_key, action: requestAction } = requestBody;
 
     // Action: list - Retourne la liste des jobs configurés
-    if (action === "list") {
+    if (requestAction === "list") {
       console.log("[Scheduler] Listing configured jobs");
       return new Response(
         JSON.stringify({ 
@@ -96,7 +239,7 @@ serve(async (req) => {
     }
 
     // Action: status - Retourne le statut d'exécution des jobs
-    if (action === "status") {
+    if (requestAction === "status") {
       console.log("[Scheduler] Fetching job execution status");
       
       // Récupérer les derniers runs par type
@@ -123,7 +266,7 @@ serve(async (req) => {
     }
 
     // Action: execute - Exécute un job spécifique
-    if (action === "execute" && job_key) {
+    if (requestAction === "execute" && job_key) {
       const job = SCHEDULED_JOBS.find(j => j.key === job_key);
       
       if (!job) {
@@ -142,17 +285,17 @@ serve(async (req) => {
 
       console.log(`[Scheduler] Executing job: ${job.name} (${job.runType})`);
 
-      // Appeler l'Edge Function executive-run
+      // Appeler l'Edge Function executive-run avec le token utilisateur
       const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/executive-run`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Authorization": authHeader,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           run_type: job.runType,
           context_data: {
-            triggered_by: "scheduler",
+            triggered_by: "manual",
             job_key: job.key,
             scheduled_time: new Date().toISOString(),
           },
@@ -173,11 +316,11 @@ serve(async (req) => {
       // Enregistrer le run dans la DB
       const { data: runId } = await supabaseAdmin.rpc("insert_hq_run", {
         p_run_type: job.runType,
-        p_owner_requested: false,
+        p_owner_requested: true,
         p_status: "completed",
         p_executive_summary: result.executive_summary,
         p_detailed_appendix: {
-          triggered_by: "scheduler",
+          triggered_by: "manual",
           job_key: job.key,
           model_used: result.model_used,
           data_sources: result.data_sources,
@@ -193,60 +336,6 @@ serve(async (req) => {
           run_id: runId || result.run_id,
           executive_summary: result.executive_summary,
         }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Action: cron_trigger - Appelé par pg_cron
-    if (action === "cron_trigger") {
-      console.log("[Scheduler] CRON trigger received");
-      
-      const now = new Date();
-      const currentHour = now.getHours();
-      const currentDay = now.getDay(); // 0 = Dimanche
-      
-      // Trouver les jobs à exécuter maintenant
-      const jobsToRun = SCHEDULED_JOBS.filter(job => {
-        if (!job.enabled) return false;
-        
-        const [minute, hour, , , dayOfWeek] = job.cronExpression.split(" ");
-        const targetHour = parseInt(hour);
-        const targetDays = dayOfWeek === "*" ? [0, 1, 2, 3, 4, 5, 6] : 
-                          dayOfWeek.includes("-") ? 
-                            Array.from(
-                              { length: parseInt(dayOfWeek.split("-")[1]) - parseInt(dayOfWeek.split("-")[0]) + 1 },
-                              (_, i) => parseInt(dayOfWeek.split("-")[0]) + i
-                            ) : [parseInt(dayOfWeek)];
-        
-        return targetHour === currentHour && targetDays.includes(currentDay);
-      });
-
-      console.log(`[Scheduler] Found ${jobsToRun.length} jobs to run`);
-
-      const results = [];
-      for (const job of jobsToRun) {
-        try {
-          const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/scheduled-runs`, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              action: "execute",
-              job_key: job.key,
-            }),
-          });
-          
-          const result = await execResponse.json();
-          results.push({ job: job.key, success: execResponse.ok, result });
-        } catch (e) {
-          results.push({ job: job.key, success: false, error: (e as Error).message });
-        }
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, executed: results }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
