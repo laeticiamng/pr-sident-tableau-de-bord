@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAgents } from "@/hooks/useHQData";
 import { cn } from "@/lib/utils";
+import { TeamPerformanceMetrics } from "@/components/hq/rh/TeamPerformanceMetrics";
 
 export default function RHPage() {
   const { data: agents, isLoading } = useAgents();
@@ -202,31 +203,8 @@ export default function RHPage() {
         </CardContent>
       </Card>
 
-      {/* Performance globale */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Performance Mensuelle
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-muted/30 text-center">
-              <p className="text-3xl font-bold text-primary">{rhKPIs.tasksCompleted}</p>
-              <p className="text-sm text-muted-foreground">Tâches complétées</p>
-            </div>
-            <div className="p-4 rounded-lg bg-muted/30 text-center">
-              <p className="text-3xl font-bold text-success">{rhKPIs.avgResponseTime}</p>
-              <p className="text-sm text-muted-foreground">Temps de réponse moyen</p>
-            </div>
-            <div className="p-4 rounded-lg bg-muted/30 text-center">
-              <p className="text-3xl font-bold text-warning">{rhKPIs.uptime}%</p>
-              <p className="text-sm text-muted-foreground">Disponibilité</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Performance globale - Composant dédié */}
+      <TeamPerformanceMetrics />
     </div>
   );
 }
