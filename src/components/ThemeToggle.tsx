@@ -23,11 +23,12 @@ export function ThemeToggle({ className, variant = "default" }: ThemeToggleProps
         variant="ghost"
         size="icon"
         onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-        className={cn("h-9 w-9", className)}
+        className={cn("h-9 w-9 relative overflow-hidden", className)}
+        aria-label={resolvedTheme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
       >
-        <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        <span className="sr-only">Toggle theme</span>
+        <Sun className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
+        <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
+        <span className="sr-only">Changer de thème</span>
       </Button>
     );
   }
@@ -35,26 +36,40 @@ export function ThemeToggle({ className, variant = "default" }: ThemeToggleProps
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("h-9 w-9", className)}>
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={cn("h-9 w-9 relative overflow-hidden", className)}
+          aria-label="Sélectionner un thème"
+        >
+          <Sun className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
+          <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Changer de thème</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")} className="gap-2">
+      <DropdownMenuContent align="end" className="animate-in fade-in-0 zoom-in-95">
+        <DropdownMenuItem 
+          onClick={() => setTheme("light")} 
+          className="gap-2 cursor-pointer"
+        >
           <Sun className="h-4 w-4" />
-          Clair
+          <span>Clair</span>
           {theme === "light" && <span className="ml-auto text-accent">✓</span>}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")} className="gap-2">
+        <DropdownMenuItem 
+          onClick={() => setTheme("dark")} 
+          className="gap-2 cursor-pointer"
+        >
           <Moon className="h-4 w-4" />
-          Sombre
+          <span>Sombre</span>
           {theme === "dark" && <span className="ml-auto text-accent">✓</span>}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")} className="gap-2">
+        <DropdownMenuItem 
+          onClick={() => setTheme("system")} 
+          className="gap-2 cursor-pointer"
+        >
           <Monitor className="h-4 w-4" />
-          Système
+          <span>Système</span>
           {theme === "system" && <span className="ml-auto text-accent">✓</span>}
         </DropdownMenuItem>
       </DropdownMenuContent>

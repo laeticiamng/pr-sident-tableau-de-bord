@@ -142,6 +142,20 @@
     scroll-behavior: smooth;
   }
 
+  /* Theme transition for smooth light/dark mode switching */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *::before,
+  html.theme-transition *::after {
+    transition: 
+      background-color 0.4s ease-out,
+      border-color 0.3s ease-out,
+      color 0.3s ease-out,
+      fill 0.3s ease-out,
+      stroke 0.3s ease-out,
+      box-shadow 0.3s ease-out !important;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
