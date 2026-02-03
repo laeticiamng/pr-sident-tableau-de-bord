@@ -107,7 +107,7 @@ export default function PlateformesPage() {
               Nos <span className="text-gradient">Plateformes</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-primary-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
               Cinq solutions innovantes, une vision unifiée. 
               Chaque plateforme excelle dans son domaine.
             </p>
@@ -122,13 +122,13 @@ export default function PlateformesPage() {
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in"
+                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
                   <div className="text-3xl md:text-4xl font-bold text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-primary-foreground/60">
+                  <div className="text-sm text-white/80">
                     {stat.label}
                   </div>
                 </div>
@@ -344,7 +344,7 @@ export default function PlateformesPage() {
               <span className="text-accent">Cinq excellences.</span>
             </h2>
             
-            <p className="text-xl text-primary-foreground/70 mb-12 max-w-2xl mx-auto">
+            <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
               Toutes nos plateformes partagent la même infrastructure backend, 
               les mêmes standards de sécurité et la même rigueur d'exécution.
             </p>
@@ -359,14 +359,14 @@ export default function PlateformesPage() {
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in"
+                  className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
                   <stat.icon className="w-6 h-6 mx-auto mb-4 text-accent" />
                   <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-primary-foreground/60">
+                  <div className="text-sm text-white/80">
                     {stat.label}
                   </div>
                 </div>

@@ -52,10 +52,10 @@ export default function HomePage() {
             </div>
 
             {/* Tagline */}
-            <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/70 mb-4 sm:mb-6 max-w-2xl mx-auto animate-slide-up font-light tracking-wide px-4" style={{ animationDelay: "0.15s" }}>
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-4 sm:mb-6 max-w-2xl mx-auto animate-slide-up font-light tracking-wide px-4" style={{ animationDelay: "0.15s" }}>
               Éditeur de logiciels applicatifs
             </p>
-            <p className="text-base sm:text-lg text-primary-foreground/50 mb-8 sm:mb-12 max-w-xl mx-auto animate-slide-up px-4" style={{ animationDelay: "0.2s" }}>
+            <p className="text-base sm:text-lg text-white/70 mb-8 sm:mb-12 max-w-xl mx-auto animate-slide-up px-4" style={{ animationDelay: "0.2s" }}>
               5 plateformes innovantes pilotées depuis notre siège numérique
             </p>
 
