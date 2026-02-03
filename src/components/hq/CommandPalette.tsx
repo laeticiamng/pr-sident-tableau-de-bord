@@ -10,6 +10,8 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useExecuteRun } from "@/hooks/useHQData";
 import {
   LayoutDashboard,
@@ -104,6 +106,10 @@ export function CommandPalette({ open: controlledOpen, onOpenChange }: CommandPa
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
+      <VisuallyHidden>
+        <DialogTitle>Palette de commandes</DialogTitle>
+        <DialogDescription>Recherchez des pages ou lancez des actions IA</DialogDescription>
+      </VisuallyHidden>
       <Command className="rounded-lg border shadow-2xl">
         <CommandInput placeholder="Rechercher ou lancer une action..." className="h-14 text-lg" />
         <CommandList className="max-h-[400px]">

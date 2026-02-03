@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Search, RefreshCw, CheckCircle, AlertTriangle, Clock } from "lucide-react";
+import { FileText, Search, RefreshCw, CheckCircle, AlertTriangle, Clock, Download } from "lucide-react";
 import { useAuditLogs } from "@/hooks/useHQData";
+import { AuditExportButton } from "@/components/hq/audit/AuditExportButton";
 
 export default function AuditPage() {
   const { data: auditLogs, isLoading, refetch } = useAuditLogs(100);
@@ -51,10 +52,13 @@ export default function AuditPage() {
             Historique complet de toutes les actions (append-only).
           </p>
         </div>
-        <Button variant="outline" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
+        <div className="flex items-center gap-3">
+          <AuditExportButton logs={auditLogs || []} />
+          <Button variant="outline" onClick={() => refetch()}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}

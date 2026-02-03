@@ -217,6 +217,14 @@ npm run test
 - Composants : CommandPalette, ExecutiveCockpit
 - Logique : run-engine, scheduler, stripe-kpis
 
+### Couverture des modules
+| Module | Composants | Tests | Status |
+|--------|------------|-------|--------|
+| Auth | 3 | 5 | ✅ |
+| HQ Core | 12 | 28 | ✅ |
+| Finance | 4 | 8 | ✅ |
+| Permissions | 6 | 10 | ✅ |
+
 ---
 
 ## 📦 Déploiement

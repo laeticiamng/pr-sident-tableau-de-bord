@@ -20,6 +20,8 @@ import {
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { MRRChart } from "@/components/hq/charts/MRRChart";
+import { UnitEconomicsDisplay } from "@/components/hq/finance/UnitEconomicsDisplay";
 
 export default function FinancePage() {
   const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
@@ -229,6 +231,9 @@ export default function FinancePage() {
         </Card>
       </div>
 
+      {/* MRR Chart */}
+      <MRRChart />
+
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Platform Costs */}
         <Card className="card-executive">
@@ -261,46 +266,8 @@ export default function FinancePage() {
           </CardContent>
         </Card>
 
-        {/* Unit Economics */}
-        <Card className="card-executive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Unit Economics
-            </CardTitle>
-            <CardDescription>
-              Métriques de rentabilité
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 grid-cols-2">
-              <div className="p-4 rounded-lg border text-center">
-                <div className="text-sm text-muted-foreground mb-2">CAC</div>
-                <div className="text-2xl font-bold text-primary">52 €</div>
-                <div className="text-xs text-muted-foreground">Coût d'Acquisition</div>
-              </div>
-              <div className="p-4 rounded-lg border text-center">
-                <div className="text-sm text-muted-foreground mb-2">LTV</div>
-                <div className="text-2xl font-bold text-success">487 €</div>
-                <div className="text-xs text-muted-foreground">Valeur Client</div>
-              </div>
-              <div className="p-4 rounded-lg border text-center">
-                <div className="text-sm text-muted-foreground mb-2">LTV/CAC</div>
-                <div className="text-2xl font-bold text-accent">9.4x</div>
-                <div className="text-xs text-muted-foreground">Ratio</div>
-              </div>
-              <div className="p-4 rounded-lg border text-center">
-                <div className="text-sm text-muted-foreground mb-2">ARPU</div>
-                <div className="text-2xl font-bold">
-                  {kpis && kpis.activeSubscriptions > 0 
-                    ? formatCurrency(kpis.mrr / kpis.activeSubscriptions, kpis.currency)
-                    : "29.50 €"}
-                </div>
-                <div className="text-xs text-muted-foreground">Revenu/Utilisateur</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Unit Economics - Enhanced Component */}
+        <UnitEconomicsDisplay />
       </div>
 
       {/* Last Updated */}
