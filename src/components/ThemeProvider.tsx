@@ -46,6 +46,11 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
     setResolvedTheme(resolved);
 
     const root = document.documentElement;
+    
+    // Add transition class for smooth theme change
+    root.classList.add("theme-transition");
+    
+    // Apply theme
     root.classList.remove("light", "dark");
     root.classList.add(resolved);
 
@@ -57,6 +62,11 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
         resolved === "dark" ? "#0a0a0a" : "#ffffff"
       );
     }
+    
+    // Remove transition class after animation completes
+    setTimeout(() => {
+      root.classList.remove("theme-transition");
+    }, 400);
   }, []);
 
   const setTheme = useCallback((newTheme: Theme) => {
