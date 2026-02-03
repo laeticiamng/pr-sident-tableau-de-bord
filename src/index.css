@@ -69,6 +69,13 @@
     --status-amber: 38 92% 50%;
     --status-red: 0 72% 51%;
 
+    /* Platform Accent Colors */
+    --platform-health: 160 84% 39%;
+    --platform-social: 38 92% 50%;
+    --platform-compass: 217 91% 60%;
+    --platform-growth: 263 70% 50%;
+    --platform-medical: 350 89% 60%;
+
     /* Sidebar */
     --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
