@@ -1,22 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lovable App</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <title>EMOTIONSCARE SASU — Siège Social Numérique</title>
+    <meta name="description" content="Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique." />
+    <meta name="author" content="EMOTIONSCARE SASU" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lovable App" />
-    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:title" content="EMOTIONSCARE SASU — Siège Social Numérique" />
+    <meta property="og:description" content="Éditeur de logiciels applicatifs français. 5 plateformes innovantes." />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:site" content="@emotionscare" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <!-- Inline script to prevent FOUC (Flash of Unstyled Content) -->
+    <script>
+      (function() {
+        const THEME_KEY = 'hq-theme';
+        const stored = localStorage.getItem(THEME_KEY);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored || 'system';
+        const resolved = theme === 'system' ? (prefersDark ? 'dark' : 'light') : theme;
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(resolved);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', resolved === 'dark' ? '#0a0a0a' : '#ffffff');
+      })();
+    </script>
   </head>
 
   <body>

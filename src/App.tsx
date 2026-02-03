@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Layouts
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -50,57 +51,59 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/plateformes" element={<PlateformesPage />} />
-            <Route path="/vision" element={<VisionPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
-            <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
-            <Route path="/legal/cgv" element={<CGVPage />} />
-          </Route>
-
-          {/* Auth */}
-          <Route path="/auth" element={<AuthPage />} />
-
-          {/* Protected HQ Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<HQLayout />}>
-              {/* Cockpit */}
-              <Route path="/hq" element={<BriefingRoom />} />
-              <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
-              <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
-              
-              {/* Opérations */}
-              <Route path="/hq/reunions" element={<ReunionsPage />} />
-              <Route path="/hq/approbations" element={<ApprobationsPage />} />
-              <Route path="/hq/historique" element={<HistoriquePage />} />
-              
-              {/* Fonctions */}
-              <Route path="/hq/securite" element={<SecuritePage />} />
-              <Route path="/hq/marketing" element={<MarketingPage />} />
-              <Route path="/hq/ventes" element={<VentesPage />} />
-              <Route path="/hq/finance" element={<FinancePage />} />
-              <Route path="/hq/produit" element={<ProduitPage />} />
-              <Route path="/hq/engineering" element={<EngineeringPage />} />
-              <Route path="/hq/support" element={<SupportPage />} />
-              
-              {/* Gouvernance */}
-              <Route path="/hq/audit" element={<AuditPage />} />
-              <Route path="/hq/entreprise" element={<EntreprisePage />} />
+    <ThemeProvider defaultTheme="system">
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/plateformes" element={<PlateformesPage />} />
+              <Route path="/vision" element={<VisionPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
+              <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
+              <Route path="/legal/cgv" element={<CGVPage />} />
             </Route>
-          </Route>
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+            {/* Auth */}
+            <Route path="/auth" element={<AuthPage />} />
+
+            {/* Protected HQ Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<HQLayout />}>
+                {/* Cockpit */}
+                <Route path="/hq" element={<BriefingRoom />} />
+                <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
+                <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
+                
+                {/* Opérations */}
+                <Route path="/hq/reunions" element={<ReunionsPage />} />
+                <Route path="/hq/approbations" element={<ApprobationsPage />} />
+                <Route path="/hq/historique" element={<HistoriquePage />} />
+                
+                {/* Fonctions */}
+                <Route path="/hq/securite" element={<SecuritePage />} />
+                <Route path="/hq/marketing" element={<MarketingPage />} />
+                <Route path="/hq/ventes" element={<VentesPage />} />
+                <Route path="/hq/finance" element={<FinancePage />} />
+                <Route path="/hq/produit" element={<ProduitPage />} />
+                <Route path="/hq/engineering" element={<EngineeringPage />} />
+                <Route path="/hq/support" element={<SupportPage />} />
+                
+                {/* Gouvernance */}
+                <Route path="/hq/audit" element={<AuditPage />} />
+                <Route path="/hq/entreprise" element={<EntreprisePage />} />
+              </Route>
+            </Route>
+
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
