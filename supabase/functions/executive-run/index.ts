@@ -252,6 +252,7 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
     const GITHUB_TOKEN = Deno.env.get("GITHUB_TOKEN");
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
 
@@ -259,11 +260,72 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
       throw new Error("Supabase configuration missing");
     }
 
+    // ============================================
+    // AUTHENTICATION & AUTHORIZATION CHECK
+    // ============================================
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("[Executive Run] Missing or invalid authorization header");
+      return new Response(
+        JSON.stringify({ error: "Authorization requise" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create a client with the user's token to verify authentication
+    const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify the JWT and get claims
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+
+    if (claimsError || !claimsData?.claims) {
+      console.error("[Executive Run] Invalid token:", claimsError?.message);
+      return new Response(
+        JSON.stringify({ error: "Token invalide ou expiré" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log(`[Executive Run] Authenticated user: ${userId}`);
+
+    // Create admin client for privileged operations
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Verify user has owner role using the has_role RPC function
+    const { data: hasOwnerRole, error: roleError } = await supabaseAdmin.rpc("has_role", {
+      _user_id: userId,
+      _role: "owner"
+    });
+
+    if (roleError) {
+      console.error("[Executive Run] Role check error:", roleError.message);
+      return new Response(
+        JSON.stringify({ error: "Erreur de vérification des permissions" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!hasOwnerRole) {
+      console.error(`[Executive Run] User ${userId} lacks owner role`);
+      return new Response(
+        JSON.stringify({ error: "Permissions insuffisantes - rôle owner requis" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`[Executive Run] User ${userId} authorized as owner`);
+    // ============================================
+    // END AUTHENTICATION CHECK
+    // ============================================
+
     const { run_type, platform_key, context_data } = await req.json();
 
     console.log(`[Executive Run] Starting ${run_type}${platform_key ? ` for ${platform_key}` : ""}`);
