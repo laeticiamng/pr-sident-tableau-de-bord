@@ -91,8 +91,7 @@ export function PlatformShowcase() {
 
         {/* Featured Platform — Hero Card */}
         <div className="mb-16">
-          <Link 
-            to="/plateformes" 
+          <div 
             className="group block"
             onMouseEnter={() => setHoveredPlatform(MANAGED_PLATFORMS[0].key)}
             onMouseLeave={() => setHoveredPlatform(null)}
@@ -151,10 +150,21 @@ export function PlatformShowcase() {
                     ))}
                   </div>
 
-                  <Button variant="ghost" className="group/btn px-0 text-platform-health hover:text-platform-health/80 hover:bg-transparent">
-                    Découvrir la plateforme
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                  </Button>
+                  {/* Actions */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    <Button asChild className="bg-platform-health hover:bg-platform-health/90 text-white">
+                      <a href={MANAGED_PLATFORMS[0].liveUrl} target="_blank" rel="noopener noreferrer">
+                        Visiter le site
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                    <Link to="/plateformes">
+                      <Button variant="ghost" className="text-platform-health hover:text-platform-health/80 hover:bg-transparent">
+                        Détails
+                        <ChevronRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Right — Stats Grid */}
@@ -181,7 +191,7 @@ export function PlatformShowcase() {
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
         </div>
 
         {/* Other Platforms — Grid */}
@@ -191,9 +201,8 @@ export function PlatformShowcase() {
             const isHovered = hoveredPlatform === platform.key;
             
             return (
-              <Link
+              <div
                 key={platform.key}
-                to="/plateformes"
                 className="group block"
                 onMouseEnter={() => setHoveredPlatform(platform.key)}
                 onMouseLeave={() => setHoveredPlatform(null)}
@@ -253,14 +262,25 @@ export function PlatformShowcase() {
                       <span>{platform.stats.tables} tables</span>
                     </div>
 
-                    {/* Arrow */}
-                    <div className="flex items-center gap-2 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <span className={platformAccents[platform.key]}>Explorer</span>
-                      <ChevronRight className={cn("w-4 h-4", platformAccents[platform.key])} />
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2">
+                      <a 
+                        href={platform.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={cn(
+                          "flex items-center gap-1.5 text-sm font-medium transition-all duration-300",
+                          platformAccents[platform.key],
+                          "hover:underline"
+                        )}
+                      >
+                        Visiter
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </a>
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>
