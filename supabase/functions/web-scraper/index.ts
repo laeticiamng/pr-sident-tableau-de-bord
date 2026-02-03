@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface ScrapeRequest {
@@ -22,7 +23,65 @@ serve(async (req) => {
   }
 
   try {
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
     const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
+      throw new Error("Configuration Supabase manquante");
+    }
+
+    // ============================================
+    // AUTHENTICATION & AUTHORIZATION CHECK
+    // ============================================
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("[Web Scraper] Missing or invalid authorization header");
+      return new Response(
+        JSON.stringify({ error: "Authorization requise" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+
+    if (claimsError || !claimsData?.claims) {
+      console.error("[Web Scraper] Invalid token:", claimsError?.message);
+      return new Response(
+        JSON.stringify({ error: "Token invalide ou expiré" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log(`[Web Scraper] Authenticated user: ${userId}`);
+
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    const { data: hasOwnerRole, error: roleError } = await supabaseAdmin.rpc("has_role", {
+      _user_id: userId,
+      _role: "owner"
+    });
+
+    if (roleError || !hasOwnerRole) {
+      console.error(`[Web Scraper] User ${userId} lacks owner role`);
+      return new Response(
+        JSON.stringify({ error: "Permissions insuffisantes - rôle owner requis" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`[Web Scraper] User ${userId} authorized as owner`);
+    // ============================================
+    // END AUTHENTICATION CHECK
+    // ============================================
+
     if (!FIRECRAWL_API_KEY) {
       return new Response(
         JSON.stringify({ success: false, error: "Firecrawl API non configurée" }),
