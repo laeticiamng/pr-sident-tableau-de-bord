@@ -26,9 +26,9 @@
     --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 15%;
 
-    /* Muted — Higher contrast for better readability */
+    /* Muted — Much higher contrast for better readability */
     --muted: 220 14% 96%;
-    --muted-foreground: 220 15% 35%;
+    --muted-foreground: 220 20% 28%;
 
     /* Accent — Warm Gold/Amber for prestige */
     --accent: 38 92% 50%;
@@ -39,15 +39,15 @@
     --destructive-foreground: 0 0% 100%;
 
     /* Success — Refined Green */
-    --success: 142 71% 40%;
+    --success: 142 71% 35%;
     --success-foreground: 0 0% 100%;
 
     /* Warning — Amber */
-    --warning: 38 92% 50%;
+    --warning: 38 92% 45%;
     --warning-foreground: 222 47% 11%;
 
-    --border: 220 13% 85%;
-    --input: 220 13% 85%;
+    --border: 220 13% 80%;
+    --input: 220 13% 80%;
     --ring: 222 47% 11%;
 
     --radius: 0.75rem;
@@ -65,16 +65,16 @@
     --shadow-gold: 0 4px 14px -3px hsl(38 92% 50% / 0.4);
 
     /* RAG Status Colors */
-    --status-green: 142 71% 40%;
-    --status-amber: 38 92% 45%;
-    --status-red: 0 72% 51%;
+    --status-green: 142 71% 35%;
+    --status-amber: 38 92% 40%;
+    --status-red: 0 72% 45%;
 
     /* Platform Accent Colors */
-    --platform-health: 160 84% 35%;
-    --platform-social: 38 92% 45%;
-    --platform-compass: 217 91% 50%;
-    --platform-growth: 263 70% 45%;
-    --platform-medical: 350 89% 55%;
+    --platform-health: 160 84% 30%;
+    --platform-social: 38 92% 40%;
+    --platform-compass: 217 91% 45%;
+    --platform-growth: 263 70% 40%;
+    --platform-medical: 350 89% 50%;
 
     /* Sidebar */
     --sidebar-background: 222 47% 11%;
@@ -103,8 +103,9 @@
     --secondary: 220 20% 16%;
     --secondary-foreground: 0 0% 95%;
 
+    /* Muted — Higher contrast for dark mode */
     --muted: 220 20% 16%;
-    --muted-foreground: 220 15% 70%;
+    --muted-foreground: 220 15% 75%;
 
     --accent: 38 92% 50%;
     --accent-foreground: 222 47% 11%;
@@ -118,8 +119,8 @@
     --warning: 38 92% 50%;
     --warning-foreground: 222 47% 11%;
 
-    --border: 220 20% 22%;
-    --input: 220 20% 22%;
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
     --ring: 0 0% 85%;
 
     --sidebar-background: 222 47% 8%;
@@ -128,7 +129,7 @@
     --sidebar-primary-foreground: 222 47% 11%;
     --sidebar-accent: 220 20% 16%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 20% 16%;
+    --sidebar-border: 220 20% 18%;
     --sidebar-ring: 38 92% 50%;
   }
 }
