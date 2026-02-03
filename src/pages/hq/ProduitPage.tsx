@@ -4,17 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { 
   Package, 
-  Target, 
   Layers, 
   CheckCircle,
   Clock,
   AlertTriangle,
-  ArrowRight,
   RefreshCw,
   TrendingUp,
   Rocket
 } from "lucide-react";
-import { PRODUCT_OKRS, PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mock-data";
+import { PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mock-data";
+import { OKRProgress } from "@/components/hq/product/OKRProgress";
 import { cn } from "@/lib/utils";
 
 const platforms = [
@@ -83,58 +82,8 @@ export default function ProduitPage() {
         </CardContent>
       </Card>
 
-      {/* OKRs */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Target className="h-5 w-5 text-primary" />
-            OKRs Trimestriels
-          </CardTitle>
-          <CardDescription>
-            Objectifs et résultats clés
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {PRODUCT_OKRS.map((okr, index) => (
-              <div key={index} className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{okr.objective}</span>
-                  <div className="flex items-center gap-2">
-                    <Badge 
-                      variant={okr.status === "on_track" ? "success" : "warning"}
-                    >
-                      {okr.status === "on_track" ? "En bonne voie" : "À risque"}
-                    </Badge>
-                    <Badge variant="subtle">{okr.progress}%</Badge>
-                  </div>
-                </div>
-                <Progress value={okr.progress} className="h-2" />
-                <div className="grid gap-2 md:grid-cols-3 mt-2">
-                  {okr.keyResults.map((kr, krIndex) => (
-                    <div 
-                      key={krIndex}
-                      className="p-2 rounded-lg bg-muted/30 text-xs"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="truncate">{kr.name}</span>
-                        <span className={cn(
-                          "font-mono",
-                          kr.progress >= 70 ? "text-success" :
-                          kr.progress >= 40 ? "text-warning" : "text-destructive"
-                        )}>
-                          {kr.progress}%
-                        </span>
-                      </div>
-                      <Progress value={kr.progress} className="h-1" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* OKRs - Using new component */}
+      <OKRProgress />
 
       {/* Feature Requests */}
       <div className="grid gap-6 lg:grid-cols-2">
