@@ -21,14 +21,28 @@ import MentionsLegalesPage from "@/pages/legal/MentionsLegalesPage";
 import ConfidentialitePage from "@/pages/legal/ConfidentialitePage";
 import CGVPage from "@/pages/legal/CGVPage";
 
-// HQ Pages
+// HQ Pages - Cockpit
 import BriefingRoom from "@/pages/hq/BriefingRoom";
 import HQPlateformesPage from "@/pages/hq/HQPlateformesPage";
-import EntreprisePage from "@/pages/hq/EntreprisePage";
-import ApprobationsPage from "@/pages/hq/ApprobationsPage";
-import SecuritePage from "@/pages/hq/SecuritePage";
 import EquipeExecutivePage from "@/pages/hq/EquipeExecutivePage";
+
+// HQ Pages - Opérations
+import ReunionsPage from "@/pages/hq/ReunionsPage";
+import ApprobationsPage from "@/pages/hq/ApprobationsPage";
+import HistoriquePage from "@/pages/hq/HistoriquePage";
+
+// HQ Pages - Fonctions
+import SecuritePage from "@/pages/hq/SecuritePage";
+import MarketingPage from "@/pages/hq/MarketingPage";
+import VentesPage from "@/pages/hq/VentesPage";
+import FinancePage from "@/pages/hq/FinancePage";
+import ProduitPage from "@/pages/hq/ProduitPage";
+import EngineeringPage from "@/pages/hq/EngineeringPage";
+import SupportPage from "@/pages/hq/SupportPage";
+
+// HQ Pages - Gouvernance
 import AuditPage from "@/pages/hq/AuditPage";
+import EntreprisePage from "@/pages/hq/EntreprisePage";
 
 import NotFound from "@/pages/NotFound";
 
@@ -58,11 +72,26 @@ const App = () => (
           {/* Protected HQ Routes */}
           <Route element={<ProtectedRoute />}>
             <Route element={<HQLayout />}>
+              {/* Cockpit */}
               <Route path="/hq" element={<BriefingRoom />} />
               <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
               <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
+              
+              {/* Opérations */}
+              <Route path="/hq/reunions" element={<ReunionsPage />} />
               <Route path="/hq/approbations" element={<ApprobationsPage />} />
+              <Route path="/hq/historique" element={<HistoriquePage />} />
+              
+              {/* Fonctions */}
               <Route path="/hq/securite" element={<SecuritePage />} />
+              <Route path="/hq/marketing" element={<MarketingPage />} />
+              <Route path="/hq/ventes" element={<VentesPage />} />
+              <Route path="/hq/finance" element={<FinancePage />} />
+              <Route path="/hq/produit" element={<ProduitPage />} />
+              <Route path="/hq/engineering" element={<EngineeringPage />} />
+              <Route path="/hq/support" element={<SupportPage />} />
+              
+              {/* Gouvernance */}
               <Route path="/hq/audit" element={<AuditPage />} />
               <Route path="/hq/entreprise" element={<EntreprisePage />} />
             </Route>
