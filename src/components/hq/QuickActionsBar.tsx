@@ -20,6 +20,7 @@ interface QuickActionsBarProps {
   onOpenCommand?: () => void;
   onOpenTemplates?: () => void;
   className?: string;
+  compact?: boolean;
 }
 
 const quickActions = [
@@ -53,7 +54,7 @@ const quickActions = [
   },
 ];
 
-export function QuickActionsBar({ onOpenCommand, onOpenTemplates, className }: QuickActionsBarProps) {
+export function QuickActionsBar({ onOpenCommand, onOpenTemplates, className, compact }: QuickActionsBarProps) {
   const { enqueue, stats } = useRunQueue();
   const { data: pendingApprovals } = usePendingApprovals();
   const [activeAction, setActiveAction] = useState<string | null>(null);
@@ -69,6 +70,68 @@ export function QuickActionsBar({ onOpenCommand, onOpenTemplates, className }: Q
   };
 
   const pendingCount = pendingApprovals?.length || 0;
+
+  // Compact mode for mobile
+  if (compact) {
+    return (
+      <div className={cn(
+        "flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg sm:rounded-xl bg-muted/30 backdrop-blur-sm border overflow-x-auto",
+        className
+      )}>
+        {/* Command Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenCommand}
+          className="h-8 w-8 p-0 flex-shrink-0"
+        >
+          <Command className="h-4 w-4" />
+        </Button>
+
+        <div className="w-px h-5 bg-border flex-shrink-0" />
+
+        {/* Quick Actions - Icons only */}
+        {quickActions.map((action) => (
+          <Button
+            key={action.id}
+            variant="ghost"
+            size="sm"
+            onClick={() => handleAction(action.runType, action.id)}
+            disabled={activeAction !== null}
+            className={cn(
+              "h-8 w-8 p-0 flex-shrink-0",
+              activeAction === action.id && "bg-accent/20 text-accent"
+            )}
+          >
+            {activeAction === action.id ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <action.icon className="h-4 w-4" />
+            )}
+          </Button>
+        ))}
+
+        <div className="w-px h-5 bg-border flex-shrink-0" />
+
+        {/* Templates Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onOpenTemplates}
+          className="h-8 w-8 p-0 flex-shrink-0"
+        >
+          <FileText className="h-4 w-4" />
+        </Button>
+
+        {/* Queue status indicator */}
+        {stats.running > 0 && (
+          <Badge variant="gold" className="ml-1 text-xs flex-shrink-0">
+            {stats.running}
+          </Badge>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={cn(
