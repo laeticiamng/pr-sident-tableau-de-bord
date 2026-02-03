@@ -4,21 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { 
-  Settings, 
   GitBranch, 
   GitPullRequest,
   Bug,
   Rocket,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
   RefreshCw,
   Loader2,
   ExternalLink,
-  GitCommit
+  GitCommit,
+  CheckCircle
 } from "lucide-react";
 import { useExecuteRun, usePlatforms } from "@/hooks/useHQData";
 import { useGitHubData, useGitHubSync } from "@/hooks/useGitHubSync";
+import { ReleaseChecklist } from "@/components/hq/engineering/ReleaseChecklist";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
@@ -280,43 +278,9 @@ export default function EngineeringPage() {
       </div>
 
       {/* Release Checklist */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Settings className="h-5 w-5 text-primary" />
-            Checklist de Release
-          </CardTitle>
-          <CardDescription>
-            Critères de validation avant déploiement
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-3">
-            {[
-              { label: "Tests unitaires passés", status: "pending" },
-              { label: "Code review approuvé", status: totalOpenPRs === 0 ? "ok" : "pending" },
-              { label: "Documentation à jour", status: "pending" },
-              { label: "Audit sécurité OK", status: "pending" },
-              { label: "Performance validée", status: "pending" },
-              { label: "Rollback plan prêt", status: "pending" },
-            ].map((item) => (
-              <div 
-                key={item.label}
-                className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  item.status === "ok" ? "border-success/30 bg-success/5" : ""
-                }`}
-              >
-                {item.status === "ok" ? (
-                  <CheckCircle className="h-4 w-4 text-success" />
-                ) : (
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                )}
-                <span className="text-sm">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <ReleaseChecklist 
+        onDeploy={() => executeRun.mutate({ run_type: "RELEASE_GATE_CHECK" })}
+      />
     </div>
   );
 }

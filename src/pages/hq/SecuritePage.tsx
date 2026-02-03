@@ -8,15 +8,14 @@ import {
   Shield, 
   AlertTriangle, 
   CheckCircle, 
-  Lock, 
-  Key, 
   AlertOctagon,
-  RefreshCw,
   Loader2,
   Power
 } from "lucide-react";
 import { useSystemConfig, useUpdateConfig, useExecuteRun, usePlatforms } from "@/hooks/useHQData";
 import { useToast } from "@/hooks/use-toast";
+import { SecretsRegistry } from "@/components/hq/security/SecretsRegistry";
+import { RLSAuditTable } from "@/components/hq/security/RLSAuditTable";
 
 export default function SecuritePage() {
   const { toast } = useToast();
@@ -41,7 +40,6 @@ export default function SecuritePage() {
 
   const handlePanicButton = () => {
     setPanicMode(true);
-    // Disable autopilot
     updateConfig.mutate({
       key: "autopilot",
       value: { enabled: false, low_risk_auto_execute: false },
@@ -169,7 +167,7 @@ export default function SecuritePage() {
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <Lock className="h-8 w-8 mx-auto mb-3 text-success" />
+            <CheckCircle className="h-8 w-8 mx-auto mb-3 text-success" />
             <div className="text-2xl font-bold">
               {isLoading ? "..." : `${platforms?.length || 0}/${platforms?.length || 0}`}
             </div>
@@ -178,108 +176,28 @@ export default function SecuritePage() {
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <Key className="h-8 w-8 mx-auto mb-3 text-primary" />
-            <div className="text-2xl font-bold">4</div>
-            <div className="text-sm text-muted-foreground">Secrets Stockés</div>
+            <Shield className="h-8 w-8 mx-auto mb-3 text-primary" />
+            <div className="text-2xl font-bold">8</div>
+            <div className="text-sm text-muted-foreground">Secrets Configurés</div>
           </CardContent>
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-warning" />
-            <div className="text-2xl font-bold">0</div>
+            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-success" />
+            <div className="text-2xl font-bold text-success">0</div>
             <div className="text-sm text-muted-foreground">Alertes</div>
           </CardContent>
         </Card>
       </div>
 
       {/* RLS Audit */}
-      <Card className="card-executive">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Audit RLS</CardTitle>
-            <CardDescription>État des politiques Row Level Security</CardDescription>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleSecurityAudit}
-            disabled={executeRun.isPending}
-          >
-            {executeRun.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
-            Relancer
-          </Button>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {[
-                { table: "hq.platforms", status: "ok", lastCheck: "Maintenant" },
-                { table: "hq.runs", status: "ok", lastCheck: "Maintenant" },
-                { table: "hq.agents", status: "ok", lastCheck: "Maintenant" },
-                { table: "hq.audit_logs", status: "ok", lastCheck: "Maintenant" },
-                { table: "hq.actions", status: "ok", lastCheck: "Maintenant" },
-                { table: "hq.approvals", status: "ok", lastCheck: "Maintenant" },
-                { table: "public.user_roles", status: "ok", lastCheck: "Maintenant" },
-              ].map((item) => (
-                <div key={item.table} className="flex items-center justify-between p-4 rounded-lg border">
-                  <div className="flex items-center gap-4">
-                    {item.status === "ok" ? (
-                      <CheckCircle className="h-5 w-5 text-success" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 text-warning" />
-                    )}
-                    <span className="font-mono text-sm">{item.table}</span>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <Badge variant="success">RLS Actif</Badge>
-                    <span className="text-sm text-muted-foreground">{item.lastCheck}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <RLSAuditTable 
+        onAudit={handleSecurityAudit}
+        isAuditing={executeRun.isPending}
+      />
 
       {/* Secrets Registry */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle>Registre des Secrets</CardTitle>
-          <CardDescription>
-            Les valeurs des secrets ne sont jamais affichées. Seuls les noms sont visibles.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2">
-            {[
-              { name: "LOVABLE_API_KEY", status: "Configuré" },
-              { name: "SUPABASE_URL", status: "Configuré" },
-              { name: "SUPABASE_PUBLISHABLE_KEY", status: "Configuré" },
-              { name: "SUPABASE_SERVICE_ROLE_KEY", status: "Configuré" },
-              { name: "STRIPE_SECRET_KEY", status: "Configuré" },
-              { name: "GITHUB_TOKEN", status: "Configuré" },
-              { name: "PERPLEXITY_API_KEY", status: "Configuré (Connector)" },
-              { name: "FIRECRAWL_API_KEY", status: "Configuré (Connector)" },
-            ].map((secret) => (
-              <div key={secret.name} className="flex items-center gap-3 p-3 rounded-lg border">
-                <Key className="h-4 w-4 text-muted-foreground" />
-                <span className="font-mono text-sm">{secret.name}</span>
-                <Badge variant="success" className="ml-auto">{secret.status}</Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <SecretsRegistry />
     </div>
   );
 }
