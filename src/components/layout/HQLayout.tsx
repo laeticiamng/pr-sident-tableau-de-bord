@@ -9,21 +9,24 @@ import { FloatingActionButton } from "@/components/hq/FloatingActionButton";
 import { ShortcutsHelp } from "@/components/hq/ShortcutsHelp";
 import { NotificationCenter } from "@/components/hq/NotificationCenter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { RunQueueWidget } from "@/components/hq/RunQueueWidget";
+import { RunTemplateDialog } from "@/components/hq/RunTemplateDialog";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useExecuteRun } from "@/hooks/useHQData";
+import { useRunQueue } from "@/hooks/useRunQueue";
 
 export function HQLayout() {
   const { user } = useAuth();
   const [commandOpen, setCommandOpen] = useState(false);
-  const executeRun = useExecuteRun();
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const { enqueue } = useRunQueue();
 
 
   // Register keyboard shortcuts for quick actions
   useKeyboardShortcuts({
-    onBrief: () => executeRun.mutate({ run_type: "DAILY_EXECUTIVE_BRIEF" }),
-    onAudit: () => executeRun.mutate({ run_type: "SECURITY_AUDIT_RLS" }),
-    onMarketing: () => executeRun.mutate({ run_type: "MARKETING_WEEK_PLAN" }),
-    onCompetitive: () => executeRun.mutate({ run_type: "COMPETITIVE_ANALYSIS" }),
+    onBrief: () => enqueue("DAILY_EXECUTIVE_BRIEF"),
+    onAudit: () => enqueue("SECURITY_AUDIT_RLS"),
+    onMarketing: () => enqueue("MARKETING_WEEK_PLAN"),
+    onCompetitive: () => enqueue("COMPETITIVE_ANALYSIS"),
   });
 
   return (
@@ -52,15 +55,27 @@ export function HQLayout() {
             </div>
             
             {/* Quick Actions Bar */}
-            <QuickActionsBar onOpenCommand={() => setCommandOpen(true)} />
+            <QuickActionsBar 
+              onOpenCommand={() => setCommandOpen(true)} 
+              onOpenTemplates={() => setTemplateDialogOpen(true)}
+            />
           </div>
+          
+          {/* Run Queue Widget - shows when runs are in progress */}
+          <RunQueueWidget className="mb-6" compact />
           
           <Outlet />
         </div>
       </main>
 
       {/* Floating Action Button */}
-      <FloatingActionButton />
+      <FloatingActionButton onOpenTemplates={() => setTemplateDialogOpen(true)} />
+      
+      {/* Template Dialog */}
+      <RunTemplateDialog 
+        open={templateDialogOpen} 
+        onOpenChange={setTemplateDialogOpen} 
+      />
     </div>
   );
 }

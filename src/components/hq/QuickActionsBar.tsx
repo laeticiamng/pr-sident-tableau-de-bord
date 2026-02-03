@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useExecuteRun, usePendingApprovals } from "@/hooks/useHQData";
+import { usePendingApprovals } from "@/hooks/useHQData";
+import { useRunQueue } from "@/hooks/useRunQueue";
 import {
   Sparkles,
   Shield,
@@ -11,11 +12,13 @@ import {
   Loader2,
   Bell,
   Command,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuickActionsBarProps {
   onOpenCommand?: () => void;
+  onOpenTemplates?: () => void;
   className?: string;
 }
 
@@ -50,17 +53,18 @@ const quickActions = [
   },
 ];
 
-export function QuickActionsBar({ onOpenCommand, className }: QuickActionsBarProps) {
-  const executeRun = useExecuteRun();
+export function QuickActionsBar({ onOpenCommand, onOpenTemplates, className }: QuickActionsBarProps) {
+  const { enqueue, stats } = useRunQueue();
   const { data: pendingApprovals } = usePendingApprovals();
   const [activeAction, setActiveAction] = useState<string | null>(null);
 
   const handleAction = async (runType: string, actionId: string) => {
     setActiveAction(actionId);
     try {
-      await executeRun.mutateAsync({ run_type: runType });
+      enqueue(runType);
     } finally {
-      setActiveAction(null);
+      // Quick visual feedback
+      setTimeout(() => setActiveAction(null), 500);
     }
   };
 
@@ -117,6 +121,24 @@ export function QuickActionsBar({ onOpenCommand, className }: QuickActionsBarPro
         </Tooltip>
       ))}
 
+      <div className="w-px h-6 bg-border" />
+
+      {/* Templates Button */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onOpenTemplates}
+            className="gap-2 text-muted-foreground hover:text-foreground"
+          >
+            <FileText className="h-4 w-4" />
+            <span className="hidden lg:inline">Templates</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Lancer un run personnalisé</TooltipContent>
+      </Tooltip>
+
       {/* Notifications */}
       {pendingCount > 0 && (
         <>
@@ -136,6 +158,13 @@ export function QuickActionsBar({ onOpenCommand, className }: QuickActionsBarPro
             <TooltipContent>{pendingCount} approbation(s) en attente</TooltipContent>
           </Tooltip>
         </>
+      )}
+      
+      {/* Queue status indicator */}
+      {stats.running > 0 && (
+        <Badge variant="gold" className="ml-2">
+          {stats.running} run{stats.running > 1 ? 's' : ''} en cours
+        </Badge>
       )}
     </div>
   );
