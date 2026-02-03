@@ -1,1 +1,4 @@
 project_id = "hjoylhxakijxpihwrqny"
+
+[functions.executive-run]
+verify_jwt = true
