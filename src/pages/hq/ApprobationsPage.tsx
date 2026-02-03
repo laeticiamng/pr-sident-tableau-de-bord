@@ -1,56 +1,53 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Clock, AlertTriangle, ArrowRight } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CheckCircle, XCircle, Clock, AlertTriangle, Loader2 } from "lucide-react";
+import { usePendingApprovals, useApproveAction } from "@/hooks/useHQData";
 
-// Mock data for approvals
-const pendingApprovals = [
-  {
-    id: "1",
-    title: "Déploiement EmotionsCare v2.1.0",
-    type: "RELEASE",
-    platform: "EmotionsCare",
-    risk: "medium",
-    requestedBy: "CTO_AGENT",
-    requestedAt: new Date().toISOString(),
-    summary: "Mise en production de la version 2.1.0 avec nouvelles fonctionnalités de dashboard.",
-  },
-  {
-    id: "2",
-    title: "Mise à jour politique RLS",
-    type: "DB_CHANGE",
-    platform: "System Compass",
-    risk: "high",
-    requestedBy: "CISO_AGENT",
-    requestedAt: new Date(Date.now() - 86400000).toISOString(),
-    summary: "Renforcement des règles de sécurité Row Level Security sur les tables utilisateurs.",
-  },
-];
+const riskColors = {
+  low: "bg-status-green text-white",
+  medium: "bg-status-amber text-white",
+  high: "bg-orange-500 text-white",
+  critical: "bg-destructive text-destructive-foreground",
+};
 
-const recentDecisions = [
-  {
-    id: "3",
-    title: "Campagne email Q1",
-    type: "MARKETING",
-    decision: "approved",
-    decidedAt: new Date(Date.now() - 172800000).toISOString(),
-  },
-  {
-    id: "4",
-    title: "Nouvelle API endpoint",
-    type: "ENGINEERING",
-    decision: "approved",
-    decidedAt: new Date(Date.now() - 259200000).toISOString(),
-  },
-  {
-    id: "5",
-    title: "Accès base prod",
-    type: "SECURITY",
-    decision: "rejected",
-    decidedAt: new Date(Date.now() - 345600000).toISOString(),
-  },
-];
+const riskLabels = {
+  low: "Faible",
+  medium: "Moyen",
+  high: "Élevé",
+  critical: "Critique",
+};
 
 export default function ApprobationsPage() {
+  const { data: pendingApprovals, isLoading } = usePendingApprovals();
+  const approveAction = useApproveAction();
+  const [selectedAction, setSelectedAction] = useState<string | null>(null);
+  const [decision, setDecision] = useState<"approved" | "rejected" | null>(null);
+  const [reason, setReason] = useState("");
+
+  const handleDecision = (actionId: string, dec: "approved" | "rejected") => {
+    setSelectedAction(actionId);
+    setDecision(dec);
+  };
+
+  const confirmDecision = async () => {
+    if (!selectedAction || !decision) return;
+    
+    await approveAction.mutateAsync({
+      action_id: selectedAction,
+      decision,
+      reason: reason || undefined,
+    });
+    
+    setSelectedAction(null);
+    setDecision(null);
+    setReason("");
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
@@ -62,100 +59,166 @@ export default function ApprobationsPage() {
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="card-executive p-6">
-          <div className="flex items-center gap-3">
-            <Clock className="h-8 w-8 text-warning" />
-            <div>
-              <div className="text-3xl font-bold">{pendingApprovals.length}</div>
-              <div className="text-sm text-muted-foreground">En attente</div>
+        <Card className="card-executive">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <Clock className="h-8 w-8 text-warning" />
+              <div>
+                <div className="text-3xl font-bold">
+                  {isLoading ? "..." : pendingApprovals?.length || 0}
+                </div>
+                <div className="text-sm text-muted-foreground">En attente</div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="card-executive p-6">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="h-8 w-8 text-success" />
-            <div>
-              <div className="text-3xl font-bold">12</div>
-              <div className="text-sm text-muted-foreground">Approuvées ce mois</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="h-8 w-8 text-success" />
+              <div>
+                <div className="text-3xl font-bold">—</div>
+                <div className="text-sm text-muted-foreground">Approuvées ce mois</div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="card-executive p-6">
-          <div className="flex items-center gap-3">
-            <XCircle className="h-8 w-8 text-destructive" />
-            <div>
-              <div className="text-3xl font-bold">2</div>
-              <div className="text-sm text-muted-foreground">Rejetées ce mois</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3">
+              <XCircle className="h-8 w-8 text-destructive" />
+              <div>
+                <div className="text-3xl font-bold">—</div>
+                <div className="text-sm text-muted-foreground">Rejetées ce mois</div>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Pending Approvals */}
-      <div className="card-executive p-6">
-        <h2 className="text-xl font-semibold mb-6">En attente de décision</h2>
-        <div className="space-y-4">
-          {pendingApprovals.map((approval) => (
-            <div key={approval.id} className="p-6 rounded-lg border hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-semibold text-lg">{approval.title}</h3>
-                    <Badge variant={approval.risk === "high" ? "status-amber" : "subtle"}>
-                      {approval.risk === "high" ? "Risque Élevé" : "Risque Moyen"}
-                    </Badge>
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle>En attente de décision</CardTitle>
+          <CardDescription>
+            Actions proposées par les agents nécessitant votre approbation
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-32 w-full" />
+            </div>
+          ) : pendingApprovals && pendingApprovals.length > 0 ? (
+            <div className="space-y-4">
+              {pendingApprovals.map((action) => (
+                <div key={action.id} className="p-6 rounded-lg border hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-lg">{action.title}</h3>
+                        <Badge className={riskColors[action.risk_level]}>
+                          Risque {riskLabels[action.risk_level]}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span>Type: {action.action_type}</span>
+                        <span>
+                          {new Date(action.created_at).toLocaleDateString("fr-FR", {
+                            day: "numeric",
+                            month: "long",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span>Plateforme: {approval.platform}</span>
-                    <span>Type: {approval.type}</span>
-                    <span>Par: {approval.requestedBy}</span>
+                  
+                  {action.description && (
+                    <p className="text-muted-foreground mb-6">{action.description}</p>
+                  )}
+                  
+                  <div className="flex items-center gap-3">
+                    <Button 
+                      variant="executive"
+                      onClick={() => handleDecision(action.id, "approved")}
+                      disabled={approveAction.isPending}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Approuver
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleDecision(action.id, "rejected")}
+                      disabled={approveAction.isPending}
+                    >
+                      <XCircle className="h-4 w-4 mr-2" />
+                      Rejeter
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <p className="text-muted-foreground mb-6">{approval.summary}</p>
-              <div className="flex items-center gap-3">
-                <Button variant="executive">
-                  <CheckCircle className="h-4 w-4" />
-                  Approuver
-                </Button>
-                <Button variant="outline">
-                  <XCircle className="h-4 w-4" />
-                  Rejeter
-                </Button>
-                <Button variant="ghost">
-                  Voir les détails
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <CheckCircle className="h-12 w-12 mx-auto mb-4 text-success" />
+              <p className="text-lg font-medium">Aucune approbation en attente</p>
+              <p className="text-sm mt-1">Toutes les actions ont été traitées.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Recent Decisions */}
-      <div className="card-executive p-6">
-        <h2 className="text-xl font-semibold mb-6">Décisions récentes</h2>
-        <div className="space-y-3">
-          {recentDecisions.map((decision) => (
-            <div key={decision.id} className="flex items-center justify-between p-4 rounded-lg border">
-              <div className="flex items-center gap-4">
-                {decision.decision === "approved" ? (
-                  <CheckCircle className="h-5 w-5 text-success" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-destructive" />
-                )}
-                <div>
-                  <span className="font-medium">{decision.title}</span>
-                  <Badge variant="subtle" className="ml-3">{decision.type}</Badge>
-                </div>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                {new Date(decision.decidedAt).toLocaleDateString("fr-FR")}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Confirmation Dialog */}
+      <Dialog open={!!selectedAction} onOpenChange={() => setSelectedAction(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {decision === "approved" ? "Confirmer l'approbation" : "Confirmer le rejet"}
+            </DialogTitle>
+            <DialogDescription>
+              {decision === "approved" 
+                ? "Cette action sera exécutée par l'agent responsable."
+                : "L'action sera annulée et l'agent en sera informé."
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <label className="text-sm font-medium mb-2 block">
+              Raison (optionnel)
+            </label>
+            <Textarea
+              placeholder="Ajoutez une note pour cette décision..."
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={3}
+            />
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedAction(null)}>
+              Annuler
+            </Button>
+            <Button 
+              variant={decision === "approved" ? "executive" : "destructive"}
+              onClick={confirmDecision}
+              disabled={approveAction.isPending}
+            >
+              {approveAction.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : decision === "approved" ? (
+                <CheckCircle className="h-4 w-4 mr-2" />
+              ) : (
+                <XCircle className="h-4 w-4 mr-2" />
+              )}
+              {decision === "approved" ? "Approuver" : "Rejeter"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

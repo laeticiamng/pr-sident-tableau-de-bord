@@ -25,6 +25,8 @@ export interface Agent {
   model_preference: string | null;
   created_at: string;
   updated_at: string;
+  role_title_fr?: string;
+  role_category?: string;
 }
 
 export interface OrgRole {
@@ -92,7 +94,6 @@ export interface ExecutiveRunResult {
 
 // Local storage keys for cached runs
 const RUNS_CACHE_KEY = "hq_runs_cache";
-const PLATFORMS_CACHE_KEY = "hq_platforms_cache";
 
 // Get cached data from localStorage
 function getCachedData<T>(key: string): T[] {
@@ -113,83 +114,20 @@ function setCachedData<T>(key: string, data: T[]): void {
   }
 }
 
-// Mock platforms data (will be replaced when RPC functions are ready)
-const MOCK_PLATFORMS: Platform[] = [
-  {
-    id: "1",
-    key: "emotionscare",
-    name: "EmotionsCare",
-    description: "Plateforme principale de gestion émotionnelle",
-    github_url: "https://github.com/laeticiamng/emotionscare",
-    status: "green",
-    status_reason: "Opérationnel",
-    uptime_percent: 99.9,
-    last_release_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    key: "pixel-perfect-replica",
-    name: "Pixel Perfect Replica",
-    description: "Réplication d'interfaces haute fidélité",
-    github_url: "https://github.com/laeticiamng/pixel-perfect-replica",
-    status: "green",
-    status_reason: "Opérationnel",
-    uptime_percent: 99.8,
-    last_release_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    key: "system-compass",
-    name: "System Compass",
-    description: "Navigation et orientation systémique",
-    github_url: "https://github.com/laeticiamng/system-compass",
-    status: "green",
-    status_reason: "Opérationnel",
-    uptime_percent: 99.9,
-    last_release_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "4",
-    key: "growth-copilot",
-    name: "Growth Copilot",
-    description: "Intelligence marketing et croissance",
-    github_url: "https://github.com/laeticiamng/growth-copilot",
-    status: "amber",
-    status_reason: "Mise à jour en cours",
-    uptime_percent: 98.5,
-    last_release_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "5",
-    key: "med-mng",
-    name: "Med MNG",
-    description: "Gestion médicale et suivi santé",
-    github_url: "https://github.com/laeticiamng/med-mng",
-    status: "green",
-    status_reason: "Opérationnel",
-    uptime_percent: 99.7,
-    last_release_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
-// Hook: Fetch platforms (using cached/mock data until RPC is ready)
+// Hook: Fetch platforms from RPC
 export function usePlatforms() {
   return useQuery({
     queryKey: ["hq", "platforms"],
     queryFn: async () => {
-      // For now, return mock data
-      // TODO: Replace with RPC call when functions are created
-      return MOCK_PLATFORMS;
+      const { data, error } = await supabase.rpc("get_all_hq_platforms");
+      
+      if (error) {
+        console.warn("RPC error, using fallback:", error.message);
+        // Fallback to mock data if RPC fails (user not owner or not logged in)
+        return getMockPlatforms();
+      }
+      
+      return (data as Platform[]) || getMockPlatforms();
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -197,45 +135,119 @@ export function usePlatforms() {
 
 // Hook: Fetch single platform
 export function usePlatform(key: string) {
+  const { data: platforms } = usePlatforms();
+  
   return useQuery({
     queryKey: ["hq", "platforms", key],
     queryFn: async () => {
-      return MOCK_PLATFORMS.find(p => p.key === key) || null;
+      return platforms?.find(p => p.key === key) || null;
     },
-    enabled: !!key,
+    enabled: !!key && !!platforms,
   });
 }
 
-// Hook: Fetch pending approvals (empty for now)
+// Hook: Fetch org roles
+export function useOrgRoles() {
+  return useQuery({
+    queryKey: ["hq", "org_roles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_org_roles");
+      
+      if (error) {
+        console.warn("RPC error:", error.message);
+        return [];
+      }
+      
+      return (data as OrgRole[]) || [];
+    },
+  });
+}
+
+// Hook: Fetch agents with their roles
+export function useAgents() {
+  return useQuery({
+    queryKey: ["hq", "agents"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_agents");
+      
+      if (error) {
+        console.warn("RPC error:", error.message);
+        return [];
+      }
+      
+      return (data as Agent[]) || [];
+    },
+  });
+}
+
+// Hook: Fetch pending approvals
 export function usePendingApprovals() {
   return useQuery({
     queryKey: ["hq", "actions", "pending"],
-    queryFn: async (): Promise<Action[]> => {
-      // TODO: Replace with RPC call when functions are created
-      return [];
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_pending_actions");
+      
+      if (error) {
+        console.warn("RPC error:", error.message);
+        return [];
+      }
+      
+      return (data as Action[]) || [];
     },
   });
 }
 
-// Hook: Fetch recent runs from local cache
+// Hook: Fetch recent runs (from DB + local cache)
 export function useRecentRuns(limit = 10) {
   return useQuery({
     queryKey: ["hq", "runs", "recent", limit],
-    queryFn: async (): Promise<Run[]> => {
+    queryFn: async () => {
+      // Try to get from database
+      const { data, error } = await supabase.rpc("get_hq_recent_runs", { limit_count: limit });
+      
+      if (!error && data && Array.isArray(data) && data.length > 0) {
+        return data as Run[];
+      }
+      
+      // Fallback to local cache
       const cached = getCachedData<Run>(RUNS_CACHE_KEY);
       return cached.slice(0, limit);
     },
   });
 }
 
-// Hook: Fetch audit logs (empty for now)
+// Hook: Fetch audit logs
 export function useAuditLogs(limit = 50) {
   return useQuery({
     queryKey: ["hq", "audit_logs", limit],
-    queryFn: async (): Promise<AuditLog[]> => {
-      // TODO: Replace with RPC call when functions are created
-      return [];
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_audit_logs", { limit_count: limit });
+      
+      if (error) {
+        console.warn("RPC error:", error.message);
+        return [];
+      }
+      
+      return (data as AuditLog[]) || [];
     },
+  });
+}
+
+// Hook: Fetch system config
+export function useSystemConfig(key: string) {
+  return useQuery({
+    queryKey: ["hq", "system_config", key],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_system_config", { config_key: key });
+      
+      if (error) {
+        console.warn("RPC error:", error.message);
+        return null;
+      }
+      
+      return data as Record<string, unknown> | null;
+    },
+    enabled: !!key,
   });
 }
 
@@ -297,7 +309,7 @@ export function useExecuteRun() {
   });
 }
 
-// Hook: Approve/Reject action (placeholder)
+// Hook: Approve/Reject action
 export function useApproveAction() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -312,8 +324,13 @@ export function useApproveAction() {
       decision: "approved" | "rejected";
       reason?: string;
     }) => {
-      // TODO: Implement when RPC functions are ready
-      console.log("Approval:", { action_id, decision, reason });
+      const { data, error } = await supabase.rpc("approve_hq_action", {
+        p_action_id: action_id,
+        p_decision: decision,
+        p_reason: reason || null,
+      });
+
+      if (error) throw error;
       return { action_id, decision };
     },
     onSuccess: (data) => {
@@ -331,4 +348,114 @@ export function useApproveAction() {
       });
     },
   });
+}
+
+// Hook: Update system config
+export function useUpdateConfig() {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      key,
+      value,
+    }: {
+      key: string;
+      value: Record<string, unknown>;
+    }) => {
+      const { error } = await supabase.rpc("update_hq_system_config", {
+        p_key: key,
+        p_value: value as unknown as Parameters<typeof supabase.rpc<"update_hq_system_config">>[1]["p_value"],
+      });
+
+      if (error) throw error;
+      return { key, value };
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Configuration mise à jour",
+        description: `${data.key} sauvegardé`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["hq", "system_config"] });
+    },
+    onError: (error: unknown) => {
+      const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+      toast({
+        title: "Erreur",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
+// Mock platforms fallback
+function getMockPlatforms(): Platform[] {
+  return [
+    {
+      id: "1",
+      key: "emotionscare",
+      name: "EmotionsCare",
+      description: "Plateforme principale de gestion émotionnelle",
+      github_url: "https://github.com/laeticiamng/emotionscare",
+      status: "green",
+      status_reason: "Opérationnel",
+      uptime_percent: 99.9,
+      last_release_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      key: "pixel-perfect-replica",
+      name: "Pixel Perfect Replica",
+      description: "Réplication d'interfaces haute fidélité",
+      github_url: "https://github.com/laeticiamng/pixel-perfect-replica",
+      status: "green",
+      status_reason: "Opérationnel",
+      uptime_percent: 99.8,
+      last_release_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: "3",
+      key: "system-compass",
+      name: "System Compass",
+      description: "Navigation et orientation systémique",
+      github_url: "https://github.com/laeticiamng/system-compass",
+      status: "green",
+      status_reason: "Opérationnel",
+      uptime_percent: 99.9,
+      last_release_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: "4",
+      key: "growth-copilot",
+      name: "Growth Copilot",
+      description: "Intelligence marketing et croissance",
+      github_url: "https://github.com/laeticiamng/growth-copilot",
+      status: "amber",
+      status_reason: "Mise à jour en cours",
+      uptime_percent: 98.5,
+      last_release_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: "5",
+      key: "med-mng",
+      name: "Med MNG",
+      description: "Gestion médicale et suivi santé",
+      github_url: "https://github.com/laeticiamng/med-mng",
+      status: "green",
+      status_reason: "Opérationnel",
+      uptime_percent: 99.7,
+      last_release_at: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ];
 }

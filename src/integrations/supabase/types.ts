@@ -40,6 +40,116 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_hq_action: {
+        Args: { p_action_id: string; p_decision: string; p_reason?: string }
+        Returns: boolean
+      }
+      get_all_hq_platforms: {
+        Args: never
+        Returns: {
+          created_at: string
+          description: string
+          github_url: string
+          id: string
+          key: string
+          last_release_at: string
+          name: string
+          status: string
+          status_reason: string
+          updated_at: string
+          uptime_percent: number
+        }[]
+      }
+      get_hq_agents: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          is_enabled: boolean
+          model_preference: string
+          name: string
+          role_category: string
+          role_key: string
+          role_title_fr: string
+          updated_at: string
+        }[]
+      }
+      get_hq_audit_logs: {
+        Args: { limit_count?: number }
+        Returns: {
+          action: string
+          actor_id: string
+          actor_type: string
+          created_at: string
+          details: Json
+          id: string
+          ip_address: unknown
+          resource_id: string
+          resource_type: string
+        }[]
+      }
+      get_hq_org_roles: {
+        Args: never
+        Returns: {
+          category: string
+          created_at: string
+          description: string
+          id: string
+          key: string
+          title: string
+          title_fr: string
+        }[]
+      }
+      get_hq_pending_actions: {
+        Args: never
+        Returns: {
+          action_type: string
+          agent_id: string
+          created_at: string
+          description: string
+          executed_at: string
+          id: string
+          payload: Json
+          requires_approval: boolean
+          risk_level: string
+          run_id: string
+          status: string
+          title: string
+        }[]
+      }
+      get_hq_platform: {
+        Args: { platform_key_param: string }
+        Returns: {
+          created_at: string
+          description: string
+          github_url: string
+          id: string
+          key: string
+          last_release_at: string
+          name: string
+          status: string
+          status_reason: string
+          updated_at: string
+          uptime_percent: number
+        }[]
+      }
+      get_hq_recent_runs: {
+        Args: { limit_count?: number }
+        Returns: {
+          completed_at: string
+          created_at: string
+          detailed_appendix: Json
+          director_agent_id: string
+          executive_summary: string
+          id: string
+          owner_requested: boolean
+          platform_key: string
+          run_type: string
+          started_at: string
+          status: string
+        }[]
+      }
+      get_hq_system_config: { Args: { config_key: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -47,7 +157,22 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_hq_run: {
+        Args: {
+          p_detailed_appendix?: Json
+          p_executive_summary?: string
+          p_owner_requested?: boolean
+          p_platform_key?: string
+          p_run_type: string
+          p_status?: string
+        }
+        Returns: string
+      }
       is_owner: { Args: never; Returns: boolean }
+      update_hq_system_config: {
+        Args: { p_key: string; p_value: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "owner" | "admin"
