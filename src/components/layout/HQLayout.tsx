@@ -5,10 +5,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { CommandPalette } from "@/components/hq/CommandPalette";
 import { LiveStatusWidget } from "@/components/hq/LiveStatusWidget";
 import { QuickActionsBar } from "@/components/hq/QuickActionsBar";
+import { FloatingActionButton } from "@/components/hq/FloatingActionButton";
+import { ShortcutsHelp } from "@/components/hq/ShortcutsHelp";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { useExecuteRun } from "@/hooks/useHQData";
 
 export function HQLayout() {
   const { user } = useAuth();
   const [commandOpen, setCommandOpen] = useState(false);
+  const executeRun = useExecuteRun();
+
+  // Register keyboard shortcuts for quick actions
+  useKeyboardShortcuts({
+    onBrief: () => executeRun.mutate({ run_type: "DAILY_EXECUTIVE_BRIEF" }),
+    onAudit: () => executeRun.mutate({ run_type: "SECURITY_AUDIT_RLS" }),
+    onMarketing: () => executeRun.mutate({ run_type: "MARKETING_WEEK_PLAN" }),
+    onCompetitive: () => executeRun.mutate({ run_type: "COMPETITIVE_ANALYSIS" }),
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,10 +35,11 @@ export function HQLayout() {
           {/* Top Bar */}
           <div className="mb-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex items-center gap-3">
                 <p className="text-sm text-muted-foreground">
                   Connecté(e) : {user?.email}
                 </p>
+                <ShortcutsHelp />
               </div>
               <LiveStatusWidget />
             </div>
@@ -37,6 +51,9 @@ export function HQLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Floating Action Button */}
+      <FloatingActionButton />
     </div>
   );
 }
