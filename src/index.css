@@ -26,9 +26,9 @@
     --secondary: 220 14% 96%;
     --secondary-foreground: 222 47% 15%;
 
-    /* Muted — Much higher contrast for better readability */
+    /* Muted — Maximum contrast for readability */
     --muted: 220 14% 96%;
-    --muted-foreground: 220 20% 28%;
+    --muted-foreground: 220 25% 20%;
 
     /* Accent — Warm Gold/Amber for prestige */
     --accent: 38 92% 50%;
@@ -103,9 +103,9 @@
     --secondary: 220 20% 16%;
     --secondary-foreground: 0 0% 95%;
 
-    /* Muted — Higher contrast for dark mode */
+    /* Muted — Maximum contrast for dark mode readability */
     --muted: 220 20% 16%;
-    --muted-foreground: 220 15% 75%;
+    --muted-foreground: 220 10% 85%;
 
     --accent: 38 92% 50%;
     --accent-foreground: 222 47% 11%;
