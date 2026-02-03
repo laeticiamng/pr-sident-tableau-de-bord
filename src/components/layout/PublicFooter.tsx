@@ -54,7 +54,7 @@ export function PublicFooter() {
 
           {/* Légal */}
           <div>
-            <h4 className="font-semibold mb-4">Légal</h4>
+            <h4 className="font-semibold mb-4">Légal & Conformité</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link to="/legal/mentions" className="hover:text-primary transition-colors">
@@ -69,6 +69,11 @@ export function PublicFooter() {
               <li>
                 <Link to="/legal/cgv" className="hover:text-primary transition-colors">
                   CGV
+                </Link>
+              </li>
+              <li>
+                <Link to="/legal/rgpd" className="hover:text-primary transition-colors">
+                  Registre RGPD
                 </Link>
               </li>
             </ul>

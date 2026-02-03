@@ -22,6 +22,7 @@ import AuthPage from "@/pages/AuthPage";
 import MentionsLegalesPage from "@/pages/legal/MentionsLegalesPage";
 import ConfidentialitePage from "@/pages/legal/ConfidentialitePage";
 import CGVPage from "@/pages/legal/CGVPage";
+import RGPDRegistryPage from "@/pages/legal/RGPDRegistryPage";
 
 // HQ Pages - Cockpit
 import BriefingRoom from "@/pages/hq/BriefingRoom";
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
                 <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
                 <Route path="/legal/cgv" element={<CGVPage />} />
+                <Route path="/legal/rgpd" element={<RGPDRegistryPage />} />
               </Route>
 
               {/* Auth */}
