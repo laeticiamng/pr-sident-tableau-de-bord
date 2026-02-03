@@ -1,122 +1,314 @@
+import { useState } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Github, CheckCircle, AlertCircle, Zap } from "lucide-react";
+import { 
+  ExternalLink, 
+  Github, 
+  CheckCircle, 
+  AlertCircle, 
+  Heart,
+  Compass,
+  Rocket,
+  Music,
+  Users,
+  Database,
+  Cpu,
+  GitBranch,
+  Sparkles,
+  ArrowRight,
+  Layers
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const statusLabels = {
-  production: { label: "Production", icon: CheckCircle, className: "bg-success text-success-foreground" },
-  prototype: { label: "Prototype", icon: AlertCircle, className: "bg-warning text-warning-foreground" },
-  development: { label: "Développement", icon: Zap, className: "bg-muted text-muted-foreground" },
+  production: { label: "Production", icon: CheckCircle },
+  prototype: { label: "Prototype", icon: AlertCircle },
+  development: { label: "Développement", icon: Sparkles },
+};
+
+// Icon mapping for each platform
+const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  "emotionscare": Heart,
+  "pixel-perfect-replica": Users,
+  "system-compass": Compass,
+  "growth-copilot": Rocket,
+  "med-mng": Music,
+};
+
+// Platform accent colors (semantic tokens)
+const platformAccents: Record<string, string> = {
+  "emotionscare": "text-platform-health",
+  "pixel-perfect-replica": "text-platform-social",
+  "system-compass": "text-platform-compass",
+  "growth-copilot": "text-platform-growth",
+  "med-mng": "text-platform-medical",
+};
+
+const platformBgAccents: Record<string, string> = {
+  "emotionscare": "bg-platform-health",
+  "pixel-perfect-replica": "bg-platform-social",
+  "system-compass": "bg-platform-compass",
+  "growth-copilot": "bg-platform-growth",
+  "med-mng": "bg-platform-medical",
+};
+
+const platformGradients: Record<string, string> = {
+  "emotionscare": "from-platform-health/20 via-platform-health/5 to-transparent",
+  "pixel-perfect-replica": "from-platform-social/20 via-platform-social/5 to-transparent",
+  "system-compass": "from-platform-compass/20 via-platform-compass/5 to-transparent",
+  "growth-copilot": "from-platform-growth/20 via-platform-growth/5 to-transparent",
+  "med-mng": "from-platform-medical/20 via-platform-medical/5 to-transparent",
+};
+
+const platformBorders: Record<string, string> = {
+  "emotionscare": "hover:border-platform-health/40",
+  "pixel-perfect-replica": "hover:border-platform-social/40",
+  "system-compass": "hover:border-platform-compass/40",
+  "growth-copilot": "hover:border-platform-growth/40",
+  "med-mng": "hover:border-platform-medical/40",
 };
 
 export default function PlateformesPage() {
+  const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+
+  // Calculate totals
+  const totals = MANAGED_PLATFORMS.reduce(
+    (acc, p) => ({
+      modules: acc.modules + p.stats.modules,
+      tables: acc.tables + p.stats.tables,
+      functions: acc.functions + p.stats.edgeFunctions,
+      branches: acc.branches + p.stats.branches,
+    }),
+    { modules: 0, tables: 0, functions: 0, branches: 0 }
+  );
+
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="py-20 md:py-28 bg-subtle-gradient">
-        <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="gold" className="mb-6">
-              Écosystème
+      {/* Hero — Immersive */}
+      <section className="relative py-32 md:py-40 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-hero-gradient" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_-10%,hsl(var(--accent)/0.15),transparent)]" />
+        <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-platform-health/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-platform-compass/10 rounded-full blur-[120px]" />
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(220_25%_20%/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(220_25%_20%/0.08)_1px,transparent_1px)] bg-[size:80px_80px]" />
+
+        <div className="container relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
+            <Badge variant="gold" className="mb-8 glow-gold">
+              <Layers className="w-4 h-4 mr-2" />
+              Écosystème Complet
             </Badge>
-            <h1 className="text-headline-1 md:text-display-2 mb-6">
-              Nos 5 Plateformes
+            
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 leading-[0.95]">
+              Nos <span className="text-gradient">Plateformes</span>
             </h1>
-            <p className="text-body-lg text-muted-foreground">
-              Chaque plateforme répond à un besoin spécifique, toutes sont pilotées 
-              depuis notre siège social numérique avec les mêmes standards d'excellence.
+            
+            <p className="text-xl md:text-2xl text-primary-foreground/70 max-w-2xl mx-auto mb-12 leading-relaxed">
+              Cinq solutions innovantes, une vision unifiée. 
+              Chaque plateforme excelle dans son domaine.
             </p>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+              {[
+                { value: "5", label: "Plateformes" },
+                { value: `${totals.modules}`, label: "Modules" },
+                { value: `${totals.tables}`, label: "Tables" },
+                { value: `${totals.functions}`, label: "Functions" },
+              ].map((stat, i) => (
+                <div 
+                  key={stat.label}
+                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in"
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  <div className="text-3xl md:text-4xl font-bold text-accent mb-1">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-primary-foreground/60">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
+            <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
           </div>
         </div>
       </section>
 
-      {/* Platforms Grid */}
-      <section className="py-20 md:py-28">
+      {/* Platforms — Individual Showcases */}
+      <section className="py-24 md:py-32 bg-background">
         <div className="container">
-          <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="space-y-16 md:space-y-24">
             {MANAGED_PLATFORMS.map((platform, index) => {
+              const Icon = platformIcons[platform.key] || Rocket;
               const statusConfig = statusLabels[platform.status as keyof typeof statusLabels] || statusLabels.development;
               const StatusIcon = statusConfig.icon;
-              
+              const isHovered = hoveredPlatform === platform.key;
+              const isEven = index % 2 === 0;
+
               return (
                 <div
                   key={platform.key}
-                  className="card-executive p-8 flex flex-col animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className={cn(
+                    "group relative rounded-3xl border bg-card overflow-hidden transition-all duration-700",
+                    "hover:shadow-2xl",
+                    platformBorders[platform.key]
+                  )}
+                  onMouseEnter={() => setHoveredPlatform(platform.key)}
+                  onMouseLeave={() => setHoveredPlatform(null)}
                 >
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full ${platform.color}`} />
-                      <Badge className={statusConfig.className}>
-                        <StatusIcon className="h-3 w-3 mr-1" />
-                        {statusConfig.label}
-                      </Badge>
-                    </div>
+                  {/* Gradient Overlay */}
+                  <div className={cn(
+                    "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-700",
+                    platformGradients[platform.key],
+                    isHovered && "opacity-100"
+                  )} />
+
+                  {/* Large Icon Watermark */}
+                  <div className={cn(
+                    "absolute opacity-[0.03] transition-opacity duration-500 group-hover:opacity-[0.08]",
+                    isEven ? "-right-16 -bottom-16" : "-left-16 -bottom-16"
+                  )}>
+                    <Icon className="w-[400px] h-[400px]" />
                   </div>
 
-                  {/* Content */}
-                  <h3 className="text-2xl font-semibold mb-2">{platform.name}</h3>
-                  <p className="text-sm font-medium text-primary mb-3">
-                    {platform.shortDescription}
-                  </p>
-                  <p className="text-sm text-muted-foreground mb-4 italic">
-                    "{platform.tagline}"
-                  </p>
-                  <p className="text-sm text-muted-foreground flex-1 mb-4 line-clamp-3">
-                    {platform.description}
-                  </p>
+                  <div className={cn(
+                    "relative grid md:grid-cols-2 gap-8 lg:gap-12 p-8 md:p-12 lg:p-16 items-center",
+                    !isEven && "md:flex-row-reverse"
+                  )}>
+                    {/* Content Side */}
+                    <div className={cn(!isEven && "md:order-2")}>
+                      {/* Status & Platform Badge */}
+                      <div className="flex flex-wrap items-center gap-3 mb-6">
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            "w-3 h-3 rounded-full animate-pulse",
+                            platform.status === "production" ? "bg-status-green" : "bg-status-amber"
+                          )} />
+                          <span className={cn(
+                            "text-xs font-semibold uppercase tracking-wider",
+                            platform.status === "production" ? "text-status-green" : "text-status-amber"
+                          )}>
+                            {statusConfig.label}
+                          </span>
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          {platform.stats.modules} modules
+                        </Badge>
+                      </div>
 
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {platform.features.slice(0, 3).map((feature) => (
-                      <Badge key={feature} variant="outline" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
-                    {platform.features.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{platform.features.length - 3}
-                      </Badge>
-                    )}
-                  </div>
+                      {/* Icon & Title */}
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300",
+                          "bg-secondary/50 group-hover:scale-110",
+                          isHovered && "shadow-lg"
+                        )}>
+                          <Icon className={cn("w-7 h-7", platformAccents[platform.key])} />
+                        </div>
+                        <h2 className={cn(
+                          "text-3xl md:text-4xl lg:text-5xl font-bold transition-colors duration-300",
+                          `group-hover:${platformAccents[platform.key]}`,
+                          isHovered && platformAccents[platform.key]
+                        )}>
+                          {platform.name}
+                        </h2>
+                      </div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-4 gap-2 mb-6 text-center">
-                    <div className="p-2 bg-muted/50 rounded">
-                      <div className="text-lg font-bold">{platform.stats.modules}</div>
-                      <div className="text-[10px] text-muted-foreground">Modules</div>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <div className="text-lg font-bold">{platform.stats.tables}</div>
-                      <div className="text-[10px] text-muted-foreground">Tables</div>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <div className="text-lg font-bold">{platform.stats.edgeFunctions}</div>
-                      <div className="text-[10px] text-muted-foreground">Functions</div>
-                    </div>
-                    <div className="p-2 bg-muted/50 rounded">
-                      <div className="text-lg font-bold">{platform.stats.branches}</div>
-                      <div className="text-[10px] text-muted-foreground">Branches</div>
-                    </div>
-                  </div>
+                      {/* Tagline */}
+                      <p className={cn(
+                        "text-lg font-medium mb-4 transition-colors duration-300",
+                        platformAccents[platform.key]
+                      )}>
+                        "{platform.tagline}"
+                      </p>
 
-                  {/* Actions */}
-                  <div className="flex gap-3">
-                    <Button variant="outline" size="sm" asChild>
-                      <a
-                        href={platform.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Github className="h-4 w-4" />
-                        GitHub
-                      </a>
-                    </Button>
-                    <Button variant="ghost" size="sm">
-                      <ExternalLink className="h-4 w-4" />
-                      Voir le projet
-                    </Button>
+                      {/* Description */}
+                      <p className="text-muted-foreground leading-relaxed mb-6">
+                        {platform.description}
+                      </p>
+
+                      {/* Features */}
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        {platform.features.map((feature) => (
+                          <span 
+                            key={feature}
+                            className="px-3 py-1.5 text-xs font-medium bg-secondary/80 rounded-full border border-border/50 transition-colors duration-300 hover:border-accent/30"
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-wrap gap-4">
+                        <Button 
+                          variant="outline" 
+                          size="lg"
+                          className="group/btn"
+                          asChild
+                        >
+                          <a
+                            href={platform.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Github className="h-5 w-5 mr-2" />
+                            GitHub
+                            <ExternalLink className="h-4 w-4 ml-2 opacity-50 group-hover/btn:opacity-100 transition-opacity" />
+                          </a>
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="lg"
+                          className={cn("group/btn", platformAccents[platform.key])}
+                        >
+                          En savoir plus
+                          <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover/btn:translate-x-1" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Stats Side */}
+                    <div className={cn(!isEven && "md:order-1")}>
+                      <div className="grid grid-cols-2 gap-4">
+                        {[
+                          { icon: Cpu, value: platform.stats.modules, label: "Modules" },
+                          { icon: Database, value: platform.stats.tables, label: "Tables DB" },
+                          { icon: Sparkles, value: platform.stats.edgeFunctions, label: "Edge Functions" },
+                          { icon: GitBranch, value: platform.stats.branches, label: "Git Branches" },
+                        ].map((stat) => (
+                          <div 
+                            key={stat.label}
+                            className={cn(
+                              "p-6 rounded-2xl bg-secondary/30 backdrop-blur-sm border border-border/50 text-center transition-all duration-500",
+                              isHovered && "border-opacity-100 shadow-sm"
+                            )}
+                          >
+                            <stat.icon className={cn(
+                              "w-5 h-5 mx-auto mb-3 transition-colors duration-300",
+                              isHovered ? platformAccents[platform.key] : "text-muted-foreground"
+                            )} />
+                            <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                              {stat.value}
+                            </div>
+                            <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                              {stat.label}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
@@ -125,34 +317,51 @@ export default function PlateformesPage() {
         </div>
       </section>
 
-      {/* Info Section */}
-      <section className="py-20 md:py-28 bg-secondary/30">
-        <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-headline-1 mb-6">Gouvernance Centralisée</h2>
-            <p className="text-body-lg text-muted-foreground mb-8">
+      {/* Governance Section */}
+      <section className="py-24 md:py-32 bg-primary text-primary-foreground relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,hsl(var(--accent)/0.1),transparent)]" />
+        
+        <div className="container relative">
+          <div className="mx-auto max-w-4xl text-center">
+            <Badge variant="gold" className="mb-8">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Gouvernance Unifiée
+            </Badge>
+            
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+              Un siège.
+              <br />
+              <span className="text-accent">Cinq excellences.</span>
+            </h2>
+            
+            <p className="text-xl text-primary-foreground/70 mb-12 max-w-2xl mx-auto">
               Toutes nos plateformes partagent la même infrastructure backend, 
-              les mêmes standards de sécurité et la même rigueur d'exécution. 
-              Le siège social numérique assure la cohérence et la qualité 
-              à travers l'ensemble de l'écosystème.
+              les mêmes standards de sécurité et la même rigueur d'exécution.
             </p>
-            <div className="grid gap-4 md:grid-cols-4 text-center">
-              <div className="p-6">
-                <div className="text-4xl font-bold text-accent mb-2">5</div>
-                <div className="text-sm text-muted-foreground">Plateformes Actives</div>
-              </div>
-              <div className="p-6">
-                <div className="text-4xl font-bold text-accent mb-2">~900</div>
-                <div className="text-sm text-muted-foreground">Tables Supabase</div>
-              </div>
-              <div className="p-6">
-                <div className="text-4xl font-bold text-accent mb-2">~350</div>
-                <div className="text-sm text-muted-foreground">Edge Functions</div>
-              </div>
-              <div className="p-6">
-                <div className="text-4xl font-bold text-accent mb-2">87</div>
-                <div className="text-sm text-muted-foreground">Modules Métier</div>
-              </div>
+
+            {/* Final Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {[
+                { value: "5", label: "Plateformes Actives", icon: Layers },
+                { value: `~${Math.round(totals.tables / 100) * 100}`, label: "Tables Supabase", icon: Database },
+                { value: `~${Math.round(totals.functions / 10) * 10}`, label: "Edge Functions", icon: Sparkles },
+                { value: `${totals.modules}`, label: "Modules Métier", icon: Cpu },
+              ].map((stat, i) => (
+                <div 
+                  key={stat.label}
+                  className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in"
+                  style={{ animationDelay: `${i * 0.1}s` }}
+                >
+                  <stat.icon className="w-6 h-6 mx-auto mb-4 text-accent" />
+                  <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-primary-foreground/60">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
