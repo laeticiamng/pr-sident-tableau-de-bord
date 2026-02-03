@@ -8,6 +8,8 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 [![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
 [![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
+[![Tests](https://img.shields.io/badge/Tests-84%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
+[![Security](https://img.shields.io/badge/Security-RLS%20Protected-green)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
@@ -36,13 +38,13 @@ Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour pe
 
 ## 🚀 Les 5 Plateformes Managées
 
-| Plateforme | Description | Repository |
-|------------|-------------|------------|
-| **EmotionsCare** | Plateforme principale de gestion émotionnelle | [GitHub](https://github.com/laeticiamng/emotionscare) |
-| **Pixel Perfect Replica** | Réplication d'interfaces haute fidélité | [GitHub](https://github.com/laeticiamng/pixel-perfect-replica) |
-| **System Compass** | Navigation et orientation systémique | [GitHub](https://github.com/laeticiamng/system-compass) |
-| **Growth Copilot** | Intelligence marketing et croissance | [GitHub](https://github.com/laeticiamng/growth-copilot) |
-| **Med MNG** | Gestion médicale et suivi santé | [GitHub](https://github.com/laeticiamng/med-mng) |
+| Plateforme | Description | Status |
+|------------|-------------|--------|
+| **EmotionsCare** | Plateforme principale de gestion émotionnelle | ✅ Production |
+| **Pixel Perfect Replica** | Réplication d'interfaces haute fidélité | 🚧 Prototype |
+| **System Compass** | Navigation et orientation systémique | ✅ Production |
+| **Growth Copilot** | Intelligence marketing et croissance | ✅ Production |
+| **Med MNG** | Gestion médicale et suivi santé | ✅ Production |
 
 ---
 
@@ -148,10 +150,17 @@ supabase/
 - Schemas Zod pour tous les formulaires
 - Protection XSS via sanitization
 - Pas de secrets en frontend
+- Input validation côté serveur (Edge Functions)
 
 ### Rôles
 - **owner** : Accès complet (Présidente)
 - **admin** : Accès étendu (futurs collaborateurs)
+
+### Sécurité RLS
+Toutes les tables sensibles ont des politiques RLS restrictives :
+- `user_roles` : Utilisateurs ne voient que leurs propres rôles
+- `role_permissions` : Accès limité aux permissions du rôle de l'utilisateur
+- Owners ont accès complet pour administration
 
 ---
 
@@ -196,11 +205,17 @@ npm run test     # Tests Vitest
 4. ✅ Command Palette (⌘K) s'ouvre
 5. ✅ Toggle thème dark/light
 6. ✅ Responsive mobile/desktop
+7. ✅ Gestion réseau offline/online
 
 ### Tests unitaires
 ```bash
 npm run test
 ```
+
+**Résultats actuels** : 84 tests passants dans 10 fichiers de test
+- Hooks : useAuth, useStripeKPIs, usePermissions
+- Composants : CommandPalette, ExecutiveCockpit
+- Logique : run-engine, scheduler, stripe-kpis
 
 ---
 
