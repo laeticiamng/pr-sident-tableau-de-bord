@@ -25,6 +25,7 @@ import CGVPage from "@/pages/legal/CGVPage";
 
 // HQ Pages - Cockpit
 import BriefingRoom from "@/pages/hq/BriefingRoom";
+import CockpitPage from "@/pages/hq/CockpitPage";
 import HQPlateformesPage from "@/pages/hq/HQPlateformesPage";
 import EquipeExecutivePage from "@/pages/hq/EquipeExecutivePage";
 
@@ -87,6 +88,7 @@ const App = () => (
                 <Route element={<HQLayout />}>
                   {/* Cockpit */}
                   <Route path="/hq" element={<BriefingRoom />} />
+                  <Route path="/hq/cockpit" element={<CockpitPage />} />
                   <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
                   <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
                   

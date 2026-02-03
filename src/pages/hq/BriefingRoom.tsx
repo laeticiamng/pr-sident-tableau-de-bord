@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,7 +6,6 @@ import {
   Phone, 
   FileText, 
   Shield, 
-  TrendingUp, 
   Rocket,
   CheckCircle,
   Clock,
@@ -13,25 +13,35 @@ import {
   Loader2,
   Sparkles,
   Brain,
-  GitBranch
+  GitBranch,
+  Gauge
 } from "lucide-react";
 import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PlatformHealthGrid } from "@/components/hq/PlatformHealthGrid";
 import { AIInsightsWidget } from "@/components/hq/AIInsightsWidget";
+import { AutopilotControl } from "@/components/hq/AutopilotControl";
+import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
 
 export default function BriefingRoom() {
   const { data: platforms } = usePlatforms();
   const { data: pendingApprovals, isLoading: approvalsLoading } = usePendingApprovals();
-  const { refetch: refetchRuns } = useRecentRuns(5);
+  const { data: recentRuns, refetch: refetchRuns } = useRecentRuns(5);
   const executeRun = useExecuteRun();
+  const [lastRunResult, setLastRunResult] = useState<any>(null);
 
   const currentTime = new Date();
   const greeting = currentTime.getHours() < 12 ? "Bonjour" : currentTime.getHours() < 18 ? "Bon après-midi" : "Bonsoir";
 
   const handleCallDG = async () => {
-    await executeRun.mutateAsync({ run_type: "CEO_STANDUP_MEETING" });
+    const result = await executeRun.mutateAsync({ run_type: "CEO_STANDUP_MEETING" });
+    setLastRunResult(result);
+    refetchRuns();
+  };
+
+  const handleExecutiveAction = async (runType: string) => {
+    const result = await executeRun.mutateAsync({ run_type: runType });
+    setLastRunResult(result);
     refetchRuns();
   };
 
@@ -74,12 +84,15 @@ export default function BriefingRoom() {
         </div>
       </div>
 
+      {/* Autopilot Control */}
+      <AutopilotControl compact />
+
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <Button 
           variant="outline" 
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
-          onClick={() => executeRun.mutate({ run_type: "DAILY_EXECUTIVE_BRIEF" })}
+          onClick={() => handleExecutiveAction("DAILY_EXECUTIVE_BRIEF")}
           disabled={executeRun.isPending}
         >
           <div className="p-2 rounded-lg bg-accent/10">
@@ -98,7 +111,7 @@ export default function BriefingRoom() {
         <Button 
           variant="outline" 
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
-          onClick={() => executeRun.mutate({ run_type: "SECURITY_AUDIT_RLS" })}
+          onClick={() => handleExecutiveAction("SECURITY_AUDIT_RLS")}
           disabled={executeRun.isPending}
         >
           <div className="p-2 rounded-lg bg-accent/10">
@@ -109,7 +122,7 @@ export default function BriefingRoom() {
         <Button 
           variant="outline" 
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
-          onClick={() => executeRun.mutate({ run_type: "COMPETITIVE_ANALYSIS" })}
+          onClick={() => handleExecutiveAction("COMPETITIVE_ANALYSIS")}
           disabled={executeRun.isPending}
         >
           <div className="p-2 rounded-lg bg-accent/10">
@@ -118,11 +131,11 @@ export default function BriefingRoom() {
           <span className="text-xs font-medium">Veille Concurrentielle</span>
         </Button>
         <Button variant="outline" className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all" asChild>
-          <Link to="/hq/plateformes">
+          <Link to="/hq/cockpit">
             <div className="p-2 rounded-lg bg-accent/10">
-              <Rocket className="h-5 w-5 text-accent" />
+              <Gauge className="h-5 w-5 text-accent" />
             </div>
-            <span className="text-xs font-medium">Préparer Release</span>
+            <span className="text-xs font-medium">Cockpit</span>
           </Link>
         </Button>
       </div>
@@ -189,6 +202,9 @@ export default function BriefingRoom() {
         </Card>
       </div>
 
+      {/* AI Transparency Panel */}
+      <AITransparencyPanel runResult={lastRunResult} />
+
       {/* Platform Status Grid */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -227,7 +243,7 @@ export default function BriefingRoom() {
         <Card className="card-executive bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold mb-1">
-              {platforms?.reduce((sum, p) => sum + (p.uptime_percent || 0), 0) / (platforms?.length || 1) || 0}%
+              {(platforms?.reduce((sum, p) => sum + (p.uptime_percent || 0), 0) / (platforms?.length || 1) || 0).toFixed(1)}%
             </div>
             <div className="text-sm text-muted-foreground">Uptime Moyen</div>
           </CardContent>
