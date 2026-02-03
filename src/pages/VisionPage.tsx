@@ -82,15 +82,15 @@ export default function VisionPage() {
       </section>
 
       {/* Mission Statement */}
-      <section className="py-20 md:py-28 bg-subtle-gradient">
+      <section className="py-20 md:py-28 bg-secondary">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-headline-1 mb-8">Notre Mission</h2>
-            <blockquote className="text-2xl md:text-3xl font-medium italic text-foreground/90 leading-relaxed">
+            <h2 className="text-headline-1 mb-8 text-foreground">Notre Mission</h2>
+            <blockquote className="text-2xl md:text-3xl font-medium italic text-foreground leading-relaxed">
               "Créer des logiciels qui transforment la complexité en simplicité, 
               et qui permettent à chacun de se concentrer sur ce qui compte vraiment."
             </blockquote>
-            <p className="mt-8 text-muted-foreground">
+            <p className="mt-8 text-accent font-medium">
               — Motongane Laeticia, Présidente
             </p>
           </div>
