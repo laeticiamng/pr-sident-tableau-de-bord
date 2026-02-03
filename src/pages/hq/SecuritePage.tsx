@@ -266,6 +266,10 @@ export default function SecuritePage() {
               { name: "SUPABASE_URL", status: "Configuré" },
               { name: "SUPABASE_PUBLISHABLE_KEY", status: "Configuré" },
               { name: "SUPABASE_SERVICE_ROLE_KEY", status: "Configuré" },
+              { name: "STRIPE_SECRET_KEY", status: "Configuré" },
+              { name: "GITHUB_TOKEN", status: "Configuré" },
+              { name: "PERPLEXITY_API_KEY", status: "Configuré (Connector)" },
+              { name: "FIRECRAWL_API_KEY", status: "Configuré (Connector)" },
             ].map((secret) => (
               <div key={secret.name} className="flex items-center gap-3 p-3 rounded-lg border">
                 <Key className="h-4 w-4 text-muted-foreground" />

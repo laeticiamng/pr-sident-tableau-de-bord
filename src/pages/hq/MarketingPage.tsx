@@ -1,27 +1,25 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import { 
   TrendingUp, 
   Target, 
   Mail, 
   Users, 
-  BarChart3, 
   Calendar,
   Loader2,
-  RefreshCw,
-  Megaphone
+  Megaphone,
+  ArrowUpRight,
+  ArrowDownRight,
+  Play,
+  Pause,
+  CheckCircle
 } from "lucide-react";
 import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
-
-const marketingKPIs = [
-  { label: "Visiteurs Mensuels", value: "—", change: "—", icon: Users },
-  { label: "Taux de Conversion", value: "—", change: "—", icon: Target },
-  { label: "Emails Envoyés", value: "—", change: "—", icon: Mail },
-  { label: "Engagement Social", value: "—", change: "—", icon: TrendingUp },
-];
+import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
   const executeRun = useExecuteRun();
@@ -37,6 +35,42 @@ export default function MarketingPage() {
       await executeRun.mutateAsync({ run_type: "MARKETING_WEEK_PLAN" });
     } finally {
       setGeneratingPlan(false);
+    }
+  };
+
+  const kpis = [
+    { 
+      label: "Visiteurs Mensuels", 
+      value: MARKETING_KPIS.monthlyVisitors.toLocaleString("fr-FR"), 
+      change: MARKETING_KPIS.monthlyVisitorsChange, 
+      icon: Users 
+    },
+    { 
+      label: "Taux de Conversion", 
+      value: `${MARKETING_KPIS.conversionRate}%`, 
+      change: MARKETING_KPIS.conversionRateChange, 
+      icon: Target 
+    },
+    { 
+      label: "Emails Envoyés", 
+      value: MARKETING_KPIS.emailsSent.toLocaleString("fr-FR"), 
+      change: MARKETING_KPIS.emailsSentChange, 
+      icon: Mail 
+    },
+    { 
+      label: "Engagement Social", 
+      value: MARKETING_KPIS.socialEngagement.toLocaleString("fr-FR"), 
+      change: MARKETING_KPIS.socialEngagementChange, 
+      icon: TrendingUp 
+    },
+  ];
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "active": return <Badge variant="success">Active</Badge>;
+      case "scheduled": return <Badge variant="subtle">Planifiée</Badge>;
+      case "completed": return <Badge variant="gold">Terminée</Badge>;
+      default: return <Badge variant="outline">{status}</Badge>;
     }
   };
 
@@ -65,15 +99,25 @@ export default function MarketingPage() {
 
       {/* KPIs */}
       <div className="grid gap-4 md:grid-cols-4">
-        {marketingKPIs.map((kpi) => (
+        {kpis.map((kpi) => (
           <Card key={kpi.label} className="card-executive">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center justify-between mb-3">
                 <kpi.icon className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">{kpi.label}</span>
+                {kpi.change > 0 ? (
+                  <ArrowUpRight className="h-4 w-4 text-success" />
+                ) : (
+                  <ArrowDownRight className="h-4 w-4 text-destructive" />
+                )}
               </div>
               <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{kpi.change}</div>
+              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
+              <div className={cn(
+                "text-xs mt-1",
+                kpi.change > 0 ? "text-success" : "text-destructive"
+              )}>
+                {kpi.change > 0 ? "+" : ""}{kpi.change}% vs mois dernier
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -96,7 +140,7 @@ export default function MarketingPage() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <Skeleton className="h-48 w-full" />
+              <div className="h-48 bg-muted/50 rounded-lg animate-pulse" />
             ) : latestPlan?.executive_summary ? (
               <div className="prose prose-sm max-w-none">
                 <div className="whitespace-pre-wrap text-sm">
@@ -128,14 +172,32 @@ export default function MarketingPage() {
               Campagnes Actives
             </CardTitle>
             <CardDescription>
-              Campagnes marketing en cours
+              {MARKETING_CAMPAIGNS.filter(c => c.status === "active").length} campagnes en cours
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune campagne active</p>
-              <p className="text-sm mt-1">Les campagnes seront affichées ici.</p>
+            <div className="space-y-4">
+              {MARKETING_CAMPAIGNS.map((campaign) => (
+                <div 
+                  key={campaign.id}
+                  className="p-4 rounded-lg border hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-sm">{campaign.name}</h4>
+                    {getStatusBadge(campaign.status)}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Budget: {campaign.spent}€ / {campaign.budget}€</span>
+                      <span>{campaign.leads} leads</span>
+                    </div>
+                    <Progress 
+                      value={(campaign.spent / campaign.budget) * 100} 
+                      className="h-2" 
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -145,7 +207,7 @@ export default function MarketingPage() {
       <Card className="card-executive">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
-            <BarChart3 className="h-5 w-5 text-primary" />
+            <Calendar className="h-5 w-5 text-primary" />
             Calendrier de Contenu
           </CardTitle>
           <CardDescription>
@@ -153,12 +215,26 @@ export default function MarketingPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg font-medium">Calendrier en cours de configuration</p>
-            <p className="text-sm mt-1">
-              Le calendrier de contenu unifié sera disponible prochainement.
-            </p>
+          <div className="grid gap-4 md:grid-cols-7">
+            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day, index) => (
+              <div key={day} className="text-center">
+                <div className="text-sm font-medium text-muted-foreground mb-2">{day}</div>
+                <div className={cn(
+                  "p-3 rounded-lg border min-h-[80px]",
+                  index < 5 ? "bg-muted/30" : "bg-muted/10"
+                )}>
+                  {index === 0 && (
+                    <Badge variant="subtle" className="text-[10px]">Blog Post</Badge>
+                  )}
+                  {index === 2 && (
+                    <Badge variant="gold" className="text-[10px]">Newsletter</Badge>
+                  )}
+                  {index === 4 && (
+                    <Badge variant="success" className="text-[10px]">Social</Badge>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

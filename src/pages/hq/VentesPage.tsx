@@ -10,25 +10,37 @@ import {
   Calendar,
   FileText,
   ArrowRight,
-  Phone
+  Phone,
+  ArrowUpRight
 } from "lucide-react";
-
-const pipelineStages = [
-  { name: "Prospects", count: 0, value: "0 €" },
-  { name: "Qualification", count: 0, value: "0 €" },
-  { name: "Proposition", count: 0, value: "0 €" },
-  { name: "Négociation", count: 0, value: "0 €" },
-  { name: "Clôture", count: 0, value: "0 €" },
-];
-
-const salesKPIs = [
-  { label: "CA Mensuel", value: "—", icon: DollarSign },
-  { label: "Deals en Cours", value: "0", icon: Briefcase },
-  { label: "Taux de Conversion", value: "—", icon: Target },
-  { label: "Clients Actifs", value: "—", icon: Users },
-];
+import { SALES_KPIS, SALES_PIPELINE, SALES_ACTIVITIES, RECENT_OPPORTUNITIES } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 export default function VentesPage() {
+  const kpis = [
+    { 
+      label: "CA Mensuel", 
+      value: `${SALES_KPIS.monthlyRevenue.toLocaleString("fr-FR")} €`, 
+      change: SALES_KPIS.monthlyRevenueChange,
+      icon: DollarSign 
+    },
+    { 
+      label: "Deals en Cours", 
+      value: SALES_KPIS.activeDeals.toString(), 
+      icon: Briefcase 
+    },
+    { 
+      label: "Taux de Conversion", 
+      value: `${SALES_KPIS.conversionRate}%`, 
+      icon: Target 
+    },
+    { 
+      label: "Clients Actifs", 
+      value: SALES_KPIS.activeClients.toString(), 
+      icon: Users 
+    },
+  ];
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -46,14 +58,20 @@ export default function VentesPage() {
 
       {/* KPIs */}
       <div className="grid gap-4 md:grid-cols-4">
-        {salesKPIs.map((kpi) => (
+        {kpis.map((kpi) => (
           <Card key={kpi.label} className="card-executive">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center justify-between mb-3">
                 <kpi.icon className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">{kpi.label}</span>
+                {kpi.change && <ArrowUpRight className="h-4 w-4 text-success" />}
               </div>
               <div className="text-2xl font-bold">{kpi.value}</div>
+              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
+              {kpi.change && (
+                <div className="text-xs text-success mt-1">
+                  +{kpi.change}% vs mois dernier
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -67,21 +85,23 @@ export default function VentesPage() {
             Pipeline Commercial
           </CardTitle>
           <CardDescription>
-            Vue d'ensemble du funnel de vente
+            Vue d'ensemble du funnel de vente — Total: {SALES_PIPELINE.reduce((s, p) => s + p.value, 0).toLocaleString("fr-FR")} €
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4">
-            {pipelineStages.map((stage, index) => (
+            {SALES_PIPELINE.map((stage, index) => (
               <div key={stage.name} className="flex items-center">
                 <div className="flex flex-col items-center min-w-[120px]">
-                  <div className="w-full p-4 rounded-lg border bg-muted/30 text-center">
+                  <div className="w-full p-4 rounded-lg border bg-gradient-to-b from-muted/50 to-transparent text-center hover:shadow-md transition-shadow">
                     <div className="font-medium text-sm">{stage.name}</div>
-                    <div className="text-2xl font-bold mt-2">{stage.count}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{stage.value}</div>
+                    <div className="text-2xl font-bold mt-2 text-primary">{stage.count}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {stage.value.toLocaleString("fr-FR")} €
+                    </div>
                   </div>
                 </div>
-                {index < pipelineStages.length - 1 && (
+                {index < SALES_PIPELINE.length - 1 && (
                   <ArrowRight className="h-5 w-5 text-muted-foreground mx-2 flex-shrink-0" />
                 )}
               </div>
@@ -100,10 +120,22 @@ export default function VentesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Briefcase className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune opportunité en cours</p>
-              <p className="text-sm mt-1">Les deals apparaîtront ici.</p>
+            <div className="space-y-3">
+              {RECENT_OPPORTUNITIES.map((opp) => (
+                <div 
+                  key={opp.id}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-sm">{opp.name}</p>
+                    <p className="text-xs text-muted-foreground">{opp.stage}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-primary">{opp.value.toLocaleString("fr-FR")} €</p>
+                    <p className="text-xs text-muted-foreground">{opp.probability}% proba</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -117,10 +149,29 @@ export default function VentesPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune activité planifiée</p>
-              <p className="text-sm mt-1">Les rendez-vous et suivis seront affichés ici.</p>
+            <div className="space-y-3">
+              {SALES_ACTIVITIES.map((activity) => (
+                <div 
+                  key={activity.id}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    {activity.type === "call" && <Phone className="h-4 w-4 text-primary" />}
+                    {activity.type === "meeting" && <Users className="h-4 w-4 text-primary" />}
+                    {activity.type === "proposal" && <FileText className="h-4 w-4 text-primary" />}
+                    <div>
+                      <p className="font-medium text-sm">{activity.prospect}</p>
+                      <p className="text-xs text-muted-foreground capitalize">{activity.type}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm">{new Date(activity.date).toLocaleDateString("fr-FR")}</p>
+                    <Badge variant={activity.status === "scheduled" ? "subtle" : "gold"} className="text-xs">
+                      {activity.status === "scheduled" ? "Planifié" : "Envoyé"}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -138,12 +189,25 @@ export default function VentesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="text-lg font-medium">Aucune proposition en cours</p>
-            <p className="text-sm mt-1">
-              Les propositions nécessitant approbation apparaîtront ici.
-            </p>
+          <div className="grid gap-3 md:grid-cols-3">
+            {RECENT_OPPORTUNITIES.filter(o => o.stage === "Proposition" || o.stage === "Négociation").map((opp) => (
+              <div 
+                key={opp.id}
+                className="p-4 rounded-lg border hover:shadow-md transition-shadow"
+              >
+                <h4 className="font-medium text-sm mb-2">{opp.name}</h4>
+                <div className="flex items-center justify-between">
+                  <Badge variant="gold">{opp.value.toLocaleString("fr-FR")} €</Badge>
+                  <Badge variant="subtle">{opp.probability}%</Badge>
+                </div>
+              </div>
+            ))}
+            {RECENT_OPPORTUNITIES.filter(o => o.stage === "Proposition" || o.stage === "Négociation").length === 0 && (
+              <div className="col-span-3 text-center py-8 text-muted-foreground">
+                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Aucune proposition en cours</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
