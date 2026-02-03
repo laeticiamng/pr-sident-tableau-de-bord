@@ -1,34 +1,40 @@
 import { Link } from "react-router-dom";
 import { Building2 } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function PublicFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="border-t bg-secondary/30">
-      <div className="container py-12 md:py-16">
-        <div className="grid gap-8 md:grid-cols-4">
+      <div className="container py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-8 grid-cols-2 md:grid-cols-4">
           {/* Logo & Description */}
-          <div className="md:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Building2 className="h-5 w-5" />
+          <div className="col-span-2">
+            <Link to="/" className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-                <span className="text-xs text-muted-foreground">SASU</span>
+                <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">SASU</span>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-sm">
+            <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-4">
               Siège social numérique pilotant 5 plateformes innovantes. 
               Éditeur de logiciels applicatifs basé à Amiens.
             </p>
+            {/* Theme Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Thème :</span>
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Navigation */}
           <div>
-            <h4 className="font-semibold mb-4">Navigation</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4">Navigation</h4>
+            <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li>
                 <Link to="/" className="hover:text-primary transition-colors">
                   Accueil
@@ -54,8 +60,8 @@ export function PublicFooter() {
 
           {/* Légal */}
           <div>
-            <h4 className="font-semibold mb-4">Légal & Conformité</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4">Légal</h4>
+            <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li>
                 <Link to="/legal/mentions" className="hover:text-primary transition-colors">
                   Mentions légales
@@ -63,7 +69,7 @@ export function PublicFooter() {
               </li>
               <li>
                 <Link to="/legal/confidentialite" className="hover:text-primary transition-colors">
-                  Politique de confidentialité
+                  Confidentialité
                 </Link>
               </li>
               <li>
@@ -81,8 +87,8 @@ export function PublicFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <p>© {currentYear} EMOTIONSCARE SASU. Tous droits réservés.</p>
             <p>SIREN : 944 505 445 | RCS Amiens</p>
           </div>
