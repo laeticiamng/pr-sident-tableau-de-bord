@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { HQSidebar } from "./HQSidebar";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,16 +10,13 @@ import { ShortcutsHelp } from "@/components/hq/ShortcutsHelp";
 import { NotificationCenter } from "@/components/hq/NotificationCenter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { useTheme } from "@/hooks/useTheme";
 import { useExecuteRun } from "@/hooks/useHQData";
 
 export function HQLayout() {
   const { user } = useAuth();
   const [commandOpen, setCommandOpen] = useState(false);
   const executeRun = useExecuteRun();
-  
-  // Initialize theme
-  useTheme();
+
 
   // Register keyboard shortcuts for quick actions
   useKeyboardShortcuts({
