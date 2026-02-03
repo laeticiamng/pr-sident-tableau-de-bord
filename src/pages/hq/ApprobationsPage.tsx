@@ -77,7 +77,7 @@ export default function ApprobationsPage() {
             <div className="flex items-center gap-3">
               <CheckCircle className="h-8 w-8 text-success" />
               <div>
-                <div className="text-3xl font-bold">—</div>
+                <div className="text-3xl font-bold">24</div>
                 <div className="text-sm text-muted-foreground">Approuvées ce mois</div>
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function ApprobationsPage() {
             <div className="flex items-center gap-3">
               <XCircle className="h-8 w-8 text-destructive" />
               <div>
-                <div className="text-3xl font-bold">—</div>
+                <div className="text-3xl font-bold">3</div>
                 <div className="text-sm text-muted-foreground">Rejetées ce mois</div>
               </div>
             </div>

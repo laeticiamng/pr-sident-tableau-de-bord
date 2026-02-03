@@ -200,11 +200,46 @@ export default function ConformitePage() {
 
       {/* Actions */}
       <div className="flex gap-4">
-        <Button variant="executive">
+        <Button 
+          variant="executive"
+          onClick={() => {
+            // Génération du registre RGPD au format texte
+            const registre = `
+REGISTRE DES TRAITEMENTS - EMOTIONSCARE SASU
+============================================
+SIREN: 944 505 445
+Siège: 5 Rue Caudron, 80000 Amiens
+Présidente: Motongane Laeticia
+
+SCORE DE CONFORMITÉ: ${complianceScore.toFixed(0)}%
+
+DROITS RGPD:
+${RGPD_RIGHTS.map(r => `- ${r.name}: ${r.status === "compliant" ? "✓ Conforme" : "⚠ Partiel"}`).join("\n")}
+
+DOCUMENTS:
+${COMPLIANCE_DOCS.map(d => `- ${d.name}: ${d.status} (${d.lastUpdate || "Non défini"})`).join("\n")}
+
+Généré le: ${new Date().toLocaleDateString("fr-FR")}
+            `.trim();
+            
+            const blob = new Blob([registre], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `registre-rgpd-emotionscare-${new Date().toISOString().split("T")[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+        >
           <Download className="h-4 w-4 mr-2" />
           Exporter le registre
         </Button>
-        <Button variant="outline">
+        <Button 
+          variant="outline"
+          onClick={() => {
+            window.open("mailto:contact@emotionscare.fr?subject=Demande%20d%27audit%20RGPD", "_blank");
+          }}
+        >
           Demander un audit
         </Button>
       </div>

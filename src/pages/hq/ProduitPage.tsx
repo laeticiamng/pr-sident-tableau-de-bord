@@ -10,8 +10,12 @@ import {
   Clock,
   AlertTriangle,
   ArrowRight,
-  RefreshCw
+  RefreshCw,
+  TrendingUp,
+  Rocket
 } from "lucide-react";
+import { PRODUCT_OKRS, PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 const platforms = [
   { key: "emotionscare", name: "EmotionsCare" },
@@ -19,12 +23,6 @@ const platforms = [
   { key: "system-compass", name: "System Compass" },
   { key: "growth-copilot", name: "Growth Copilot" },
   { key: "med-mng", name: "Med MNG" },
-];
-
-const okrStatus = [
-  { objective: "Améliorer l'expérience utilisateur", progress: 0, status: "not_started" },
-  { objective: "Augmenter la rétention", progress: 0, status: "not_started" },
-  { objective: "Lancer de nouvelles fonctionnalités", progress: 0, status: "not_started" },
 ];
 
 export default function ProduitPage() {
@@ -56,28 +54,31 @@ export default function ProduitPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-5">
-            {platforms.map((platform) => (
-              <div 
-                key={platform.key} 
-                className="p-4 rounded-lg border hover:shadow-md transition-shadow"
-              >
-                <h3 className="font-semibold text-sm mb-3">{platform.name}</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-xs">
-                    <CheckCircle className="h-3 w-3 text-success" />
-                    <span className="text-muted-foreground">0 livrées</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <Clock className="h-3 w-3 text-warning" />
-                    <span className="text-muted-foreground">0 en cours</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <AlertTriangle className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-muted-foreground">0 bloquées</span>
+            {platforms.map((platform) => {
+              const features = PLATFORM_FEATURES[platform.key as keyof typeof PLATFORM_FEATURES] || { delivered: 0, inProgress: 0, blocked: 0 };
+              return (
+                <div 
+                  key={platform.key} 
+                  className="p-4 rounded-lg border hover:shadow-md transition-shadow"
+                >
+                  <h3 className="font-semibold text-sm mb-3">{platform.name}</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs">
+                      <CheckCircle className="h-3 w-3 text-success" />
+                      <span className="text-muted-foreground">{features.delivered} livrées</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <Clock className="h-3 w-3 text-warning" />
+                      <span className="text-muted-foreground">{features.inProgress} en cours</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <AlertTriangle className="h-3 w-3 text-destructive" />
+                      <span className="text-muted-foreground">{features.blocked} bloquées</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
@@ -95,15 +96,39 @@ export default function ProduitPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
-            {okrStatus.map((okr, index) => (
-              <div key={index} className="space-y-2">
+            {PRODUCT_OKRS.map((okr, index) => (
+              <div key={index} className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="font-medium">{okr.objective}</span>
-                  <Badge variant="subtle">{okr.progress}%</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge 
+                      variant={okr.status === "on_track" ? "success" : "warning"}
+                    >
+                      {okr.status === "on_track" ? "En bonne voie" : "À risque"}
+                    </Badge>
+                    <Badge variant="subtle">{okr.progress}%</Badge>
+                  </div>
                 </div>
                 <Progress value={okr.progress} className="h-2" />
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>Status: Non démarré</span>
+                <div className="grid gap-2 md:grid-cols-3 mt-2">
+                  {okr.keyResults.map((kr, krIndex) => (
+                    <div 
+                      key={krIndex}
+                      className="p-2 rounded-lg bg-muted/30 text-xs"
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="truncate">{kr.name}</span>
+                        <span className={cn(
+                          "font-mono",
+                          kr.progress >= 70 ? "text-success" :
+                          kr.progress >= 40 ? "text-warning" : "text-destructive"
+                        )}>
+                          {kr.progress}%
+                        </span>
+                      </div>
+                      <Progress value={kr.progress} className="h-1" />
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
@@ -121,12 +146,33 @@ export default function ProduitPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune demande en attente</p>
-              <p className="text-sm mt-1">
-                Les demandes des utilisateurs apparaîtront ici.
-              </p>
+            <div className="space-y-3">
+              {FEATURE_REQUESTS.map((request) => (
+                <div 
+                  key={request.id}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                >
+                  <div>
+                    <p className="font-medium text-sm">{request.title}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{request.platform}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="subtle" className="text-xs">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      {request.votes}
+                    </Badge>
+                    <Badge 
+                      variant={
+                        request.status === "completed" ? "success" :
+                        request.status === "planned" ? "gold" : "subtle"
+                      }
+                    >
+                      {request.status === "completed" ? "Terminé" :
+                       request.status === "planned" ? "Planifié" : "En revue"}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -134,17 +180,34 @@ export default function ProduitPage() {
         <Card className="card-executive">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
-              <ArrowRight className="h-5 w-5 text-primary" />
+              <Rocket className="h-5 w-5 text-primary" />
               Prochaines Releases
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Layers className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune release planifiée</p>
-              <p className="text-sm mt-1">
-                Les releases à venir seront affichées ici.
-              </p>
+            <div className="space-y-3">
+              {UPCOMING_RELEASES.map((release, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Rocket className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{release.version}</p>
+                      <p className="text-xs text-muted-foreground">{release.platform}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">
+                      {new Date(release.date).toLocaleDateString("fr-FR")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{release.features} features</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
