@@ -1,8 +1,16 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Layers, Shield, Zap, Sparkles, Globe } from "lucide-react";
-import { PlatformShowcase } from "@/components/home/PlatformShowcase";
+import { CardGridLoader } from "@/components/ui/skeleton-loader";
+
+// Lazy load heavy component
+const PlatformShowcase = lazy(() => 
+  import("@/components/home/PlatformShowcase").then(module => ({
+    default: module.PlatformShowcase
+  }))
+);
 
 export default function HomePage() {
   return (
@@ -133,8 +141,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Platforms Showcase — Premium Apple-like */}
-      <PlatformShowcase />
+      {/* Platforms Showcase — Premium Apple-like (Lazy Loaded) */}
+      <Suspense fallback={
+        <section className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background">
+          <div className="container px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <div className="h-8 w-48 mx-auto bg-muted/50 rounded-full animate-pulse mb-6" />
+              <div className="h-12 w-64 mx-auto bg-muted/50 rounded-lg animate-pulse mb-4" />
+              <div className="h-6 w-96 max-w-full mx-auto bg-muted/30 rounded-lg animate-pulse" />
+            </div>
+            <CardGridLoader count={4} />
+          </div>
+        </section>
+      }>
+        <PlatformShowcase />
+      </Suspense>
 
       {/* Stats Section — Minimal & Impactful */}
       <section className="py-16 sm:py-24 md:py-32 bg-primary text-primary-foreground">
