@@ -13,21 +13,21 @@ import {
   CheckCircle,
   AlertTriangle,
   RefreshCw,
-  Loader2
+  Loader2,
+  ExternalLink,
+  GitCommit
 } from "lucide-react";
 import { useExecuteRun, usePlatforms } from "@/hooks/useHQData";
-
-const deliveryKPIs = [
-  { label: "Lead Time", value: "—", description: "Temps moyen de livraison" },
-  { label: "Deploy Freq.", value: "—", description: "Déploiements par semaine" },
-  { label: "Bug Rate", value: "—", description: "Bugs par release" },
-  { label: "MTTR", value: "—", description: "Temps de résolution" },
-];
+import { useGitHubData, useGitHubSync } from "@/hooks/useGitHubSync";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
-  const { data: platforms, isLoading } = usePlatforms();
+  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
+  const { data: githubData, isLoading: githubLoading } = useGitHubData();
+  const githubSync = useGitHubSync();
   const [runningCheck, setRunningCheck] = useState<string | null>(null);
+
+  const isLoading = platformsLoading || githubLoading;
 
   const handleReleaseGateCheck = async (platformKey: string) => {
     setRunningCheck(platformKey);
@@ -41,6 +41,22 @@ export default function EngineeringPage() {
     }
   };
 
+  const getGitHubDataForPlatform = (platformKey: string) => {
+    return githubData?.repos.find(r => r.key === platformKey);
+  };
+
+  // Calculate delivery KPIs from GitHub data
+  const totalCommits = githubData?.repos.reduce((sum, r) => sum + r.commits.length, 0) || 0;
+  const totalOpenIssues = githubData?.repos.reduce((sum, r) => sum + r.issues.filter(i => i.state === "open").length, 0) || 0;
+  const totalOpenPRs = githubData?.repos.reduce((sum, r) => sum + r.pullRequests.filter(pr => pr.state === "open").length, 0) || 0;
+
+  const deliveryKPIs = [
+    { label: "Commits (7j)", value: totalCommits > 0 ? `${totalCommits}` : "—", description: "Commits récents" },
+    { label: "PRs Ouvertes", value: totalOpenPRs > 0 ? `${totalOpenPRs}` : "0", description: "En attente de review" },
+    { label: "Issues", value: totalOpenIssues > 0 ? `${totalOpenIssues}` : "0", description: "Issues ouvertes" },
+    { label: "Dernière Sync", value: githubData?.syncedAt ? new Date(githubData.syncedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) : "—", description: "GitHub sync" },
+  ];
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -50,8 +66,16 @@ export default function EngineeringPage() {
             Delivery, releases et santé technique.
           </p>
         </div>
-        <Button variant="outline">
-          <RefreshCw className="h-4 w-4 mr-2" />
+        <Button 
+          variant="outline"
+          onClick={() => githubSync.mutate(undefined)}
+          disabled={githubSync.isPending}
+        >
+          {githubSync.isPending ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <RefreshCw className="h-4 w-4 mr-2" />
+          )}
           Sync GitHub
         </Button>
       </div>
@@ -77,7 +101,7 @@ export default function EngineeringPage() {
             Statut Engineering par Plateforme
           </CardTitle>
           <CardDescription>
-            Gate checks et releases
+            Gate checks et releases — Données GitHub en temps réel
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -89,71 +113,116 @@ export default function EngineeringPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {platforms?.map((platform) => (
-                <div 
-                  key={platform.key}
-                  className="flex items-center justify-between p-4 rounded-lg border"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`h-3 w-3 rounded-full ${
-                      platform.status === "green" ? "bg-success" :
-                      platform.status === "amber" ? "bg-warning" : "bg-destructive"
-                    }`} />
-                    <div>
-                      <h3 className="font-semibold">{platform.name}</h3>
-                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <GitBranch className="h-3 w-3" />
-                          main
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <GitPullRequest className="h-3 w-3" />
-                          — PRs
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Bug className="h-3 w-3" />
-                          — issues
-                        </span>
+              {platforms?.map((platform) => {
+                const ghData = getGitHubDataForPlatform(platform.key);
+                const openIssues = ghData?.issues.filter(i => i.state === "open").length || 0;
+                const openPRs = ghData?.pullRequests.filter(pr => pr.state === "open").length || 0;
+                const recentCommits = ghData?.commits.length || 0;
+
+                return (
+                  <div 
+                    key={platform.key}
+                    className="flex items-center justify-between p-4 rounded-lg border"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`h-3 w-3 rounded-full ${
+                        platform.status === "green" ? "bg-success" :
+                        platform.status === "amber" ? "bg-warning" : "bg-destructive"
+                      }`} />
+                      <div>
+                        <h3 className="font-semibold">{platform.name}</h3>
+                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <GitCommit className="h-3 w-3" />
+                            {recentCommits} commits
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <GitPullRequest className="h-3 w-3" />
+                            {openPRs} PRs
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Bug className="h-3 w-3" />
+                            {openIssues} issues
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center gap-2">
+                      {platform.github_url && (
+                        <Button variant="ghost" size="icon" asChild>
+                          <a href={platform.github_url} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      )}
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleReleaseGateCheck(platform.key)}
+                        disabled={runningCheck === platform.key}
+                      >
+                        {runningCheck === platform.key ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                        )}
+                        Gate Check
+                      </Button>
+                    </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleReleaseGateCheck(platform.key)}
-                    disabled={runningCheck === platform.key}
-                  >
-                    {runningCheck === platform.key ? (
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                    )}
-                    Gate Check
-                  </Button>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
       </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Releases */}
+        {/* Recent Commits */}
         <Card className="card-executive">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
-              <Rocket className="h-5 w-5 text-primary" />
-              Releases Récentes
+              <GitCommit className="h-5 w-5 text-primary" />
+              Commits Récents
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Rocket className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune release récente</p>
-              <p className="text-sm mt-1">
-                Connectez GitHub pour synchroniser les releases.
-              </p>
-            </div>
+            {githubLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ) : totalCommits > 0 ? (
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {githubData?.repos.flatMap(repo => 
+                  repo.commits.slice(0, 3).map(commit => ({
+                    ...commit,
+                    repoKey: repo.key
+                  }))
+                ).slice(0, 10).map((commit) => (
+                  <div key={commit.sha} className="flex items-start gap-3 p-3 rounded-lg border">
+                    <GitCommit className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{commit.message}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Badge variant="subtle" className="text-xs">{commit.repoKey}</Badge>
+                        <span>{commit.author}</span>
+                        <span>{new Date(commit.date).toLocaleDateString("fr-FR")}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <GitCommit className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>Aucun commit récent</p>
+                <p className="text-sm mt-1">
+                  Synchronisez GitHub pour voir les commits.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -166,13 +235,46 @@ export default function EngineeringPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <Bug className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Aucune issue ouverte</p>
-              <p className="text-sm mt-1">
-                Connectez GitHub pour synchroniser les issues.
-              </p>
-            </div>
+            {githubLoading ? (
+              <div className="space-y-3">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ) : totalOpenIssues > 0 ? (
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {githubData?.repos.flatMap(repo => 
+                  repo.issues.filter(i => i.state === "open").map(issue => ({
+                    ...issue,
+                    repoKey: repo.key
+                  }))
+                ).slice(0, 10).map((issue) => (
+                  <a 
+                    key={`${issue.repoKey}-${issue.number}`} 
+                    href={issue.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                  >
+                    <Bug className="h-4 w-4 mt-0.5 text-warning flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">#{issue.number}: {issue.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                        <Badge variant="subtle" className="text-xs">{issue.repoKey}</Badge>
+                        {issue.labels.slice(0, 2).map(label => (
+                          <Badge key={label} variant="outline" className="text-xs">{label}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <CheckCircle className="h-12 w-12 mx-auto mb-4 text-success" />
+                <p>Aucune issue ouverte</p>
+                <p className="text-sm mt-1">Toutes les issues sont résolues.</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -192,7 +294,7 @@ export default function EngineeringPage() {
           <div className="grid gap-3 md:grid-cols-3">
             {[
               { label: "Tests unitaires passés", status: "pending" },
-              { label: "Code review approuvé", status: "pending" },
+              { label: "Code review approuvé", status: totalOpenPRs === 0 ? "ok" : "pending" },
               { label: "Documentation à jour", status: "pending" },
               { label: "Audit sécurité OK", status: "pending" },
               { label: "Performance validée", status: "pending" },
@@ -200,9 +302,15 @@ export default function EngineeringPage() {
             ].map((item) => (
               <div 
                 key={item.label}
-                className="flex items-center gap-3 p-3 rounded-lg border"
+                className={`flex items-center gap-3 p-3 rounded-lg border ${
+                  item.status === "ok" ? "border-success/30 bg-success/5" : ""
+                }`}
               >
-                <Clock className="h-4 w-4 text-muted-foreground" />
+                {item.status === "ok" ? (
+                  <CheckCircle className="h-4 w-4 text-success" />
+                ) : (
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                )}
                 <span className="text-sm">{item.label}</span>
               </div>
             ))}
