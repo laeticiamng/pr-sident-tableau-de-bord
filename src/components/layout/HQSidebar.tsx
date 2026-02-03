@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Briefcase,
   HeadphonesIcon,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +57,7 @@ const sidebarLinks = [
     items: [
       { href: "/hq/audit", label: "Audit Log", icon: FileText },
       { href: "/hq/entreprise", label: "Profil Entreprise", icon: Building2 },
+      { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
     ],
   },
 ];
