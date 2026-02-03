@@ -22,6 +22,8 @@ import {
   HeadphonesIcon,
   Activity,
   Bot,
+  Scale,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -61,6 +63,9 @@ const sidebarLinks = [
       { href: "/hq/audit", label: "Audit Log", icon: FileText },
       { href: "/hq/entreprise", label: "Profil Entreprise", icon: Building2 },
       { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
+      { href: "/hq/rh", label: "RH & Agents", icon: Bot },
+      { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
+      { href: "/hq/data", label: "Data & Analytics", icon: BarChart3 },
     ],
   },
 ];
