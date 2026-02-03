@@ -18,9 +18,11 @@ import {
   Target,
   ArrowUpRight,
   ArrowDownRight,
-  Minus
+  Minus,
+  RefreshCw
 } from "lucide-react";
-import { usePlatforms, usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
+import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
+import { useConsolidatedMetrics, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -84,33 +86,34 @@ interface ExecutiveCockpitProps {
 }
 
 export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
-  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
+  const { metrics, isLoading: metricsLoading, isHealthy, isCritical } = useConsolidatedMetrics();
+  const refreshMonitor = useRefreshPlatformMonitor();
   const { data: approvals, isLoading: approvalsLoading } = usePendingApprovals();
   const { data: runs, isLoading: runsLoading } = useRecentRuns(10);
 
-  // Calculate platform metrics
-  const greenCount = platforms?.filter(p => p.status === "green").length || 0;
-  const amberCount = platforms?.filter(p => p.status === "amber").length || 0;
-  const redCount = platforms?.filter(p => p.status === "red").length || 0;
-  const totalPlatforms = platforms?.length || 5;
-  const avgUptime = platforms?.reduce((sum, p) => sum + (p.uptime_percent || 0), 0) / totalPlatforms || 0;
+  // Calculate platform metrics from live monitoring
+  const greenCount = metrics.greenPlatforms;
+  const amberCount = metrics.amberPlatforms;
+  const redCount = metrics.redPlatforms;
+  const totalPlatforms = metrics.totalPlatforms;
+  const avgUptime = metrics.uptimePercent;
 
   // Calculate run metrics
   const completedRuns = runs?.filter(r => r.status === "completed").length || 0;
   const failedRuns = runs?.filter(r => r.status === "failed").length || 0;
   const runSuccessRate = runs?.length ? (completedRuns / runs.length) * 100 : 0;
 
-  // Mock KPIs (to be connected to real data)
+  // Mock KPIs (to be connected to real Stripe/analytics data)
   const mockKPIs = {
     mrr: { value: "€12,450", change: 8.2, trend: "up" as const },
     activeUsers: { value: "1,247", change: 12.5, trend: "up" as const },
     churnRate: { value: "2.1%", change: -0.3, trend: "up" as const },
     nps: { value: "72", change: 5, trend: "up" as const },
     ticketsOpen: { value: "23", change: -15, trend: "up" as const },
-    avgResponseTime: { value: "2.4h", change: -8, trend: "up" as const },
+    avgResponseTime: { value: `${metrics.avgResponseTime}ms`, change: -8, trend: "up" as const },
   };
 
-  const isLoading = platformsLoading || approvalsLoading || runsLoading;
+  const isLoading = metricsLoading || approvalsLoading || runsLoading;
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -122,10 +125,24 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
             Vue consolidée des KPIs des 5 plateformes
           </p>
         </div>
-        <Badge variant="gold" className="gap-1">
-          <Activity className="h-3 w-3" />
-          Temps réel
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => refreshMonitor.mutate(undefined)}
+            disabled={refreshMonitor.isPending}
+            title="Rafraîchir le monitoring"
+          >
+            <RefreshCw className={cn("h-4 w-4", refreshMonitor.isPending && "animate-spin")} />
+          </Button>
+          <Badge 
+            variant={isCritical ? "destructive" : isHealthy ? "gold" : "subtle"} 
+            className="gap-1"
+          >
+            <Activity className="h-3 w-3" />
+            {isCritical ? "Critique" : isHealthy ? "Opérationnel" : "Attention"}
+          </Badge>
+        </div>
       </div>
 
       {/* Platform Health Overview */}
@@ -298,9 +315,9 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {platforms?.map((platform) => (
+            {metrics.platforms.map((platform) => (
               <div 
-                key={platform.id}
+                key={platform.key}
                 className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -311,15 +328,15 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
                     "bg-destructive"
                   )} />
                   <div>
-                    <p className="font-medium text-sm">{platform.name}</p>
+                    <p className="font-medium text-sm capitalize">{platform.key.replace(/-/g, " ")}</p>
                     <p className="text-xs text-muted-foreground">
-                      {platform.status_reason || "Opérationnel"}
+                      {platform.error || (platform.status === "green" ? "Opérationnel" : "Attention requise")}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-mono text-sm">{platform.uptime_percent?.toFixed(1) || "—"}%</p>
-                  <p className="text-xs text-muted-foreground">Uptime</p>
+                  <p className="font-mono text-sm">{platform.responseTime ? `${platform.responseTime}ms` : "—"}</p>
+                  <p className="text-xs text-muted-foreground">Latence</p>
                 </div>
               </div>
             ))}
