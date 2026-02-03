@@ -13,6 +13,7 @@ import {
 import { useExecuteRun } from "@/hooks/useHQData";
 import {
   LayoutDashboard,
+  Gauge,
   Layers,
   Users,
   Calendar,
@@ -33,6 +34,7 @@ import {
   Briefcase,
   HeadphonesIcon,
   Zap,
+  Activity,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -42,6 +44,7 @@ interface CommandPaletteProps {
 
 const navigationItems = [
   { label: "Briefing Room", icon: LayoutDashboard, href: "/hq" },
+  { label: "Cockpit Dirigeant", icon: Gauge, href: "/hq/cockpit" },
   { label: "Plateformes", icon: Layers, href: "/hq/plateformes" },
   { label: "Équipe Executive", icon: Users, href: "/hq/equipe-executive" },
   { label: "Réunions", icon: Calendar, href: "/hq/reunions" },
@@ -56,7 +59,7 @@ const navigationItems = [
   { label: "Support", icon: HeadphonesIcon, href: "/hq/support" },
   { label: "Audit Log", icon: FileText, href: "/hq/audit" },
   { label: "Profil Entreprise", icon: Building2, href: "/hq/entreprise" },
-  { label: "Diagnostics", icon: GitBranch, href: "/hq/diagnostics" },
+  { label: "Diagnostics", icon: Activity, href: "/hq/diagnostics" },
 ];
 
 const runItems = [

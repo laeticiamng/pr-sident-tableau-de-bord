@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Building2,
   LayoutDashboard,
+  Gauge,
   Layers,
   Users,
   Calendar,
@@ -20,6 +21,7 @@ import {
   Briefcase,
   HeadphonesIcon,
   Activity,
+  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +30,7 @@ const sidebarLinks = [
     label: "Cockpit",
     items: [
       { href: "/hq", label: "Briefing Room", icon: LayoutDashboard },
+      { href: "/hq/cockpit", label: "Cockpit Dirigeant", icon: Gauge },
       { href: "/hq/plateformes", label: "Plateformes", icon: Layers },
       { href: "/hq/equipe-executive", label: "Équipe Executive", icon: Users },
     ],
