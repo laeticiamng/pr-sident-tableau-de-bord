@@ -1,0 +1,139 @@
+import { Badge } from "@/components/ui/badge";
+import { Target, Lightbulb, Heart, TrendingUp } from "lucide-react";
+
+export default function VisionPage() {
+  return (
+    <div className="flex flex-col">
+      {/* Hero */}
+      <section className="py-20 md:py-28 bg-hero-gradient text-primary-foreground">
+        <div className="container">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="gold" className="mb-6">
+              Notre Vision
+            </Badge>
+            <h1 className="text-headline-1 md:text-display-2 mb-6">
+              Construire l'avenir
+              <span className="block text-accent">du logiciel</span>
+            </h1>
+            <p className="text-body-lg text-primary-foreground/80">
+              Chez EMOTIONSCARE, nous croyons que la technologie doit servir 
+              l'humain, pas l'inverse. Notre mission : créer des outils 
+              qui simplifient la vie et libèrent le potentiel de chacun.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-20 md:py-28">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <h2 className="text-headline-1 mb-4">Nos Valeurs</h2>
+            <p className="text-body-lg text-muted-foreground">
+              Les principes qui guident chacune de nos décisions.
+            </p>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2">
+            {[
+              {
+                icon: Target,
+                title: "Excellence",
+                description:
+                  "Nous visons l'excellence dans chaque ligne de code, chaque interface, chaque interaction. Pas de compromis sur la qualité.",
+              },
+              {
+                icon: Lightbulb,
+                title: "Innovation",
+                description:
+                  "L'innovation est dans notre ADN. Nous explorons constamment de nouvelles approches pour résoudre les problèmes complexes.",
+              },
+              {
+                icon: Heart,
+                title: "Empathie",
+                description:
+                  "Nous concevons nos produits en pensant d'abord aux utilisateurs. Comprendre leurs besoins est notre priorité absolue.",
+              },
+              {
+                icon: TrendingUp,
+                title: "Croissance",
+                description:
+                  "Nous cultivons une culture d'apprentissage continu. Chaque défi est une opportunité de progresser.",
+              },
+            ].map((value, index) => (
+              <div
+                key={value.title}
+                className="card-executive p-8 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="flex items-start gap-6">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                    <value.icon className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
+                    <p className="text-muted-foreground">{value.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Statement */}
+      <section className="py-20 md:py-28 bg-subtle-gradient">
+        <div className="container">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-headline-1 mb-8">Notre Mission</h2>
+            <blockquote className="text-2xl md:text-3xl font-medium italic text-foreground/90 leading-relaxed">
+              "Créer des logiciels qui transforment la complexité en simplicité, 
+              et qui permettent à chacun de se concentrer sur ce qui compte vraiment."
+            </blockquote>
+            <p className="mt-8 text-muted-foreground">
+              — Motongane Laeticia, Présidente
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-20 md:py-28">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center mb-16">
+            <h2 className="text-headline-1 mb-4">Notre Histoire</h2>
+          </div>
+
+          <div className="mx-auto max-w-2xl">
+            <div className="relative border-l-2 border-accent/30 pl-8 space-y-12">
+              <div className="relative">
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent" />
+                <div className="text-sm font-medium text-accent mb-2">Mai 2025</div>
+                <h3 className="text-xl font-semibold mb-2">Création d'EMOTIONSCARE SASU</h3>
+                <p className="text-muted-foreground">
+                  Immatriculation au RCS d'Amiens. Début de l'aventure entrepreneuriale.
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/50" />
+                <div className="text-sm font-medium text-accent mb-2">2025</div>
+                <h3 className="text-xl font-semibold mb-2">Lancement des 5 plateformes</h3>
+                <p className="text-muted-foreground">
+                  Développement et mise en production de l'écosystème complet.
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full border-2 border-accent bg-background" />
+                <div className="text-sm font-medium text-muted-foreground mb-2">À venir</div>
+                <h3 className="text-xl font-semibold mb-2">Et demain ?</h3>
+                <p className="text-muted-foreground">
+                  L'histoire continue de s'écrire...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
