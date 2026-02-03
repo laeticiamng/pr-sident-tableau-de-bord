@@ -1,73 +1,247 @@
-# Welcome to your Lovable project
+# EMOTIONSCARE SASU — Siège Social Numérique
 
-## Project info
+> **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+[![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb)](https://reactjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 📋 Vision
 
-**Use Lovable**
+Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour permettre à la Présidente d'EMOTIONSCARE SASU de piloter l'ensemble de ses plateformes sans jamais avoir à manipuler GitHub, Supabase ou d'autres outils techniques.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+**Philosophie fondamentale : "Zéro technique pour le Président"**
+- Le HQ analyse et propose des actions
+- Le Président décide et approuve
+- L'IA exécute avec supervision
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🏢 Entreprise
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+| Attribut | Valeur |
+|----------|--------|
+| **Raison sociale** | EMOTIONSCARE SASU |
+| **SIREN** | 944 505 445 |
+| **Activité** | 58.29C — Édition de logiciels applicatifs |
+| **Siège** | 5 Rue Caudron, 80000 Amiens |
+| **Présidente** | Motongane Laeticia |
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🚀 Les 5 Plateformes Managées
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+| Plateforme | Description | Repository |
+|------------|-------------|------------|
+| **EmotionsCare** | Plateforme principale de gestion émotionnelle | [GitHub](https://github.com/laeticiamng/emotionscare) |
+| **Pixel Perfect Replica** | Réplication d'interfaces haute fidélité | [GitHub](https://github.com/laeticiamng/pixel-perfect-replica) |
+| **System Compass** | Navigation et orientation systémique | [GitHub](https://github.com/laeticiamng/system-compass) |
+| **Growth Copilot** | Intelligence marketing et croissance | [GitHub](https://github.com/laeticiamng/growth-copilot) |
+| **Med MNG** | Gestion médicale et suivi santé | [GitHub](https://github.com/laeticiamng/med-mng) |
+
+---
+
+## 🏗️ Architecture Technique
+
+### Stack Frontend
+- **Framework** : React 18.3 + TypeScript 5.0
+- **Build** : Vite 5.x
+- **Styling** : Tailwind CSS + shadcn/ui
+- **State** : TanStack Query (React Query)
+- **Routing** : React Router DOM 6.x
+- **Animations** : Framer Motion (planned)
+
+### Stack Backend (Lovable Cloud)
+- **Database** : PostgreSQL avec RLS (Row Level Security)
+- **Auth** : Authentification native avec rôles (owner, admin)
+- **Edge Functions** : Deno runtime
+- **Realtime** : Supabase Realtime (subscriptions)
+
+### Intégrations IA
+- **Lovable AI Gateway** : Multi-modèles (Gemini, GPT-5)
+- **Perplexity AI** : Veille stratégique temps réel
+- **GitHub API** : Synchronisation repos
+
+---
+
+## 📁 Structure du Projet
+
+```
+src/
+├── components/
+│   ├── auth/           # ProtectedRoute, guards
+│   ├── hq/             # Widgets HQ (CommandPalette, AIInsights, etc.)
+│   ├── layout/         # HQLayout, HQSidebar, PublicLayout
+│   └── ui/             # shadcn/ui components
+├── hooks/
+│   ├── useAuth.ts      # Authentification
+│   ├── useHQData.ts    # Données HQ (runs, agents, platforms)
+│   ├── useGitHubSync.ts # Synchronisation GitHub
+│   └── useBusinessMetrics.ts # Métriques métier
+├── lib/
+│   ├── constants.ts    # Plateformes, profil entreprise
+│   ├── validation.ts   # Schemas Zod + sanitization
+│   └── utils.ts        # Utilitaires
+├── pages/
+│   ├── hq/             # 16 pages HQ
+│   ├── legal/          # CGV, Mentions légales, RGPD
+│   └── *.tsx           # Pages publiques
+└── integrations/
+    └── supabase/       # Client + types auto-générés
+
+supabase/
+└── functions/
+    ├── executive-run/      # Runs IA exécutifs
+    ├── github-sync/        # Sync GitHub
+    ├── platform-monitor/   # Monitoring
+    ├── intelligence-search/ # Recherche intelligente
+    └── web-scraper/        # Scraping web
+```
+
+---
+
+## 🎯 Modules HQ
+
+### Gouvernance
+| Module | Route | Description |
+|--------|-------|-------------|
+| Briefing Room | `/hq` | Dashboard exécutif avec KPIs |
+| Approbations | `/hq/approbations` | Actions en attente de validation |
+| Audit Log | `/hq/audit` | Journal des actions système |
+| Diagnostics | `/hq/diagnostics` | Monitoring technique |
+| Équipe Exécutive | `/hq/equipe-executive` | Agents IA et rôles |
+| Réunions | `/hq/reunions` | Planification et comptes-rendus |
+
+### Départements
+| Module | Route | Description |
+|--------|-------|-------------|
+| Finance | `/hq/finance` | Trésorerie, P&L, forecasts |
+| Ventes | `/hq/ventes` | Pipeline, deals, conversions |
+| Marketing | `/hq/marketing` | Campagnes, acquisition |
+| Produit | `/hq/produit` | Roadmap, features, feedback |
+| Engineering | `/hq/engineering` | Commits, PRs, issues GitHub |
+| Support | `/hq/support` | Tickets, SLA, satisfaction |
+| Sécurité | `/hq/securite` | Audit RLS, vulnérabilités |
+| Plateformes | `/hq/plateformes` | Status des 5 plateformes |
+
+### Profil
+| Module | Route | Description |
+|--------|-------|-------------|
+| Entreprise | `/hq/entreprise` | Données légales SASU |
+| Historique | `/hq/historique` | Historique des runs IA |
+
+---
+
+## 🔐 Sécurité
+
+### Row Level Security (RLS)
+- Toutes les tables sensibles ont RLS activé
+- Policies basées sur `auth.uid()` et rôles
+- Validation des permissions côté serveur
+
+### Validation & Sanitization
+- Schemas Zod pour tous les formulaires
+- Protection XSS via sanitization
+- Pas de secrets en frontend
+
+### Rôles
+- **owner** : Accès complet (Présidente)
+- **admin** : Accès étendu (futurs collaborateurs)
+
+---
+
+## 🚀 Développement
+
+### Prérequis
+- Node.js 18+
+- npm ou bun
+
+### Installation
+
+```bash
+# Cloner le repo
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Installer les dépendances
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Lancer le serveur de développement
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Scripts disponibles
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run dev      # Serveur dev avec HMR
+npm run build    # Build production
+npm run preview  # Preview du build
+npm run lint     # ESLint
+npm run test     # Tests Vitest
+```
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🧪 Tests
 
-## What technologies are used for this project?
+### Smoke Test (à chaque changement)
+1. ✅ Page d'accueil charge sans erreur
+2. ✅ Navigation HQ fonctionne
+3. ✅ Auth login/logout OK
+4. ✅ Command Palette (⌘K) s'ouvre
+5. ✅ Toggle thème dark/light
+6. ✅ Responsive mobile/desktop
 
-This project is built with:
+### Tests unitaires
+```bash
+npm run test
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 📦 Déploiement
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Le projet se déploie automatiquement via Lovable :
 
-## Can I connect a custom domain to my Lovable project?
+1. Ouvrir [Lovable](https://lovable.dev)
+2. Naviguer vers le projet
+3. Cliquer **Share → Publish**
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔧 Configuration
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Variables d'environnement
+Les variables sont auto-configurées par Lovable Cloud :
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_PROJECT_ID`
+
+### Secrets (Edge Functions)
+- `LOVABLE_API_KEY` : Gateway IA
+- `GITHUB_TOKEN` : API GitHub (optionnel)
+- `PERPLEXITY_API_KEY` : Veille IA (optionnel)
+
+---
+
+## 📚 Documentation
+
+- [Lovable Docs](https://docs.lovable.dev)
+- [shadcn/ui](https://ui.shadcn.com)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [TanStack Query](https://tanstack.com/query)
+
+---
+
+## 📄 Licence
+
+Propriétaire — © 2025 EMOTIONSCARE SASU. Tous droits réservés.
+
+---
+
+<p align="center">
+  <strong>Built with ❤️ using <a href="https://lovable.dev">Lovable</a></strong>
+</p>
