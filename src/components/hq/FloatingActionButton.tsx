@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { useExecuteRun } from "@/hooks/useHQData";
+import { useRunQueue } from "@/hooks/useRunQueue";
 import {
   Plus,
   X,
@@ -9,12 +9,14 @@ import {
   Shield,
   TrendingUp,
   Brain,
+  FileText,
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FloatingActionButtonProps {
   className?: string;
+  onOpenTemplates?: () => void;
 }
 
 const quickActions = [
@@ -22,20 +24,29 @@ const quickActions = [
   { id: "security", icon: Shield, label: "Audit", runType: "SECURITY_AUDIT_RLS", color: "bg-success" },
   { id: "marketing", icon: TrendingUp, label: "Marketing", runType: "MARKETING_WEEK_PLAN", color: "bg-warning" },
   { id: "competitive", icon: Brain, label: "Veille", runType: "COMPETITIVE_ANALYSIS", color: "bg-primary" },
+  { id: "templates", icon: FileText, label: "Templates", runType: "", color: "bg-secondary" },
 ];
 
-export function FloatingActionButton({ className }: FloatingActionButtonProps) {
+export function FloatingActionButton({ className, onOpenTemplates }: FloatingActionButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeAction, setActiveAction] = useState<string | null>(null);
-  const executeRun = useExecuteRun();
+  const { enqueue } = useRunQueue();
 
   const handleAction = async (runType: string, actionId: string) => {
+    if (actionId === "templates") {
+      setIsOpen(false);
+      onOpenTemplates?.();
+      return;
+    }
+    
     setActiveAction(actionId);
     try {
-      await executeRun.mutateAsync({ run_type: runType });
+      enqueue(runType);
     } finally {
-      setActiveAction(null);
-      setIsOpen(false);
+      setTimeout(() => {
+        setActiveAction(null);
+        setIsOpen(false);
+      }, 300);
     }
   };
 
