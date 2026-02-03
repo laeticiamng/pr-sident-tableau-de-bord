@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MANAGED_PLATFORMS } from "@/lib/constants";
-import { ArrowRight, Building2, Layers, Shield, Zap, Sparkles, Globe, ChevronRight } from "lucide-react";
+import { ArrowRight, Layers, Shield, Zap, Sparkles, Globe } from "lucide-react";
+import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 
 export default function HomePage() {
   return (
@@ -133,69 +133,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Platforms Showcase — Premium Cards */}
-      <section className="py-32 md:py-40 bg-subtle-gradient relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(38_92%_50%/0.03),transparent_50%)]" />
-        
-        <div className="container relative">
-          {/* Section Header */}
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-16">
-            <div>
-              <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
-                Écosystème
-              </p>
-              <h2 className="text-headline-1 md:text-display-2">
-                Nos Plateformes
-              </h2>
-            </div>
-            <Link to="/plateformes" className="group">
-              <span className="inline-flex items-center gap-2 text-lg font-medium text-foreground hover:text-accent transition-colors">
-                Tout voir
-                <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </span>
-            </Link>
-          </div>
-          
-          {/* Platform Cards */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {MANAGED_PLATFORMS.map((platform, index) => (
-              <div
-                key={platform.key}
-                className="group relative bg-card rounded-2xl border p-8 hover:shadow-xl transition-all duration-500 animate-fade-in overflow-hidden"
-                style={{ animationDelay: `${index * 0.08}s` }}
-              >
-                {/* Hover Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <div className="relative">
-                  {/* Status Dot */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className={`w-3 h-3 rounded-full ${platform.color} shadow-sm`} />
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Active
-                    </span>
-                  </div>
-
-                  {/* Platform Info */}
-                  <h3 className="text-2xl font-semibold mb-3 group-hover:text-accent transition-colors">
-                    {platform.name}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed mb-6">
-                    {platform.description}
-                  </p>
-
-                  {/* Arrow Link */}
-                  <div className="flex items-center gap-2 text-sm font-medium text-accent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    En savoir plus
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Platforms Showcase — Premium Apple-like */}
+      <PlatformShowcase />
 
       {/* Stats Section — Minimal & Impactful */}
       <section className="py-24 md:py-32 bg-primary text-primary-foreground">

@@ -70,6 +70,13 @@ export default {
           amber: "hsl(var(--status-amber))",
           red: "hsl(var(--status-red))",
         },
+        platform: {
+          health: "hsl(var(--platform-health))",
+          social: "hsl(var(--platform-social))",
+          compass: "hsl(var(--platform-compass))",
+          growth: "hsl(var(--platform-growth))",
+          medical: "hsl(var(--platform-medical))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
