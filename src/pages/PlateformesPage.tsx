@@ -253,6 +253,24 @@ export default function PlateformesPage() {
                       {/* Actions */}
                       <div className="flex flex-wrap gap-4">
                         <Button 
+                          size="lg"
+                          className={cn(
+                            "group/btn",
+                            platformBgAccents[platform.key],
+                            "hover:opacity-90 text-white"
+                          )}
+                          asChild
+                        >
+                          <a
+                            href={platform.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="h-5 w-5 mr-2" />
+                            Visiter le site
+                          </a>
+                        </Button>
+                        <Button 
                           variant="outline" 
                           size="lg"
                           className="group/btn"
@@ -265,16 +283,7 @@ export default function PlateformesPage() {
                           >
                             <Github className="h-5 w-5 mr-2" />
                             GitHub
-                            <ExternalLink className="h-4 w-4 ml-2 opacity-50 group-hover/btn:opacity-100 transition-opacity" />
                           </a>
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="lg"
-                          className={cn("group/btn", platformAccents[platform.key])}
-                        >
-                          En savoir plus
-                          <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover/btn:translate-x-1" />
                         </Button>
                       </div>
                     </div>
