@@ -1,119 +1,168 @@
 import { Badge } from "@/components/ui/badge";
-import { Users, Building2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Users, Building2, Bot, Power, RefreshCw } from "lucide-react";
+import { useAgents, useOrgRoles } from "@/hooks/useHQData";
 
-const executiveTeam = [
-  { role: "CEO_AGENT", title: "Directeur Général", name: "CEO Agent", status: "active" },
-  { role: "COO_AGENT", title: "Directeur des Opérations", name: "COO Agent", status: "active" },
-  { role: "CPO_AGENT", title: "Directeur Produit", name: "CPO Agent", status: "active" },
-  { role: "CTO_AGENT", title: "Directeur Technique", name: "CTO Agent", status: "active" },
-  { role: "CISO_AGENT", title: "Directeur Sécurité", name: "CISO Agent", status: "active" },
-  { role: "CFO_AGENT", title: "Directeur Financier", name: "CFO Agent", status: "active" },
-  { role: "CMO_AGENT", title: "Directeur Marketing", name: "CMO Agent", status: "active" },
-  { role: "CRO_AGENT", title: "Directeur Commercial", name: "CRO Agent", status: "active" },
-  { role: "CIO_AGENT", title: "Directeur SI", name: "CIO Agent", status: "active" },
-  { role: "GC_AGENT", title: "Directeur Juridique", name: "GC Agent", status: "active" },
-];
+const categoryLabels = {
+  c_suite: "Comité Exécutif",
+  function_head: "Responsables de Fonction",
+  platform_gm: "Directeurs Généraux Plateforme",
+};
 
-const functionHeads = [
-  { role: "HEAD_ENGINEERING_PLATFORM_AGENT", title: "Responsable Engineering", status: "active" },
-  { role: "HEAD_QA_AGENT", title: "Responsable QA", status: "active" },
-  { role: "HEAD_DATA_AGENT", title: "Responsable Data", status: "active" },
-  { role: "HEAD_DESIGN_AGENT", title: "Responsable Design", status: "active" },
-  { role: "HEAD_SUPPORT_AGENT", title: "Responsable Support", status: "active" },
-  { role: "HEAD_PEOPLE_AGENT", title: "Responsable RH Agents", status: "active" },
-];
+const categoryIcons = {
+  c_suite: Users,
+  function_head: Building2,
+  platform_gm: Bot,
+};
 
-const platformDirectors = [
-  { role: "GM_EMOTIONSCARE", title: "DG EmotionsCare", platform: "emotionscare", status: "active" },
-  { role: "GM_PIXEL_PERFECT_REPLICA", title: "DG Pixel Perfect", platform: "pixel-perfect-replica", status: "active" },
-  { role: "GM_SYSTEM_COMPASS", title: "DG System Compass", platform: "system-compass", status: "active" },
-  { role: "GM_GROWTH_COPILOT", title: "DG Growth Copilot", platform: "growth-copilot", status: "active" },
-  { role: "GM_MED_MNG", title: "DG Med MNG", platform: "med-mng", status: "active" },
-];
+const categoryColors = {
+  c_suite: "gold",
+  function_head: "default",
+  platform_gm: "subtle",
+};
 
 export default function EquipeExecutivePage() {
+  const { data: agents, isLoading: agentsLoading, refetch } = useAgents();
+  const { data: orgRoles, isLoading: rolesLoading } = useOrgRoles();
+
+  const isLoading = agentsLoading || rolesLoading;
+
+  // Group agents by category
+  const groupedAgents = agents?.reduce((acc, agent) => {
+    const category = agent.role_category || "c_suite";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(agent);
+    return acc;
+  }, {} as Record<string, typeof agents>);
+
+  // Count by category
+  const countByCategory = {
+    c_suite: groupedAgents?.c_suite?.length || 0,
+    function_head: groupedAgents?.function_head?.length || 0,
+    platform_gm: groupedAgents?.platform_gm?.length || 0,
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-headline-1 mb-2">Équipe Executive</h1>
-        <p className="text-muted-foreground text-lg">
-          Organigramme complet des directeurs et agents du siège.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-headline-1 mb-2">Équipe Executive</h1>
+          <p className="text-muted-foreground text-lg">
+            Organigramme complet des directeurs et agents du siège.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => refetch()}>
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Actualiser
+        </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="card-executive p-6 text-center">
-          <div className="text-3xl font-bold mb-1">{executiveTeam.length}</div>
-          <div className="text-sm text-muted-foreground">Directeurs Exécutifs</div>
-        </div>
-        <div className="card-executive p-6 text-center">
-          <div className="text-3xl font-bold mb-1">{functionHeads.length}</div>
-          <div className="text-sm text-muted-foreground">Responsables Fonction</div>
-        </div>
-        <div className="card-executive p-6 text-center">
-          <div className="text-3xl font-bold mb-1">{platformDirectors.length}</div>
-          <div className="text-sm text-muted-foreground">Directeurs Plateforme</div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card className="card-executive">
+          <CardContent className="p-6 text-center">
+            <div className="text-3xl font-bold mb-1">
+              {isLoading ? "..." : agents?.length || 0}
+            </div>
+            <div className="text-sm text-muted-foreground">Total Agents</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-6 text-center">
+            <div className="text-3xl font-bold text-primary mb-1">
+              {isLoading ? "..." : countByCategory.c_suite}
+            </div>
+            <div className="text-sm text-muted-foreground">Directeurs Exécutifs</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-6 text-center">
+            <div className="text-3xl font-bold text-success mb-1">
+              {isLoading ? "..." : countByCategory.function_head}
+            </div>
+            <div className="text-sm text-muted-foreground">Responsables Fonction</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-6 text-center">
+            <div className="text-3xl font-bold text-muted-foreground mb-1">
+              {isLoading ? "..." : countByCategory.platform_gm}
+            </div>
+            <div className="text-sm text-muted-foreground">Directeurs Plateforme</div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* C-Suite */}
-      <div className="card-executive p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Users className="h-5 w-5 text-accent" />
-          <h2 className="text-xl font-semibold">Comité Exécutif (C-Suite)</h2>
+      {/* Agent Groups */}
+      {isLoading ? (
+        <div className="space-y-6">
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-64 w-full" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {executiveTeam.map((member) => (
-            <div key={member.role} className="p-4 rounded-lg border hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <Badge variant="gold" className="font-mono text-xs">{member.role}</Badge>
-                <Badge variant="success" className="text-xs">Actif</Badge>
-              </div>
-              <h3 className="font-semibold">{member.title}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Function Heads */}
-      <div className="card-executive p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Building2 className="h-5 w-5 text-accent" />
-          <h2 className="text-xl font-semibold">Responsables de Fonction</h2>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {functionHeads.map((member) => (
-            <div key={member.role} className="p-4 rounded-lg border hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <Badge variant="subtle" className="font-mono text-xs">{member.role}</Badge>
-                <Badge variant="success" className="text-xs">Actif</Badge>
-              </div>
-              <h3 className="font-semibold">{member.title}</h3>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Platform Directors */}
-      <div className="card-executive p-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Building2 className="h-5 w-5 text-accent" />
-          <h2 className="text-xl font-semibold">Directeurs Généraux Plateforme</h2>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {platformDirectors.map((member) => (
-            <div key={member.role} className="p-4 rounded-lg border hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-2">
-                <Badge variant="default" className="font-mono text-xs">{member.role}</Badge>
-                <Badge variant="success" className="text-xs">Actif</Badge>
-              </div>
-              <h3 className="font-semibold">{member.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">Plateforme: {member.platform}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+      ) : (
+        Object.entries(categoryLabels).map(([category, label]) => {
+          const CategoryIcon = categoryIcons[category as keyof typeof categoryIcons];
+          const categoryAgents = groupedAgents?.[category] || [];
+          
+          return (
+            <Card key={category} className="card-executive">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <CategoryIcon className="h-5 w-5 text-primary" />
+                  {label}
+                </CardTitle>
+                <CardDescription>
+                  {categoryAgents.length} agent{categoryAgents.length > 1 ? "s" : ""} dans cette catégorie
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {categoryAgents.length > 0 ? (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {categoryAgents.map((agent) => (
+                      <div 
+                        key={agent.id} 
+                        className="p-4 rounded-lg border hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <Badge 
+                            variant={categoryColors[category as keyof typeof categoryColors] as any} 
+                            className="font-mono text-xs"
+                          >
+                            {agent.role_key}
+                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Power className={`h-3 w-3 ${agent.is_enabled ? "text-success" : "text-muted-foreground"}`} />
+                            <Switch 
+                              checked={agent.is_enabled} 
+                              disabled 
+                              className="scale-75"
+                            />
+                          </div>
+                        </div>
+                        <h3 className="font-semibold">{agent.role_title_fr || agent.name}</h3>
+                        {agent.model_preference && (
+                          <p className="text-xs text-muted-foreground mt-2 font-mono">
+                            Modèle: {agent.model_preference}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <CategoryIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Aucun agent dans cette catégorie</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })
+      )}
     </div>
   );
 }
