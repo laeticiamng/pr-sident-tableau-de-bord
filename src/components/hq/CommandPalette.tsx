@@ -56,6 +56,7 @@ const navigationItems = [
   { label: "Support", icon: HeadphonesIcon, href: "/hq/support" },
   { label: "Audit Log", icon: FileText, href: "/hq/audit" },
   { label: "Profil Entreprise", icon: Building2, href: "/hq/entreprise" },
+  { label: "Diagnostics", icon: GitBranch, href: "/hq/diagnostics" },
 ];
 
 const runItems = [

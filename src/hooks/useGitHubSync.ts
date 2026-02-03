@@ -65,7 +65,41 @@ export function useGitHubData() {
 
         if (error) throw error;
         
-        return data as GitHubSyncResult;
+        // Transform the response to match our expected interface
+        const transformedData: GitHubSyncResult = {
+          success: data.success,
+          repos: (data.data || []).map((repoData: any) => ({
+            key: repoData.key,
+            repo: repoData.repo,
+            commits: (repoData.commits || []).map((c: any) => ({
+              sha: c.sha,
+              message: c.message,
+              author: c.author,
+              date: c.date,
+              url: `https://github.com/${repoData.repo}/commit/${c.sha}`,
+            })),
+            issues: (repoData.issues || []).map((i: any) => ({
+              number: i.number,
+              title: i.title,
+              state: i.state as "open" | "closed",
+              labels: i.labels || [],
+              createdAt: i.created_at,
+              url: `https://github.com/${repoData.repo}/issues/${i.number}`,
+            })),
+            pullRequests: (repoData.pullRequests || []).map((pr: any) => ({
+              number: pr.number,
+              title: pr.title,
+              state: pr.state as "open" | "closed" | "merged",
+              author: pr.author || "Unknown",
+              createdAt: pr.created_at,
+              url: `https://github.com/${repoData.repo}/pull/${pr.number}`,
+            })),
+            lastSynced: new Date(),
+          })),
+          syncedAt: data.summary?.synced_at || new Date().toISOString(),
+        };
+        
+        return transformedData;
       } catch (e) {
         console.warn("GitHub sync failed:", e);
         // Return empty data structure on error
