@@ -14,7 +14,9 @@ import {
   Database,
   Cpu,
   GitBranch,
-  Sparkles
+  Sparkles,
+  GitCommit,
+  TestTube2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -168,12 +170,12 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     </div>
                   </div>
 
-                  {/* Right — Stats Grid */}
+                  {/* Right — Stats Grid - Real GitHub Stats */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-4 md:mt-0">
                     {[
-                      { icon: Cpu, value: MANAGED_PLATFORMS[0].stats.modules, label: "Modules", suffix: "" },
+                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: "Commits", suffix: "" },
                       { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: "Tables", suffix: "" },
-                      { icon: Sparkles, value: MANAGED_PLATFORMS[0].stats.edgeFunctions, label: "Edge Fn.", suffix: "" },
+                      { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: "Tests", suffix: "" },
                       { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: "Branches", suffix: "" },
                     ].map((stat) => (
                       <div 
@@ -256,11 +258,17 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                         {platform.shortDescription}
                       </p>
 
-                      {/* Stats Row */}
+                      {/* Stats Row - Real GitHub Stats */}
                       <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-muted-foreground mb-3 sm:mb-4">
-                        <span>{platform.stats.modules} modules</span>
+                        <span>{platform.stats.commits > 0 ? (platform.stats.commits > 1000 ? `${(platform.stats.commits / 1000).toFixed(1)}K` : platform.stats.commits) : "0"} commits</span>
                         <span>•</span>
                         <span>{platform.stats.tables} tables</span>
+                        {platform.stats.tests > 0 && (
+                          <>
+                            <span>•</span>
+                            <span>{platform.stats.tests} tests</span>
+                          </>
+                        )}
                       </div>
 
                       {/* Action Buttons */}

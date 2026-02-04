@@ -14,10 +14,20 @@ import {
   Clock,
   CheckCircle,
   Loader2,
-  RefreshCw
+  RefreshCw,
+  GitCommit,
+  TestTube2,
+  Database
 } from "lucide-react";
 import { usePlatforms, useExecuteRun } from "@/hooks/useHQData";
 import { MultiPlatformUptimeChart } from "@/components/hq/platforms/MultiPlatformUptimeChart";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
+
+// Helper to get real stats from constants
+const getPlatformStats = (key: string) => {
+  const platform = MANAGED_PLATFORMS.find(p => p.key === key);
+  return platform?.stats || { commits: 0, branches: 0, tests: 0, tables: 0 };
+};
 
 const statusColors = {
   green: "bg-status-green",
@@ -172,38 +182,41 @@ export default function HQPlateformesPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-6">
-                    {/* Metrics */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="text-center p-4 rounded-lg bg-muted/50">
-                        <Activity className="h-5 w-5 mx-auto mb-2 text-primary" />
-                        <div className="text-2xl font-bold">{platform.uptime_percent?.toFixed(1)}%</div>
-                        <div className="text-xs text-muted-foreground">Uptime</div>
-                      </div>
-                      <div className="text-center p-4 rounded-lg bg-muted/50">
-                        <GitBranch className="h-5 w-5 mx-auto mb-2 text-primary" />
-                        <div className="text-2xl font-bold">
-                          {platform.key === "emotionscare" ? "12" :
-                           platform.key === "growth-copilot" ? "28" :
-                           platform.key === "system-compass" ? "8" :
-                           platform.key === "med-mng" ? "5" : "3"}
+                    {/* Metrics - Real GitHub Stats */}
+                    {(() => {
+                      const stats = getPlatformStats(platform.key);
+                      return (
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                          <div className="text-center p-4 rounded-lg bg-muted/50">
+                            <Activity className="h-5 w-5 mx-auto mb-2 text-primary" />
+                            <div className="text-2xl font-bold">{platform.uptime_percent?.toFixed(1)}%</div>
+                            <div className="text-xs text-muted-foreground">Uptime</div>
+                          </div>
+                          <div className="text-center p-4 rounded-lg bg-muted/50">
+                            <GitCommit className="h-5 w-5 mx-auto mb-2 text-primary" />
+                            <div className="text-2xl font-bold">
+                              {stats.commits > 1000 ? `${(stats.commits / 1000).toFixed(1)}K` : stats.commits}
+                            </div>
+                            <div className="text-xs text-muted-foreground">Commits</div>
+                          </div>
+                          <div className="text-center p-4 rounded-lg bg-muted/50">
+                            <GitBranch className="h-5 w-5 mx-auto mb-2 text-accent" />
+                            <div className="text-2xl font-bold">{stats.branches}</div>
+                            <div className="text-xs text-muted-foreground">Branches</div>
+                          </div>
+                          <div className="text-center p-4 rounded-lg bg-muted/50">
+                            <TestTube2 className="h-5 w-5 mx-auto mb-2 text-success" />
+                            <div className="text-2xl font-bold">{stats.tests}</div>
+                            <div className="text-xs text-muted-foreground">Tests</div>
+                          </div>
+                          <div className="text-center p-4 rounded-lg bg-muted/50">
+                            <Database className="h-5 w-5 mx-auto mb-2 text-warning" />
+                            <div className="text-2xl font-bold">{stats.tables}</div>
+                            <div className="text-xs text-muted-foreground">Tables</div>
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground">Commits (7j)</div>
-                      </div>
-                      <div className="text-center p-4 rounded-lg bg-muted/50">
-                        <AlertTriangle className="h-5 w-5 mx-auto mb-2 text-warning" />
-                        <div className="text-2xl font-bold">0</div>
-                        <div className="text-xs text-muted-foreground">Incidents</div>
-                      </div>
-                      <div className="text-center p-4 rounded-lg bg-muted/50">
-                        <Rocket className="h-5 w-5 mx-auto mb-2 text-success" />
-                        <div className="text-2xl font-bold">
-                          {platform.last_release_at 
-                            ? new Date(platform.last_release_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })
-                            : "Jan 28"}
-                        </div>
-                        <div className="text-xs text-muted-foreground">Dernière Release</div>
-                      </div>
-                    </div>
+                      );
+                    })()}
 
                     {/* Status Reason */}
                     <div className="p-4 rounded-lg border">
