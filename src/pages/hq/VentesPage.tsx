@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { SALES_KPIS, SALES_PIPELINE, SALES_ACTIVITIES, RECENT_OPPORTUNITIES } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
+import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
 
 export default function VentesPage() {
   const kpis = [
@@ -77,38 +79,11 @@ export default function VentesPage() {
         ))}
       </div>
 
-      {/* Pipeline */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Pipeline Commercial
-          </CardTitle>
-          <CardDescription>
-            Vue d'ensemble du funnel de vente — Total: {SALES_PIPELINE.reduce((s, p) => s + p.value, 0).toLocaleString("fr-FR")} €
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4">
-            {SALES_PIPELINE.map((stage, index) => (
-              <div key={stage.name} className="flex items-center">
-                <div className="flex flex-col items-center min-w-[120px]">
-                  <div className="w-full p-4 rounded-lg border bg-gradient-to-b from-muted/50 to-transparent text-center hover:shadow-md transition-shadow">
-                    <div className="font-medium text-sm">{stage.name}</div>
-                    <div className="text-2xl font-bold mt-2 text-primary">{stage.count}</div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {stage.value.toLocaleString("fr-FR")} €
-                    </div>
-                  </div>
-                </div>
-                {index < SALES_PIPELINE.length - 1 && (
-                  <ArrowRight className="h-5 w-5 text-muted-foreground mx-2 flex-shrink-0" />
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Pipeline Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <SalesPipelineChart />
+        <ConversionFunnelChart />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Deals */}
