@@ -5,35 +5,35 @@ import { cn } from "@/lib/utils";
 
 const TIMELINE_DATA = [
   { 
-    date: "2025-02-10", 
+    date: "2026-02-10", 
     platform: "EmotionsCare", 
     version: "2.4.0", 
     status: "planned",
     features: 5
   },
   { 
-    date: "2025-02-05", 
+    date: "2026-02-05", 
     platform: "Growth Copilot", 
     version: "1.8.0", 
     status: "released",
     features: 8
   },
   { 
-    date: "2025-02-03", 
+    date: "2026-02-03", 
     platform: "System Compass", 
     version: "3.2.1", 
     status: "released",
     features: 3
   },
   { 
-    date: "2025-01-28", 
+    date: "2026-01-28", 
     platform: "Med MNG", 
     version: "1.1.0", 
     status: "released",
     features: 4
   },
   { 
-    date: "2025-01-20", 
+    date: "2026-01-20", 
     platform: "Pixel Perfect Replica", 
     version: "0.9.0", 
     status: "released",

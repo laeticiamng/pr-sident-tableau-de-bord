@@ -68,7 +68,7 @@ export function OKRProgress({ loading }: OKRProgressProps) {
         <div>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5 text-primary" />
-            OKRs Q1 2025
+            OKRs Q1 2026
           </CardTitle>
           <CardDescription>Objectifs et résultats clés du trimestre</CardDescription>
         </div>

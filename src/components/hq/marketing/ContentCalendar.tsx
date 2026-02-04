@@ -16,12 +16,12 @@ interface ContentItem {
 }
 
 const CONTENT_ITEMS: ContentItem[] = [
-  { id: "1", title: "Article: IA & Bien-être", type: "blog", platform: "EmotionsCare", status: "scheduled", date: "2025-02-04", dayOfWeek: 0 },
-  { id: "2", title: "Post LinkedIn", type: "social", platform: "Growth Copilot", status: "draft", date: "2025-02-04", dayOfWeek: 0 },
-  { id: "3", title: "Newsletter Février", type: "newsletter", platform: "All", status: "scheduled", date: "2025-02-06", dayOfWeek: 2 },
-  { id: "4", title: "Thread Twitter", type: "social", platform: "System Compass", status: "published", date: "2025-02-07", dayOfWeek: 3 },
-  { id: "5", title: "Webinar Q1", type: "webinar", platform: "EmotionsCare", status: "scheduled", date: "2025-02-07", dayOfWeek: 4 },
-  { id: "6", title: "Vidéo Tutoriel", type: "video", platform: "Med MNG", status: "draft", date: "2025-02-08", dayOfWeek: 5 },
+  { id: "1", title: "Article: IA & Bien-être", type: "blog", platform: "EmotionsCare", status: "scheduled", date: "2026-02-04", dayOfWeek: 0 },
+  { id: "2", title: "Post LinkedIn", type: "social", platform: "Growth Copilot", status: "draft", date: "2026-02-04", dayOfWeek: 0 },
+  { id: "3", title: "Newsletter Février", type: "newsletter", platform: "All", status: "scheduled", date: "2026-02-06", dayOfWeek: 2 },
+  { id: "4", title: "Thread Twitter", type: "social", platform: "System Compass", status: "published", date: "2026-02-07", dayOfWeek: 3 },
+  { id: "5", title: "Webinar Q1", type: "webinar", platform: "EmotionsCare", status: "scheduled", date: "2026-02-07", dayOfWeek: 4 },
+  { id: "6", title: "Vidéo Tutoriel", type: "video", platform: "Med MNG", status: "draft", date: "2026-02-08", dayOfWeek: 5 },
 ];
 
 const typeColors: Record<string, string> = {

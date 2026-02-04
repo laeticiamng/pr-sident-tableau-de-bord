@@ -29,7 +29,7 @@ vi.mock("@/lib/mock-data", () => ({
 describe("OKRProgress", () => {
   it("renders without crashing", () => {
     render(<OKRProgress />);
-    expect(screen.getByText("OKRs Q1 2025")).toBeInTheDocument();
+    expect(screen.getByText("OKRs Q1 2026")).toBeInTheDocument();
   });
 
   it("shows loading state when loading prop is true", () => {

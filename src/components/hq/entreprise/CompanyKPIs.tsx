@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const COMPANY_KPIS = {
-  founded: "2024-05-15",
+  founded: "2025-05-15",
   platforms: 5,
   agents: 37,
   totalUsers: 1247,
@@ -23,11 +23,11 @@ const COMPANY_KPIS = {
     progress: 67,
   },
   milestones: [
-    { name: "MVP EmotionsCare", status: "completed", date: "2024-06" },
-    { name: "Lancement Growth Copilot", status: "completed", date: "2024-09" },
-    { name: "1000 utilisateurs", status: "completed", date: "2024-12" },
-    { name: "Break-even", status: "in_progress", date: "2025-Q2" },
-    { name: "Série A", status: "planned", date: "2025-Q4" },
+    { name: "MVP EmotionsCare", status: "completed", date: "2025-06" },
+    { name: "Lancement Growth Copilot", status: "completed", date: "2025-09" },
+    { name: "1000 utilisateurs", status: "completed", date: "2025-12" },
+    { name: "Break-even", status: "in_progress", date: "2026-Q2" },
+    { name: "Série A", status: "planned", date: "2026-Q4" },
   ],
 };
 
