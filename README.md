@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.1
+# EMOTIONSCARE SASU — Siège Social Numérique v3.2
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -11,8 +11,9 @@
 [![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-100%25%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v10%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
+[![Widgets](https://img.shields.io/badge/Widgets-85%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
@@ -242,6 +243,19 @@ npm run test
 | Historique | 3 | 5 | ✅ |
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v3.2 (Audit v10)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Marketing | CampaignPerformance + PlatformTrafficWidget intégrés |
+| 2 | Finance | CashFlowForecast (prévision trésorerie) intégré |
+| 3 | Diagnostics | SystemAlerts widget intégré |
+| 4 | Ventes | DealVelocityWidget intégré |
+| 5 | Entreprise | StrategicGoals widget intégré |
+| 6 | Conformité | ComplianceAlerts widget intégré |
+| 7 | Réunions | ActionItems widget intégré |
+| 8 | Engineering | OpenPRsWidget intégré |
+| 9 | Support | TicketDistributionChart intégré |
 
 ### Enrichissements v3.0 (Audit Final)
 | # | Module | Enrichissement |

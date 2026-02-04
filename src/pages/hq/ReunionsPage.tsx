@@ -17,6 +17,7 @@ import { useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
 import { UpcomingMeetings } from "@/components/hq/meetings/UpcomingMeetings";
 import { MeetingNotes } from "@/components/hq/meetings/MeetingNotes";
 import { ParticipationIndicator } from "@/components/hq/meetings/ParticipationIndicator";
+import { ActionItems } from "@/components/hq/meetings/ActionItems";
 
 const meetingTypes = [
   { 
@@ -108,6 +109,9 @@ export default function ReunionsPage() {
 
       {/* Participation Indicator */}
       <ParticipationIndicator />
+
+      {/* Action Items */}
+      <ActionItems />
 
       {/* Meeting Notes Archive */}
       <MeetingNotes />

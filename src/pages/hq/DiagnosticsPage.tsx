@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { SystemPerformance } from "@/components/hq/diagnostics/SystemPerformance";
 import { LiveActivityStream } from "@/components/hq/diagnostics/LiveActivityStream";
+import { SystemAlerts } from "@/components/hq/diagnostics/SystemAlerts";
 
 interface HealthCheck {
   name: string;
@@ -432,6 +433,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* System Alerts - Enhanced */}
+      <SystemAlerts />
 
       {/* Live Activity Stream */}
       <LiveActivityStream />

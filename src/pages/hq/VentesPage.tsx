@@ -19,6 +19,7 @@ import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
 import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
 import { TopClients } from "@/components/hq/sales/TopClients";
 import { WinLossWidget } from "@/components/hq/sales/WinLossWidget";
+import { DealVelocityWidget } from "@/components/hq/sales/DealVelocityWidget";
 
 export default function VentesPage() {
   const kpis = [
@@ -87,10 +88,11 @@ export default function VentesPage() {
         <ConversionFunnelChart />
       </div>
 
-      {/* Win/Loss & Details */}
+      {/* Win/Loss, Deal Velocity & Details */}
       <div className="grid gap-6 lg:grid-cols-3">
         <WinLossWidget />
-        <div className="lg:col-span-2">
+        <DealVelocityWidget />
+        <div className="lg:col-span-1">
         {/* Recent Deals */}
         <Card className="card-executive">
           <CardHeader>

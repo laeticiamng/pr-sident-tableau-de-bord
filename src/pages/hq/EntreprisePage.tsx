@@ -3,6 +3,7 @@ import { COMPANY_PROFILE } from "@/lib/constants";
 import { Building2, FileText, MapPin, Calendar, User, CreditCard } from "lucide-react";
 import { CompanyKPIs } from "@/components/hq/entreprise/CompanyKPIs";
 import { QuarterlyObjectives } from "@/components/hq/entreprise/QuarterlyObjectives";
+import { StrategicGoals } from "@/components/hq/entreprise/StrategicGoals";
 
 export default function EntreprisePage() {
   return (
@@ -120,6 +121,9 @@ export default function EntreprisePage() {
         <CompanyKPIs />
         <QuarterlyObjectives />
       </div>
+
+      {/* Strategic Goals */}
+      <StrategicGoals />
     </div>
   );
 }
