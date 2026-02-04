@@ -81,11 +81,11 @@ function MetricCard({ title, value, change, icon, loading }: MetricCardProps) {
 
 // Données de cohortes simulées
 const COHORT_DATA = [
-  { month: "Sep 2024", users: 120, retention: [100, 85, 72, 65, 58] },
-  { month: "Oct 2024", users: 145, retention: [100, 88, 75, 68] },
-  { month: "Nov 2024", users: 168, retention: [100, 82, 70] },
-  { month: "Déc 2024", users: 195, retention: [100, 86] },
-  { month: "Jan 2025", users: 220, retention: [100] },
+  { month: "Sep 2025", users: 120, retention: [100, 85, 72, 65, 58] },
+  { month: "Oct 2025", users: 145, retention: [100, 88, 75, 68] },
+  { month: "Nov 2025", users: 168, retention: [100, 82, 70] },
+  { month: "Déc 2025", users: 195, retention: [100, 86] },
+  { month: "Jan 2026", users: 220, retention: [100] },
 ];
 
 // Données de funnel
