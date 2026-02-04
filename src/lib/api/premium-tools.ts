@@ -126,6 +126,56 @@ export async function monitorPlatforms(platformKey?: string): Promise<PlatformMo
   return data;
 }
 
+// ========== Platform Analysis API (NEW) ==========
+export interface PlatformAnalysisResult {
+  success: boolean;
+  error?: string;
+  platform?: {
+    key: string;
+    name: string;
+    liveUrl: string;
+    repo: string;
+  };
+  analyzed_at?: string;
+  website?: {
+    scraped: boolean;
+    links_count: number;
+    content_length: number;
+    error?: string;
+  };
+  github?: {
+    stars: number;
+    forks: number;
+    languages: string[];
+    issues_open: number;
+    issues_closed: number;
+    prs_open: number;
+    prs_merged: number;
+    last_push: string;
+    recent_commits: Array<{
+      sha: string;
+      message: string;
+      date: string;
+      author: string;
+    }>;
+  };
+  analysis?: string;
+}
+
+export async function analyzePlatform(
+  platformKey: string,
+  analysisType: "full" | "quick" = "full"
+): Promise<PlatformAnalysisResult> {
+  const { data, error } = await supabase.functions.invoke("platform-analysis", {
+    body: { platform_key: platformKey, analysis_type: analysisType },
+  });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+  return data;
+}
+
 // ========== Convenience functions for HQ ==========
 
 /**
@@ -167,4 +217,11 @@ export async function technicalAudit(url: string): Promise<WebScraperResult> {
  */
 export async function mapCompetitorSite(url: string): Promise<WebScraperResult> {
   return webScraper(url, "map", { limit: 200 });
+}
+
+/**
+ * Lance une analyse IA complète d'une plateforme
+ */
+export async function runPlatformAudit(platformKey: string): Promise<PlatformAnalysisResult> {
+  return analyzePlatform(platformKey, "full");
 }

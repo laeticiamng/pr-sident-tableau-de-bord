@@ -11,6 +11,7 @@
 | `executive-run` | `/functions/v1/executive-run` | POST | JWT requis | Exécution des runs IA structurés |
 | `github-sync` | `/functions/v1/github-sync` | POST | JWT requis | Synchronisation données GitHub |
 | `intelligence-search` | `/functions/v1/intelligence-search` | POST | JWT requis | Recherche via Perplexity AI |
+| `platform-analysis` | `/functions/v1/platform-analysis` | POST | JWT requis | Analyse IA complète d'une plateforme |
 | `platform-monitor` | `/functions/v1/platform-monitor` | POST | JWT requis | Monitoring uptime des plateformes |
 | `scheduled-runs` | `/functions/v1/scheduled-runs` | POST | CRON interne | Exécution planifiée automatique |
 | `stripe-kpis` | `/functions/v1/stripe-kpis` | GET/POST | JWT requis | Récupération KPIs Stripe |
@@ -332,10 +333,88 @@ Chaque appel est loggé avec :
 | executive-run | 30s | Réponse partielle avec données disponibles |
 | github-sync | 20s | Cache des dernières données |
 | intelligence-search | 15s | Message "Recherche indisponible" |
+| platform-analysis | 60s | Analyse partielle (GitHub seul si scrape échoue) |
 | platform-monitor | 10s | Status "unknown" |
 | stripe-kpis | 10s | Données mockées si dev |
 | web-scraper | 30s | Erreur explicite |
 
 ---
 
-*Dernière mise à jour: 03/02/2026 — v1.0*
+## 9. platform-analysis
+
+### Description
+Analyse IA complète d'une plateforme combinant scraping du site web, données GitHub et génération de rapport par IA.
+
+### Endpoint
+```
+POST /functions/v1/platform-analysis
+Authorization: Bearer <JWT>
+Content-Type: application/json
+```
+
+### Payload
+```typescript
+{
+  platform_key: string;           // Clé de la plateforme (emotionscare, med-mng, etc.)
+  analysis_type?: "full" | "quick"; // Type d'analyse (défaut: full)
+}
+```
+
+### Sources de données
+- **Site web** : Scraping via Firecrawl (markdown + liens)
+- **GitHub** : Commits, issues, PRs, langages, README
+- **IA** : Gemini 3 Flash pour génération du rapport
+
+### Réponse
+```typescript
+{
+  success: boolean;
+  platform: {
+    key: string;
+    name: string;
+    liveUrl: string;
+    repo: string;
+  };
+  analyzed_at: string;
+  website: {
+    scraped: boolean;
+    links_count: number;
+    content_length: number;
+    error?: string;
+  };
+  github: {
+    stars: number;
+    forks: number;
+    languages: string[];
+    issues_open: number;
+    issues_closed: number;
+    prs_open: number;
+    prs_merged: number;
+    last_push: string;
+    recent_commits: Array<{
+      sha: string;
+      message: string;
+      date: string;
+      author: string;
+    }>;
+  };
+  analysis: string;  // Rapport Markdown généré par IA
+}
+```
+
+### Erreurs
+| Code | Description |
+|------|-------------|
+| 400 | platform_key manquant ou invalide |
+| 401 | Token JWT invalide |
+| 403 | Rôle owner requis |
+| 500 | Erreur interne |
+
+### Secrets requis
+- `LOVABLE_API_KEY` (obligatoire)
+- `GITHUB_TOKEN` (obligatoire)
+- `FIRECRAWL_API_KEY` (optionnel - analyse GitHub seul si absent)
+
+---
+
+*Dernière mise à jour: 04/02/2026 — v1.1*
