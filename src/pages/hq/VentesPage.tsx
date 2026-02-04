@@ -88,11 +88,14 @@ export default function VentesPage() {
         <ConversionFunnelChart />
       </div>
 
-      {/* Win/Loss, Deal Velocity & Details */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      {/* Win/Loss & Deal Velocity */}
+      <div className="grid gap-6 lg:grid-cols-2">
         <WinLossWidget />
         <DealVelocityWidget />
-        <div className="lg:col-span-1">
+      </div>
+
+      {/* Opportunités & Activités */}
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Deals */}
         <Card className="card-executive">
           <CardHeader>
@@ -157,7 +160,6 @@ export default function VentesPage() {
             </div>
           </CardContent>
         </Card>
-        </div>
       </div>
 
       {/* Top Clients */}
