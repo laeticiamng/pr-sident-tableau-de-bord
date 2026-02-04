@@ -114,7 +114,7 @@ function setCachedData<T>(key: string, data: T[]): void {
   }
 }
 
-// Hook: Fetch platforms from RPC
+// Hook: Fetch platforms from RPC with auto-refresh
 export function usePlatforms() {
   return useQuery({
     queryKey: ["hq", "platforms"],
@@ -129,7 +129,9 @@ export function usePlatforms() {
       
       return (data as Platform[]) || getMockPlatforms();
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5, // 5 minutes - data considered fresh
+    refetchInterval: 1000 * 60 * 60, // 1 hour - auto-refresh uptime data
+    refetchIntervalInBackground: false, // Only refresh when tab is active
   });
 }
 
