@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.9
+# EMOTIONSCARE SASU — Siège Social Numérique v4.0
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -8,12 +8,12 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 [![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
 [![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
-[![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
+[![Tests](https://img.shields.io/badge/Tests-126%2F126%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Hardened-green)](https://github.com/laeticiamng/hq-emotionscare)
-[![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-v19%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Coverage](https://img.shields.io/badge/Coverage-13%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v20%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Agents](https://img.shields.io/badge/Agents%20IA-39%20employés-gold)](https://github.com/laeticiamng/hq-emotionscare)
+[![Agents](https://img.shields.io/badge/Agents%20IA-39%20(2%20Dir%20%2B%2037%20Dept)-gold)](https://github.com/laeticiamng/hq-emotionscare)
 [![Edge Functions](https://img.shields.io/badge/Edge%20Functions-9%20deployed-blue)](https://github.com/laeticiamng/hq-emotionscare)
 [![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits%20|%20912%20tests-181717?logo=github)](https://github.com/laeticiamng)
 
@@ -221,10 +221,10 @@ npm run test     # Tests Vitest
 npm run test
 ```
 
-**Résultats actuels** : 100 tests passants dans 12 fichiers de test
+**Résultats actuels** : 128 tests passants dans 13 fichiers de test
 - Hooks : useAuth, useStripeKPIs, usePermissions
 - Composants : CommandPalette, ExecutiveCockpit, OKRProgress, ReleaseChecklist
-- Logique : run-engine, scheduler, stripe-kpis
+- Logique : run-engine, scheduler, stripe-kpis, agent-profiles
 - Intégration : components.test
 
 ### Couverture des modules
@@ -232,6 +232,7 @@ npm run test
 |--------|------------|-------|--------|
 | Auth | 3 | 5 | ✅ |
 | HQ Core | 28 | 45 | ✅ |
+| Agent Profiles | 1 | 28 | ✅ |
 | Finance | 8 | 16 | ✅ |
 | Permissions | 6 | 10 | ✅ |
 | Produit | 4 | 8 | ✅ |
@@ -248,6 +249,15 @@ npm run test
 | Historique | 3 | 5 | ✅ |
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v4.0 (Audit v20)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Équipe Executive | Nouvelle structure : 2 Direction + 37 agents dans 11 départements |
+| 2 | agent-profiles.ts | Refonte complète avec 39 agents et DEPARTMENTS constant |
+| 3 | Tests | 28 nouveaux tests pour agent-profiles.ts (validateAgentStructure) |
+| 4 | constants.ts | Growth Copilot mis à jour (11 modules, 64 tests) |
+| 5 | Documentation | Cohérence 100% README/code/backend validée |
 
 ### Enrichissements v3.9 (Audit v19)
 | # | Module | Enrichissement |
