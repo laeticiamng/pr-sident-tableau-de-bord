@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Users, Bot, Power, RefreshCw, Play, Sparkles, Zap, Crown, Briefcase } from "lucide-react";
 import { useAgents } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
-import { AGENT_PROFILES, DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
+import { DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
 import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
 
 const departmentIcons: Record<string, typeof Users> = {
@@ -58,9 +58,12 @@ export default function EquipeExecutivePage() {
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-headline-1 mb-2">Équipe Executive</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-headline-1">Workforce IA — Growth Copilot</h1>
+            <Badge variant="gold" className="text-xs">Vue lecture</Badge>
+          </div>
           <p className="text-muted-foreground text-lg">
-            {agentStats.total} employés IA : 2 Direction (CGO/QCO) + {agentStats.departmentAgents} agents répartis dans {agentStats.totalDepartments} départements.
+            {agentStats.total} employés IA de la plateforme Growth Copilot : 2 Direction (CGO/QCO) + {agentStats.departmentAgents} agents dans {agentStats.totalDepartments} départements.
           </p>
         </div>
         <Button variant="outline" onClick={() => refetch()}>
