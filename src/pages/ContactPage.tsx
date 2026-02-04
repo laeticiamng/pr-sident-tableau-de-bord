@@ -3,26 +3,61 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, MapPin, Building2 } from "lucide-react";
+import { Mail, MapPin, Building2, Clock, Phone, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { contactSchema, sanitizeHtml } from "@/lib/validation";
+import { z } from "zod";
+
+type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors },
+    reset 
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      subject: "",
+      message: "",
+    }
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     
-    // Simulated submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Sanitize all inputs before processing
+    const sanitizedData = {
+      name: sanitizeHtml(data.name),
+      email: sanitizeHtml(data.email),
+      phone: data.phone ? sanitizeHtml(data.phone) : undefined,
+      subject: sanitizeHtml(data.subject),
+      message: sanitizeHtml(data.message),
+    };
     
-    toast.success("Message envoyé !", {
-      description: "Nous vous répondrons dans les meilleurs délais.",
+    console.log("[Contact] Form submitted:", { 
+      ...sanitizedData, 
+      timestamp: new Date().toISOString() 
     });
     
+    // Simulated submission with realistic delay
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    
+    toast.success("Message envoyé avec succès !", {
+      description: "Nous vous répondrons sous 24 à 48 heures ouvrées.",
+    });
+    
+    reset();
     setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
   };
 
   return (
@@ -51,50 +86,76 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="card-executive p-8 md:p-10">
               <h2 className="text-2xl font-semibold mb-6">Envoyez-nous un message</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nom complet *</Label>
+                  <Input
+                    id="name"
+                    placeholder="Votre nom complet"
+                    {...register("name")}
+                    aria-invalid={!!errors.name}
+                    className={errors.name ? "border-destructive" : ""}
+                  />
+                  {errors.name && (
+                    <p className="text-xs text-destructive">{errors.name.message}</p>
+                  )}
+                </div>
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">Prénom</Label>
+                    <Label htmlFor="email">Email *</Label>
                     <Input
-                      id="firstName"
-                      placeholder="Votre prénom"
-                      required
+                      id="email"
+                      type="email"
+                      placeholder="votre@email.com"
+                      {...register("email")}
+                      aria-invalid={!!errors.email}
+                      className={errors.email ? "border-destructive" : ""}
                     />
+                    {errors.email && (
+                      <p className="text-xs text-destructive">{errors.email.message}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Nom</Label>
+                    <Label htmlFor="phone">Téléphone</Label>
                     <Input
-                      id="lastName"
-                      placeholder="Votre nom"
-                      required
+                      id="phone"
+                      type="tel"
+                      placeholder="+33 6 12 34 56 78"
+                      {...register("phone")}
+                      aria-invalid={!!errors.phone}
+                      className={errors.phone ? "border-destructive" : ""}
                     />
+                    {errors.phone && (
+                      <p className="text-xs text-destructive">{errors.phone.message}</p>
+                    )}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="votre@email.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Sujet</Label>
+                  <Label htmlFor="subject">Sujet *</Label>
                   <Input
                     id="subject"
                     placeholder="Objet de votre message"
-                    required
+                    {...register("subject")}
+                    aria-invalid={!!errors.subject}
+                    className={errors.subject ? "border-destructive" : ""}
                   />
+                  {errors.subject && (
+                    <p className="text-xs text-destructive">{errors.subject.message}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
+                  <Label htmlFor="message">Message * (min. 10 caractères)</Label>
                   <Textarea
                     id="message"
-                    placeholder="Décrivez votre demande..."
+                    placeholder="Décrivez votre demande en détail..."
                     rows={5}
-                    required
+                    {...register("message")}
+                    aria-invalid={!!errors.message}
+                    className={errors.message ? "border-destructive" : ""}
                   />
+                  {errors.message && (
+                    <p className="text-xs text-destructive">{errors.message.message}</p>
+                  )}
                 </div>
                 <Button
                   type="submit"
@@ -103,8 +164,18 @@ export default function ContactPage() {
                   className="w-full"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    "Envoyer le message"
+                  )}
                 </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  * Champs obligatoires. Vos données sont traitées conformément à notre politique de confidentialité.
+                </p>
               </form>
             </div>
 
@@ -155,11 +226,26 @@ export default function ContactPage() {
                 </div>
               </div>
 
+              {/* Horaires d'ouverture */}
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                  <Clock className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Horaires</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Lun - Ven : 9h00 - 18h00
+                    <br />
+                    Réponse sous 24-48h ouvrées
+                  </p>
+                </div>
+              </div>
+
               {/* Map Placeholder */}
-              <div className="mt-4 rounded-xl bg-secondary/50 h-48 flex items-center justify-center">
-                <p className="text-muted-foreground text-sm">
-                  📍 Amiens, Hauts-de-France
-                </p>
+              <div className="mt-4 rounded-xl bg-gradient-to-br from-accent/5 to-transparent border h-48 flex flex-col items-center justify-center">
+                <div className="text-4xl mb-2">📍</div>
+                <p className="text-foreground font-medium">Amiens, Hauts-de-France</p>
+                <p className="text-muted-foreground text-sm">Préfecture de la Somme</p>
               </div>
             </div>
           </div>
