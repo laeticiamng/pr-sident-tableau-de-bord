@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.7
+# EMOTIONSCARE SASU — Siège Social Numérique v3.8
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -11,9 +11,9 @@
 [![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-v17%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v18%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Widgets](https://img.shields.io/badge/Widgets-100%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
+[![Agents](https://img.shields.io/badge/Agents%20IA-39%20employés-gold)](https://github.com/laeticiamng/hq-emotionscare)
 [![Edge Functions](https://img.shields.io/badge/Edge%20Functions-9%20deployed-blue)](https://github.com/laeticiamng/hq-emotionscare)
 [![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits%20|%20912%20tests-181717?logo=github)](https://github.com/laeticiamng)
 
@@ -248,6 +248,15 @@ npm run test
 | Historique | 3 | 5 | ✅ |
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v3.8 (Audit v18)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Agents IA | Extension à 39 employés IA (37 départements + 2 Direction CGO/QCO) |
+| 2 | RLS | Correction des politiques RESTRICTIVE → PERMISSIVE |
+| 3 | Growth Copilot | Description mise à jour avec structure 39 agents |
+| 4 | agent-profiles.ts | Ajout catégorie "direction" et 16 agents département |
+| 5 | Documentation | Cohérence 100% README/code/backend validée |
 
 ### Enrichissements v3.5 (Audit v13)
 | # | Module | Enrichissement |
