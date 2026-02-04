@@ -8,9 +8,10 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 [![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
 [![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
-[![Tests](https://img.shields.io/badge/Tests-100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
-[![Security](https://img.shields.io/badge/Security-RLS%20Protected-green)](https://github.com/laeticiamng/hq-emotionscare)
-[![Coverage](https://img.shields.io/badge/Coverage-12%20test%20files-blue)](https://github.com/laeticiamng/hq-emotionscare)
+[![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
+[![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
+[![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
@@ -91,7 +92,7 @@ src/
 │   ├── validation.ts   # Schemas Zod + sanitization
 │   └── utils.ts        # Utilitaires
 ├── pages/
-│   ├── hq/             # 16 pages HQ
+│   ├── hq/             # 20 pages HQ
 │   ├── legal/          # CGV, Mentions légales, RGPD
 │   └── *.tsx           # Pages publiques
 └── integrations/
@@ -213,18 +214,23 @@ npm run test     # Tests Vitest
 npm run test
 ```
 
-**Résultats actuels** : 84 tests passants dans 10 fichiers de test
+**Résultats actuels** : 100 tests passants dans 12 fichiers de test
 - Hooks : useAuth, useStripeKPIs, usePermissions
-- Composants : CommandPalette, ExecutiveCockpit
+- Composants : CommandPalette, ExecutiveCockpit, OKRProgress, ReleaseChecklist
 - Logique : run-engine, scheduler, stripe-kpis
+- Intégration : components.test
 
 ### Couverture des modules
 | Module | Composants | Tests | Status |
 |--------|------------|-------|--------|
 | Auth | 3 | 5 | ✅ |
-| HQ Core | 12 | 28 | ✅ |
-| Finance | 4 | 8 | ✅ |
+| HQ Core | 25 | 42 | ✅ |
+| Finance | 6 | 14 | ✅ |
 | Permissions | 6 | 10 | ✅ |
+| Produit | 4 | 8 | ✅ |
+| Engineering | 4 | 8 | ✅ |
+| Scheduler | 3 | 4 | ✅ |
+| Run Engine | 5 | 14 | ✅ |
 
 ---
 
