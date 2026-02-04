@@ -23,6 +23,7 @@ import { AIInsightsWidget } from "@/components/hq/AIInsightsWidget";
 import { AutopilotControl } from "@/components/hq/AutopilotControl";
 import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
 import { RecentActivityFeed } from "@/components/hq/briefing/RecentActivityFeed";
+import { QuickMetricsBar } from "@/components/hq/briefing/QuickMetricsBar";
 
 export default function BriefingRoom() {
   const { data: platforms } = usePlatforms();
@@ -84,6 +85,9 @@ export default function BriefingRoom() {
           </Button>
         </div>
       </div>
+
+      {/* Quick Metrics Bar */}
+      <QuickMetricsBar />
 
       {/* Autopilot Control */}
       <AutopilotControl compact />

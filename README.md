@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.2
+# EMOTIONSCARE SASU — Siège Social Numérique v3.3
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -11,9 +11,9 @@
 [![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-v10%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v11%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Widgets](https://img.shields.io/badge/Widgets-85%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
+[![Widgets](https://img.shields.io/badge/Widgets-90%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
@@ -243,6 +243,14 @@ npm run test
 | Historique | 3 | 5 | ✅ |
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v3.3 (Audit v11)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Briefing Room | QuickMetricsBar intégré (MRR, Utilisateurs, Uptime, Sécurité) |
+| 2 | Engineering | CodeCoverageWidget intégré (couverture par plateforme) |
+| 3 | RLS | Correction vulnérabilités sur user_roles et role_permissions |
+| 4 | Security | Scan complet - 1 warning restant (Leaked Password Protection) |
 
 ### Enrichissements v3.2 (Audit v10)
 | # | Module | Enrichissement |

@@ -20,6 +20,7 @@ import { ReleaseChecklist } from "@/components/hq/engineering/ReleaseChecklist";
 import { PullRequestsWidget } from "@/components/hq/engineering/PullRequestsWidget";
 import { DeploymentStatus } from "@/components/hq/engineering/DeploymentStatus";
 import { OpenPRsWidget } from "@/components/hq/engineering/OpenPRsWidget";
+import { CodeCoverageWidget } from "@/components/hq/engineering/CodeCoverageWidget";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
@@ -288,6 +289,9 @@ export default function EngineeringPage() {
 
       {/* Open PRs Widget - Detailed */}
       <OpenPRsWidget />
+
+      {/* Code Coverage Widget */}
+      <CodeCoverageWidget />
 
       {/* Release Checklist */}
       <ReleaseChecklist 
