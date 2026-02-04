@@ -14,7 +14,7 @@
 [![Audit](https://img.shields.io/badge/Audit-v14%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
 [![Widgets](https://img.shields.io/badge/Widgets-100%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
-[![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits-181717?logo=github)](https://github.com/laeticiamng)
+[![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits%20|%20912%20tests-181717?logo=github)](https://github.com/laeticiamng)
 
 ---
 
