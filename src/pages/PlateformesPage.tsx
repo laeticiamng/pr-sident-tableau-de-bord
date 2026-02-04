@@ -15,9 +15,12 @@ import {
   Database,
   Cpu,
   GitBranch,
+  GitCommit,
   Sparkles,
   ArrowRight,
-  Layers
+  Layers,
+  TestTube2,
+  Calendar
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -79,8 +82,10 @@ export default function PlateformesPage() {
       tables: acc.tables + p.stats.tables,
       functions: acc.functions + p.stats.edgeFunctions,
       branches: acc.branches + p.stats.branches,
+      commits: acc.commits + p.stats.commits,
+      tests: acc.tests + p.stats.tests,
     }),
-    { modules: 0, tables: 0, functions: 0, branches: 0 }
+    { modules: 0, tables: 0, functions: 0, branches: 0, commits: 0, tests: 0 }
   );
 
   return (
@@ -116,9 +121,9 @@ export default function PlateformesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
               {[
                 { value: "5", label: "Plateformes" },
-                { value: `${totals.modules}`, label: "Modules" },
+                { value: `${totals.commits.toLocaleString()}`, label: "Commits" },
+                { value: `${totals.tests.toLocaleString()}`, label: "Tests" },
                 { value: `${totals.tables}`, label: "Tables" },
-                { value: `${totals.functions}`, label: "Functions" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -292,10 +297,10 @@ export default function PlateformesPage() {
                     <div className={cn(!isEven && "md:order-1")}>
                       <div className="grid grid-cols-2 gap-4">
                         {[
-                          { icon: Cpu, value: platform.stats.modules, label: "Modules" },
+                          { icon: GitCommit, value: platform.stats.commits.toLocaleString(), label: "Commits" },
                           { icon: Database, value: platform.stats.tables, label: "Tables DB" },
-                          { icon: Sparkles, value: platform.stats.edgeFunctions, label: "Edge Functions" },
-                          { icon: GitBranch, value: platform.stats.branches, label: "Git Branches" },
+                          { icon: TestTube2, value: platform.stats.tests.toLocaleString(), label: "Tests" },
+                          { icon: GitBranch, value: platform.stats.branches, label: "Branches" },
                         ].map((stat) => (
                           <div 
                             key={stat.label}
@@ -309,7 +314,7 @@ export default function PlateformesPage() {
                               isHovered ? platformAccents[platform.key] : "text-muted-foreground"
                             )} />
                             <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-                              {stat.value}
+                              {stat.value || "—"}
                             </div>
                             <div className="text-xs text-muted-foreground uppercase tracking-wider">
                               {stat.label}
@@ -317,6 +322,14 @@ export default function PlateformesPage() {
                           </div>
                         ))}
                       </div>
+                      
+                      {/* Last commit info */}
+                      {platform.lastCommit && (
+                        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="w-4 h-4" />
+                          <span>Dernière MAJ : {new Date(platform.lastCommit).toLocaleDateString('fr-FR')}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -353,9 +366,9 @@ export default function PlateformesPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { value: "5", label: "Plateformes Actives", icon: Layers },
-                { value: `~${Math.round(totals.tables / 100) * 100}`, label: "Tables Supabase", icon: Database },
-                { value: `~${Math.round(totals.functions / 10) * 10}`, label: "Edge Functions", icon: Sparkles },
-                { value: `${totals.modules}`, label: "Modules Métier", icon: Cpu },
+                { value: `${(totals.commits / 1000).toFixed(1)}K`, label: "Commits GitHub", icon: GitCommit },
+                { value: `${totals.tests.toLocaleString()}`, label: "Tests Passants", icon: TestTube2 },
+                { value: `${totals.tables}`, label: "Tables Supabase", icon: Database },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}

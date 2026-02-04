@@ -1,5 +1,5 @@
 // Constantes pour les 5 plateformes managées (immuable)
-// Données issues des README GitHub - Février 2026
+// Données synchronisées depuis GitHub - 4 Février 2026
 export const MANAGED_PLATFORMS = [
   {
     key: "emotionscare",
@@ -10,9 +10,10 @@ export const MANAGED_PLATFORMS = [
     github: "https://github.com/laeticiamng/emotionscare",
     liveUrl: "https://emotionscare.com",
     color: "bg-status-green",
-    stats: { modules: 33, tables: 723, edgeFunctions: 261, branches: 635 },
+    stats: { modules: 33, tables: 723, edgeFunctions: 261, branches: 635, commits: 7723, tests: 194 },
     features: ["Scan émotionnel IA", "Coach IA Nyvée", "Musicothérapie Suno", "Dashboard B2B RH", "Gamification XP"],
     status: "production",
+    lastCommit: "2026-02-03",
   },
   {
     key: "pixel-perfect-replica",
@@ -23,22 +24,24 @@ export const MANAGED_PLATFORMS = [
     github: "https://github.com/laeticiamng/pixel-perfect-replica",
     liveUrl: "https://pixel-perfect-clone-6574.lovable.app",
     color: "bg-status-amber",
-    stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 2 },
+    stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 2, commits: 0, tests: 0 },
     features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
     status: "prototype",
+    lastCommit: null,
   },
   {
     key: "system-compass",
     name: "System Compass",
     shortDescription: "Intelligence relocalisation internationale",
-    description: "Plateforme d'aide à la décision pour relocalisation internationale (B2C expats/nomades, B2B entrepreneurs/institutions). Exit Keys personnalisées, analyse 50+ pays, simulation fiscale, gamification. 718 tests, 103 routes lazy-loaded.",
+    description: "Plateforme d'aide à la décision pour relocalisation internationale (B2C expats/nomades, B2B entrepreneurs/institutions). Exit Keys personnalisées, analyse 50+ pays, simulation fiscale, gamification. 718 tests passants, 103 routes lazy-loaded, 57 tables avec RLS.",
     tagline: "Navigue les systèmes-pays avec intelligence",
     github: "https://github.com/laeticiamng/system-compass",
     liveUrl: "https://world-alignment.lovable.app",
     color: "bg-primary",
-    stats: { modules: 20, tables: 45, edgeFunctions: 25, branches: 1 },
+    stats: { modules: 20, tables: 57, edgeFunctions: 25, branches: 1, commits: 1272, tests: 718 },
     features: ["Exit Keys personnalisées", "Profils 50+ pays", "Simulateur fiscal", "TraceOS audit", "Life Game gamifié"],
     status: "production",
+    lastCommit: "2026-02-03",
   },
   {
     key: "growth-copilot",
@@ -49,9 +52,10 @@ export const MANAGED_PLATFORMS = [
     github: "https://github.com/laeticiamng/growth-copilot",
     liveUrl: "https://agent-growth-automator.com",
     color: "bg-accent",
-    stats: { modules: 9, tables: 30, edgeFunctions: 25, branches: 3 },
+    stats: { modules: 9, tables: 30, edgeFunctions: 25, branches: 3, commits: 0, tests: 0 },
     features: ["37 agents IA", "9 départements", "Intégrations Google/Meta", "Voice Commands", "Approval Gate"],
     status: "production",
+    lastCommit: null,
   },
   {
     key: "med-mng",
@@ -62,9 +66,10 @@ export const MANAGED_PLATFORMS = [
     github: "https://github.com/laeticiamng/med-mng",
     liveUrl: "https://medmng.com",
     color: "bg-destructive",
-    stats: { modules: 15, tables: 50, edgeFunctions: 30, branches: 238 },
+    stats: { modules: 15, tables: 50, edgeFunctions: 30, branches: 238, commits: 4522, tests: 0 },
     features: ["Medical AI Copilot", "Génération musicale IA", "Streaming SSE", "Mode recherche Perplexity", "PWA offline"],
     status: "production",
+    lastCommit: "2026-02-03",
   },
 ] as const;
 
