@@ -75,7 +75,7 @@ const platformBorders: Record<string, string> = {
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
 
-  // Calculate totals
+  // Calculate totals from real GitHub data
   const totals = MANAGED_PLATFORMS.reduce(
     (acc, p) => ({
       modules: acc.modules + p.stats.modules,
@@ -87,6 +87,12 @@ export default function PlateformesPage() {
     }),
     { modules: 0, tables: 0, functions: 0, branches: 0, commits: 0, tests: 0 }
   );
+
+  // Format large numbers
+  const formatNumber = (num: number) => {
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toLocaleString();
+  };
 
   return (
     <div className="flex flex-col">
@@ -117,13 +123,14 @@ export default function PlateformesPage() {
               Chaque plateforme excelle dans son domaine.
             </p>
 
-            {/* Summary Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            {/* Summary Stats - Real GitHub Data */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
                 { value: "5", label: "Plateformes" },
-                { value: `${totals.commits.toLocaleString()}`, label: "Commits" },
-                { value: `${totals.tests.toLocaleString()}`, label: "Tests" },
-                { value: `${totals.tables}`, label: "Tables" },
+                { value: formatNumber(totals.commits), label: "Commits" },
+                { value: formatNumber(totals.tests), label: "Tests" },
+                { value: `${totals.tables}`, label: "Tables DB" },
+                { value: `${totals.functions}`, label: "Edge Functions" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -293,24 +300,26 @@ export default function PlateformesPage() {
                       </div>
                     </div>
 
-                    {/* Stats Side */}
+                    {/* Stats Side - Real GitHub Data */}
                     <div className={cn(!isEven && "md:order-1")}>
                       <div className="grid grid-cols-2 gap-4">
                         {[
-                          { icon: GitCommit, value: platform.stats.commits.toLocaleString(), label: "Commits" },
+                          { icon: GitCommit, value: formatNumber(platform.stats.commits), label: "Commits" },
                           { icon: Database, value: platform.stats.tables, label: "Tables DB" },
-                          { icon: TestTube2, value: platform.stats.tests.toLocaleString(), label: "Tests" },
+                          { icon: TestTube2, value: formatNumber(platform.stats.tests), label: "Tests" },
                           { icon: GitBranch, value: platform.stats.branches, label: "Branches" },
+                          { icon: Cpu, value: platform.stats.edgeFunctions, label: "Edge Fns" },
+                          { icon: Layers, value: platform.stats.modules, label: "Modules" },
                         ].map((stat) => (
                           <div 
                             key={stat.label}
                             className={cn(
-                              "p-6 rounded-2xl bg-secondary/30 backdrop-blur-sm border border-border/50 text-center transition-all duration-500",
+                              "p-5 rounded-2xl bg-secondary/30 backdrop-blur-sm border border-border/50 text-center transition-all duration-500",
                               isHovered && "border-opacity-100 shadow-sm"
                             )}
                           >
                             <stat.icon className={cn(
-                              "w-5 h-5 mx-auto mb-3 transition-colors duration-300",
+                              "w-5 h-5 mx-auto mb-2 transition-colors duration-300",
                               isHovered ? platformAccents[platform.key] : "text-muted-foreground"
                             )} />
                             <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
@@ -362,21 +371,22 @@ export default function PlateformesPage() {
               les mêmes standards de sécurité et la même rigueur d'exécution.
             </p>
 
-            {/* Final Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {/* Final Stats Grid - Real GitHub Data */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
               {[
                 { value: "5", label: "Plateformes Actives", icon: Layers },
-                { value: `${(totals.commits / 1000).toFixed(1)}K`, label: "Commits GitHub", icon: GitCommit },
-                { value: `${totals.tests.toLocaleString()}`, label: "Tests Passants", icon: TestTube2 },
-                { value: `${totals.tables}`, label: "Tables Supabase", icon: Database },
+                { value: formatNumber(totals.commits), label: "Commits GitHub", icon: GitCommit },
+                { value: formatNumber(totals.tests), label: "Tests Passants", icon: TestTube2 },
+                { value: `${totals.tables}`, label: "Tables DB", icon: Database },
+                { value: `${totals.functions}`, label: "Edge Functions", icon: Cpu },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-8 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
+                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
-                  <stat.icon className="w-6 h-6 mx-auto mb-4 text-accent" />
-                  <div className="text-4xl md:text-5xl font-bold text-accent mb-2">
+                  <stat.icon className="w-6 h-6 mx-auto mb-3 text-accent" />
+                  <div className="text-3xl md:text-4xl font-bold text-accent mb-2">
                     {stat.value}
                   </div>
                   <div className="text-sm text-white/80">
