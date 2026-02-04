@@ -17,10 +17,12 @@ import {
   RefreshCw,
   GitCommit,
   TestTube2,
-  Database
+  Database,
+  Brain
 } from "lucide-react";
 import { usePlatforms, useExecuteRun } from "@/hooks/useHQData";
 import { MultiPlatformUptimeChart } from "@/components/hq/platforms/MultiPlatformUptimeChart";
+import { PlatformAnalysisDialog } from "@/components/hq/platforms/PlatformAnalysisDialog";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 // Helper to get real stats from constants
@@ -47,6 +49,13 @@ export default function HQPlateformesPage() {
   const { data: platforms, isLoading, refetch } = usePlatforms();
   const executeRun = useExecuteRun();
   const [preparingRelease, setPreparingRelease] = useState<string | null>(null);
+  const [analysisDialogOpen, setAnalysisDialogOpen] = useState(false);
+  const [selectedPlatformForAnalysis, setSelectedPlatformForAnalysis] = useState<{
+    key: string;
+    name: string;
+    liveUrl?: string;
+    github?: string;
+  } | null>(null);
 
   const handlePrepareRelease = async (platformKey: string) => {
     setPreparingRelease(platformKey);
@@ -67,9 +76,21 @@ export default function HQPlateformesPage() {
     });
   };
 
+  const handleOpenAnalysis = (platform: any) => {
+    const managedPlatform = MANAGED_PLATFORMS.find(p => p.key === platform.key);
+    setSelectedPlatformForAnalysis({
+      key: platform.key,
+      name: platform.name,
+      liveUrl: managedPlatform?.liveUrl,
+      github: managedPlatform?.github,
+    });
+    setAnalysisDialogOpen(true);
+  };
+
   const filteredPlatforms = selectedPlatform === "all" 
     ? platforms 
     : platforms?.filter(p => p.key === selectedPlatform);
+
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -244,6 +265,13 @@ export default function HQPlateformesPage() {
                     <div className="flex flex-wrap gap-3 pt-4 border-t">
                       <Button 
                         variant="executive"
+                        onClick={() => handleOpenAnalysis(platform)}
+                      >
+                        <Brain className="h-4 w-4 mr-2" />
+                        Analyse IA
+                      </Button>
+                      <Button 
+                        variant="outline"
                         onClick={() => handlePrepareRelease(platform.key)}
                         disabled={preparingRelease === platform.key}
                       >
@@ -278,6 +306,13 @@ export default function HQPlateformesPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Platform Analysis Dialog */}
+      <PlatformAnalysisDialog 
+        open={analysisDialogOpen}
+        onOpenChange={setAnalysisDialogOpen}
+        platform={selectedPlatformForAnalysis}
+      />
     </div>
   );
 }

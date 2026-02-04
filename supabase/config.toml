@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.stripe-kpis]
 verify_jwt = false
+
+[functions.platform-analysis]
+verify_jwt = false
