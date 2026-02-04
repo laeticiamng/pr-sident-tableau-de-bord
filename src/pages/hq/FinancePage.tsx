@@ -25,6 +25,8 @@ import { UnitEconomicsDisplay } from "@/components/hq/finance/UnitEconomicsDispl
 import { RevenueComparisonChart } from "@/components/hq/charts/RevenueComparisonChart";
 import { RevenueBreakdown } from "@/components/hq/finance/RevenueBreakdown";
 import { CashFlowForecast } from "@/components/hq/finance/CashFlowForecast";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 export default function FinancePage() {
   const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
@@ -80,32 +82,38 @@ export default function FinancePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Finance & ROI</h1>
-          <p className="text-muted-foreground text-lg">
-            Vue financière consolidée depuis Stripe.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {isMock && (
-            <Badge variant="outline" className="border-warning text-warning">
-              <AlertCircle className="h-3 w-3 mr-1" />
-              Données mock
-            </Badge>
-          )}
-          {!isMock && kpis && (
-            <Badge variant="outline" className="border-success text-success">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              Stripe connecté
-            </Badge>
-          )}
-          <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
-            Actualiser
-          </Button>
-        </div>
-      </div>
+      {/* En-tête exécutif — Standard HEC/Polytechnique */}
+      <ExecutiveHeader
+        title="Finance & ROI"
+        subtitle="Vue financière consolidée des 5 plateformes"
+        context="Indicateurs SaaS standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
+        source={{
+          source: isMock ? "mock" : "stripe",
+          lastUpdated: kpis?.lastUpdated,
+          confidence: isMock ? "low" : "high",
+          methodology: "Agrégation automatique des données de paiement Stripe",
+        }}
+        actions={
+          <div className="flex items-center gap-3">
+            {isMock && (
+              <Badge variant="outline" className="border-warning text-warning">
+                <AlertCircle className="h-3 w-3 mr-1" />
+                Données mock
+              </Badge>
+            )}
+            {!isMock && kpis && (
+              <Badge variant="outline" className="border-success text-success">
+                <CheckCircle2 className="h-3 w-3 mr-1" />
+                Stripe connecté
+              </Badge>
+            )}
+            <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+              Actualiser
+            </Button>
+          </div>
+        }
+      />
 
       {error && (
         <Card className="border-destructive/50 bg-destructive/5">
@@ -285,6 +293,47 @@ export default function FinancePage() {
         {/* Unit Economics - Enhanced Component */}
         <UnitEconomicsDisplay />
       </div>
+
+      {/* Méthodologie & Sources — Standard HEC/Polytechnique */}
+      <MethodologyDisclosure
+        sources={[
+          {
+            name: "Stripe API",
+            type: "api",
+            refreshRate: "Temps réel",
+            reliability: isMock ? "simulated" : "verified",
+            description: "Données transactionnelles et subscriptions",
+          },
+          {
+            name: "Lovable Cloud Database",
+            type: "database",
+            refreshRate: "Synchrone",
+            reliability: "verified",
+            description: "Métadonnées clients et configurations",
+          },
+        ]}
+        calculations={[
+          {
+            metric: "MRR (Monthly Recurring Revenue)",
+            formula: "Σ (subscription.amount × subscription.quantity)",
+            assumptions: ["Tous les abonnements sont mensualisés", "Les devises sont converties en EUR"],
+            limitations: ["Exclut les revenus one-time"],
+          },
+          {
+            metric: "Taux de Churn",
+            formula: "(Clients perdus ce mois / Clients début de mois) × 100",
+            assumptions: ["Période de 30 jours glissants"],
+          },
+          {
+            metric: "LTV (Lifetime Value)",
+            formula: "ARPU / Churn Rate",
+            assumptions: ["Churn constant sur la durée de vie"],
+            limitations: ["Ne prend pas en compte l'expansion revenue"],
+          },
+        ]}
+        lastUpdated={kpis?.lastUpdated}
+        dataQuality={isMock ? "low" : "high"}
+      />
 
       {/* Last Updated */}
       {kpis?.lastUpdated && (

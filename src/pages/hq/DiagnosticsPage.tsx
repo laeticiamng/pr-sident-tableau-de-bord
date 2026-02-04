@@ -24,6 +24,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SystemPerformance } from "@/components/hq/diagnostics/SystemPerformance";
 import { LiveActivityStream } from "@/components/hq/diagnostics/LiveActivityStream";
 import { SystemAlerts } from "@/components/hq/diagnostics/SystemAlerts";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 interface HealthCheck {
   name: string;
@@ -205,22 +207,28 @@ export default function DiagnosticsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Diagnostics Système</h1>
-          <p className="text-muted-foreground text-lg">
-            État de santé et métriques de performance du HQ.
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          onClick={runHealthChecks}
-          disabled={isChecking}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isChecking ? "animate-spin" : ""}`} />
-          Relancer les tests
-        </Button>
-      </div>
+      {/* En-tête exécutif — Standard HEC/Polytechnique */}
+      <ExecutiveHeader
+        title="Diagnostics Système"
+        subtitle="Observabilité et monitoring technique"
+        context="Vérifications de santé automatisées pour garantir la disponibilité et les performances des services backend. Latence mesurée en temps réel."
+        source={{
+          source: "realtime",
+          lastUpdated: healthChecks[0]?.lastChecked,
+          confidence: overallStatus === "healthy" ? "high" : "medium",
+          methodology: "Health checks synchrones vers Database, Auth, Edge Functions, Realtime",
+        }}
+        actions={
+          <Button 
+            variant="outline" 
+            onClick={runHealthChecks}
+            disabled={isChecking}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isChecking ? "animate-spin" : ""}`} />
+            Relancer les tests
+          </Button>
+        }
+      />
 
       {/* Global Status */}
       <div className="grid gap-4 md:grid-cols-4">
@@ -442,6 +450,54 @@ export default function DiagnosticsPage() {
 
       {/* System Performance */}
       <SystemPerformance />
+
+      {/* Méthodologie & Sources — Standard HEC/Polytechnique */}
+      <MethodologyDisclosure
+        sources={[
+          {
+            name: "Lovable Cloud Database",
+            type: "database",
+            refreshRate: "À la demande",
+            reliability: "verified",
+            description: "Test de connectivité RPC vers PostgreSQL",
+          },
+          {
+            name: "Supabase Auth",
+            type: "api",
+            refreshRate: "À la demande",
+            reliability: "verified",
+            description: "Vérification de session et tokens JWT",
+          },
+          {
+            name: "Edge Functions Runtime",
+            type: "api",
+            refreshRate: "À la demande",
+            reliability: "estimated",
+            description: "Appel health check vers Deno runtime",
+          },
+          {
+            name: "Supabase Realtime",
+            type: "api",
+            refreshRate: "À la demande",
+            reliability: "verified",
+            description: "Test de connexion WebSocket",
+          },
+        ]}
+        calculations={[
+          {
+            metric: "Latence moyenne",
+            formula: "Σ(latency_i) / n",
+            assumptions: ["Mesures depuis le navigateur client", "Réseau utilisateur variable"],
+            limitations: ["Ne reflète pas la latence serveur-serveur"],
+          },
+          {
+            metric: "Statut global",
+            formula: "healthy si tous services OK, degraded si ≥1 warning, error si ≥1 critique",
+          },
+        ]}
+        lastUpdated={healthChecks[0]?.lastChecked}
+        dataQuality={overallStatus === "healthy" ? "high" : overallStatus === "error" ? "low" : "medium"}
+      />
     </div>
   );
 }
