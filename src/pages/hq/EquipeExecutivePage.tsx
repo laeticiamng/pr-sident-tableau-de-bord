@@ -7,56 +7,52 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, Building2, Bot, Power, RefreshCw, Play, Sparkles, Zap, Crown, Briefcase } from "lucide-react";
-import { useAgents, useOrgRoles } from "@/hooks/useHQData";
+import { Users, Bot, Power, RefreshCw, Play, Sparkles, Zap, Crown, Briefcase } from "lucide-react";
+import { useAgents } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
-import { AGENT_PROFILES, getAgentProfile, getAgentStats, AgentProfile } from "@/lib/agent-profiles";
+import { AGENT_PROFILES, DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
 import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
 
-const categoryLabels: Record<string, string> = {
-  direction: "Direction Générale",
-  c_suite: "Comité Exécutif (C-Suite)",
-  function_head: "Responsables de Fonction",
-  platform_gm: "Directeurs Généraux Plateforme",
-  department: "Chefs de Département",
-};
-
-const categoryIcons: Record<string, typeof Users> = {
+const departmentIcons: Record<string, typeof Users> = {
   direction: Crown,
-  c_suite: Users,
-  function_head: Building2,
-  platform_gm: Bot,
-  department: Briefcase,
+  marketing: Users,
+  commercial: Briefcase,
+  finance: Briefcase,
+  security: Briefcase,
+  product: Briefcase,
+  engineering: Bot,
+  data: Bot,
+  support: Users,
+  governance: Crown,
+  people: Users,
+  innovation: Sparkles,
 };
 
-const categoryColors: Record<string, string> = {
+const departmentColors: Record<string, string> = {
   direction: "gold",
-  c_suite: "default",
-  function_head: "subtle",
-  platform_gm: "secondary",
-  department: "outline",
+  marketing: "default",
+  commercial: "secondary",
+  finance: "subtle",
+  security: "destructive",
+  product: "default",
+  engineering: "secondary",
+  data: "subtle",
+  support: "default",
+  governance: "gold",
+  people: "subtle",
+  innovation: "default",
 };
-
-const categoryOrder = ["direction", "c_suite", "function_head", "platform_gm", "department"];
 
 export default function EquipeExecutivePage() {
   const { data: agents, isLoading: agentsLoading, refetch } = useAgents();
-  const { data: orgRoles, isLoading: rolesLoading } = useOrgRoles();
   const { enqueue } = useRunQueue();
   const [selectedAgent, setSelectedAgent] = useState<AgentProfile | null>(null);
 
-  const isLoading = agentsLoading || rolesLoading;
-  
   // Get stats from agent-profiles.ts (source of truth)
   const agentStats = getAgentStats();
 
-  // Group AGENT_PROFILES by category (source of truth for 39 agents)
-  const groupedProfiles = AGENT_PROFILES.reduce((acc, profile) => {
-    const category = profile.category;
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(profile);
-    return acc;
-  }, {} as Record<string, AgentProfile[]>);
+  // Get direction agents (CGO/QCO)
+  const directionAgents = getDirectionAgents();
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -64,7 +60,7 @@ export default function EquipeExecutivePage() {
         <div>
           <h1 className="text-headline-1 mb-2">Équipe Executive</h1>
           <p className="text-muted-foreground text-lg">
-            39 employés IA répartis en 5 catégories (37 départements + 2 Direction).
+            {agentStats.total} employés IA : 2 Direction (CGO/QCO) + {agentStats.departmentAgents} agents répartis dans {agentStats.totalDepartments} départements.
           </p>
         </div>
         <Button variant="outline" onClick={() => refetch()}>
@@ -73,8 +69,8 @@ export default function EquipeExecutivePage() {
         </Button>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-5">
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="card-executive bg-gradient-to-br from-gold/10 to-transparent border-gold/30">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold mb-1">{agentStats.total}</div>
@@ -90,80 +86,127 @@ export default function EquipeExecutivePage() {
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <Users className="h-5 w-5 mx-auto mb-2 text-primary" />
-            <div className="text-2xl font-bold text-primary mb-1">{agentStats.cSuite}</div>
-            <div className="text-xs text-muted-foreground">C-Suite</div>
+            <Briefcase className="h-5 w-5 mx-auto mb-2 text-primary" />
+            <div className="text-2xl font-bold text-primary mb-1">{agentStats.totalDepartments}</div>
+            <div className="text-xs text-muted-foreground">Départements</div>
           </CardContent>
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <Building2 className="h-5 w-5 mx-auto mb-2 text-success" />
-            <div className="text-2xl font-bold text-success mb-1">{agentStats.functionHeads}</div>
-            <div className="text-xs text-muted-foreground">Function Heads</div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6 text-center">
-            <Briefcase className="h-5 w-5 mx-auto mb-2 text-accent" />
-            <div className="text-2xl font-bold text-accent mb-1">{agentStats.platformGMs + agentStats.departments}</div>
-            <div className="text-xs text-muted-foreground">GMs + Départements</div>
+            <Users className="h-5 w-5 mx-auto mb-2 text-success" />
+            <div className="text-2xl font-bold text-success mb-1">{agentStats.departmentHeads}</div>
+            <div className="text-xs text-muted-foreground">Chefs Département</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Agent Groups - From AGENT_PROFILES (source of truth) */}
-      {isLoading ? (
+      {/* Direction (CGO + QCO) */}
+      {agentsLoading ? (
+        <Skeleton className="h-48 w-full" />
+      ) : (
+        <Card className="card-executive bg-gradient-to-br from-gold/5 to-transparent border-gold/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3">
+              <Crown className="h-5 w-5 text-gold" />
+              Direction Générale
+            </CardTitle>
+            <CardDescription>
+              {directionAgents.length} directeur{directionAgents.length > 1 ? "s" : ""} — Pilotage stratégique global
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2">
+              {directionAgents.map((profile) => {
+                const dbAgent = agents?.find(a => a.role_key === profile.roleKey);
+                const isEnabled = dbAgent?.is_enabled ?? true;
+                
+                return (
+                  <div 
+                    key={profile.roleKey} 
+                    className="p-4 rounded-lg border border-gold/30 bg-gold/5 hover:shadow-md transition-shadow cursor-pointer hover:border-gold/50"
+                    onClick={() => setSelectedAgent(profile)}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge variant="gold" className="font-mono text-xs">
+                        {profile.roleKey}
+                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Power className={`h-3 w-3 ${isEnabled ? "text-success" : "text-muted-foreground"}`} />
+                        <Switch checked={isEnabled} disabled className="scale-75" />
+                      </div>
+                    </div>
+                    <h3 className="font-semibold">{profile.nameFr}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">{profile.specialty}</p>
+                    <div className="flex items-center gap-2 mt-3 flex-wrap">
+                      {profile.capabilities.slice(0, 2).map(cap => (
+                        <Badge key={cap.id} variant="subtle" className="text-[10px]">
+                          {cap.name}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-2 font-mono truncate">
+                      {profile.model}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 11 Départements */}
+      {agentsLoading ? (
         <div className="space-y-6">
           {[1, 2, 3].map(i => (
             <Skeleton key={i} className="h-64 w-full" />
           ))}
         </div>
       ) : (
-        categoryOrder.map((category) => {
-          const CategoryIcon = categoryIcons[category] || Users;
-          const categoryProfiles = groupedProfiles[category] || [];
-          const label = categoryLabels[category] || category;
+        Object.entries(DEPARTMENTS).map(([deptKey, deptInfo]) => {
+          const DeptIcon = departmentIcons[deptKey] || Users;
+          const deptAgents = getAgentsByDepartment(deptKey);
           
-          if (categoryProfiles.length === 0) return null;
+          if (deptAgents.length === 0) return null;
           
           return (
-            <Card key={category} className="card-executive">
+            <Card key={deptKey} className="card-executive">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
-                  <CategoryIcon className="h-5 w-5 text-primary" />
-                  {label}
+                  <DeptIcon className="h-5 w-5 text-primary" />
+                  {deptInfo.name}
                 </CardTitle>
                 <CardDescription>
-                  {categoryProfiles.length} agent{categoryProfiles.length > 1 ? "s" : ""} dans cette catégorie
+                  {deptAgents.length} agent{deptAgents.length > 1 ? "s" : ""} dans ce département
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {categoryProfiles.map((profile) => {
-                    // Try to find matching agent from DB for status
+                  {deptAgents.map((profile) => {
                     const dbAgent = agents?.find(a => a.role_key === profile.roleKey);
                     const isEnabled = dbAgent?.is_enabled ?? true;
                     
                     return (
                       <div 
                         key={profile.roleKey} 
-                        className="p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer hover:border-primary/50"
+                        className={`p-4 rounded-lg border hover:shadow-md transition-shadow cursor-pointer hover:border-primary/50 ${profile.isHead ? 'bg-primary/5 border-primary/20' : ''}`}
                         onClick={() => setSelectedAgent(profile)}
                       >
                         <div className="flex items-center justify-between mb-3">
-                          <Badge 
-                            variant={categoryColors[category] as any} 
-                            className="font-mono text-xs"
-                          >
-                            {profile.roleKey}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge 
+                              variant={departmentColors[deptKey] as "default" | "secondary" | "destructive" | "outline" | "gold" | "subtle"}
+                              className="font-mono text-xs"
+                            >
+                              {profile.roleKey}
+                            </Badge>
+                            {profile.isHead && (
+                              <Badge variant="gold" className="text-[10px]">Chef</Badge>
+                            )}
+                          </div>
                           <div className="flex items-center gap-2">
                             <Power className={`h-3 w-3 ${isEnabled ? "text-success" : "text-muted-foreground"}`} />
-                            <Switch 
-                              checked={isEnabled} 
-                              disabled 
-                              className="scale-75"
-                            />
+                            <Switch checked={isEnabled} disabled className="scale-75" />
                           </div>
                         </div>
                         <h3 className="font-semibold">{profile.nameFr}</h3>
@@ -205,6 +248,9 @@ export default function EquipeExecutivePage() {
             <DialogTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
               {selectedAgent?.nameFr}
+              {selectedAgent?.isHead && (
+                <Badge variant="gold" className="ml-2">Chef de Département</Badge>
+              )}
             </DialogTitle>
             <DialogDescription>
               {selectedAgent?.name}
@@ -219,9 +265,12 @@ export default function EquipeExecutivePage() {
                   <p className="font-mono text-sm">{selectedAgent.model}</p>
                 </div>
                 <div className="p-3 rounded-lg bg-muted/50">
-                  <p className="text-xs text-muted-foreground mb-1">Catégorie</p>
+                  <p className="text-xs text-muted-foreground mb-1">Département</p>
                   <Badge variant="gold">
-                    {categoryLabels[selectedAgent.category]}
+                    {selectedAgent.category === "direction" 
+                      ? "Direction Générale" 
+                      : DEPARTMENTS[selectedAgent.department as DepartmentKey]?.name || selectedAgent.department
+                    }
                   </Badge>
                 </div>
               </div>
