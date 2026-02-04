@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.5
+# EMOTIONSCARE SASU — Siège Social Numérique v3.6
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -11,9 +11,10 @@
 [![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-v13%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v14%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Widgets](https://img.shields.io/badge/Widgets-98%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
+[![Widgets](https://img.shields.io/badge/Widgets-100%2B%20intégrés-orange)](https://github.com/laeticiamng/hq-emotionscare)
+[![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits-181717?logo=github)](https://github.com/laeticiamng)
 
 ---
 
