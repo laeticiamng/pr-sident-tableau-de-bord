@@ -5,9 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle, XCircle, Clock, AlertTriangle, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
 import { usePendingApprovals, useApproveAction } from "@/hooks/useHQData";
 import { ApprovalHistory } from "@/components/hq/approbations/ApprovalHistory";
+import { ApprovalStats } from "@/components/hq/approbations/ApprovalStats";
 
 const riskColors = {
   low: "bg-status-green text-white",
@@ -58,44 +59,13 @@ export default function ApprobationsPage() {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card className="card-executive">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <Clock className="h-8 w-8 text-warning" />
-              <div>
-                <div className="text-3xl font-bold">
-                  {isLoading ? "..." : pendingApprovals?.length || 0}
-                </div>
-                <div className="text-sm text-muted-foreground">En attente</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <CheckCircle className="h-8 w-8 text-success" />
-              <div>
-                <div className="text-3xl font-bold">24</div>
-                <div className="text-sm text-muted-foreground">Approuvées ce mois</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3">
-              <XCircle className="h-8 w-8 text-destructive" />
-              <div>
-                <div className="text-3xl font-bold">3</div>
-                <div className="text-sm text-muted-foreground">Rejetées ce mois</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Stats Grid */}
+      <ApprovalStats 
+        pending={pendingApprovals?.length || 0}
+        approvedThisMonth={24}
+        rejectedThisMonth={3}
+        avgResponseTime="< 2h"
+      />
 
       {/* Pending Approvals */}
       <Card className="card-executive">

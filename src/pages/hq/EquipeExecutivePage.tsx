@@ -11,6 +11,7 @@ import { Users, Building2, Bot, Power, RefreshCw, Play, Sparkles, Zap } from "lu
 import { useAgents, useOrgRoles } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { AGENT_PROFILES, getAgentProfile, AgentProfile } from "@/lib/agent-profiles";
+import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
 
 const categoryLabels = {
   c_suite: "Comité Exécutif",
@@ -193,6 +194,9 @@ export default function EquipeExecutivePage() {
           );
         })
       )}
+
+      {/* Agent Performance Widget */}
+      <AgentPerformanceWidget />
 
       {/* Agent Detail Dialog */}
       <Dialog open={!!selectedAgent} onOpenChange={(open) => !open && setSelectedAgent(null)}>

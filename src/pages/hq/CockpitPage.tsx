@@ -5,6 +5,8 @@ import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
 import { SchedulerPanel } from "@/components/hq/SchedulerPanel";
 import { AICostWidget } from "@/components/hq/AICostWidget";
 import { EssentialModeToggle, useEssentialMode } from "@/components/hq/EssentialModeToggle";
+import { PanicSwitch } from "@/components/hq/cockpit/PanicSwitch";
+import { KeyMetricsGrid } from "@/components/hq/cockpit/KeyMetricsGrid";
 
 export default function CockpitPage() {
   const { isEssential } = useEssentialMode();
@@ -41,11 +43,15 @@ export default function CockpitPage() {
         <EssentialModeToggle />
       </div>
 
+      {/* Key Metrics Grid */}
+      <KeyMetricsGrid />
+
       {/* Control Row */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-4 gap-6">
         <AutopilotControl />
         <SchedulerPanel />
         <AICostWidget />
+        <PanicSwitch />
       </div>
 
       {/* Executive Cockpit */}
