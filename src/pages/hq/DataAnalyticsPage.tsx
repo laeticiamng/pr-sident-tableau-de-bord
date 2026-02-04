@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { CohortRetentionTable } from "@/components/hq/data/CohortRetentionTable";
+import { CohortAnalysis } from "@/components/hq/data/CohortAnalysis";
+import { ARPUTrendChart } from "@/components/hq/charts/ARPUTrendChart";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -180,8 +182,11 @@ export default function DataAnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* Analyse de cohortes - Composant dédié */}
-      <CohortRetentionTable />
+      {/* Analyse de cohortes - Composants dédiés */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CohortRetentionTable />
+        <ARPUTrendChart />
+      </div>
 
       {/* LTV et ROI */}
       <div className="grid md:grid-cols-2 gap-6">

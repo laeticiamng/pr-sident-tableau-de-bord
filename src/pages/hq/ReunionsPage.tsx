@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
 import { UpcomingMeetings } from "@/components/hq/meetings/UpcomingMeetings";
+import { MeetingNotes } from "@/components/hq/meetings/MeetingNotes";
 
 const meetingTypes = [
   { 
@@ -104,7 +105,8 @@ export default function ReunionsPage() {
       {/* Upcoming Meetings Agenda */}
       <UpcomingMeetings onStartMeeting={(id) => handleStartMeeting("CEO_STANDUP_MEETING")} />
 
-      {/* Meeting History */}
+      {/* Meeting Notes Archive */}
+      <MeetingNotes />
       <Card className="card-executive">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
