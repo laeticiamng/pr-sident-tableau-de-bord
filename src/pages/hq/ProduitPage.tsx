@@ -16,6 +16,7 @@ import { PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mo
 import { OKRProgress } from "@/components/hq/product/OKRProgress";
 import { RoadmapExportButton } from "@/components/hq/product/RoadmapExportButton";
 import { ReleaseTimeline } from "@/components/hq/product/ReleaseTimeline";
+import { FeatureRequests } from "@/components/hq/product/FeatureRequests";
 import { cn } from "@/lib/utils";
 
 const platforms = [
@@ -93,7 +94,10 @@ export default function ProduitPage() {
       {/* Release Timeline */}
       <ReleaseTimeline />
 
-      {/* Feature Requests */}
+      {/* Feature Requests - Enhanced Component */}
+      <FeatureRequests />
+
+      {/* Feature Requests & Releases */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="card-executive">
           <CardHeader>

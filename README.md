@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v3.0
+# EMOTIONSCARE SASU — Siège Social Numérique v3.1
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 

@@ -22,6 +22,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { SystemPerformance } from "@/components/hq/diagnostics/SystemPerformance";
+import { LiveActivityStream } from "@/components/hq/diagnostics/LiveActivityStream";
 
 interface HealthCheck {
   name: string;
@@ -431,6 +432,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Live Activity Stream */}
+      <LiveActivityStream />
 
       {/* System Performance */}
       <SystemPerformance />

@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { TeamPerformanceMetrics } from "@/components/hq/rh/TeamPerformanceMetrics";
 import { OnboardingTracker } from "@/components/hq/rh/OnboardingTracker";
 import { TrainingCompletionWidget } from "@/components/hq/rh/TrainingCompletionWidget";
+import { PerformanceReview } from "@/components/hq/rh/PerformanceReview";
 
 export default function RHPage() {
   const { data: agents, isLoading } = useAgents();
@@ -210,6 +211,9 @@ export default function RHPage() {
 
       {/* Formations */}
       <TrainingCompletionWidget />
+
+      {/* Performance Review */}
+      <PerformanceReview />
 
       {/* Performance globale - Composant dédié */}
       <TeamPerformanceMetrics />
