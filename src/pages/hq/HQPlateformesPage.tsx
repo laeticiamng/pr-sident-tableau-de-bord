@@ -17,6 +17,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { usePlatforms, useExecuteRun } from "@/hooks/useHQData";
+import { MultiPlatformUptimeChart } from "@/components/hq/platforms/MultiPlatformUptimeChart";
 
 const statusColors = {
   green: "bg-status-green",
@@ -110,6 +111,9 @@ export default function HQPlateformesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Multi-Platform Uptime Chart */}
+      <MultiPlatformUptimeChart />
 
       {/* Platform Selector */}
       <Tabs 
