@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { SecretsRegistry } from "@/components/hq/security/SecretsRegistry";
 import { RLSAuditTable } from "@/components/hq/security/RLSAuditTable";
 import { IncidentCounter } from "@/components/hq/security/IncidentCounter";
+import { VulnerabilityScanner } from "@/components/hq/security/VulnerabilityScanner";
 
 export default function SecuritePage() {
   const { toast } = useToast();
@@ -193,6 +194,9 @@ export default function SecuritePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Vulnerability Scanner */}
+      <VulnerabilityScanner />
 
       {/* RLS Audit */}
       <RLSAuditTable 

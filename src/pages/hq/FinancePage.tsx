@@ -23,6 +23,7 @@ import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { MRRChart } from "@/components/hq/charts/MRRChart";
 import { UnitEconomicsDisplay } from "@/components/hq/finance/UnitEconomicsDisplay";
 import { RevenueComparisonChart } from "@/components/hq/charts/RevenueComparisonChart";
+import { RevenueBreakdown } from "@/components/hq/finance/RevenueBreakdown";
 
 export default function FinancePage() {
   const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
@@ -241,6 +242,9 @@ export default function FinancePage() {
           currency={kpis?.currency || "EUR"}
         />
       </div>
+
+      {/* Revenue Breakdown */}
+      <RevenueBreakdown />
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Platform Costs */}

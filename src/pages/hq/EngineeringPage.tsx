@@ -18,6 +18,7 @@ import { useExecuteRun, usePlatforms } from "@/hooks/useHQData";
 import { useGitHubData, useGitHubSync } from "@/hooks/useGitHubSync";
 import { ReleaseChecklist } from "@/components/hq/engineering/ReleaseChecklist";
 import { PullRequestsWidget } from "@/components/hq/engineering/PullRequestsWidget";
+import { DeploymentStatus } from "@/components/hq/engineering/DeploymentStatus";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
@@ -277,6 +278,9 @@ export default function EngineeringPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Deployment Status */}
+      <DeploymentStatus />
 
       {/* Pull Requests Widget */}
       <PullRequestsWidget />
