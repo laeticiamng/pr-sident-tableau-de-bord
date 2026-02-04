@@ -4,14 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Search, RefreshCw, CheckCircle, AlertTriangle, Clock, Download } from "lucide-react";
+import { FileText, Search, RefreshCw, CheckCircle, AlertTriangle, Clock } from "lucide-react";
 import { useAuditLogs } from "@/hooks/useHQData";
 import { AuditExportButton } from "@/components/hq/audit/AuditExportButton";
+import { AuditStats } from "@/components/hq/audit/AuditStats";
+import { DateRangeFilter } from "@/components/hq/audit/DateRangeFilter";
 
 export default function AuditPage() {
   const { data: auditLogs, isLoading, refetch } = useAuditLogs(100);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null; label: string }>({
+    from: null,
+    to: null,
+    label: "30 derniers jours"
+  });
 
   const filteredLogs = auditLogs?.filter(log => {
     const matchesSearch = !searchTerm || 
@@ -53,6 +60,7 @@ export default function AuditPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <DateRangeFilter onRangeChange={setDateRange} />
           <AuditExportButton logs={auditLogs || []} />
           <Button variant="outline" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -61,41 +69,14 @@ export default function AuditPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="card-executive">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold mb-1">
-              {isLoading ? "..." : auditLogs?.length || 0}
-            </div>
-            <div className="text-sm text-muted-foreground">Total Entrées</div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-primary mb-1">
-              {isLoading ? "..." : auditLogs?.filter(l => l.actor_type === "owner").length || 0}
-            </div>
-            <div className="text-sm text-muted-foreground">Actions Owner</div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-success mb-1">
-              {isLoading ? "..." : auditLogs?.filter(l => l.actor_type === "agent").length || 0}
-            </div>
-            <div className="text-sm text-muted-foreground">Actions Agents</div>
-          </CardContent>
-        </Card>
-        <Card className="card-executive">
-          <CardContent className="p-6 text-center">
-            <div className="text-3xl font-bold text-muted-foreground mb-1">
-              {isLoading ? "..." : auditLogs?.filter(l => l.actor_type === "system").length || 0}
-            </div>
-            <div className="text-sm text-muted-foreground">Actions Système</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Stats - Using dedicated component */}
+      <AuditStats
+        totalEntries={auditLogs?.length || 0}
+        ownerActions={auditLogs?.filter(l => l.actor_type === "owner").length || 0}
+        agentActions={auditLogs?.filter(l => l.actor_type === "agent").length || 0}
+        systemActions={auditLogs?.filter(l => l.actor_type === "system").length || 0}
+        isLoading={isLoading}
+      />
 
       {/* Filters */}
       <Card className="card-executive">
