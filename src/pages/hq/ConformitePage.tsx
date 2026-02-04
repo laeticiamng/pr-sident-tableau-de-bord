@@ -35,12 +35,12 @@ const RGPD_RIGHTS = [
 
 // Documents de conformité
 const COMPLIANCE_DOCS = [
-  { name: "Politique de confidentialité", status: "published", lastUpdate: "2025-01-15" },
-  { name: "Conditions Générales de Vente", status: "published", lastUpdate: "2025-01-15" },
-  { name: "Mentions légales", status: "published", lastUpdate: "2025-01-10" },
-  { name: "Registre des traitements", status: "draft", lastUpdate: "2025-01-20" },
+  { name: "Politique de confidentialité", status: "published", lastUpdate: "2026-01-15" },
+  { name: "Conditions Générales de Vente", status: "published", lastUpdate: "2026-01-15" },
+  { name: "Mentions légales", status: "published", lastUpdate: "2026-01-10" },
+  { name: "Registre des traitements", status: "draft", lastUpdate: "2026-01-20" },
   { name: "AIPD (Analyse d'impact)", status: "pending", lastUpdate: null },
-  { name: "Politique de cookies", status: "published", lastUpdate: "2025-01-12" },
+  { name: "Politique de cookies", status: "published", lastUpdate: "2026-01-12" },
 ];
 
 export default function ConformitePage() {

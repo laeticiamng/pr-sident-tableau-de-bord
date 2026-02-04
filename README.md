@@ -417,7 +417,7 @@ Les variables sont auto-configurées par Lovable Cloud :
 
 ## 📄 Licence
 
-Propriétaire — © 2025 EMOTIONSCARE SASU. Tous droits réservés.
+Propriétaire — © 2026 EMOTIONSCARE SASU. Tous droits réservés.
 
 ---
 
