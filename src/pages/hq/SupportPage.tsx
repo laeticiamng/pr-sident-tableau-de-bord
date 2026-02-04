@@ -14,6 +14,7 @@ import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
 import { TicketTrendChart } from "@/components/hq/support/TicketTrendChart";
 import { EscalationQueue } from "@/components/hq/support/EscalationQueue";
+import { TicketDistributionChart } from "@/components/hq/support/TicketDistributionChart";
 import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 
 export default function SupportPage() {
@@ -58,6 +59,9 @@ export default function SupportPage() {
         <TicketsByPriority />
         <TicketTrendChart />
       </div>
+
+      {/* Ticket Distribution */}
+      <TicketDistributionChart />
 
       {/* Escalation Queue */}
       <EscalationQueue />
