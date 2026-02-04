@@ -83,9 +83,10 @@ serve(async (req) => {
     // ============================================
 
     if (!FIRECRAWL_API_KEY) {
+      console.error("[Web Scraper] FIRECRAWL_API_KEY not configured");
       return new Response(
-        JSON.stringify({ success: false, error: "Firecrawl API non configurée" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: "Service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -158,13 +159,13 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error("Firecrawl API error:", response.status, data);
+      console.error("[Web Scraper] External API error:", response.status, data);
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: data.error || `Erreur Firecrawl: ${response.status}` 
+          error: "Scraping service error. Please try again later." 
         }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -180,11 +181,11 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Web scraper error:", error);
+    console.error("[Web Scraper] Unexpected error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : "Erreur inconnue" 
+        error: "An unexpected error occurred. Please try again later." 
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

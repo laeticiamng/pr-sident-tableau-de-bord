@@ -38,7 +38,11 @@ serve(async (req) => {
     const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
-      throw new Error("Configuration Supabase manquante");
+      console.error("[Stripe KPIs] Supabase configuration missing");
+      return new Response(
+        JSON.stringify({ error: "Service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // ============================================
@@ -233,10 +237,11 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("[Stripe KPIs] Error:", error);
+    console.error("[Stripe KPIs] Unexpected error:", error);
+    // Return graceful degradation with mock data on error
     return new Response(
       JSON.stringify({ 
-        error: (error as Error).message,
+        error: "Service temporarily unavailable. Displaying cached data.",
         mock: true,
         kpis: {
           mrr: 0,

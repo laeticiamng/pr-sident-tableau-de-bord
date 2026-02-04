@@ -310,16 +310,18 @@ serve(async (req) => {
 
     // Check required API keys
     if (!GITHUB_TOKEN) {
+      console.error("[Platform Analysis] GITHUB_TOKEN not configured");
       return new Response(
-        JSON.stringify({ success: false, error: "GITHUB_TOKEN non configuré" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: "Service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     if (!LOVABLE_API_KEY) {
+      console.error("[Platform Analysis] LOVABLE_API_KEY not configured");
       return new Response(
-        JSON.stringify({ success: false, error: "LOVABLE_API_KEY non configuré" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: "Service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -377,11 +379,11 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("[Platform Analysis] Error:", error);
+    console.error("[Platform Analysis] Unexpected error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : "Erreur inconnue" 
+        error: "An unexpected error occurred. Please try again later." 
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

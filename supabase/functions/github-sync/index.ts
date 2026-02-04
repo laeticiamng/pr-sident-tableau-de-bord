@@ -249,13 +249,13 @@ serve(async (req) => {
     // ============================================
 
     if (!GITHUB_TOKEN) {
-      console.error("GITHUB_TOKEN non configuré");
+      console.error("[GitHub Sync] GITHUB_TOKEN not configured");
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: "GitHub token non configuré. Ajoutez GITHUB_TOKEN dans les secrets." 
+          error: "Service temporarily unavailable" 
         }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -321,11 +321,11 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("[GitHub Sync] Error:", error);
+    console.error("[GitHub Sync] Unexpected error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : "Erreur inconnue" 
+        error: "An unexpected error occurred. Please try again later." 
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

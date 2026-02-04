@@ -78,9 +78,10 @@ serve(async (req) => {
     // ============================================
 
     if (!PERPLEXITY_API_KEY) {
+      console.error("[Intelligence Search] PERPLEXITY_API_KEY not configured");
       return new Response(
-        JSON.stringify({ success: false, error: "Perplexity API non configurée" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: "Service temporarily unavailable" }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -148,10 +149,10 @@ Réponds de manière:
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Perplexity API error:", response.status, errorText);
+      console.error("[Intelligence Search] External API error:", response.status, errorText);
       return new Response(
-        JSON.stringify({ success: false, error: `Perplexity API error: ${response.status}` }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ success: false, error: "Search service error. Please try again later." }),
+        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -174,11 +175,11 @@ Réponds de manière:
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("Intelligence search error:", error);
+    console.error("[Intelligence Search] Unexpected error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error instanceof Error ? error.message : "Erreur inconnue" 
+        error: "An unexpected error occurred. Please try again later." 
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
