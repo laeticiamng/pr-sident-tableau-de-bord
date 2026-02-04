@@ -97,82 +97,41 @@ export default function ProduitPage() {
       {/* Feature Requests - Enhanced Component */}
       <FeatureRequests />
 
-      {/* Feature Requests & Releases */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="card-executive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Package className="h-5 w-5 text-primary" />
-              Demandes de Fonctionnalités
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {FEATURE_REQUESTS.map((request) => (
-                <div 
-                  key={request.id}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-                >
+      {/* Prochaines Releases */}
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <Rocket className="h-5 w-5 text-primary" />
+            Prochaines Releases
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-3">
+            {UPCOMING_RELEASES.map((release, index) => (
+              <div 
+                key={index}
+                className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Rocket className="h-5 w-5 text-primary" />
+                  </div>
                   <div>
-                    <p className="font-medium text-sm">{request.title}</p>
-                    <p className="text-xs text-muted-foreground capitalize">{request.platform}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="subtle" className="text-xs">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      {request.votes}
-                    </Badge>
-                    <Badge 
-                      variant={
-                        request.status === "completed" ? "success" :
-                        request.status === "planned" ? "gold" : "subtle"
-                      }
-                    >
-                      {request.status === "completed" ? "Terminé" :
-                       request.status === "planned" ? "Planifié" : "En revue"}
-                    </Badge>
+                    <p className="font-medium text-sm">{release.version}</p>
+                    <p className="text-xs text-muted-foreground">{release.platform}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="card-executive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Rocket className="h-5 w-5 text-primary" />
-              Prochaines Releases
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {UPCOMING_RELEASES.map((release, index) => (
-                <div 
-                  key={index}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Rocket className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{release.version}</p>
-                      <p className="text-xs text-muted-foreground">{release.platform}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">
-                      {new Date(release.date).toLocaleDateString("fr-FR")}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{release.features} features</p>
-                  </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium">
+                    {new Date(release.date).toLocaleDateString("fr-FR")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{release.features} features</p>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

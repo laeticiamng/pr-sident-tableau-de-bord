@@ -73,8 +73,8 @@ export const MARKETING_CAMPAIGNS = [
     id: "1", 
     name: "Lancement EmotionsCare v2", 
     status: "active", 
-    startDate: "2025-01-15", 
-    endDate: "2025-02-15",
+    startDate: "2026-01-15", 
+    endDate: "2026-02-15",
     budget: 5000,
     spent: 3200,
     leads: 145
@@ -83,8 +83,8 @@ export const MARKETING_CAMPAIGNS = [
     id: "2", 
     name: "Newsletter Février", 
     status: "scheduled", 
-    startDate: "2025-02-01", 
-    endDate: "2025-02-28",
+    startDate: "2026-02-01", 
+    endDate: "2026-02-28",
     budget: 1500,
     spent: 0,
     leads: 0
@@ -93,8 +93,8 @@ export const MARKETING_CAMPAIGNS = [
     id: "3", 
     name: "Webinar IA & Bien-être", 
     status: "completed", 
-    startDate: "2025-01-20", 
-    endDate: "2025-01-20",
+    startDate: "2026-01-20", 
+    endDate: "2026-01-20",
     budget: 2000,
     spent: 1850,
     leads: 89
@@ -154,9 +154,9 @@ export const FEATURE_REQUESTS = [
 
 // Prochaines releases
 export const UPCOMING_RELEASES = [
-  { version: "v2.1.0", platform: "EmotionsCare", date: "2025-02-10", features: 5 },
-  { version: "v1.3.0", platform: "Growth Copilot", date: "2025-02-15", features: 8 },
-  { version: "v0.8.0", platform: "Pixel Perfect Replica", date: "2025-02-20", features: 3 },
+  { version: "v2.1.0", platform: "EmotionsCare", date: "2026-02-10", features: 5 },
+  { version: "v1.3.0", platform: "Growth Copilot", date: "2026-02-15", features: 8 },
+  { version: "v0.8.0", platform: "Pixel Perfect Replica", date: "2026-02-20", features: 3 },
 ];
 
 // Unit Economics (calculés depuis Stripe quand disponible)
@@ -170,9 +170,9 @@ export const UNIT_ECONOMICS = {
 
 // Données d'activités commerciales
 export const SALES_ACTIVITIES = [
-  { id: "1", type: "call", prospect: "TechCorp SAS", date: "2025-02-03T14:00:00", status: "scheduled" },
-  { id: "2", type: "meeting", prospect: "InnovHealth", date: "2025-02-04T10:00:00", status: "scheduled" },
-  { id: "3", type: "proposal", prospect: "EduNext", date: "2025-02-01T16:30:00", status: "sent" },
+  { id: "1", type: "call", prospect: "TechCorp SAS", date: "2026-02-03T14:00:00", status: "scheduled" },
+  { id: "2", type: "meeting", prospect: "InnovHealth", date: "2026-02-04T10:00:00", status: "scheduled" },
+  { id: "3", type: "proposal", prospect: "EduNext", date: "2026-02-01T16:30:00", status: "sent" },
 ];
 
 // Opportunités récentes
