@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { Building2, FileText, MapPin, Calendar, User, CreditCard } from "lucide-react";
 import { CompanyKPIs } from "@/components/hq/entreprise/CompanyKPIs";
+import { QuarterlyObjectives } from "@/components/hq/entreprise/QuarterlyObjectives";
 
 export default function EntreprisePage() {
   return (
@@ -114,8 +115,11 @@ export default function EntreprisePage() {
         </div>
       </div>
 
-      {/* Company KPIs */}
-      <CompanyKPIs />
+      {/* Company KPIs & Quarterly Objectives */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CompanyKPIs />
+        <QuarterlyObjectives />
+      </div>
     </div>
   );
 }

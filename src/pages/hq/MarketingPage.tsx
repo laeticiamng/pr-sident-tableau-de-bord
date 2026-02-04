@@ -18,6 +18,7 @@ import { useState } from "react";
 import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
 import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
+import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
 import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
@@ -202,8 +203,11 @@ export default function MarketingPage() {
         </Card>
       </div>
 
-      {/* ROI by Channel Chart */}
-      <ChannelROIChart />
+      {/* ROI by Channel Chart & Competitive Radar */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ChannelROIChart />
+        <CompetitiveRadar />
+      </div>
 
       {/* Content Calendar - Interactive Component */}
       <ContentCalendar />

@@ -20,6 +20,7 @@ import { CohortRetentionTable } from "@/components/hq/data/CohortRetentionTable"
 import { CohortAnalysis } from "@/components/hq/data/CohortAnalysis";
 import { ARPUTrendChart } from "@/components/hq/charts/ARPUTrendChart";
 import { LTVSegmentChart } from "@/components/hq/data/LTVSegmentChart";
+import { FeatureAdoptionChart } from "@/components/hq/data/FeatureAdoptionChart";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -189,8 +190,11 @@ export default function DataAnalyticsPage() {
         <ARPUTrendChart />
       </div>
 
-      {/* LTV par Segment */}
-      <LTVSegmentChart />
+      {/* LTV par Segment et Adoption des Features */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <LTVSegmentChart />
+        <FeatureAdoptionChart />
+      </div>
 
       {/* LTV et ROI */}
       <div className="grid md:grid-cols-2 gap-6">

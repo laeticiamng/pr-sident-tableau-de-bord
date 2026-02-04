@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { RGPDExportButton } from "@/components/hq/compliance/RGPDExportButton";
 import { AIPDChecklist } from "@/components/hq/conformite/AIPDChecklist";
+import { DocumentInventory } from "@/components/hq/conformite/DocumentInventory";
 
 // RGPD Rights - Les 8 droits fondamentaux
 const RGPD_RIGHTS = [
@@ -173,6 +174,9 @@ export default function ConformitePage() {
 
       {/* AIPD Checklist */}
       <AIPDChecklist />
+
+      {/* Document Inventory */}
+      <DocumentInventory />
 
       <Separator />
 
