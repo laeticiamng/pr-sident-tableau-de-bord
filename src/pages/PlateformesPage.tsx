@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { usePlatforms } from "@/hooks/useHQData";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   ExternalLink, 
-  Github, 
   CheckCircle, 
   AlertCircle, 
   Heart,
@@ -17,10 +17,10 @@ import {
   GitBranch,
   GitCommit,
   Sparkles,
-  ArrowRight,
   Layers,
   TestTube2,
-  Calendar
+  Calendar,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -72,18 +72,61 @@ const platformBorders: Record<string, string> = {
   "med-mng": "hover:border-platform-medical/40",
 };
 
+// Mapping platform key to live URL (static config)
+const platformLiveUrls: Record<string, string> = {
+  "emotionscare": "https://emotionscare.com",
+  "pixel-perfect-replica": "https://pixel-perfect-clone-6574.lovable.app",
+  "system-compass": "https://world-alignment.lovable.app",
+  "growth-copilot": "https://agent-growth-automator.com",
+  "med-mng": "https://medmng.com",
+};
+
+// Static platform metadata (features, taglines from constants)
+const platformMetadata = MANAGED_PLATFORMS.reduce((acc, p) => {
+  acc[p.key] = {
+    tagline: p.tagline,
+    description: p.description,
+    features: p.features,
+    stats: p.stats,
+    status: p.status,
+    lastCommit: p.lastCommit,
+  };
+  return acc;
+}, {} as Record<string, { tagline: string; description: string; features: readonly string[]; stats: { modules: number; tables: number; edgeFunctions: number; branches: number; commits: number; tests: number }; status: string; lastCommit: string | null }>);
+
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+  
+  // Fetch platforms from Supabase
+  const { data: supabasePlatforms, isLoading } = usePlatforms();
 
-  // Calculate totals from real GitHub data
-  const totals = MANAGED_PLATFORMS.reduce(
+  // Merge Supabase data with static metadata
+  const platforms = supabasePlatforms?.map(sp => {
+    const meta = platformMetadata[sp.key];
+    return {
+      key: sp.key,
+      name: sp.name,
+      description: meta?.description || sp.description,
+      tagline: meta?.tagline || "",
+      liveUrl: platformLiveUrls[sp.key] || "",
+      status: sp.status === "green" ? "production" : sp.status === "amber" ? "prototype" : "development",
+      uptime_percent: sp.uptime_percent,
+      last_release_at: sp.last_release_at,
+      features: meta?.features || [],
+      stats: meta?.stats || { modules: 0, tables: 0, edgeFunctions: 0, branches: 0, commits: 0, tests: 0 },
+      lastCommit: meta?.lastCommit,
+    };
+  }) || [];
+
+  // Calculate totals
+  const totals = platforms.reduce(
     (acc, p) => ({
-      modules: acc.modules + p.stats.modules,
-      tables: acc.tables + p.stats.tables,
-      functions: acc.functions + p.stats.edgeFunctions,
-      branches: acc.branches + p.stats.branches,
-      commits: acc.commits + p.stats.commits,
-      tests: acc.tests + p.stats.tests,
+      modules: acc.modules + (p.stats?.modules || 0),
+      tables: acc.tables + (p.stats?.tables || 0),
+      functions: acc.functions + (p.stats?.edgeFunctions || 0),
+      branches: acc.branches + (p.stats?.branches || 0),
+      commits: acc.commits + (p.stats?.commits || 0),
+      tests: acc.tests + (p.stats?.tests || 0),
     }),
     { modules: 0, tables: 0, functions: 0, branches: 0, commits: 0, tests: 0 }
   );
@@ -93,6 +136,14 @@ export default function PlateformesPage() {
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toLocaleString();
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
@@ -161,7 +212,7 @@ export default function PlateformesPage() {
       <section className="py-24 md:py-32 bg-background">
         <div className="container">
           <div className="space-y-16 md:space-y-24">
-            {MANAGED_PLATFORMS.map((platform, index) => {
+            {platforms.map((platform, index) => {
               const Icon = platformIcons[platform.key] || Rocket;
               const statusConfig = statusLabels[platform.status as keyof typeof statusLabels] || statusLabels.development;
               const StatusIcon = statusConfig.icon;
@@ -280,21 +331,6 @@ export default function PlateformesPage() {
                           >
                             <ExternalLink className="h-5 w-5 mr-2" />
                             Visiter le site
-                          </a>
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="lg"
-                          className="group/btn"
-                          asChild
-                        >
-                          <a
-                            href={platform.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Github className="h-5 w-5 mr-2" />
-                            GitHub
                           </a>
                         </Button>
                       </div>
