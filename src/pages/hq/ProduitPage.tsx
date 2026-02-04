@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mock-data";
 import { OKRProgress } from "@/components/hq/product/OKRProgress";
+import { RoadmapExportButton } from "@/components/hq/product/RoadmapExportButton";
 import { cn } from "@/lib/utils";
 
 const platforms = [
@@ -34,10 +35,13 @@ export default function ProduitPage() {
             Gouvernance produit et suivi des objectifs.
           </p>
         </div>
-        <Button variant="outline">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
+        <div className="flex items-center gap-3">
+          <RoadmapExportButton />
+          <Button variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Platform Roadmaps */}

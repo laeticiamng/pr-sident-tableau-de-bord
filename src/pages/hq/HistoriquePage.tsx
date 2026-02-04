@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useRecentRuns } from "@/hooks/useHQData";
 import { RunDetailsPanel } from "@/components/hq/history/RunDetailsPanel";
+import { RunExportButton } from "@/components/hq/history/RunExportButton";
 
 const runTypeLabels: Record<string, string> = {
   DAILY_EXECUTIVE_BRIEF: "Brief Exécutif",
@@ -68,10 +69,13 @@ export default function HistoriquePage() {
             Consultez l'historique complet des exécutions des agents.
           </p>
         </div>
-        <Button variant="outline" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
+        <div className="flex items-center gap-3">
+          <RunExportButton runs={runs || []} />
+          <Button variant="outline" onClick={() => refetch()}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}

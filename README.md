@@ -1,4 +1,4 @@
-# EMOTIONSCARE SASU — Siège Social Numérique
+# EMOTIONSCARE SASU — Siège Social Numérique v3.0
 
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
@@ -11,7 +11,8 @@
 [![Tests](https://img.shields.io/badge/Tests-100%2F100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected%20%2B%20JWT-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-12%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-100%25%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
@@ -237,8 +238,20 @@ npm run test
 | Marketing | 4 | 6 | ✅ |
 | RH | 3 | 5 | ✅ |
 | Data Analytics | 4 | 6 | ✅ |
-| Conformité | 3 | 4 | ✅ |
-| Historique | 2 | 4 | ✅ |
+| Conformité | 4 | 5 | ✅ |
+| Historique | 3 | 5 | ✅ |
+| Approbations | 3 | 4 | ✅ |
+| Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v3.0 (Audit Final)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Produit | Export Roadmap en Markdown |
+| 2 | Approbations | Historique des décisions |
+| 3 | Sécurité | Compteur jours sans incident |
+| 4 | Support | Graphique tendance tickets |
+| 5 | Conformité | Checklist AIPD interactive |
+| 6 | Historique | Export runs en TSV |
 
 ---
 
