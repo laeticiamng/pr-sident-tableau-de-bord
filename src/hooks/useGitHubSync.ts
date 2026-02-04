@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -47,17 +48,50 @@ export interface GitHubPullRequest {
   url: string;
 }
 
+export interface GitHubPlatformStats {
+  key: string;
+  commits: number;
+  branches: number;
+  contributors: number;
+  stars: number;
+  forks: number;
+  open_issues: number;
+  open_prs: number;
+  last_commit: string | null;
+  last_release: string | null;
+}
+
+export interface GitHubSyncSummary {
+  synced_at: string;
+  platforms_count: number;
+  total_commits: number;
+  total_branches: number;
+  total_contributors: number;
+  total_stars: number;
+  total_open_issues: number;
+  total_open_prs: number;
+  platforms: GitHubPlatformStats[];
+}
+
 export interface GitHubSyncResult {
+  success: boolean;
+  summary: GitHubSyncSummary;
+  data: any[];
+  error?: string;
+}
+
+export interface GitHubDataResult {
   success: boolean;
   repos: GitHubRepo[];
   syncedAt: string;
+  summary?: GitHubSyncSummary;
 }
 
 // Hook: Fetch GitHub data for all platforms
 export function useGitHubData() {
   return useQuery({
     queryKey: ["github", "all"],
-    queryFn: async (): Promise<GitHubSyncResult> => {
+    queryFn: async (): Promise<GitHubDataResult> => {
       try {
         const { data, error } = await supabase.functions.invoke("github-sync", {
           body: { action: "sync_all" },
@@ -66,7 +100,7 @@ export function useGitHubData() {
         if (error) throw error;
         
         // Transform the response to match our expected interface
-        const transformedData: GitHubSyncResult = {
+        const transformedData: GitHubDataResult = {
           success: data.success,
           repos: (data.data || []).map((repoData: any) => ({
             key: repoData.key,
@@ -97,6 +131,7 @@ export function useGitHubData() {
             lastSynced: new Date(),
           })),
           syncedAt: data.summary?.synced_at || new Date().toISOString(),
+          summary: data.summary,
         };
         
         return transformedData;
@@ -146,29 +181,34 @@ export function useGitHubPlatform(platformKey: string) {
   });
 }
 
-// Hook: Force sync GitHub data
+// Hook: Force sync GitHub data with full stats
 export function useGitHubSync() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [lastSyncResult, setLastSyncResult] = useState<GitHubSyncResult | null>(null);
 
-  return useMutation({
-    mutationFn: async (platformKey?: string) => {
+  const mutation = useMutation({
+    mutationFn: async (platformKey?: string): Promise<GitHubSyncResult> => {
       const { data, error } = await supabase.functions.invoke("github-sync", {
-        body: { 
-          action: platformKey ? "sync_platform" : "sync_all",
-          platform_key: platformKey,
-        },
+        body: platformKey ? { platform_key: platformKey } : {},
       });
 
       if (error) throw error;
-      return data;
+      
+      if (!data.success) {
+        throw new Error(data.error || "Synchronisation échouée");
+      }
+      
+      return data as GitHubSyncResult;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setLastSyncResult(data);
       toast({
         title: "Synchronisation GitHub réussie",
-        description: "Les données ont été mises à jour",
+        description: `${data.summary.total_commits.toLocaleString()} commits synchronisés sur ${data.summary.platforms_count} plateformes`,
       });
       queryClient.invalidateQueries({ queryKey: ["github"] });
+      queryClient.invalidateQueries({ queryKey: ["hq", "platforms"] });
     },
     onError: (error: Error) => {
       toast({
@@ -178,6 +218,14 @@ export function useGitHubSync() {
       });
     },
   });
+
+  return {
+    sync: mutation.mutate,
+    syncAsync: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    lastSyncResult,
+    error: mutation.error,
+  };
 }
 
 // Helper to get repo name for a platform key
@@ -192,9 +240,20 @@ export function useGitHubStats() {
 
   return {
     isLoading,
-    totalCommits: data?.repos.reduce((sum, r) => sum + r.commits.length, 0) || 0,
-    totalOpenIssues: data?.repos.reduce((sum, r) => sum + r.issues.filter(i => i.state === "open").length, 0) || 0,
-    totalOpenPRs: data?.repos.reduce((sum, r) => sum + r.pullRequests.filter(pr => pr.state === "open").length, 0) || 0,
+    // Use summary stats if available (more accurate), fallback to counting
+    totalCommits: data?.summary?.total_commits ?? data?.repos.reduce((sum, r) => sum + r.commits.length, 0) ?? 0,
+    totalBranches: data?.summary?.total_branches ?? 0,
+    totalContributors: data?.summary?.total_contributors ?? 0,
+    totalStars: data?.summary?.total_stars ?? 0,
+    totalOpenIssues: data?.summary?.total_open_issues ?? data?.repos.reduce((sum, r) => sum + r.issues.filter(i => i.state === "open").length, 0) ?? 0,
+    totalOpenPRs: data?.summary?.total_open_prs ?? data?.repos.reduce((sum, r) => sum + r.pullRequests.filter(pr => pr.state === "open").length, 0) ?? 0,
     lastSynced: data?.syncedAt ? new Date(data.syncedAt) : null,
+    platformStats: data?.summary?.platforms ?? [],
   };
+}
+
+// Get stats for a specific platform
+export function useGitHubPlatformStats(platformKey: string) {
+  const { platformStats } = useGitHubStats();
+  return platformStats.find(p => p.key === platformKey) ?? null;
 }

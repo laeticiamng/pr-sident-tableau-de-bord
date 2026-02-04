@@ -15,6 +15,18 @@ const MANAGED_REPOS = [
   { key: "med-mng", repo: "laeticiamng/med-mng" },
 ];
 
+interface RepoStats {
+  commits: number;
+  branches: number;
+  contributors: number;
+  openIssues: number;
+  openPRs: number;
+  stars: number;
+  forks: number;
+  lastCommit: string | null;
+  lastRelease: string | null;
+}
+
 interface RepoData {
   key: string;
   repo: string;
@@ -44,12 +56,7 @@ interface RepoData {
     published_at: string;
     prerelease: boolean;
   }[];
-  stats: {
-    openIssues: number;
-    openPRs: number;
-    lastCommit: string | null;
-    lastRelease: string | null;
-  };
+  stats: RepoStats;
 }
 
 async function fetchGitHubAPI(endpoint: string, token: string): Promise<any> {
@@ -69,15 +76,54 @@ async function fetchGitHubAPI(endpoint: string, token: string): Promise<any> {
   return response.json();
 }
 
+// Fetch commit count via contributors stats (more accurate)
+async function fetchCommitCount(repo: string, token: string): Promise<number> {
+  const contributors = await fetchGitHubAPI(`/repos/${repo}/contributors?per_page=100&anon=true`, token);
+  if (!contributors || !Array.isArray(contributors)) return 0;
+  return contributors.reduce((sum: number, c: any) => sum + (c.contributions || 0), 0);
+}
+
+// Fetch branch count
+async function fetchBranchCount(repo: string, token: string): Promise<number> {
+  const branches = await fetchGitHubAPI(`/repos/${repo}/branches?per_page=100`, token);
+  return Array.isArray(branches) ? branches.length : 0;
+}
+
+// Fetch repo metadata (stars, forks, open issues count)
+async function fetchRepoMetadata(repo: string, token: string): Promise<{ stars: number; forks: number; openIssuesCount: number }> {
+  const repoData = await fetchGitHubAPI(`/repos/${repo}`, token);
+  if (!repoData) return { stars: 0, forks: 0, openIssuesCount: 0 };
+  return {
+    stars: repoData.stargazers_count || 0,
+    forks: repoData.forks_count || 0,
+    openIssuesCount: repoData.open_issues_count || 0,
+  };
+}
+
 async function fetchRepoData(repoInfo: typeof MANAGED_REPOS[0], token: string): Promise<RepoData> {
   const { key, repo } = repoInfo;
   
+  console.log(`[GitHub Sync] Fetching data for ${repo}...`);
+  
   // Fetch en parallèle pour la performance
-  const [commitsData, issuesData, prsData, releasesData] = await Promise.all([
+  const [
+    commitsData, 
+    issuesData, 
+    prsData, 
+    releasesData, 
+    commitCount,
+    branchCount,
+    repoMeta,
+    contributorsData
+  ] = await Promise.all([
     fetchGitHubAPI(`/repos/${repo}/commits?per_page=10`, token),
     fetchGitHubAPI(`/repos/${repo}/issues?state=open&per_page=20`, token),
     fetchGitHubAPI(`/repos/${repo}/pulls?state=open&per_page=20`, token),
     fetchGitHubAPI(`/repos/${repo}/releases?per_page=5`, token),
+    fetchCommitCount(repo, token),
+    fetchBranchCount(repo, token),
+    fetchRepoMetadata(repo, token),
+    fetchGitHubAPI(`/repos/${repo}/contributors?per_page=100`, token),
   ]);
 
   const commits = (commitsData || []).map((c: any) => ({
@@ -112,6 +158,10 @@ async function fetchRepoData(repoInfo: typeof MANAGED_REPOS[0], token: string): 
     prerelease: r.prerelease || false,
   }));
 
+  const contributorCount = Array.isArray(contributorsData) ? contributorsData.length : 0;
+
+  console.log(`[GitHub Sync] ${repo}: ${commitCount} commits, ${branchCount} branches, ${contributorCount} contributors`);
+
   return {
     key,
     repo,
@@ -120,8 +170,13 @@ async function fetchRepoData(repoInfo: typeof MANAGED_REPOS[0], token: string): 
     pullRequests,
     releases,
     stats: {
+      commits: commitCount,
+      branches: branchCount,
+      contributors: contributorCount,
       openIssues: issues.length,
       openPRs: pullRequests.length,
+      stars: repoMeta.stars,
+      forks: repoMeta.forks,
       lastCommit: commits[0]?.date || null,
       lastRelease: releases[0]?.published_at || null,
     },
@@ -217,7 +272,7 @@ serve(async (req) => {
       }
     }
 
-    console.log(`Syncing ${reposToFetch.length} repo(s)...`);
+    console.log(`[GitHub Sync] Syncing ${reposToFetch.length} repo(s)...`);
 
     // Fetch tous les repos en parallèle
     const results = await Promise.all(
@@ -225,16 +280,29 @@ serve(async (req) => {
     );
 
     // Générer un résumé exécutif
+    const totalCommits = results.reduce((sum, r) => sum + r.stats.commits, 0);
+    const totalBranches = results.reduce((sum, r) => sum + r.stats.branches, 0);
     const totalOpenIssues = results.reduce((sum, r) => sum + r.stats.openIssues, 0);
     const totalOpenPRs = results.reduce((sum, r) => sum + r.stats.openPRs, 0);
+    const totalStars = results.reduce((sum, r) => sum + r.stats.stars, 0);
+    const totalContributors = results.reduce((sum, r) => sum + r.stats.contributors, 0);
     
     const summary = {
       synced_at: new Date().toISOString(),
       platforms_count: results.length,
+      total_commits: totalCommits,
+      total_branches: totalBranches,
+      total_contributors: totalContributors,
+      total_stars: totalStars,
       total_open_issues: totalOpenIssues,
       total_open_prs: totalOpenPRs,
       platforms: results.map(r => ({
         key: r.key,
+        commits: r.stats.commits,
+        branches: r.stats.branches,
+        contributors: r.stats.contributors,
+        stars: r.stats.stars,
+        forks: r.stats.forks,
         open_issues: r.stats.openIssues,
         open_prs: r.stats.openPRs,
         last_commit: r.stats.lastCommit,
@@ -242,7 +310,7 @@ serve(async (req) => {
       })),
     };
 
-    console.log("GitHub sync completed successfully");
+    console.log(`[GitHub Sync] Completed: ${totalCommits} total commits across ${results.length} repos`);
 
     return new Response(
       JSON.stringify({
@@ -253,7 +321,7 @@ serve(async (req) => {
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.error("GitHub sync error:", error);
+    console.error("[GitHub Sync] Error:", error);
     return new Response(
       JSON.stringify({ 
         success: false, 
