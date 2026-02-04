@@ -16,10 +16,12 @@ import {
   Wifi,
   WifiOff,
   Zap,
-  HardDrive
+  HardDrive,
+  Cpu
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { SystemPerformance } from "@/components/hq/diagnostics/SystemPerformance";
 
 interface HealthCheck {
   name: string;
@@ -429,6 +431,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* System Performance */}
+      <SystemPerformance />
     </div>
   );
 }

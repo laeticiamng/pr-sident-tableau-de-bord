@@ -22,6 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { MRRChart } from "@/components/hq/charts/MRRChart";
 import { UnitEconomicsDisplay } from "@/components/hq/finance/UnitEconomicsDisplay";
+import { RevenueComparisonChart } from "@/components/hq/charts/RevenueComparisonChart";
 
 export default function FinancePage() {
   const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
@@ -231,8 +232,15 @@ export default function FinancePage() {
         </Card>
       </div>
 
-      {/* MRR Chart */}
-      <MRRChart />
+      {/* MRR Chart & Revenue Comparison */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <MRRChart />
+        <RevenueComparisonChart 
+          currentMonth={kpis?.revenueThisMonth || 0} 
+          previousMonth={kpis?.revenueLastMonth || 0}
+          currency={kpis?.currency || "EUR"}
+        />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Platform Costs */}
