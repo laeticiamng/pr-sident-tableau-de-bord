@@ -19,6 +19,7 @@ import {
 import { RGPDExportButton } from "@/components/hq/compliance/RGPDExportButton";
 import { AIPDChecklist } from "@/components/hq/conformite/AIPDChecklist";
 import { DocumentInventory } from "@/components/hq/conformite/DocumentInventory";
+import { ComplianceAlerts } from "@/components/hq/conformite/ComplianceAlerts";
 
 // RGPD Rights - Les 8 droits fondamentaux
 const RGPD_RIGHTS = [
@@ -174,6 +175,9 @@ export default function ConformitePage() {
 
       {/* AIPD Checklist */}
       <AIPDChecklist />
+
+      {/* Compliance Alerts */}
+      <ComplianceAlerts />
 
       {/* Document Inventory */}
       <DocumentInventory />

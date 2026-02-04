@@ -19,6 +19,8 @@ import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
 import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
+import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerformance";
+import { PlatformTrafficWidget } from "@/components/hq/marketing/PlatformTrafficWidget";
 import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
@@ -208,6 +210,12 @@ export default function MarketingPage() {
         <ChannelROIChart />
         <CompetitiveRadar />
       </div>
+
+      {/* Campaign Performance - Detailed Analysis */}
+      <CampaignPerformance />
+
+      {/* Platform Traffic Widget */}
+      <PlatformTrafficWidget />
 
       {/* Content Calendar - Interactive Component */}
       <ContentCalendar />
