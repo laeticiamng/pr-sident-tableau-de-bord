@@ -19,6 +19,7 @@ import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStri
 import { CohortRetentionTable } from "@/components/hq/data/CohortRetentionTable";
 import { CohortAnalysis } from "@/components/hq/data/CohortAnalysis";
 import { ARPUTrendChart } from "@/components/hq/charts/ARPUTrendChart";
+import { LTVSegmentChart } from "@/components/hq/data/LTVSegmentChart";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -187,6 +188,9 @@ export default function DataAnalyticsPage() {
         <CohortRetentionTable />
         <ARPUTrendChart />
       </div>
+
+      {/* LTV par Segment */}
+      <LTVSegmentChart />
 
       {/* LTV et ROI */}
       <div className="grid md:grid-cols-2 gap-6">
