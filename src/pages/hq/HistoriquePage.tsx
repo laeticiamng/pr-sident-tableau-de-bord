@@ -14,9 +14,11 @@ import {
   Clock,
   Loader2,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Eye
 } from "lucide-react";
 import { useRecentRuns } from "@/hooks/useHQData";
+import { RunDetailsPanel } from "@/components/hq/history/RunDetailsPanel";
 
 const runTypeLabels: Record<string, string> = {
   DAILY_EXECUTIVE_BRIEF: "Brief Exécutif",
@@ -26,6 +28,7 @@ const runTypeLabels: Record<string, string> = {
   MARKETING_WEEK_PLAN: "Plan Marketing",
   RELEASE_GATE_CHECK: "Validation Release",
   WEEKLY_EXEC_REVIEW: "Revue Exécutive",
+  COMPETITIVE_ANALYSIS: "Analyse Concurrentielle",
 };
 
 export default function HistoriquePage() {
@@ -33,6 +36,7 @@ export default function HistoriquePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [expandedRun, setExpandedRun] = useState<string | null>(null);
+  const [selectedRun, setSelectedRun] = useState<any | null>(null);
 
   const filteredRuns = runs?.filter(run => {
     const matchesSearch = !searchTerm || 
@@ -192,6 +196,17 @@ export default function HistoriquePage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedRun(run);
+                        }}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        Détails
+                      </Button>
                       <Badge 
                         variant={run.status === "completed" ? "success" : run.status === "failed" ? "destructive" : "subtle"}
                       >
@@ -224,6 +239,15 @@ export default function HistoriquePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Run Details Panel */}
+      {selectedRun && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedRun(null)}>
+          <div className="max-w-2xl w-full max-h-[90vh] overflow-auto" onClick={e => e.stopPropagation()}>
+            <RunDetailsPanel run={selectedRun} onClose={() => setSelectedRun(null)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
