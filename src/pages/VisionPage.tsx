@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Target, Lightbulb, Heart, TrendingUp } from "lucide-react";
+import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket } from "lucide-react";
 
 export default function VisionPage() {
   return (
@@ -63,7 +63,7 @@ export default function VisionPage() {
             ].map((value, index) => (
               <div
                 key={value.title}
-                className="card-executive p-8 animate-fade-in"
+                className="card-executive p-8 animate-fade-in hover:shadow-lg transition-all duration-300"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex items-start gap-6">
@@ -97,29 +97,106 @@ export default function VisionPage() {
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Engagements */}
       <section className="py-20 md:py-28">
         <div className="container">
           <div className="mx-auto max-w-2xl text-center mb-16">
+            <h2 className="text-headline-1 mb-4">Nos Engagements</h2>
+            <p className="text-body-lg text-muted-foreground">
+              Ce que nous promettons à nos utilisateurs et partenaires.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-4">
+            {[
+              {
+                icon: Shield,
+                title: "Sécurité",
+                stat: "100%",
+                description: "Données chiffrées et RLS activé"
+              },
+              {
+                icon: Users,
+                title: "Accessibilité",
+                stat: "WCAG AA",
+                description: "Interfaces inclusives"
+              },
+              {
+                icon: Award,
+                title: "Qualité",
+                stat: "128+",
+                description: "Tests automatisés"
+              },
+              {
+                icon: Rocket,
+                title: "Performance",
+                stat: "99.9%",
+                description: "Uptime garanti"
+              },
+            ].map((engagement, index) => (
+              <div
+                key={engagement.title}
+                className="text-center p-6 rounded-2xl border hover:border-accent/50 transition-all duration-300 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                  <engagement.icon className="h-6 w-6" />
+                </div>
+                <div className="text-2xl font-bold text-accent mb-1">{engagement.stat}</div>
+                <h3 className="font-semibold mb-1">{engagement.title}</h3>
+                <p className="text-sm text-muted-foreground">{engagement.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-20 md:py-28 bg-secondary/50">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="text-headline-1 mb-4">Notre Histoire</h2>
+            <p className="text-body-lg text-muted-foreground">
+              Une aventure entrepreneuriale ambitieuse.
+            </p>
           </div>
 
           <div className="mx-auto max-w-2xl">
             <div className="relative border-l-2 border-accent/30 pl-8 space-y-12">
               <div className="relative">
-                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent" />
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent shadow-lg shadow-accent/30" />
                 <div className="text-sm font-medium text-accent mb-2">Mai 2025</div>
                 <h3 className="text-xl font-semibold mb-2">Création d'EMOTIONSCARE SASU</h3>
                 <p className="text-muted-foreground">
-                  Immatriculation au RCS d'Amiens. Début de l'aventure entrepreneuriale.
+                  Immatriculation au RCS d'Amiens (SIREN 944 505 445). 
+                  Début de l'aventure entrepreneuriale dans l'édition de logiciels applicatifs.
                 </p>
               </div>
               <div className="relative">
-                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/50" />
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/80" />
                 <div className="text-sm font-medium text-accent mb-2">2025</div>
                 <h3 className="text-xl font-semibold mb-2">Lancement des 5 plateformes</h3>
                 <p className="text-muted-foreground">
-                  Développement et mise en production de l'écosystème complet.
+                  Développement et mise en production de l'écosystème complet : 
+                  EmotionsCare, Pixel Perfect Replica, System Compass, Growth Copilot et Med MNG.
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/60" />
+                <div className="text-sm font-medium text-accent mb-2">2025</div>
+                <h3 className="text-xl font-semibold mb-2">Siège Social Numérique</h3>
+                <p className="text-muted-foreground">
+                  Création du HQ — Centre de commandement permettant de piloter 
+                  les 5 plateformes depuis une interface unifiée avec IA intégrée.
+                </p>
+              </div>
+              <div className="relative">
+                <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/40" />
+                <div className="text-sm font-medium text-accent mb-2">2026</div>
+                <h3 className="text-xl font-semibold mb-2">Expansion & Intégrations</h3>
+                <p className="text-muted-foreground">
+                  Intégration des outils tiers (CRM, Analytics, Support) et 
+                  déploiement des 39 agents IA de Growth Copilot.
                 </p>
               </div>
               <div className="relative">
@@ -127,6 +204,7 @@ export default function VisionPage() {
                 <div className="text-sm font-medium text-muted-foreground mb-2">À venir</div>
                 <h3 className="text-xl font-semibold mb-2">Et demain ?</h3>
                 <p className="text-muted-foreground">
+                  Expansion internationale, nouvelles plateformes et partenariats stratégiques. 
                   L'histoire continue de s'écrire...
                 </p>
               </div>

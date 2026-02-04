@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,9 @@ import {
   FileText,
   RefreshCw,
   Star,
-  ExternalLink
+  ExternalLink,
+  TrendingUp,
+  TrendingDown
 } from "lucide-react";
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
@@ -18,11 +21,19 @@ import { TicketDistributionChart } from "@/components/hq/support/TicketDistribut
 import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 
 export default function SupportPage() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await new Promise(r => setTimeout(r, 800));
+    setIsRefreshing(false);
+  };
+
   const kpis = [
-    { label: "Tickets Ouverts", value: SUPPORT_KPIS.openTickets.toString(), icon: MessageSquare },
-    { label: "Temps Réponse Moy.", value: SUPPORT_KPIS.avgResponseTime, icon: Clock },
-    { label: "Taux Résolution", value: `${SUPPORT_KPIS.resolutionRate}%`, icon: CheckCircle },
-    { label: "Satisfaction Client", value: `${SUPPORT_KPIS.customerSatisfaction}/5`, icon: Star, extra: "⭐".repeat(Math.round(SUPPORT_KPIS.customerSatisfaction)) },
+    { label: "Tickets Ouverts", value: SUPPORT_KPIS.openTickets.toString(), icon: MessageSquare, trend: -12 },
+    { label: "Temps Réponse Moy.", value: SUPPORT_KPIS.avgResponseTime, icon: Clock, trend: -8 },
+    { label: "Taux Résolution", value: `${SUPPORT_KPIS.resolutionRate}%`, icon: CheckCircle, trend: 5 },
+    { label: "Satisfaction Client", value: `${SUPPORT_KPIS.customerSatisfaction}/5`, icon: Star, extra: "⭐".repeat(Math.round(SUPPORT_KPIS.customerSatisfaction)), trend: 3 },
   ];
 
   return (
@@ -30,24 +41,30 @@ export default function SupportPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-headline-1 mb-2">Support Console</h1>
-          <p className="text-muted-foreground text-lg">Gestion centralisée du support client.</p>
+          <p className="text-muted-foreground text-lg">Gestion centralisée du support client multi-plateformes.</p>
         </div>
-        <Button variant="outline">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+        <Button variant="outline" onClick={handleRefresh} disabled={isRefreshing}>
+          <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Actualisation...' : 'Actualiser'}
         </Button>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs avec tendances */}
       <div className="grid gap-4 md:grid-cols-4">
         {kpis.map((kpi) => (
-          <Card key={kpi.label} className="card-executive">
+          <Card key={kpi.label} className="card-executive hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center justify-between mb-3">
                 <kpi.icon className="h-5 w-5 text-primary" />
-                <span className="text-sm text-muted-foreground">{kpi.label}</span>
+                {kpi.trend !== undefined && (
+                  <div className={`flex items-center gap-1 text-xs ${kpi.trend > 0 ? 'text-success' : 'text-destructive'}`}>
+                    {kpi.trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {Math.abs(kpi.trend)}%
+                  </div>
+                )}
               </div>
               <div className="text-2xl font-bold">{kpi.value}</div>
+              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
               {kpi.extra && <div className="text-sm mt-1">{kpi.extra}</div>}
             </CardContent>
           </Card>
