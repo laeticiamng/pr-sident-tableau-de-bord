@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
+import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 
 export default function SupportPage() {
   const kpis = [
@@ -52,6 +53,9 @@ export default function SupportPage() {
 
       {/* Ticket Overview */}
       <TicketsByPriority />
+
+      {/* SLA Monitoring */}
+      <SLAMonitor />
 
       {/* Knowledge Base */}
       <Card className="card-executive">

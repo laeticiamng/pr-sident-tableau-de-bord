@@ -17,6 +17,7 @@ import { SALES_KPIS, SALES_PIPELINE, SALES_ACTIVITIES, RECENT_OPPORTUNITIES } fr
 import { cn } from "@/lib/utils";
 import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
 import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
+import { TopClients } from "@/components/hq/sales/TopClients";
 
 export default function VentesPage() {
   const kpis = [
