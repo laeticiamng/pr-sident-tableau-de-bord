@@ -11,14 +11,12 @@ import {
   Loader2,
   Megaphone,
   ArrowUpRight,
-  ArrowDownRight,
-  Play,
-  Pause,
-  CheckCircle
+  ArrowDownRight
 } from "lucide-react";
 import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
 import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
+import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
 import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
@@ -203,41 +201,8 @@ export default function MarketingPage() {
         </Card>
       </div>
 
-      {/* Content Calendar */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-3">
-            <Calendar className="h-5 w-5 text-primary" />
-            Calendrier de Contenu
-          </CardTitle>
-          <CardDescription>
-            Planification du contenu pour les 5 plateformes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-7">
-            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day, index) => (
-              <div key={day} className="text-center">
-                <div className="text-sm font-medium text-muted-foreground mb-2">{day}</div>
-                <div className={cn(
-                  "p-3 rounded-lg border min-h-[80px]",
-                  index < 5 ? "bg-muted/30" : "bg-muted/10"
-                )}>
-                  {index === 0 && (
-                    <Badge variant="subtle" className="text-[10px]">Blog Post</Badge>
-                  )}
-                  {index === 2 && (
-                    <Badge variant="gold" className="text-[10px]">Newsletter</Badge>
-                  )}
-                  {index === 4 && (
-                    <Badge variant="success" className="text-[10px]">Social</Badge>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Content Calendar - Interactive Component */}
+      <ContentCalendar />
     </div>
   );
 }
