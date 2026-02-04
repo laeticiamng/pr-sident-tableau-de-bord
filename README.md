@@ -13,7 +13,7 @@
 [![Coverage](https://img.shields.io/badge/Coverage-13%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
 [![Audit](https://img.shields.io/badge/Audit-v20%20Complet-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Agents](https://img.shields.io/badge/Agents%20IA-39%20(2%20Dir%20%2B%2037%20Dept)-gold)](https://github.com/laeticiamng/hq-emotionscare)
+[![Growth Copilot](https://img.shields.io/badge/Growth%20Copilot-39%20AI%20Employees-gold)](https://github.com/laeticiamng/growth-copilot)
 [![Edge Functions](https://img.shields.io/badge/Edge%20Functions-9%20deployed-blue)](https://github.com/laeticiamng/hq-emotionscare)
 [![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits%20|%20912%20tests-181717?logo=github)](https://github.com/laeticiamng)
 
@@ -125,7 +125,8 @@ supabase/
 | Approbations | `/hq/approbations` | Actions en attente de validation |
 | Audit Log | `/hq/audit` | Journal des actions système |
 | Diagnostics | `/hq/diagnostics` | Monitoring technique |
-| Équipe Exécutive | `/hq/equipe-executive` | Agents IA et rôles |
+| Workforce Growth Copilot | `/hq/equipe-executive` | Vue des 39 agents IA de Growth Copilot |
+| Réunions | `/hq/reunions` | Planification et comptes-rendus |
 | Réunions | `/hq/reunions` | Planification et comptes-rendus |
 
 ### Départements
@@ -253,10 +254,10 @@ npm run test
 ### Enrichissements v4.0 (Audit v20)
 | # | Module | Enrichissement |
 |---|--------|----------------|
-| 1 | Équipe Executive | Nouvelle structure : 2 Direction + 37 agents dans 11 départements |
-| 2 | agent-profiles.ts | Refonte complète avec 39 agents et DEPARTMENTS constant |
-| 3 | Tests | 28 nouveaux tests pour agent-profiles.ts (validateAgentStructure) |
-| 4 | constants.ts | Growth Copilot mis à jour (11 modules, 64 tests) |
+| 1 | Workforce Growth Copilot | Page renommée pour clarifier qu'elle affiche les agents de Growth Copilot |
+| 2 | agent-profiles.ts | Documentation mise à jour (agents = Growth Copilot, pas HQ) |
+| 3 | Tests | 128 tests passants (100%) |
+| 4 | Sidebar | Label "Workforce Growth Copilot" pour éviter la confusion |
 | 5 | Documentation | Cohérence 100% README/code/backend validée |
 
 ### Enrichissements v3.9 (Audit v19)
