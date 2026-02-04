@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle, XCircle, Clock, AlertTriangle, Loader2 } from "lucide-react";
 import { usePendingApprovals, useApproveAction } from "@/hooks/useHQData";
+import { ApprovalHistory } from "@/components/hq/approbations/ApprovalHistory";
 
 const riskColors = {
   low: "bg-status-green text-white",
@@ -170,6 +171,9 @@ export default function ApprobationsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Approval History */}
+      <ApprovalHistory />
 
       {/* Confirmation Dialog */}
       <Dialog open={!!selectedAction} onOpenChange={() => setSelectedAction(null)}>

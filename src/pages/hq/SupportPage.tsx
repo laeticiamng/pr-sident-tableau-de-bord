@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
+import { TicketTrendChart } from "@/components/hq/support/TicketTrendChart";
 import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 
 export default function SupportPage() {
@@ -51,8 +52,11 @@ export default function SupportPage() {
         ))}
       </div>
 
-      {/* Ticket Overview */}
-      <TicketsByPriority />
+      {/* Ticket Overview & Trend */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TicketsByPriority />
+        <TicketTrendChart />
+      </div>
 
       {/* SLA Monitoring */}
       <SLAMonitor />

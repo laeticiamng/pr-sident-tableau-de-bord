@@ -16,6 +16,7 @@ import { useSystemConfig, useUpdateConfig, useExecuteRun, usePlatforms } from "@
 import { useToast } from "@/hooks/use-toast";
 import { SecretsRegistry } from "@/components/hq/security/SecretsRegistry";
 import { RLSAuditTable } from "@/components/hq/security/RLSAuditTable";
+import { IncidentCounter } from "@/components/hq/security/IncidentCounter";
 
 export default function SecuritePage() {
   const { toast } = useToast();
@@ -155,6 +156,9 @@ export default function SecuritePage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Incident Counter */}
+      <IncidentCounter daysSinceLastIncident={47} />
 
       {/* Security Status */}
       <div className="grid gap-4 md:grid-cols-4">
