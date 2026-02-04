@@ -70,10 +70,10 @@ export default function EngineeringPage() {
         </div>
         <Button 
           variant="outline"
-          onClick={() => githubSync.mutate(undefined)}
-          disabled={githubSync.isPending}
+          onClick={() => githubSync.sync(undefined)}
+          disabled={githubSync.isLoading}
         >
-          {githubSync.isPending ? (
+          {githubSync.isLoading ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           ) : (
             <RefreshCw className="h-4 w-4 mr-2" />
