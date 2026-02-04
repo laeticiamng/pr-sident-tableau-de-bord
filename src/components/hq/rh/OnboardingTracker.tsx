@@ -10,35 +10,35 @@ const ONBOARDING_DATA = [
     role: "Directeur Financier", 
     progress: 100,
     status: "completed",
-    startedAt: "2025-01-15"
+    startedAt: "2026-01-15"
   },
   { 
     agent: "CMO Agent", 
     role: "Directeur Marketing", 
     progress: 85,
     status: "in_progress",
-    startedAt: "2025-01-28"
+    startedAt: "2026-01-28"
   },
   { 
     agent: "CTO Agent", 
     role: "Directeur Technique", 
     progress: 100,
     status: "completed",
-    startedAt: "2025-01-10"
+    startedAt: "2026-01-10"
   },
   { 
     agent: "Support Lead", 
     role: "Responsable Support", 
     progress: 60,
     status: "in_progress",
-    startedAt: "2025-02-01"
+    startedAt: "2026-02-01"
   },
   { 
     agent: "Sales Director", 
     role: "Directeur Commercial", 
     progress: 30,
     status: "pending",
-    startedAt: "2025-02-03"
+    startedAt: "2026-02-03"
   },
 ];
 

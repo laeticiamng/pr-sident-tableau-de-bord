@@ -20,7 +20,7 @@ const MEETING_NOTES: MeetingNote[] = [
   {
     id: "1",
     title: "Standup DG Quotidien",
-    date: "2025-02-04T09:00:00Z",
+    date: "2026-02-04T09:00:00Z",
     type: "standup",
     attendees: ["Présidente", "DG IA"],
     summary: "Revue des KPIs journaliers, validation du plan marketing Q1, discussion sur le recrutement.",
@@ -31,7 +31,7 @@ const MEETING_NOTES: MeetingNote[] = [
   {
     id: "2",
     title: "Revue Exécutive Hebdo",
-    date: "2025-02-03T14:00:00Z",
+    date: "2026-02-03T14:00:00Z",
     type: "review",
     attendees: ["Présidente", "DG IA", "CFO", "CMO", "CTO"],
     summary: "Analyse financière mensuelle, roadmap produit Q1, validation budget marketing.",
@@ -42,7 +42,7 @@ const MEETING_NOTES: MeetingNote[] = [
   {
     id: "3",
     title: "Directeurs Plateforme",
-    date: "2025-02-01T10:00:00Z",
+    date: "2026-02-01T10:00:00Z",
     type: "planning",
     attendees: ["DG EmotionsCare", "DG Growth Copilot", "DG System Compass", "DG Med MNG", "DG Pixel Perfect"],
     summary: "Coordination inter-plateformes, partage des best practices, planning releases Q1.",

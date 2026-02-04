@@ -11,11 +11,11 @@ interface CohortData {
 }
 
 const COHORT_DATA: CohortData[] = [
-  { month: "Oct 2024", users: 120, retention: [100, 72, 58, 45, 38] },
-  { month: "Nov 2024", users: 145, retention: [100, 75, 62, 48] },
-  { month: "Déc 2024", users: 98, retention: [100, 68, 54] },
-  { month: "Jan 2025", users: 167, retention: [100, 78] },
-  { month: "Fév 2025", users: 89, retention: [100] },
+  { month: "Oct 2025", users: 120, retention: [100, 72, 58, 45, 38] },
+  { month: "Nov 2025", users: 145, retention: [100, 75, 62, 48] },
+  { month: "Déc 2025", users: 98, retention: [100, 68, 54] },
+  { month: "Jan 2026", users: 167, retention: [100, 78] },
+  { month: "Fév 2026", users: 89, retention: [100] },
 ];
 
 const RETENTION_THRESHOLDS = {

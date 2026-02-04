@@ -183,7 +183,7 @@ export default function VisionPage() {
               </div>
               <div className="relative">
                 <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/60" />
-                <div className="text-sm font-medium text-accent mb-2">2025</div>
+                <div className="text-sm font-medium text-accent mb-2">2026</div>
                 <h3 className="text-xl font-semibold mb-2">Siège Social Numérique</h3>
                 <p className="text-muted-foreground">
                   Création du HQ — Centre de commandement permettant de piloter 

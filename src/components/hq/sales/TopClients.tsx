@@ -22,7 +22,7 @@ const TOP_CLIENTS: TopClient[] = [
     industry: "Technologie", 
     revenue: 45000, 
     revenueChange: 12.5, 
-    since: "2024-03", 
+    since: "2025-03", 
     platform: "Growth Copilot",
     healthScore: 95
   },
@@ -32,7 +32,7 @@ const TOP_CLIENTS: TopClient[] = [
     industry: "Santé", 
     revenue: 38500, 
     revenueChange: 8.2, 
-    since: "2024-05", 
+    since: "2025-05", 
     platform: "EmotionsCare",
     healthScore: 88
   },
@@ -42,7 +42,7 @@ const TOP_CLIENTS: TopClient[] = [
     industry: "Éducation", 
     revenue: 28000, 
     revenueChange: -3.1, 
-    since: "2024-01", 
+    since: "2025-01", 
     platform: "Med MNG",
     healthScore: 72
   },
@@ -52,7 +52,7 @@ const TOP_CLIENTS: TopClient[] = [
     industry: "Finance", 
     revenue: 24500, 
     revenueChange: 0, 
-    since: "2024-07", 
+    since: "2025-07", 
     platform: "System Compass",
     healthScore: 85
   },
@@ -62,7 +62,7 @@ const TOP_CLIENTS: TopClient[] = [
     industry: "Commerce", 
     revenue: 19800, 
     revenueChange: 15.3, 
-    since: "2024-09", 
+    since: "2025-09", 
     platform: "Growth Copilot",
     healthScore: 92
   },
