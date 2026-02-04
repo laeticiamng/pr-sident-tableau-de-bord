@@ -15,6 +15,7 @@ import {
 import { useAgents } from "@/hooks/useHQData";
 import { cn } from "@/lib/utils";
 import { TeamPerformanceMetrics } from "@/components/hq/rh/TeamPerformanceMetrics";
+import { OnboardingTracker } from "@/components/hq/rh/OnboardingTracker";
 
 export default function RHPage() {
   const { data: agents, isLoading } = useAgents();
@@ -202,6 +203,9 @@ export default function RHPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Onboarding Tracker */}
+      <OnboardingTracker />
 
       {/* Performance globale - Composant dédié */}
       <TeamPerformanceMetrics />

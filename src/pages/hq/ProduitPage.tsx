@@ -15,6 +15,7 @@ import {
 import { PLATFORM_FEATURES, FEATURE_REQUESTS, UPCOMING_RELEASES } from "@/lib/mock-data";
 import { OKRProgress } from "@/components/hq/product/OKRProgress";
 import { RoadmapExportButton } from "@/components/hq/product/RoadmapExportButton";
+import { ReleaseTimeline } from "@/components/hq/product/ReleaseTimeline";
 import { cn } from "@/lib/utils";
 
 const platforms = [
@@ -88,6 +89,9 @@ export default function ProduitPage() {
 
       {/* OKRs - Using new component */}
       <OKRProgress />
+
+      {/* Release Timeline */}
+      <ReleaseTimeline />
 
       {/* Feature Requests */}
       <div className="grid gap-6 lg:grid-cols-2">

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { Building2, FileText, MapPin, Calendar, User, CreditCard } from "lucide-react";
+import { CompanyKPIs } from "@/components/hq/entreprise/CompanyKPIs";
 
 export default function EntreprisePage() {
   return (
@@ -112,6 +113,9 @@ export default function EntreprisePage() {
           </dl>
         </div>
       </div>
+
+      {/* Company KPIs */}
+      <CompanyKPIs />
     </div>
   );
 }

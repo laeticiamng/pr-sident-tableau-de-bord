@@ -17,6 +17,7 @@ import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
 import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
+import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
@@ -200,6 +201,9 @@ export default function MarketingPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* ROI by Channel Chart */}
+      <ChannelROIChart />
 
       {/* Content Calendar - Interactive Component */}
       <ContentCalendar />
