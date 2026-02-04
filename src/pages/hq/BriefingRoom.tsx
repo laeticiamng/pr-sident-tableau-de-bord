@@ -22,6 +22,7 @@ import { PlatformHealthGrid } from "@/components/hq/PlatformHealthGrid";
 import { AIInsightsWidget } from "@/components/hq/AIInsightsWidget";
 import { AutopilotControl } from "@/components/hq/AutopilotControl";
 import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
+import { RecentActivityFeed } from "@/components/hq/briefing/RecentActivityFeed";
 
 export default function BriefingRoom() {
   const { data: platforms } = usePlatforms();
@@ -205,15 +206,18 @@ export default function BriefingRoom() {
       {/* AI Transparency Panel */}
       <AITransparencyPanel runResult={lastRunResult} />
 
-      {/* Platform Status Grid */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Statut des Plateformes</h2>
-          <Link to="/hq/plateformes" className="text-sm text-accent hover:underline flex items-center gap-1">
-            Voir détails <GitBranch className="h-3 w-3" />
-          </Link>
+      {/* Recent Activity & Platform Status */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Statut des Plateformes</h2>
+            <Link to="/hq/plateformes" className="text-sm text-accent hover:underline flex items-center gap-1">
+              Voir détails <GitBranch className="h-3 w-3" />
+            </Link>
+          </div>
+          <PlatformHealthGrid />
         </div>
-        <PlatformHealthGrid />
+        <RecentActivityFeed />
       </div>
 
       {/* Stats Summary */}
