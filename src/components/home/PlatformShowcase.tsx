@@ -122,7 +122,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                       <div className={cn("w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse", platformBgAccents["emotionscare"])} />
                       <span className={cn("text-[10px] sm:text-xs font-semibold uppercase tracking-wider", platformAccents["emotionscare"])}>
-                        Production • 33 Modules
+                        Production • 37 Modules
                       </span>
                     </div>
                     
