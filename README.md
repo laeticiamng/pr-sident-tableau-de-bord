@@ -224,13 +224,16 @@ npm run test
 | Module | Composants | Tests | Status |
 |--------|------------|-------|--------|
 | Auth | 3 | 5 | ✅ |
-| HQ Core | 25 | 42 | ✅ |
-| Finance | 6 | 14 | ✅ |
+| HQ Core | 28 | 45 | ✅ |
+| Finance | 8 | 16 | ✅ |
 | Permissions | 6 | 10 | ✅ |
 | Produit | 4 | 8 | ✅ |
-| Engineering | 4 | 8 | ✅ |
+| Engineering | 5 | 10 | ✅ |
 | Scheduler | 3 | 4 | ✅ |
 | Run Engine | 5 | 14 | ✅ |
+| Support | 4 | 8 | ✅ |
+| Ventes | 5 | 8 | ✅ |
+| Diagnostics | 3 | 6 | ✅ |
 
 ---
 

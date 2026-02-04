@@ -153,6 +153,9 @@ export default function VentesPage() {
         </Card>
       </div>
 
+      {/* Top Clients */}
+      <TopClients />
+
       {/* Proposals */}
       <Card className="card-executive">
         <CardHeader>

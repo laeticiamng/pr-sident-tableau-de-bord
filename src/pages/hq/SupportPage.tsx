@@ -10,9 +10,9 @@ import {
   Star,
   ExternalLink
 } from "lucide-react";
-import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
-import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
+import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
+import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 
 export default function SupportPage() {
   const kpis = [
