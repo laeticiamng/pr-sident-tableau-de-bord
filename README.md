@@ -234,6 +234,11 @@ npm run test
 | Support | 4 | 8 | ✅ |
 | Ventes | 5 | 8 | ✅ |
 | Diagnostics | 3 | 6 | ✅ |
+| Marketing | 4 | 6 | ✅ |
+| RH | 3 | 5 | ✅ |
+| Data Analytics | 4 | 6 | ✅ |
+| Conformité | 3 | 4 | ✅ |
+| Historique | 2 | 4 | ✅ |
 
 ---
 
