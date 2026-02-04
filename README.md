@@ -8,8 +8,9 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 [![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
 [![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
-[![Tests](https://img.shields.io/badge/Tests-84%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
+[![Tests](https://img.shields.io/badge/Tests-100%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Protected-green)](https://github.com/laeticiamng/hq-emotionscare)
+[![Coverage](https://img.shields.io/badge/Coverage-12%20test%20files-blue)](https://github.com/laeticiamng/hq-emotionscare)
 
 ---
 
