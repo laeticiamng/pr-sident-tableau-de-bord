@@ -42,9 +42,12 @@ export default function RHPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h1 className="text-headline-1 mb-2">Ressources Humaines IA</h1>
+        <h1 className="text-headline-1 mb-2">Ressources & Agents</h1>
         <p className="text-muted-foreground text-lg">
-          Gestion des agents IA et performance de l'équipe exécutive.
+          Gestion des agents IA configurés dans le HQ et métriques de performance.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Note : Les 39 employés IA de Growth Copilot sont visibles dans <a href="/hq/equipe-executive" className="text-accent hover:underline">Workforce Growth Copilot</a>.
         </p>
       </div>
 
@@ -155,10 +158,10 @@ export default function RHPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            Équipe Exécutive IA
+            Agents HQ Configurés
           </CardTitle>
           <CardDescription>
-            Tous les agents IA de l'organisation
+            Agents IA configurés dans la base de données du HQ
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -110,7 +110,7 @@ export default function BriefingRoom() {
             <div className="p-2 rounded-lg bg-accent/10">
               <Users className="h-5 w-5 text-accent" />
             </div>
-            <span className="text-xs font-medium">Équipe Executive</span>
+            <span className="text-xs font-medium">Workforce Copilot</span>
           </Link>
         </Button>
         <Button 
