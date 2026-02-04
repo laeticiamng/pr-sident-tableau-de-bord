@@ -81,18 +81,24 @@ serve(async (req) => {
     const { action } = await req.json().catch(() => ({}));
 
     // Action: cron_trigger - Special case for pg_cron (no auth needed for internal calls)
-    // This is triggered by pg_cron internally and should be secured by network policies
+    // This is triggered by pg_cron internally and MUST be secured by a shared secret
     if (action === "cron_trigger") {
-      // For cron triggers, we need to verify this is an internal call
-      // In production, this should be secured by network policies or a shared secret
       const cronSecret = req.headers.get("X-Cron-Secret");
       const expectedSecret = Deno.env.get("CRON_SECRET");
       
-      // If CRON_SECRET is set, validate it
-      if (expectedSecret && cronSecret !== expectedSecret) {
-        console.error("[Scheduler] Invalid cron secret");
+      // SECURITY: CRON_SECRET is MANDATORY for cron triggers
+      if (!expectedSecret) {
+        console.error("[Scheduler] CRON_SECRET not configured - rejecting request");
         return new Response(
-          JSON.stringify({ error: "Accès non autorisé" }),
+          JSON.stringify({ error: "Service temporarily unavailable" }),
+          { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      if (cronSecret !== expectedSecret) {
+        console.error("[Scheduler] Invalid cron secret provided");
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
           { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
