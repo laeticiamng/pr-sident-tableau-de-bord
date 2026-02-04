@@ -20,9 +20,11 @@ import {
   Layers,
   TestTube2,
   Calendar,
-  Loader2
+  Loader2,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 
 const statusLabels = {
   production: { label: "Production", icon: CheckCircle },
@@ -139,14 +141,21 @@ export default function PlateformesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="flex flex-col items-center justify-center min-h-screen gap-6">
+        <div className="relative">
+          <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+          <Loader2 className="h-16 w-16 animate-spin text-primary relative z-10" />
+        </div>
+        <div className="text-center animate-fade-in">
+          <p className="text-lg font-medium text-foreground">Chargement des plateformes...</p>
+          <p className="text-sm text-muted-foreground">Synchronisation avec le backend</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col animate-fade-in">
       {/* Hero — Immersive */}
       <section className="relative py-32 md:py-40 overflow-hidden">
         {/* Background Effects */}
@@ -224,9 +233,10 @@ export default function PlateformesPage() {
                   key={platform.key}
                   className={cn(
                     "group relative rounded-3xl border bg-card overflow-hidden transition-all duration-700",
-                    "hover:shadow-2xl",
+                    "hover:shadow-2xl animate-fade-in",
                     platformBorders[platform.key]
                   )}
+                  style={{ animationDelay: `${index * 0.15}s` }}
                   onMouseEnter={() => setHoveredPlatform(platform.key)}
                   onMouseLeave={() => setHoveredPlatform(null)}
                 >
@@ -268,6 +278,17 @@ export default function PlateformesPage() {
                         <Badge variant="outline" className="text-xs">
                           {platform.stats.modules} modules
                         </Badge>
+                        
+                        {/* Uptime Badge - Real-time indicator */}
+                        {platform.uptime_percent !== undefined && platform.uptime_percent !== null && (
+                          <Badge 
+                            variant={platform.uptime_percent >= 99 ? "success" : platform.uptime_percent >= 95 ? "warning" : "destructive"}
+                            className="text-xs flex items-center gap-1.5 animate-fade-in"
+                          >
+                            <Activity className="w-3 h-3" />
+                            {platform.uptime_percent.toFixed(1)}% uptime
+                          </Badge>
+                        )}
                       </div>
 
                       {/* Icon & Title */}
@@ -368,6 +389,33 @@ export default function PlateformesPage() {
                         ))}
                       </div>
                       
+                      {/* Uptime Progress Bar */}
+                      {platform.uptime_percent !== undefined && platform.uptime_percent !== null && (
+                        <div className="mt-4 p-4 rounded-xl bg-secondary/20 border border-border/30 animate-fade-in">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <Activity className={cn(
+                                "w-4 h-4",
+                                platform.uptime_percent >= 99 ? "text-status-green" : 
+                                platform.uptime_percent >= 95 ? "text-status-amber" : "text-destructive"
+                              )} />
+                              <span className="text-sm font-medium">Disponibilité</span>
+                            </div>
+                            <span className={cn(
+                              "text-lg font-bold",
+                              platform.uptime_percent >= 99 ? "text-status-green" : 
+                              platform.uptime_percent >= 95 ? "text-status-amber" : "text-destructive"
+                            )}>
+                              {platform.uptime_percent.toFixed(1)}%
+                            </span>
+                          </div>
+                          <Progress 
+                            value={platform.uptime_percent} 
+                            className="h-2"
+                          />
+                        </div>
+                      )}
+
                       {/* Last commit info */}
                       {platform.lastCommit && (
                         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
