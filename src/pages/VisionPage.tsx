@@ -15,7 +15,7 @@ export default function VisionPage() {
               Construire l'avenir
               <span className="block text-accent">du logiciel</span>
             </h1>
-            <p className="text-body-lg text-primary-foreground/80">
+            <p className="text-lg md:text-xl text-primary-foreground font-medium leading-relaxed">
               Chez EMOTIONSCARE, nous croyons que la technologie doit servir 
               l'humain, pas l'inverse. Notre mission : créer des outils 
               qui simplifient la vie et libèrent le potentiel de chacun.
