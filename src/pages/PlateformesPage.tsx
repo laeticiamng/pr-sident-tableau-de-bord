@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { usePlatforms } from "@/hooks/useHQData";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,16 +19,15 @@ import {
   Layers,
   TestTube2,
   Calendar,
-  Loader2,
-  Activity
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
+import { Link } from "react-router-dom";
 
 const statusLabels = {
-  production: { label: "Production", icon: CheckCircle },
-  prototype: { label: "Prototype", icon: AlertCircle },
-  development: { label: "Développement", icon: Sparkles },
+  production: { label: "Production", icon: CheckCircle, color: "text-success", bg: "bg-success" },
+  prototype: { label: "Prototype", icon: AlertCircle, color: "text-warning", bg: "bg-warning" },
+  development: { label: "Développement", icon: Sparkles, color: "text-muted-foreground", bg: "bg-muted-foreground" },
 };
 
 // Icon mapping for each platform
@@ -74,51 +72,11 @@ const platformBorders: Record<string, string> = {
   "med-mng": "hover:border-platform-medical/40",
 };
 
-// Mapping platform key to live URL (static config)
-const platformLiveUrls: Record<string, string> = {
-  "emotionscare": "https://emotionscare.com",
-  "pixel-perfect-replica": "https://pixel-perfect-clone-6574.lovable.app",
-  "system-compass": "https://world-alignment.lovable.app",
-  "growth-copilot": "https://www.agent-growth-automator.com",
-  "med-mng": "https://medmng.com",
-};
-
-// Static platform metadata (features, taglines from constants)
-const platformMetadata = MANAGED_PLATFORMS.reduce((acc, p) => {
-  acc[p.key] = {
-    tagline: p.tagline,
-    description: p.description,
-    features: p.features,
-    stats: p.stats,
-    status: p.status,
-    lastCommit: p.lastCommit,
-  };
-  return acc;
-}, {} as Record<string, { tagline: string; description: string; features: readonly string[]; stats: { modules: number; tables: number; edgeFunctions: number; branches: number; commits: number; tests: number }; status: string; lastCommit: string | null }>);
-
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
-  
-  // Fetch platforms from Supabase
-  const { data: supabasePlatforms, isLoading } = usePlatforms();
 
-  // Merge Supabase data with static metadata
-  const platforms = supabasePlatforms?.map(sp => {
-    const meta = platformMetadata[sp.key];
-    return {
-      key: sp.key,
-      name: sp.name,
-      description: meta?.description || sp.description,
-      tagline: meta?.tagline || "",
-      liveUrl: platformLiveUrls[sp.key] || "",
-      status: sp.status === "green" ? "production" : sp.status === "amber" ? "prototype" : "development",
-      uptime_percent: sp.uptime_percent,
-      last_release_at: sp.last_release_at,
-      features: meta?.features || [],
-      stats: meta?.stats || { modules: 0, tables: 0, edgeFunctions: 0, branches: 0, commits: 0, tests: 0 },
-      lastCommit: meta?.lastCommit,
-    };
-  }) || [];
+  // Use static data from constants (public page, no auth required)
+  const platforms = MANAGED_PLATFORMS;
 
   // Calculate totals
   const totals = platforms.reduce(
@@ -139,51 +97,38 @@ export default function PlateformesPage() {
     return num.toLocaleString();
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-6">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
-          <Loader2 className="h-16 w-16 animate-spin text-primary relative z-10" />
-        </div>
-        <div className="text-center animate-fade-in">
-          <p className="text-lg font-medium text-foreground">Chargement des plateformes...</p>
-          <p className="text-sm text-muted-foreground">Synchronisation avec le backend</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col animate-fade-in">
-      {/* Hero — Immersive */}
+      {/* ============================================ */}
+      {/* HERO SECTION */}
+      {/* ============================================ */}
       <section className="relative py-32 md:py-40 overflow-hidden">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-hero-gradient" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_-10%,hsl(var(--accent)/0.15),transparent)]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_-10%,hsl(var(--accent)/0.2),transparent)]" />
         <div className="absolute top-1/3 left-1/4 w-[600px] h-[600px] bg-platform-health/10 rounded-full blur-[150px]" />
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-platform-compass/10 rounded-full blur-[120px]" />
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(220_25%_20%/0.08)_1px,transparent_1px),linear-gradient(90deg,hsl(220_25%_20%/0.08)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--primary-foreground)/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary-foreground)/0.05)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
-        <div className="container relative z-10">
+        <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
-            <Badge variant="gold" className="mb-8 glow-gold">
+            <Badge variant="gold" className="mb-8">
               <Layers className="w-4 h-4 mr-2" />
               Écosystème Complet
             </Badge>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 leading-[0.95]">
-              Nos <span className="text-gradient">Plateformes</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 leading-[0.95]">
+              Nos <span className="text-accent">Plateformes</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 max-w-2xl mx-auto mb-12 leading-relaxed">
               Cinq solutions innovantes, une vision unifiée. 
               Chaque plateforme excelle dans son domaine.
             </p>
 
-            {/* Summary Stats - Real GitHub Data */}
+            {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
                 { value: "5", label: "Plateformes" },
@@ -194,13 +139,13 @@ export default function PlateformesPage() {
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
+                  className="p-5 md:p-6 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-primary-foreground/10 hover:border-accent/30"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
-                  <div className="text-3xl md:text-4xl font-bold text-accent mb-1">
+                  <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-white/80">
+                  <div className="text-xs md:text-sm text-primary-foreground/70">
                     {stat.label}
                   </div>
                 </div>
@@ -210,17 +155,19 @@ export default function PlateformesPage() {
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden sm:block">
           <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
             <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
           </div>
         </div>
       </section>
 
-      {/* Platforms — Individual Showcases */}
-      <section className="py-24 md:py-32 bg-background">
-        <div className="container">
-          <div className="space-y-16 md:space-y-24">
+      {/* ============================================ */}
+      {/* PLATFORMS SHOWCASE */}
+      {/* ============================================ */}
+      <section className="py-20 md:py-32 bg-background">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="space-y-12 md:space-y-20">
             {platforms.map((platform, index) => {
               const Icon = platformIcons[platform.key] || Rocket;
               const statusConfig = statusLabels[platform.status as keyof typeof statusLabels] || statusLabels.development;
@@ -232,11 +179,11 @@ export default function PlateformesPage() {
                 <div
                   key={platform.key}
                   className={cn(
-                    "group relative rounded-3xl border bg-card overflow-hidden transition-all duration-700",
+                    "group relative rounded-2xl md:rounded-3xl border bg-card overflow-hidden transition-all duration-700",
                     "hover:shadow-2xl animate-fade-in",
                     platformBorders[platform.key]
                   )}
-                  style={{ animationDelay: `${index * 0.15}s` }}
+                  style={{ animationDelay: `${index * 0.1}s` }}
                   onMouseEnter={() => setHoveredPlatform(platform.key)}
                   onMouseLeave={() => setHoveredPlatform(null)}
                 >
@@ -252,25 +199,24 @@ export default function PlateformesPage() {
                     "absolute opacity-[0.03] transition-opacity duration-500 group-hover:opacity-[0.08]",
                     isEven ? "-right-16 -bottom-16" : "-left-16 -bottom-16"
                   )}>
-                    <Icon className="w-[400px] h-[400px]" />
+                    <Icon className="w-[300px] h-[300px] md:w-[400px] md:h-[400px]" />
                   </div>
 
                   <div className={cn(
-                    "relative grid md:grid-cols-2 gap-8 lg:gap-12 p-8 md:p-12 lg:p-16 items-center",
-                    !isEven && "md:flex-row-reverse"
+                    "relative grid md:grid-cols-2 gap-6 lg:gap-12 p-6 md:p-10 lg:p-14 items-center"
                   )}>
                     {/* Content Side */}
                     <div className={cn(!isEven && "md:order-2")}>
-                      {/* Status & Platform Badge */}
-                      <div className="flex flex-wrap items-center gap-3 mb-6">
+                      {/* Status Badge */}
+                      <div className="flex flex-wrap items-center gap-3 mb-5">
                         <div className="flex items-center gap-2">
                           <div className={cn(
-                            "w-3 h-3 rounded-full animate-pulse",
-                            platform.status === "production" ? "bg-status-green" : "bg-status-amber"
+                            "w-2.5 h-2.5 rounded-full animate-pulse",
+                            statusConfig.bg
                           )} />
                           <span className={cn(
                             "text-xs font-semibold uppercase tracking-wider",
-                            platform.status === "production" ? "text-status-green" : "text-status-amber"
+                            statusConfig.color
                           )}>
                             {statusConfig.label}
                           </span>
@@ -278,31 +224,19 @@ export default function PlateformesPage() {
                         <Badge variant="outline" className="text-xs">
                           {platform.stats.modules} modules
                         </Badge>
-                        
-                        {/* Uptime Badge - Real-time indicator */}
-                        {platform.uptime_percent !== undefined && platform.uptime_percent !== null && (
-                          <Badge 
-                            variant={platform.uptime_percent >= 99 ? "success" : platform.uptime_percent >= 95 ? "warning" : "destructive"}
-                            className="text-xs flex items-center gap-1.5 animate-fade-in"
-                          >
-                            <Activity className="w-3 h-3" />
-                            {platform.uptime_percent.toFixed(1)}% uptime
-                          </Badge>
-                        )}
                       </div>
 
                       {/* Icon & Title */}
                       <div className="flex items-center gap-4 mb-4">
                         <div className={cn(
-                          "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300",
+                          "w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl flex items-center justify-center transition-all duration-300",
                           "bg-secondary/50 group-hover:scale-110",
                           isHovered && "shadow-lg"
                         )}>
-                          <Icon className={cn("w-7 h-7", platformAccents[platform.key])} />
+                          <Icon className={cn("w-6 h-6 md:w-7 md:h-7", platformAccents[platform.key])} />
                         </div>
                         <h2 className={cn(
-                          "text-3xl md:text-4xl lg:text-5xl font-bold transition-colors duration-300",
-                          `group-hover:${platformAccents[platform.key]}`,
+                          "text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold transition-colors duration-300",
                           isHovered && platformAccents[platform.key]
                         )}>
                           {platform.name}
@@ -311,23 +245,23 @@ export default function PlateformesPage() {
 
                       {/* Tagline */}
                       <p className={cn(
-                        "text-lg font-medium mb-4 transition-colors duration-300",
+                        "text-base md:text-lg font-medium mb-3",
                         platformAccents[platform.key]
                       )}>
                         "{platform.tagline}"
                       </p>
 
                       {/* Description */}
-                      <p className="text-muted-foreground leading-relaxed mb-6">
+                      <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-5">
                         {platform.description}
                       </p>
 
                       {/* Features */}
-                      <div className="flex flex-wrap gap-2 mb-8">
+                      <div className="flex flex-wrap gap-2 mb-6">
                         {platform.features.map((feature) => (
                           <span 
                             key={feature}
-                            className="px-3 py-1.5 text-xs font-medium bg-secondary/80 rounded-full border border-border/50 transition-colors duration-300 hover:border-accent/30"
+                            className="px-2.5 py-1 text-xs font-medium bg-secondary/80 rounded-full border border-border/50 transition-colors duration-300 hover:border-accent/30"
                           >
                             {feature}
                           </span>
@@ -335,9 +269,9 @@ export default function PlateformesPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-wrap gap-4">
+                      <div className="flex flex-wrap gap-3">
                         <Button 
-                          size="lg"
+                          size="default"
                           className={cn(
                             "group/btn",
                             platformBgAccents[platform.key],
@@ -350,16 +284,16 @@ export default function PlateformesPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <ExternalLink className="h-5 w-5 mr-2" />
+                            <ExternalLink className="h-4 w-4 mr-2" />
                             Visiter le site
                           </a>
                         </Button>
                       </div>
                     </div>
 
-                    {/* Stats Side - Real GitHub Data */}
+                    {/* Stats Side */}
                     <div className={cn(!isEven && "md:order-1")}>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 md:grid-cols-2 gap-3 md:gap-4">
                         {[
                           { icon: GitCommit, value: formatNumber(platform.stats.commits), label: "Commits" },
                           { icon: Database, value: platform.stats.tables, label: "Tables DB" },
@@ -371,51 +305,24 @@ export default function PlateformesPage() {
                           <div 
                             key={stat.label}
                             className={cn(
-                              "p-5 rounded-2xl bg-secondary/30 backdrop-blur-sm border border-border/50 text-center transition-all duration-500",
+                              "p-4 md:p-5 rounded-xl md:rounded-2xl bg-secondary/30 backdrop-blur-sm border border-border/50 text-center transition-all duration-500",
                               isHovered && "border-opacity-100 shadow-sm"
                             )}
                           >
                             <stat.icon className={cn(
-                              "w-5 h-5 mx-auto mb-2 transition-colors duration-300",
+                              "w-4 h-4 md:w-5 md:h-5 mx-auto mb-2",
                               isHovered ? platformAccents[platform.key] : "text-muted-foreground"
                             )} />
-                            <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                            <div className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-1">
                               {stat.value || "—"}
                             </div>
-                            <div className="text-xs text-muted-foreground uppercase tracking-wider">
+                            <div className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">
                               {stat.label}
                             </div>
                           </div>
                         ))}
                       </div>
                       
-                      {/* Uptime Progress Bar */}
-                      {platform.uptime_percent !== undefined && platform.uptime_percent !== null && (
-                        <div className="mt-4 p-4 rounded-xl bg-secondary/20 border border-border/30 animate-fade-in">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <Activity className={cn(
-                                "w-4 h-4",
-                                platform.uptime_percent >= 99 ? "text-status-green" : 
-                                platform.uptime_percent >= 95 ? "text-status-amber" : "text-destructive"
-                              )} />
-                              <span className="text-sm font-medium">Disponibilité</span>
-                            </div>
-                            <span className={cn(
-                              "text-lg font-bold",
-                              platform.uptime_percent >= 99 ? "text-status-green" : 
-                              platform.uptime_percent >= 95 ? "text-status-amber" : "text-destructive"
-                            )}>
-                              {platform.uptime_percent.toFixed(1)}%
-                            </span>
-                          </div>
-                          <Progress 
-                            value={platform.uptime_percent} 
-                            className="h-2"
-                          />
-                        </div>
-                      )}
-
                       {/* Last commit info */}
                       {platform.lastCommit && (
                         <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -432,53 +339,63 @@ export default function PlateformesPage() {
         </div>
       </section>
 
-      {/* Governance Section */}
-      <section className="py-24 md:py-32 bg-primary text-primary-foreground relative overflow-hidden">
+      {/* ============================================ */}
+      {/* GOVERNANCE SECTION */}
+      {/* ============================================ */}
+      <section className="py-20 md:py-32 bg-primary text-primary-foreground relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,hsl(var(--accent)/0.1),transparent)]" />
         
-        <div className="container relative">
+        <div className="container relative px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <Badge variant="gold" className="mb-8">
               <Sparkles className="w-4 h-4 mr-2" />
               Gouvernance Unifiée
             </Badge>
             
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Un siège.
               <br />
               <span className="text-accent">Cinq excellences.</span>
             </h2>
             
-            <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto">
               Toutes nos plateformes partagent la même infrastructure backend, 
               les mêmes standards de sécurité et la même rigueur d'exécution.
             </p>
 
-            {/* Final Stats Grid - Real GitHub Data */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {/* Final Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-12">
               {[
-                { value: "5", label: "Plateformes Actives", icon: Layers },
-                { value: formatNumber(totals.commits), label: "Commits GitHub", icon: GitCommit },
-                { value: formatNumber(totals.tests), label: "Tests Passants", icon: TestTube2 },
+                { value: "5", label: "Plateformes", icon: Layers },
+                { value: formatNumber(totals.commits), label: "Commits", icon: GitCommit },
+                { value: formatNumber(totals.tests), label: "Tests", icon: TestTube2 },
                 { value: `${totals.tables}`, label: "Tables DB", icon: Database },
                 { value: `${totals.functions}`, label: "Edge Functions", icon: Cpu },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30 hover:shadow-[0_0_30px_-5px_hsl(38_92%_50%_/_0.3)]"
+                  className="p-5 md:p-6 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-primary-foreground/10 hover:border-accent/30"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
-                  <stat.icon className="w-6 h-6 mx-auto mb-3 text-accent" />
-                  <div className="text-3xl md:text-4xl font-bold text-accent mb-2">
+                  <stat.icon className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2 md:mb-3 text-accent" />
+                  <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-white/80">
+                  <div className="text-xs md:text-sm text-primary-foreground/70">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* CTA */}
+            <Link to="/auth">
+              <Button variant="hero" size="lg" className="group">
+                Accéder au HQ
+                <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
