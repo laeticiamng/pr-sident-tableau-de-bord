@@ -88,7 +88,7 @@ serve(async (req) => {
       const cronSecret = req.headers.get("X-Cron-Secret");
       const expectedSecret = Deno.env.get("CRON_SECRET");
       
-      // SECURITY: CRON_SECRET is MANDATORY for cron triggers
+      // SECURITY: CRON_SECRET is MANDATORY for cron triggers (minimum 32 chars recommended)
       if (!expectedSecret) {
         console.error("[Scheduler] CRON_SECRET not configured - rejecting request");
         return new Response(
@@ -97,7 +97,24 @@ serve(async (req) => {
         );
       }
       
-      if (cronSecret !== expectedSecret) {
+      // SECURITY: Constant-time comparison to prevent timing attacks
+      if (!cronSecret || cronSecret.length !== expectedSecret.length) {
+        console.error("[Scheduler] Invalid or missing cron secret");
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      // Constant-time string comparison
+      let isValid = true;
+      for (let i = 0; i < expectedSecret.length; i++) {
+        if (cronSecret[i] !== expectedSecret[i]) {
+          isValid = false;
+        }
+      }
+      
+      if (!isValid) {
         console.error("[Scheduler] Invalid cron secret provided");
         return new Response(
           JSON.stringify({ error: "Unauthorized" }),
@@ -105,9 +122,34 @@ serve(async (req) => {
         );
       }
 
-      console.log("[Scheduler] CRON trigger received");
+      console.log("[Scheduler] CRON trigger received - secret validated");
       
       const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      
+      // SECURITY: Rate limiting - Check last cron execution time
+      // Prevent rapid repeated triggers (minimum 5 minute cooldown between full runs)
+      const COOLDOWN_MINUTES = 5;
+      const { data: recentRuns } = await supabaseAdmin.rpc("get_hq_recent_runs", { 
+        limit_count: 1 
+      });
+      
+      if (recentRuns && recentRuns.length > 0) {
+        const lastRunTime = new Date(recentRuns[0].completed_at || recentRuns[0].created_at);
+        const minutesSinceLastRun = (Date.now() - lastRunTime.getTime()) / (1000 * 60);
+        
+        if (minutesSinceLastRun < COOLDOWN_MINUTES) {
+          console.warn(`[Scheduler] Rate limited: last run was ${minutesSinceLastRun.toFixed(1)} minutes ago (cooldown: ${COOLDOWN_MINUTES} min)`);
+          return new Response(
+            JSON.stringify({ 
+              success: false, 
+              error: "Rate limited",
+              retry_after_seconds: Math.ceil((COOLDOWN_MINUTES - minutesSinceLastRun) * 60)
+            }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+      
       const now = new Date();
       const currentHour = now.getHours();
       const currentDay = now.getDay(); // 0 = Dimanche
