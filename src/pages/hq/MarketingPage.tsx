@@ -1,7 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { 
   TrendingUp, 
   Target, 
@@ -10,18 +9,17 @@ import {
   Calendar,
   Loader2,
   Megaphone,
-  ArrowUpRight,
-  ArrowDownRight
+  Database,
+  Link2,
+  AlertTriangle
 } from "lucide-react";
 import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
-import { MARKETING_KPIS, MARKETING_CAMPAIGNS } from "@/lib/mock-data";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
 import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
 import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerformance";
 import { PlatformTrafficWidget } from "@/components/hq/marketing/PlatformTrafficWidget";
-import { cn } from "@/lib/utils";
 
 export default function MarketingPage() {
   const executeRun = useExecuteRun();
@@ -37,42 +35,6 @@ export default function MarketingPage() {
       await executeRun.mutateAsync({ run_type: "MARKETING_WEEK_PLAN" });
     } finally {
       setGeneratingPlan(false);
-    }
-  };
-
-  const kpis = [
-    { 
-      label: "Visiteurs Mensuels", 
-      value: MARKETING_KPIS.monthlyVisitors.toLocaleString("fr-FR"), 
-      change: MARKETING_KPIS.monthlyVisitorsChange, 
-      icon: Users 
-    },
-    { 
-      label: "Taux de Conversion", 
-      value: `${MARKETING_KPIS.conversionRate}%`, 
-      change: MARKETING_KPIS.conversionRateChange, 
-      icon: Target 
-    },
-    { 
-      label: "Emails Envoyés", 
-      value: MARKETING_KPIS.emailsSent.toLocaleString("fr-FR"), 
-      change: MARKETING_KPIS.emailsSentChange, 
-      icon: Mail 
-    },
-    { 
-      label: "Engagement Social", 
-      value: MARKETING_KPIS.socialEngagement.toLocaleString("fr-FR"), 
-      change: MARKETING_KPIS.socialEngagementChange, 
-      icon: TrendingUp 
-    },
-  ];
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active": return <Badge variant="success">Active</Badge>;
-      case "scheduled": return <Badge variant="subtle">Planifiée</Badge>;
-      case "completed": return <Badge variant="gold">Terminée</Badge>;
-      default: return <Badge variant="outline">{status}</Badge>;
     }
   };
 
@@ -99,31 +61,35 @@ export default function MarketingPage() {
         </Button>
       </div>
 
-      {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {kpis.map((kpi) => (
-          <Card key={kpi.label} className="card-executive">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <kpi.icon className="h-5 w-5 text-primary" />
-                {kpi.change > 0 ? (
-                  <ArrowUpRight className="h-4 w-4 text-success" />
-                ) : (
-                  <ArrowDownRight className="h-4 w-4 text-destructive" />
-                )}
-              </div>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
-              <div className={cn(
-                "text-xs mt-1",
-                kpi.change > 0 ? "text-success" : "text-destructive"
-              )}>
-                {kpi.change > 0 ? "+" : ""}{kpi.change}% vs mois dernier
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* KPIs - État vide, nécessite connexion GA4/Meta */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Métriques Marketing
+            </CardTitle>
+            <Badge variant="destructive" className="text-[9px]">
+              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+              Non connecté
+            </Badge>
+          </div>
+          <CardDescription>
+            Visiteurs, conversions, emails, engagement
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-6 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <h3 className="text-sm font-semibold mb-1">Connexion requise</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Connectez Google Analytics, Meta Ads ou Growth OS pour les KPIs marketing.
+          </p>
+          <Badge variant="outline" className="text-[10px] gap-1">
+            <Link2 className="h-2.5 w-2.5" />
+            Sources : GA4, Meta Ads, Growth OS
+          </Badge>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Weekly Plan */}
@@ -166,41 +132,26 @@ export default function MarketingPage() {
           </CardContent>
         </Card>
 
-        {/* Campaigns */}
-        <Card className="card-executive">
+        {/* Campaigns - État vide */}
+        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Target className="h-5 w-5 text-primary" />
               Campagnes Actives
             </CardTitle>
-            <CardDescription>
-              {MARKETING_CAMPAIGNS.filter(c => c.status === "active").length} campagnes en cours
+            <CardDescription className="flex items-center gap-2">
+              Aucune campagne connectée
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {MARKETING_CAMPAIGNS.map((campaign) => (
-                <div 
-                  key={campaign.id}
-                  className="p-4 rounded-lg border hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-sm">{campaign.name}</h4>
-                    {getStatusBadge(campaign.status)}
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Budget: {campaign.spent}€ / {campaign.budget}€</span>
-                      <span>{campaign.leads} leads</span>
-                    </div>
-                    <Progress 
-                      value={(campaign.spent / campaign.budget) * 100} 
-                      className="h-2" 
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+          <CardContent className="py-8 text-center">
+            <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground mb-3">
+              Connectez un outil de campagne pour suivre vos performances.
+            </p>
+            <Badge variant="outline" className="text-[10px] gap-1">
+              <Link2 className="h-2.5 w-2.5" />
+              Sources : Meta Ads, Google Ads
+            </Badge>
           </CardContent>
         </Card>
       </div>

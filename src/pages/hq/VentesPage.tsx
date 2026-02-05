@@ -9,12 +9,11 @@ import {
   TrendingUp,
   Calendar,
   FileText,
-  ArrowRight,
   Phone,
-  ArrowUpRight
+  Database,
+  Link2,
+  AlertTriangle
 } from "lucide-react";
-import { SALES_KPIS, SALES_PIPELINE, SALES_ACTIVITIES, RECENT_OPPORTUNITIES } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
 import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
 import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
 import { TopClients } from "@/components/hq/sales/TopClients";
@@ -22,30 +21,6 @@ import { WinLossWidget } from "@/components/hq/sales/WinLossWidget";
 import { DealVelocityWidget } from "@/components/hq/sales/DealVelocityWidget";
 
 export default function VentesPage() {
-  const kpis = [
-    { 
-      label: "CA Mensuel", 
-      value: `${SALES_KPIS.monthlyRevenue.toLocaleString("fr-FR")} €`, 
-      change: SALES_KPIS.monthlyRevenueChange,
-      icon: DollarSign 
-    },
-    { 
-      label: "Deals en Cours", 
-      value: SALES_KPIS.activeDeals.toString(), 
-      icon: Briefcase 
-    },
-    { 
-      label: "Taux de Conversion", 
-      value: `${SALES_KPIS.conversionRate}%`, 
-      icon: Target 
-    },
-    { 
-      label: "Clients Actifs", 
-      value: SALES_KPIS.activeClients.toString(), 
-      icon: Users 
-    },
-  ];
-
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -61,26 +36,35 @@ export default function VentesPage() {
         </Button>
       </div>
 
-      {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {kpis.map((kpi) => (
-          <Card key={kpi.label} className="card-executive">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <kpi.icon className="h-5 w-5 text-primary" />
-                {kpi.change && <ArrowUpRight className="h-4 w-4 text-success" />}
-              </div>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
-              {kpi.change && (
-                <div className="text-xs text-success mt-1">
-                  +{kpi.change}% vs mois dernier
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* KPIs - État vide */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Métriques Commerciales
+            </CardTitle>
+            <Badge variant="destructive" className="text-[9px]">
+              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+              Non connecté
+            </Badge>
+          </div>
+          <CardDescription>
+            CA, deals, conversions, clients actifs
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-6 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <h3 className="text-sm font-semibold mb-1">Connexion CRM requise</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Connectez votre CRM (HubSpot, Pipedrive) pour les KPIs commerciaux.
+          </p>
+          <Badge variant="outline" className="text-[10px] gap-1">
+            <Link2 className="h-2.5 w-2.5" />
+            Sources : HubSpot, Pipedrive, Stripe
+          </Badge>
+        </CardContent>
+      </Card>
 
       {/* Pipeline Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -94,70 +78,35 @@ export default function VentesPage() {
         <DealVelocityWidget />
       </div>
 
-      {/* Opportunités & Activités */}
+      {/* Opportunités & Activités - États vides */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Deals */}
-        <Card className="card-executive">
+        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Briefcase className="h-5 w-5 text-primary" />
               Opportunités Récentes
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {RECENT_OPPORTUNITIES.map((opp) => (
-                <div 
-                  key={opp.id}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{opp.name}</p>
-                    <p className="text-xs text-muted-foreground">{opp.stage}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-primary">{opp.value.toLocaleString("fr-FR")} €</p>
-                    <p className="text-xs text-muted-foreground">{opp.probability}% proba</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <CardContent className="py-8 text-center">
+            <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">
+              Connectez un CRM pour voir vos opportunités
+            </p>
           </CardContent>
         </Card>
 
-        {/* Upcoming Activities */}
-        <Card className="card-executive">
+        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-primary" />
               Prochaines Activités
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {SALES_ACTIVITIES.map((activity) => (
-                <div 
-                  key={activity.id}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    {activity.type === "call" && <Phone className="h-4 w-4 text-primary" />}
-                    {activity.type === "meeting" && <Users className="h-4 w-4 text-primary" />}
-                    {activity.type === "proposal" && <FileText className="h-4 w-4 text-primary" />}
-                    <div>
-                      <p className="font-medium text-sm">{activity.prospect}</p>
-                      <p className="text-xs text-muted-foreground capitalize">{activity.type}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm">{new Date(activity.date).toLocaleDateString("fr-FR")}</p>
-                    <Badge variant={activity.status === "scheduled" ? "subtle" : "gold"} className="text-xs">
-                      {activity.status === "scheduled" ? "Planifié" : "Envoyé"}
-                    </Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <CardContent className="py-8 text-center">
+            <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">
+              Connectez un calendrier pour voir vos activités
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -165,8 +114,8 @@ export default function VentesPage() {
       {/* Top Clients */}
       <TopClients />
 
-      {/* Proposals */}
-      <Card className="card-executive">
+      {/* Proposals - État vide */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <FileText className="h-5 w-5 text-primary" />
@@ -176,27 +125,15 @@ export default function VentesPage() {
             Devis et propositions en attente de validation
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-3">
-            {RECENT_OPPORTUNITIES.filter(o => o.stage === "Proposition" || o.stage === "Négociation").map((opp) => (
-              <div 
-                key={opp.id}
-                className="p-4 rounded-lg border hover:shadow-md transition-shadow"
-              >
-                <h4 className="font-medium text-sm mb-2">{opp.name}</h4>
-                <div className="flex items-center justify-between">
-                  <Badge variant="gold">{opp.value.toLocaleString("fr-FR")} €</Badge>
-                  <Badge variant="subtle">{opp.probability}%</Badge>
-                </div>
-              </div>
-            ))}
-            {RECENT_OPPORTUNITIES.filter(o => o.stage === "Proposition" || o.stage === "Négociation").length === 0 && (
-              <div className="col-span-3 text-center py-8 text-muted-foreground">
-                <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Aucune proposition en cours</p>
-              </div>
-            )}
-          </div>
+        <CardContent className="py-8 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground">
+            Aucune proposition en cours
+          </p>
+          <Badge variant="outline" className="text-[10px] gap-1 mt-2">
+            <Link2 className="h-2.5 w-2.5" />
+            Source requise : CRM
+          </Badge>
         </CardContent>
       </Card>
     </div>

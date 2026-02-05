@@ -391,73 +391,7 @@ export function useUpdateConfig() {
   });
 }
 
-// Mock platforms fallback
+// No mock data - returns empty array
 function getMockPlatforms(): Platform[] {
-  return [
-    {
-      id: "1",
-      key: "emotionscare",
-      name: "EmotionsCare",
-      description: "Plateforme principale de gestion émotionnelle",
-      github_url: "https://github.com/laeticiamng/emotionscare",
-      status: "green",
-      status_reason: "Opérationnel",
-      uptime_percent: 99.9,
-      last_release_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "2",
-      key: "pixel-perfect-replica",
-      name: "Pixel Perfect Replica",
-      description: "Réplication d'interfaces haute fidélité",
-      github_url: "https://github.com/laeticiamng/pixel-perfect-replica",
-      status: "green",
-      status_reason: "Opérationnel",
-      uptime_percent: 99.8,
-      last_release_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "3",
-      key: "system-compass",
-      name: "System Compass",
-      description: "Navigation et orientation systémique",
-      github_url: "https://github.com/laeticiamng/system-compass",
-      status: "green",
-      status_reason: "Opérationnel",
-      uptime_percent: 99.9,
-      last_release_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "4",
-      key: "growth-copilot",
-      name: "Growth Copilot",
-      description: "Intelligence marketing et croissance",
-      github_url: "https://github.com/laeticiamng/growth-copilot",
-      status: "amber",
-      status_reason: "Mise à jour en cours",
-      uptime_percent: 98.5,
-      last_release_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: "5",
-      key: "med-mng",
-      name: "Med MNG",
-      description: "Gestion médicale et suivi santé",
-      github_url: "https://github.com/laeticiamng/med-mng",
-      status: "green",
-      status_reason: "Opérationnel",
-      uptime_percent: 99.7,
-      last_release_at: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
+  return [];
 }

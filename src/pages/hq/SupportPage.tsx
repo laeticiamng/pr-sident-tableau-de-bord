@@ -9,16 +9,15 @@ import {
   FileText,
   RefreshCw,
   Star,
-  ExternalLink,
-  TrendingUp,
-  TrendingDown
+  Database,
+  Link2,
+  AlertTriangle
 } from "lucide-react";
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
 import { TicketTrendChart } from "@/components/hq/support/TicketTrendChart";
 import { EscalationQueue } from "@/components/hq/support/EscalationQueue";
 import { TicketDistributionChart } from "@/components/hq/support/TicketDistributionChart";
-import { SUPPORT_KPIS, KNOWLEDGE_BASE_ARTICLES } from "@/lib/mock-data";
 
 export default function SupportPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -28,13 +27,6 @@ export default function SupportPage() {
     await new Promise(r => setTimeout(r, 800));
     setIsRefreshing(false);
   };
-
-  const kpis = [
-    { label: "Tickets Ouverts", value: SUPPORT_KPIS.openTickets.toString(), icon: MessageSquare, trend: -12 },
-    { label: "Temps Réponse Moy.", value: SUPPORT_KPIS.avgResponseTime, icon: Clock, trend: -8 },
-    { label: "Taux Résolution", value: `${SUPPORT_KPIS.resolutionRate}%`, icon: CheckCircle, trend: 5 },
-    { label: "Satisfaction Client", value: `${SUPPORT_KPIS.customerSatisfaction}/5`, icon: Star, extra: "⭐".repeat(Math.round(SUPPORT_KPIS.customerSatisfaction)), trend: 3 },
-  ];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -49,27 +41,35 @@ export default function SupportPage() {
         </Button>
       </div>
 
-      {/* KPIs avec tendances */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {kpis.map((kpi) => (
-          <Card key={kpi.label} className="card-executive hover:shadow-lg transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-3">
-                <kpi.icon className="h-5 w-5 text-primary" />
-                {kpi.trend !== undefined && (
-                  <div className={`flex items-center gap-1 text-xs ${kpi.trend > 0 ? 'text-success' : 'text-destructive'}`}>
-                    {kpi.trend > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                    {Math.abs(kpi.trend)}%
-                  </div>
-                )}
-              </div>
-              <div className="text-2xl font-bold">{kpi.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
-              {kpi.extra && <div className="text-sm mt-1">{kpi.extra}</div>}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* KPIs - État vide */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              Métriques Support
+            </CardTitle>
+            <Badge variant="destructive" className="text-[9px]">
+              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+              Non connecté
+            </Badge>
+          </div>
+          <CardDescription>
+            Tickets, temps de réponse, satisfaction
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="py-6 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <h3 className="text-sm font-semibold mb-1">Connexion Helpdesk requise</h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            Connectez Zendesk, Freshdesk ou Intercom pour les métriques support.
+          </p>
+          <Badge variant="outline" className="text-[10px] gap-1">
+            <Link2 className="h-2.5 w-2.5" />
+            Sources : Zendesk, Freshdesk, Intercom
+          </Badge>
+        </CardContent>
+      </Card>
 
       {/* Ticket Overview & Trend */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -86,70 +86,40 @@ export default function SupportPage() {
       {/* SLA Monitoring */}
       <SLAMonitor />
 
-      {/* Knowledge Base */}
-      <Card className="card-executive">
+      {/* Knowledge Base - État vide */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <FileText className="h-5 w-5 text-primary" />
             Base de Connaissances
           </CardTitle>
-          <CardDescription>{KNOWLEDGE_BASE_ARTICLES.length} articles</CardDescription>
+          <CardDescription>Articles et FAQ</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {KNOWLEDGE_BASE_ARTICLES.map((article) => (
-              <div key={article.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 cursor-pointer transition-all">
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm font-medium truncate block">{article.title}</span>
-                  <Badge variant="subtle" className="text-xs mt-1">{article.category}</Badge>
-                </div>
-                <span className="text-xs text-muted-foreground ml-2">{article.views} vues</span>
-              </div>
-            ))}
-          </div>
+        <CardContent className="py-8 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground">
+            Aucun article disponible
+          </p>
         </CardContent>
       </Card>
 
-      {/* Recent Tickets */}
-      <Card className="card-executive">
+      {/* Recent Tickets - État vide */}
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <MessageSquare className="h-5 w-5 text-primary" />
             Tickets Récents
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {[
-              { id: "TKT-001", subject: "Problème de connexion EmotionsCare", priority: "high", status: "open", created: "Il y a 2h" },
-              { id: "TKT-002", subject: "Question facturation Growth Copilot", priority: "medium", status: "pending", created: "Il y a 4h" },
-              { id: "TKT-003", subject: "Bug affichage mobile", priority: "low", status: "resolved", created: "Il y a 1j" },
-            ].map((ticket) => (
-              <div key={ticket.id} className="flex items-center justify-between p-4 rounded-lg border hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4">
-                  {ticket.status === "open" && <MessageSquare className="h-5 w-5 text-warning" />}
-                  {ticket.status === "pending" && <Clock className="h-5 w-5 text-primary" />}
-                  {ticket.status === "resolved" && <CheckCircle className="h-5 w-5 text-success" />}
-                  <div>
-                    <p className="font-medium text-sm">{ticket.subject}</p>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                      <span className="font-mono">{ticket.id}</span>
-                      <span>•</span>
-                      <span>{ticket.created}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={ticket.priority === "high" ? "destructive" : ticket.priority === "medium" ? "warning" : "subtle"}>
-                    {ticket.priority === "high" ? "Haute" : ticket.priority === "medium" ? "Moyenne" : "Basse"}
-                  </Badge>
-                  <Badge variant={ticket.status === "resolved" ? "success" : ticket.status === "open" ? "warning" : "subtle"}>
-                    {ticket.status === "resolved" ? "Résolu" : ticket.status === "open" ? "Ouvert" : "En attente"}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
+        <CardContent className="py-8 text-center">
+          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+          <p className="text-xs text-muted-foreground">
+            Aucun ticket récent
+          </p>
+          <Badge variant="outline" className="text-[10px] gap-1 mt-2">
+            <Link2 className="h-2.5 w-2.5" />
+            Source requise : Helpdesk
+          </Badge>
         </CardContent>
       </Card>
     </div>
