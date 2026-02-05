@@ -1,6 +1,7 @@
  import { Badge } from "@/components/ui/badge";
  import { Button } from "@/components/ui/button";
  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
  import { 
    Rocket, 
    TrendingUp, 
@@ -10,8 +11,13 @@
    Target,
    RefreshCcw,
    Download,
-   Sparkles
+   Sparkles,
+   Database,
+   Cloud,
+   AlertCircle
  } from "lucide-react";
+import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
+import { toast } from "sonner";
  
  // Growth OS Components
  import { GrowthMetricsGrid } from "@/components/hq/growth/GrowthMetricsGrid";
@@ -25,6 +31,17 @@
  import { GrowthTrendChart } from "@/components/hq/growth/GrowthTrendChart";
  
  export default function GrowthPage() {
+   const { metrics, isLoading, error } = useGrowthMetrics();
+ 
+   const handleRefresh = () => {
+     window.location.reload();
+   };
+ 
+   const handleExport = () => {
+     toast.info("Export des données Growth OS en préparation...");
+     // TODO: Implement CSV/PDF export
+   };
+ 
    return (
      <div className="space-y-6 animate-fade-in">
        {/* Header */}
@@ -44,20 +61,47 @@
          </div>
          
          <div className="flex items-center gap-2">
+           {/* Data source indicator */}
+           {!isLoading && (
+             <Badge 
+               variant={metrics.isRealData ? "success" : "subtle"} 
+               className="text-xs gap-1"
+             >
+               {metrics.isRealData ? (
+                 <>
+                   <Database className="h-3 w-3" />
+                   Stripe Live
+                 </>
+               ) : (
+                 <>
+                   <Cloud className="h-3 w-3" />
+                   Données Simulées
+                 </>
+               )}
+             </Badge>
+           )}
            <Badge variant="gold" className="text-xs">
              <Sparkles className="h-3 w-3 mr-1" />
              IA Active
            </Badge>
-           <Button variant="outline" size="sm" className="text-xs">
+           <Button variant="outline" size="sm" className="text-xs" onClick={handleRefresh}>
              <RefreshCcw className="h-3 w-3 mr-1.5" />
              Actualiser
            </Button>
-           <Button variant="outline" size="sm" className="text-xs">
+           <Button variant="outline" size="sm" className="text-xs" onClick={handleExport}>
              <Download className="h-3 w-3 mr-1.5" />
              Export
            </Button>
          </div>
        </div>
+ 
+       {/* Error Alert */}
+       {error && (
+         <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+           <AlertCircle className="h-4 w-4 flex-shrink-0" />
+           <span>Erreur de chargement des données : {error.message}</span>
+         </div>
+       )}
  
        {/* KPI Metrics Bar */}
        <GrowthMetricsGrid />

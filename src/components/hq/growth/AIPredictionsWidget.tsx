@@ -1,9 +1,10 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Progress } from "@/components/ui/progress";
- import { Brain, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Brain, TrendingUp, TrendingDown, Sparkles, Database, Cloud } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { AI_PREDICTIONS } from "@/lib/growth-data";
+import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  const predictionConfig = [
    { key: "mrr", label: "MRR", format: "€", icon: "💰", good: "up" },
@@ -13,6 +14,24 @@
  ];
  
  export function AIPredictionsWidget() {
+   const { predictions, metrics, isLoading } = useGrowthMetrics();
+ 
+   if (isLoading) {
+     return (
+       <Card className="card-executive">
+         <CardHeader className="pb-2">
+           <Skeleton className="h-6 w-40" />
+           <Skeleton className="h-4 w-60 mt-1" />
+         </CardHeader>
+         <CardContent className="space-y-4">
+           {[1, 2, 3, 4].map((i) => (
+             <Skeleton key={i} className="h-20 w-full" />
+           ))}
+         </CardContent>
+       </Card>
+     );
+   }
+ 
    return (
      <Card className="card-executive relative overflow-hidden">
        {/* Subtle AI glow */}
@@ -29,15 +48,26 @@
                Projections à 30 et 90 jours
              </CardDescription>
            </div>
-           <Badge variant="gold" className="text-xs">
-             <Sparkles className="h-3 w-3 mr-1" />
-             ML-powered
-           </Badge>
+           <div className="flex items-center gap-1">
+             <Badge variant={metrics.isRealData ? "success" : "gold"} className="text-[9px]">
+               {metrics.isRealData ? (
+                 <>
+                   <Database className="h-2.5 w-2.5 mr-0.5" />
+                   Live
+                 </>
+               ) : (
+                 <>
+                   <Sparkles className="h-2.5 w-2.5 mr-0.5" />
+                   ML
+                 </>
+               )}
+             </Badge>
+           </div>
          </div>
        </CardHeader>
        <CardContent className="space-y-4 relative">
          {predictionConfig.map((config) => {
-           const prediction = AI_PREDICTIONS[config.key as keyof typeof AI_PREDICTIONS];
+           const prediction = predictions[config.key as keyof typeof predictions];
            const change30d = ((prediction.predicted30d - prediction.current) / prediction.current) * 100;
            const change90d = ((prediction.predicted90d - prediction.current) / prediction.current) * 100;
            const isGood30d = config.good === "up" ? change30d > 0 : change30d < 0;

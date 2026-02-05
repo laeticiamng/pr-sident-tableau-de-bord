@@ -1,12 +1,29 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
  import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
- import { TrendingUp, Activity } from "lucide-react";
- import { GROWTH_HISTORY } from "@/lib/growth-data";
+import { TrendingUp, Activity, Database, Cloud } from "lucide-react";
+import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  export function GrowthTrendChart() {
-   const latestMRR = GROWTH_HISTORY[GROWTH_HISTORY.length - 1].mrr;
-   const previousMRR = GROWTH_HISTORY[GROWTH_HISTORY.length - 2].mrr;
+   const { history, metrics, isLoading } = useGrowthMetrics();
+ 
+   if (isLoading) {
+     return (
+       <Card className="card-executive">
+         <CardHeader className="pb-2">
+           <Skeleton className="h-6 w-48" />
+           <Skeleton className="h-4 w-64 mt-1" />
+         </CardHeader>
+         <CardContent>
+           <Skeleton className="h-[280px] w-full" />
+         </CardContent>
+       </Card>
+     );
+   }
+ 
+   const latestMRR = history[history.length - 1].mrr;
+   const previousMRR = history[history.length - 2].mrr;
    const mrrGrowth = (((latestMRR - previousMRR) / previousMRR) * 100).toFixed(1);
    
    return (
@@ -22,16 +39,24 @@
                MRR, utilisateurs et churn sur 6 mois
              </CardDescription>
            </div>
-           <Badge variant="success" className="text-xs">
-             <TrendingUp className="h-3 w-3 mr-1" />
-             +{mrrGrowth}% MoM
-           </Badge>
+           <div className="flex items-center gap-1.5">
+             <Badge variant="success" className="text-xs">
+               <TrendingUp className="h-3 w-3 mr-1" />
+               +{mrrGrowth}% MoM
+             </Badge>
+             {metrics.isRealData && (
+               <Badge variant="subtle" className="text-[9px]">
+                 <Database className="h-2.5 w-2.5 mr-0.5" />
+                 Live
+               </Badge>
+             )}
+           </div>
          </div>
        </CardHeader>
        <CardContent>
          <div className="h-[200px] sm:h-[280px]">
            <ResponsiveContainer width="100%" height="100%">
-             <LineChart data={GROWTH_HISTORY} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+             <LineChart data={history} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                <XAxis 
                  dataKey="month" 
