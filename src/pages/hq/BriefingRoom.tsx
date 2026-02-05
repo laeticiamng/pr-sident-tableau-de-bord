@@ -27,7 +27,7 @@ import { QuickMetricsBar } from "@/components/hq/briefing/QuickMetricsBar";
 import { GrowthSummaryWidget } from "@/components/hq/growth/GrowthSummaryWidget";
 
 export default function BriefingRoom() {
-  const { data: platforms } = usePlatforms();
+  const { data: platforms, isError: platformsError, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals, isLoading: approvalsLoading } = usePendingApprovals();
   const { data: recentRuns, refetch: refetchRuns } = useRecentRuns(5);
   const executeRun = useExecuteRun();
@@ -67,7 +67,7 @@ export default function BriefingRoom() {
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, Madame la Présidente</h1>
             <p className="text-primary-foreground/70 text-lg">
-              {greenCount}/{totalPlatforms} plateformes opérationnelles • Tout est sous contrôle.
+              {platformsLoading ? "Chargement..." : platformsError ? "Connexion base de données requise" : `${greenCount}/${totalPlatforms} plateformes opérationnelles`}
             </p>
           </div>
           <Button 
