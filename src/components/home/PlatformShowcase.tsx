@@ -77,30 +77,30 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
         <div className="container relative px-4 sm:px-6 lg:px-8">
           {/* Section Header — Apple Style */}
           <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16 md:mb-20">
-            <Badge variant="gold" className="mb-4 sm:mb-6">
+            <Badge variant="gold" className="mb-3 sm:mb-4 md:mb-6">
               <Sparkles className="w-3 h-3 mr-1.5" />
               Écosystème Premium
             </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-4 sm:mb-6 px-2">
+            <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-3 sm:mb-4 md:mb-6 px-1 sm:px-2">
               Cinq plateformes.
               <br />
               <span className="text-gradient">Une vision.</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2 sm:px-4">
               Chaque plateforme répond à un besoin spécifique, toutes sont pilotées 
               depuis notre siège numérique avec les mêmes standards d'excellence.
             </p>
           </div>
 
           {/* Featured Platform — Hero Card */}
-          <div className="mb-10 sm:mb-12 md:mb-16">
+          <div className="mb-8 sm:mb-10 md:mb-12 lg:mb-16">
             <div 
               className="group block"
               onMouseEnter={() => setHoveredPlatform(MANAGED_PLATFORMS[0].key)}
               onMouseLeave={() => setHoveredPlatform(null)}
             >
               <div className={cn(
-                "relative rounded-2xl sm:rounded-3xl border bg-card p-5 sm:p-8 md:p-12 overflow-hidden transition-all duration-700",
+                "relative rounded-xl sm:rounded-2xl md:rounded-3xl border bg-card p-4 sm:p-6 md:p-8 lg:p-12 overflow-hidden transition-all duration-700",
                 "hover:shadow-2xl",
                 platformBorders["emotionscare"]
               )}>
@@ -119,59 +119,64 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                 <div className="relative grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
                   {/* Left — Content */}
                   <div>
-                    <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                      <div className={cn("w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse", platformBgAccents["emotionscare"])} />
-                      <span className={cn("text-[10px] sm:text-xs font-semibold uppercase tracking-wider", platformAccents["emotionscare"])}>
+                    <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-3 sm:mb-4 md:mb-6">
+                      <div className={cn("w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full animate-pulse", platformBgAccents["emotionscare"])} />
+                      <span className={cn("text-[9px] sm:text-[10px] md:text-xs font-semibold uppercase tracking-wider", platformAccents["emotionscare"])}>
                         Production • 37 Modules
                       </span>
                     </div>
                     
                     <h3 className={cn(
-                      "text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 transition-colors duration-300",
+                      "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold mb-2 sm:mb-3 md:mb-4 transition-colors duration-300",
                       "group-hover:text-platform-health"
                     )}>
                       {MANAGED_PLATFORMS[0].name}
                     </h3>
                     
-                    <p className="text-sm sm:text-base md:text-lg text-muted-foreground mb-4 sm:mb-6 leading-relaxed">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 md:mb-6 leading-relaxed">
                       {MANAGED_PLATFORMS[0].tagline}
                     </p>
                     
-                    <p className="hidden sm:block text-sm sm:text-base text-muted-foreground mb-6 sm:mb-8 line-clamp-3">
+                    <p className="hidden md:block text-sm md:text-base text-muted-foreground mb-4 md:mb-6 lg:mb-8 line-clamp-3">
                       {MANAGED_PLATFORMS[0].description}
                     </p>
 
                     {/* Features Pills */}
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
-                      {MANAGED_PLATFORMS[0].features.slice(0, 4).map((feature) => (
+                    <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-4 sm:mb-5 md:mb-6 lg:mb-8">
+                      {MANAGED_PLATFORMS[0].features.slice(0, 3).map((feature) => (
                         <span 
                           key={feature}
-                          className="px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs font-medium bg-secondary/80 rounded-full border border-border/50"
+                          className="px-1.5 sm:px-2 md:px-3 py-0.5 sm:py-1 md:py-1.5 text-[8px] sm:text-[10px] md:text-xs font-medium bg-secondary/80 rounded-full border border-border/50"
                         >
                           {feature}
                         </span>
                       ))}
+                      {MANAGED_PLATFORMS[0].features.length > 3 && (
+                        <span className="hidden sm:inline-block px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs font-medium bg-secondary/80 rounded-full border border-border/50">
+                          {MANAGED_PLATFORMS[0].features[3]}
+                        </span>
+                      )}
                     </div>
 
                     {/* Actions */}
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                      <Button asChild size="sm" className="bg-platform-health hover:bg-platform-health/90 text-white text-xs sm:text-sm">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
+                      <Button asChild size="sm" className="bg-platform-health hover:bg-platform-health/90 text-white text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2.5 sm:px-3 md:px-4">
                         <a href={MANAGED_PLATFORMS[0].liveUrl} target="_blank" rel="noopener noreferrer">
                           Visiter le site
-                          <ArrowRight className="ml-1.5 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4" />
+                          <ArrowRight className="ml-1 sm:ml-1.5 md:ml-2 h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />
                         </a>
                       </Button>
                       <Link to="/plateformes">
-                        <Button variant="ghost" size="sm" className="text-platform-health hover:text-platform-health/80 hover:bg-transparent text-xs sm:text-sm">
+                        <Button variant="ghost" size="sm" className="text-platform-health hover:text-platform-health/80 hover:bg-transparent text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2 sm:px-3">
                           Détails
-                          <ChevronRight className="ml-1 h-3 w-3 sm:h-4 sm:w-4" />
+                          <ChevronRight className="ml-0.5 sm:ml-1 h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />
                         </Button>
                       </Link>
                     </div>
                   </div>
 
                   {/* Right — Stats Grid - Real GitHub Stats */}
-                  <div className="grid grid-cols-2 gap-2 sm:gap-4 mt-4 md:mt-0">
+                  <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
                     {[
                       { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: "Commits", suffix: "" },
                       { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: "Tables", suffix: "" },
@@ -180,13 +185,13 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     ].map((stat) => (
                       <div 
                         key={stat.label}
-                        className="p-3 sm:p-4 md:p-6 rounded-xl sm:rounded-2xl bg-background/50 backdrop-blur-sm border border-border/50 text-center group-hover:border-platform-health/20 transition-colors duration-500"
+                        className="p-2 sm:p-3 md:p-4 lg:p-6 rounded-lg sm:rounded-xl md:rounded-2xl bg-background/50 backdrop-blur-sm border border-border/50 text-center group-hover:border-platform-health/20 transition-colors duration-500"
                       >
-                        <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 mx-auto mb-2 sm:mb-3 text-muted-foreground" />
-                        <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-0.5 sm:mb-1">
+                        <stat.icon className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mx-auto mb-1 sm:mb-1.5 md:mb-2 lg:mb-3 text-muted-foreground" />
+                        <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold text-foreground mb-0.5">
                           {stat.value}{stat.suffix}
                         </div>
-                        <div className="text-[9px] sm:text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider">
+                        <div className="text-[7px] sm:text-[8px] md:text-[10px] lg:text-xs text-muted-foreground uppercase tracking-wider">
                           {stat.label}
                         </div>
                       </div>
@@ -198,7 +203,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
           </div>
 
           {/* Other Platforms — Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
             {MANAGED_PLATFORMS.slice(1).map((platform, index) => {
               const Icon = platformIcons[platform.key] || Rocket;
               const isHovered = hoveredPlatform === platform.key;
@@ -212,7 +217,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                 >
                   <div 
                     className={cn(
-                      "relative h-full rounded-xl sm:rounded-2xl border bg-card p-4 sm:p-6 overflow-hidden transition-all duration-500",
+                      "relative h-full rounded-lg sm:rounded-xl md:rounded-2xl border bg-card p-3 sm:p-4 md:p-5 lg:p-6 overflow-hidden transition-all duration-500",
                       "hover:shadow-xl hover:-translate-y-1",
                       platformBorders[platform.key]
                     )}
@@ -227,20 +232,20 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
 
                     <div className="relative">
                       {/* Icon & Status */}
-                      <div className="flex items-center justify-between mb-4 sm:mb-6">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-6">
                         <div className={cn(
-                          "w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center bg-secondary/50 transition-all duration-300",
+                          "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md sm:rounded-lg md:rounded-xl flex items-center justify-center bg-secondary/50 transition-all duration-300",
                           "group-hover:scale-110",
                           isHovered && "bg-opacity-100"
                         )}>
-                          <Icon className={cn("w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-300", platformAccents[platform.key])} />
+                          <Icon className={cn("w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 lg:w-6 lg:h-6 transition-colors duration-300", platformAccents[platform.key])} />
                         </div>
-                        <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
                           <div className={cn(
-                            "w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full",
+                            "w-1 h-1 sm:w-1.5 sm:h-1.5 md:w-2 md:h-2 rounded-full",
                             platform.status === "production" ? "bg-status-green" : "bg-status-amber"
                           )} />
-                          <span className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">
+                          <span className="text-[7px] sm:text-[8px] md:text-[10px] uppercase tracking-wider text-muted-foreground">
                             {platform.status === "production" ? "Prod" : "Proto"}
                           </span>
                         </div>
@@ -248,43 +253,37 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
 
                       {/* Title & Description */}
                       <h3 className={cn(
-                        "text-lg sm:text-xl font-semibold mb-1.5 sm:mb-2 transition-colors duration-300",
+                        "text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-1 sm:mb-1.5 md:mb-2 transition-colors duration-300 truncate",
                         platformAccents[platform.key]
                       )}>
                         {platform.name}
                       </h3>
                       
-                      <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 line-clamp-2">
+                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-2 sm:mb-3 md:mb-4 line-clamp-2">
                         {platform.shortDescription}
                       </p>
 
                       {/* Stats Row - Real GitHub Stats */}
-                      <div className="flex items-center gap-3 sm:gap-4 text-[10px] sm:text-xs text-muted-foreground mb-3 sm:mb-4">
-                        <span>{platform.stats.commits > 0 ? (platform.stats.commits > 1000 ? `${(platform.stats.commits / 1000).toFixed(1)}K` : platform.stats.commits) : "0"} commits</span>
-                        <span>•</span>
-                        <span>{platform.stats.tables} tables</span>
-                        {platform.stats.tests > 0 && (
-                          <>
-                            <span>•</span>
-                            <span>{platform.stats.tests} tests</span>
-                          </>
-                        )}
+                      <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
+                        <span>{platform.stats.commits > 0 ? (platform.stats.commits > 1000 ? `${(platform.stats.commits / 1000).toFixed(1)}K` : platform.stats.commits) : "0"}</span>
+                        <span className="hidden md:inline">•</span>
+                        <span className="hidden md:inline">{platform.stats.tables} tables</span>
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
                         <a 
                           href={platform.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className={cn(
-                            "flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-medium transition-all duration-300",
+                            "flex items-center gap-0.5 sm:gap-1 md:gap-1.5 text-[10px] sm:text-xs md:text-sm font-medium transition-all duration-300",
                             platformAccents[platform.key],
                             "hover:underline"
                           )}
                         >
                           Visiter
-                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                          <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
                         </a>
                       </div>
                     </div>
@@ -295,11 +294,11 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
           </div>
 
           {/* CTA */}
-          <div className="mt-10 sm:mt-12 md:mt-16 text-center">
+          <div className="mt-6 sm:mt-8 md:mt-12 lg:mt-16 text-center">
             <Link to="/plateformes">
-              <Button variant="outline" size="default" className="group text-sm sm:text-base">
+              <Button variant="outline" size="default" className="group text-xs sm:text-sm md:text-base h-8 sm:h-9 md:h-10">
                 Voir toutes les plateformes
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-1.5 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>
