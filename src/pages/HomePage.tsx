@@ -105,7 +105,7 @@ export default function HomePage() {
               Siège Social Numérique
             </p>
             <p className="text-base sm:text-lg md:text-xl text-primary-foreground/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
-              Pilotez vos 5 plateformes SaaS depuis un centre de commandement unique, propulsé par l'IA
+              5 plateformes SaaS depuis un centre de commandement unique, propulsé par l'IA
             </p>
 
             {/* CTA Buttons */}
