@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -71,6 +71,23 @@ function PlatformStatusBadge({ status }: { status: string }) {
 }
 
 export default function HomePage() {
+  // Calculate totals from platforms
+  const totals = MANAGED_PLATFORMS.reduce(
+    (acc, p) => ({
+      edgeFunctions: acc.edgeFunctions + (p.stats?.edgeFunctions || 0),
+    }),
+    { edgeFunctions: 0 }
+  );
+
+  // SEO: Update document meta for this page
+  useEffect(() => {
+    document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens. 16K+ commits, 349 Edge Functions.");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col">
       {/* ============================================ */}
@@ -266,7 +283,7 @@ export default function HomePage() {
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: "5", label: "Plateformes" },
-              { value: "9", label: "Edge Functions" },
+              { value: `${totals.edgeFunctions}`, label: "Edge Functions" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
