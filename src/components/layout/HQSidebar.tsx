@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Building2,
   LayoutDashboard,
@@ -25,9 +26,20 @@ import {
   Scale,
   BarChart3,
   X,
-   Rocket,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Routes that are still in development (show "Bientôt" badge)
+const COMING_SOON_ROUTES = [
+  "/hq/ventes",
+  "/hq/marketing",
+  "/hq/support",
+  "/hq/reunions",
+  "/hq/rh",
+  "/hq/data",
+  "/hq/conformite",
+];
 
 const sidebarLinks = [
   {
@@ -37,7 +49,7 @@ const sidebarLinks = [
       { href: "/hq/cockpit", label: "Cockpit Dirigeant", icon: Gauge },
       { href: "/hq/plateformes", label: "Plateformes", icon: Layers },
       { href: "/hq/equipe-executive", label: "Workforce Growth Copilot", icon: Users },
-       { href: "/hq/growth", label: "Growth OS", icon: Rocket },
+      { href: "/hq/growth", label: "Growth OS", icon: Rocket },
     ],
   },
   {
@@ -133,6 +145,7 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
               <ul className="space-y-1">
                 {section.items.map((link) => {
                   const isActive = location.pathname === link.href;
+                  const isComingSoon = COMING_SOON_ROUTES.includes(link.href);
                   return (
                     <li key={link.href}>
                       <Link
@@ -147,7 +160,12 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                       >
                         <link.icon className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{link.label}</span>
-                        {isActive && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                        {isComingSoon && (
+                          <Badge variant="outline" className="ml-auto text-[10px] px-1.5 py-0 text-muted-foreground/60">
+                            Bientôt
+                          </Badge>
+                        )}
+                        {isActive && !isComingSoon && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
                       </Link>
                     </li>
                   );

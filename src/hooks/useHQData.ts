@@ -131,6 +131,7 @@ export function usePlatforms() {
     staleTime: 1000 * 60 * 5, // 5 minutes - data considered fresh
     refetchInterval: 1000 * 60 * 60, // 1 hour - auto-refresh uptime data
     refetchIntervalInBackground: false, // Only refresh when tab is active
+    meta: { errorMessage: "Impossible de charger les plateformes depuis la base de données" },
   });
 }
 
@@ -276,7 +277,7 @@ export function useExecuteRun() {
       
       return data as ExecutiveRunResult;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       // Cache the run result locally
       const cached = getCachedData<Run>(RUNS_CACHE_KEY);
       const newRun: Run = {
@@ -293,6 +294,23 @@ export function useExecuteRun() {
         created_at: data.completed_at,
       };
       setCachedData(RUNS_CACHE_KEY, [newRun, ...cached].slice(0, 50));
+
+      // Persist to database
+      try {
+        const { error: dbError } = await supabase.rpc("insert_hq_run", {
+          p_run_type: data.run_type,
+          p_platform_key: data.platform_key || null,
+          p_owner_requested: true,
+          p_status: "completed",
+          p_executive_summary: data.executive_summary,
+          p_detailed_appendix: { model_used: data.model_used, steps: data.steps },
+        });
+        if (dbError) {
+          console.warn("Run logged locally only:", dbError.message);
+        }
+      } catch (dbErr) {
+        console.warn("Run logged locally only:", dbErr);
+      }
 
       toast({
         title: "Run exécuté avec succès",
