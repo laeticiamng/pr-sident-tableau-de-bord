@@ -29,7 +29,7 @@ const PLATFORMS = [
   { 
     key: "growth-copilot", 
     repo: "laeticiamng/growth-copilot",
-    liveUrl: "https://agent-growth-automator.com",
+    liveUrl: "https://www.agent-growth-automator.com",
     name: "Growth Copilot"
   },
   { 
