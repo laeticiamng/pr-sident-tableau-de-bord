@@ -1,9 +1,10 @@
  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
- import { TrendingUp, TrendingDown, Target, Users, DollarSign, Clock, Activity, Zap } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TrendingUp, TrendingDown, Target, Users, DollarSign, Clock, Activity, Zap, Database, Cloud } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { ACQUISITION_METRICS } from "@/lib/growth-data";
+import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  const metricsConfig = [
    { key: "cac", label: "CAC", icon: DollarSign, format: "€", inverse: true, description: "Coût d'Acquisition Client" },
@@ -17,12 +18,46 @@
  ];
  
  export function GrowthMetricsGrid() {
+   const { metrics, isLoading } = useGrowthMetrics();
+ 
+   if (isLoading) {
+     return (
+       <div className="space-y-2">
+         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
+           {metricsConfig.map((config) => (
+             <Skeleton key={config.key} className="h-20 rounded-xl" />
+           ))}
+         </div>
+       </div>
+     );
+   }
+ 
    return (
-     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
+     <div className="space-y-2">
+       {/* Data source indicator */}
+       <div className="flex items-center justify-end gap-2">
+         <Badge variant={metrics.isRealData ? "success" : "subtle"} className="text-[9px] gap-1">
+           {metrics.isRealData ? (
+             <>
+               <Database className="h-2.5 w-2.5" />
+               Données Stripe Live
+             </>
+           ) : (
+             <>
+               <Cloud className="h-2.5 w-2.5" />
+               Données Simulées
+             </>
+           )}
+         </Badge>
+       </div>
+       
+       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
        {metricsConfig.map((config) => {
-         const metric = ACQUISITION_METRICS[config.key as keyof typeof ACQUISITION_METRICS];
+         const metric = metrics[config.key as keyof typeof metrics];
+         if (!metric || typeof metric !== 'object' || !('value' in metric)) return null;
+         
          const isPositive = config.inverse ? metric.trend < 0 : metric.trend > 0;
-         const absBenchmark = metric.benchmark;
+         const absBenchmark = metric.benchmark as number | null;
          const beatsBenchmark = absBenchmark ? (config.inverse ? metric.value < absBenchmark : metric.value > absBenchmark) : null;
          
          return (
@@ -64,11 +99,15 @@
                      {beatsBenchmark ? " ✓" : " ⚠"}
                    </p>
                  )}
+               {metrics.isRealData && (
+                 <p className="text-[10px] text-success">✓ Source: Stripe API</p>
+               )}
                </div>
              </TooltipContent>
            </Tooltip>
          );
        })}
+       </div>
      </div>
    );
  }

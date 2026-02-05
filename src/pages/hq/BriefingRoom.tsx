@@ -24,6 +24,7 @@ import { AutopilotControl } from "@/components/hq/AutopilotControl";
 import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
 import { RecentActivityFeed } from "@/components/hq/briefing/RecentActivityFeed";
 import { QuickMetricsBar } from "@/components/hq/briefing/QuickMetricsBar";
+import { GrowthSummaryWidget } from "@/components/hq/growth/GrowthSummaryWidget";
 
 export default function BriefingRoom() {
   const { data: platforms } = usePlatforms();
@@ -146,9 +147,12 @@ export default function BriefingRoom() {
       </div>
 
       {/* Main Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
+       <div className="grid gap-6 lg:grid-cols-3">
         {/* AI Insights Widget */}
-        <AIInsightsWidget className="lg:col-span-2" />
+         <AIInsightsWidget className="" />
+ 
+         {/* Growth OS Summary */}
+         <GrowthSummaryWidget />
 
         {/* Approvals Inbox */}
         <Card className="card-executive">
