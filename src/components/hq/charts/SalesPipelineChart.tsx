@@ -1,11 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { Target } from "lucide-react";
-import { SALES_PIPELINE } from "@/lib/mock-data";
+import { Target, Database, AlertTriangle } from "lucide-react";
+
+interface PipelineStage {
+  name: string;
+  count: number;
+  value: number;
+}
 
 interface SalesPipelineChartProps {
-  data?: typeof SALES_PIPELINE;
+  data?: PipelineStage[];
   loading?: boolean;
 }
 
@@ -17,7 +22,7 @@ const COLORS = [
   "hsl(38 92% 50%)",
 ];
 
-export function SalesPipelineChart({ data = SALES_PIPELINE, loading }: SalesPipelineChartProps) {
+export function SalesPipelineChart({ data = [], loading }: SalesPipelineChartProps) {
   const totalValue = data.reduce((sum, stage) => sum + stage.value, 0);
   const totalCount = data.reduce((sum, stage) => sum + stage.count, 0);
 
@@ -26,6 +31,32 @@ export function SalesPipelineChart({ data = SALES_PIPELINE, loading }: SalesPipe
       <Card className="card-executive">
         <CardContent className="p-6">
           <div className="h-64 bg-muted/30 animate-pulse rounded-lg" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-primary" />
+            Pipeline Commercial
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center py-8 text-center">
+          <div className="p-3 rounded-full bg-muted/50 mb-3">
+            <Database className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Aucune donnée pipeline</h3>
+          <p className="text-xs text-muted-foreground max-w-[250px]">
+            Connectez un CRM (HubSpot, Salesforce, Pipedrive) pour visualiser votre pipeline commercial.
+          </p>
+          <Badge variant="outline" className="text-[10px] mt-3 gap-1">
+            <AlertTriangle className="h-2.5 w-2.5" />
+            Source requise : CRM
+          </Badge>
         </CardContent>
       </Card>
     );
