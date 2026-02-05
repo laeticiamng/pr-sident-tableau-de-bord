@@ -312,7 +312,7 @@ export default function HomePage() {
             </Link>
             
             <p className="mt-8 text-sm text-muted-foreground">
-              EMOTIONSCARE SASU — Basé à Amiens, France
+              EMOTIONSCARE SASU — SIREN 944 505 445 — Amiens, France
             </p>
           </div>
         </div>
