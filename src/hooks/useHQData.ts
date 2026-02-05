@@ -122,12 +122,11 @@ export function usePlatforms() {
       const { data, error } = await supabase.rpc("get_all_hq_platforms");
       
       if (error) {
-        console.warn("RPC error, using fallback:", error.message);
-        // Fallback to mock data if RPC fails (user not owner or not logged in)
-        return getMockPlatforms();
+        console.error("[usePlatforms] RPC error:", error.message);
+        throw new Error(`Impossible de charger les plateformes: ${error.message}`);
       }
       
-      return (data as Platform[]) || getMockPlatforms();
+      return (data as Platform[]) || [];
     },
     staleTime: 1000 * 60 * 5, // 5 minutes - data considered fresh
     refetchInterval: 1000 * 60 * 60, // 1 hour - auto-refresh uptime data
