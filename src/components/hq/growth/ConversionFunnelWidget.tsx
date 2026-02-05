@@ -1,11 +1,41 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
- import { Filter, TrendingUp } from "lucide-react";
+ import { Filter, TrendingUp, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { CONVERSION_FUNNEL } from "@/lib/growth-data";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  export function ConversionFunnelWidget() {
-   const totalConversion = ((CONVERSION_FUNNEL[CONVERSION_FUNNEL.length - 1].count / CONVERSION_FUNNEL[0].count) * 100).toFixed(2);
+   const { funnel } = useGrowthMetrics();
+   
+   // État vide - aucune donnée réelle
+   if (!funnel || funnel.length === 0) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Filter className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+             Tunnel de Conversion
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Parcours visiteur → client
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Données non disponibles</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Connectez Google Analytics 4 via Growth OS pour visualiser votre tunnel.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : GA4
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const totalConversion = ((funnel[funnel.length - 1].count / funnel[0].count) * 100).toFixed(2);
    
    return (
      <Card className="card-executive">
@@ -27,9 +57,9 @@
          </div>
        </CardHeader>
        <CardContent className="space-y-2">
-         {CONVERSION_FUNNEL.map((stage, index) => {
-           const widthPercent = (stage.count / CONVERSION_FUNNEL[0].count) * 100;
-           const prevStage = index > 0 ? CONVERSION_FUNNEL[index - 1] : null;
+       {funnel.map((stage, index) => {
+         const widthPercent = (stage.count / funnel[0].count) * 100;
+         const prevStage = index > 0 ? funnel[index - 1] : null;
            const dropRate = prevStage ? ((1 - stage.count / prevStage.count) * 100).toFixed(0) : null;
            
            return (

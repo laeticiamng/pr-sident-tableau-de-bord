@@ -1,9 +1,9 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
- import { Users, TrendingUp } from "lucide-react";
+ import { Users, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { RETENTION_COHORTS } from "@/lib/growth-data";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  function getCellColor(value: number): string {
    if (value >= 70) return "bg-success/20 text-success";
@@ -13,7 +13,37 @@
  }
  
  export function RetentionCohortWidget() {
-   const avgM5Retention = (RETENTION_COHORTS.reduce((sum, c) => sum + c.m5, 0) / RETENTION_COHORTS.length).toFixed(0);
+   const { cohorts } = useGrowthMetrics();
+   
+   // État vide - aucune donnée réelle
+   if (!cohorts || cohorts.length === 0) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+             Rétention par Cohorte
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Évolution de la rétention mensuelle
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Données non disponibles</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Connectez Growth OS pour analyser la rétention par cohorte.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Growth OS API
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const avgM5Retention = (cohorts.reduce((sum, c) => sum + c.m5, 0) / cohorts.length).toFixed(0);
    
    return (
      <Card className="card-executive">
@@ -47,7 +77,7 @@
              </TableRow>
            </TableHeader>
            <TableBody>
-             {RETENTION_COHORTS.map((cohort) => (
+             {cohorts.map((cohort) => (
                <TableRow key={cohort.cohort}>
                  <TableCell className="text-[10px] sm:text-xs font-medium whitespace-nowrap">
                    {cohort.cohort}

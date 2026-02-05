@@ -1,9 +1,9 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Progress } from "@/components/ui/progress";
- import { Users, AlertTriangle, Star, Heart, Zap, Moon } from "lucide-react";
+ import { Users, AlertTriangle, Star, Heart, Zap, Moon, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { USER_SEGMENTS } from "@/lib/growth-data";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  const segmentIcons: Record<string, React.ComponentType<{ className?: string }>> = {
    "Champions": Star,
@@ -21,8 +21,38 @@
  };
  
  export function UserSegmentsWidget() {
-   const totalUsers = USER_SEGMENTS.reduce((sum, s) => sum + s.users, 0);
-   const totalLTV = USER_SEGMENTS.reduce((sum, s) => sum + (s.users * s.ltv), 0);
+   const { segments } = useGrowthMetrics();
+   
+   // État vide - aucune donnée réelle
+   if (!segments || segments.length === 0) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Users className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+             Segments Utilisateurs
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Analyse LTV et risque churn
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Données non disponibles</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Connectez Growth OS pour la segmentation utilisateurs.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Growth OS API
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const totalUsers = segments.reduce((sum, s) => sum + s.users, 0);
+   const totalLTV = segments.reduce((sum, s) => sum + (s.users * s.ltv), 0);
    
    return (
      <Card className="card-executive">
@@ -46,7 +76,7 @@
          </div>
        </CardHeader>
        <CardContent className="space-y-3">
-         {USER_SEGMENTS.map((segment) => {
+         {segments.map((segment) => {
            const Icon = segmentIcons[segment.segment] || Users;
            const pctUsers = ((segment.users / totalUsers) * 100).toFixed(0);
            

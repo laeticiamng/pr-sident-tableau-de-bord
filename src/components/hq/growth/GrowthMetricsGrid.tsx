@@ -2,7 +2,7 @@
  import { Badge } from "@/components/ui/badge";
  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, TrendingDown, Target, Users, DollarSign, Clock, Activity, Zap, Database, Cloud } from "lucide-react";
+ import { TrendingUp, TrendingDown, Target, Users, DollarSign, Clock, Activity, Zap, Database, AlertTriangle, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
 import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
@@ -32,22 +32,40 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
      );
    }
  
+   // État vide - aucune donnée réelle
+   if (!metrics.isRealData) {
+     return (
+       <div className="space-y-2">
+         <div className="flex items-center justify-end gap-2">
+           <Badge variant="destructive" className="text-[9px] gap-1">
+             <AlertTriangle className="h-2.5 w-2.5" />
+             Aucune donnée réelle
+           </Badge>
+         </div>
+         <Card className="border-dashed border-2 border-muted-foreground/20">
+           <CardContent className="py-8 text-center">
+             <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+             <h3 className="text-sm font-semibold mb-1">Connexion Stripe requise</h3>
+             <p className="text-xs text-muted-foreground mb-3 max-w-md mx-auto">
+               Les métriques de croissance nécessitent une connexion Stripe active avec des données réelles.
+             </p>
+             <Badge variant="outline" className="text-[10px] gap-1">
+               <Link2 className="h-2.5 w-2.5" />
+               Configurez STRIPE_SECRET_KEY dans les secrets
+             </Badge>
+           </CardContent>
+         </Card>
+       </div>
+     );
+   }
+ 
    return (
      <div className="space-y-2">
        {/* Data source indicator */}
        <div className="flex items-center justify-end gap-2">
-         <Badge variant={metrics.isRealData ? "success" : "subtle"} className="text-[9px] gap-1">
-           {metrics.isRealData ? (
-             <>
-               <Database className="h-2.5 w-2.5" />
-               Données Stripe Live
-             </>
-           ) : (
-             <>
-               <Cloud className="h-2.5 w-2.5" />
-               Données Simulées
-             </>
-           )}
+         <Badge variant="success" className="text-[9px] gap-1">
+           <Database className="h-2.5 w-2.5" />
+           Stripe Live
          </Badge>
        </div>
        

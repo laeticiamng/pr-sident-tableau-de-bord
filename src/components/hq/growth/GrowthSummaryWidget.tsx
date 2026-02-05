@@ -3,9 +3,9 @@
  import { Button } from "@/components/ui/button";
  import { Skeleton } from "@/components/ui/skeleton";
  import { Link } from "react-router-dom";
- import { Rocket, TrendingUp, TrendingDown, ArrowRight, Database, Cloud, Users, DollarSign, Target } from "lucide-react";
+ import { Rocket, TrendingUp, TrendingDown, ArrowRight, Database, AlertTriangle, Users, DollarSign, Target, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
-import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  /**
   * Widget compact Growth OS pour le Briefing Room
@@ -27,6 +27,43 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
                <Skeleton key={i} className="h-16" />
              ))}
            </div>
+         </CardContent>
+       </Card>
+     );
+   }
+ 
+   // État vide - aucune donnée réelle
+   if (!metrics.isRealData) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <div className="flex items-center justify-between">
+             <div>
+               <CardTitle className="flex items-center gap-2 text-base">
+                 <Rocket className="h-4 w-4 text-platform-growth" />
+                 Growth OS
+               </CardTitle>
+               <CardDescription className="text-xs">
+                 Métriques de croissance clés
+               </CardDescription>
+             </div>
+             <Badge variant="destructive" className="text-[9px]">
+               <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+               Non connecté
+             </Badge>
+           </div>
+         </CardHeader>
+         <CardContent className="py-6 text-center">
+           <Database className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+           <p className="text-xs text-muted-foreground mb-3">
+             Connectez Stripe pour les métriques
+           </p>
+           <Link to="/hq/growth">
+             <Button variant="outline" size="sm" className="text-xs gap-1">
+               <Link2 className="h-3 w-3" />
+               Configurer
+             </Button>
+           </Link>
          </CardContent>
        </Card>
      );
@@ -77,18 +114,9 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
              </CardDescription>
            </div>
            <div className="flex items-center gap-1.5">
-             <Badge variant={metrics.isRealData ? "success" : "subtle"} className="text-[9px]">
-               {metrics.isRealData ? (
-                 <>
-                   <Database className="h-2.5 w-2.5 mr-0.5" />
-                   Live
-                 </>
-               ) : (
-                 <>
-                   <Cloud className="h-2.5 w-2.5 mr-0.5" />
-                   Simulé
-                 </>
-               )}
+             <Badge variant="success" className="text-[9px]">
+               <Database className="h-2.5 w-2.5 mr-0.5" />
+               Live
              </Badge>
            </div>
          </div>
@@ -118,18 +146,20 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
            })}
          </div>
  
-         {/* Prediction highlight */}
-         <div className="flex items-center justify-between p-2 rounded-lg bg-accent/5 border border-accent/20">
-           <div className="text-xs">
-             <span className="text-muted-foreground">Prédiction MRR +90j:</span>
-             <span className="font-semibold text-foreground ml-1">
-               €{predictions.mrr.predicted90d.toLocaleString("fr-FR")}
-             </span>
+         {/* Prediction highlight - only show if predictions available */}
+         {predictions && (
+           <div className="flex items-center justify-between p-2 rounded-lg bg-accent/5 border border-accent/20">
+             <div className="text-xs">
+               <span className="text-muted-foreground">Prédiction MRR +90j:</span>
+               <span className="font-semibold text-foreground ml-1">
+                 €{predictions.mrr.predicted90d.toLocaleString("fr-FR")}
+               </span>
+             </div>
+             <Badge variant="gold" className="text-[9px]">
+               {predictions.mrr.confidence}% confiance
+             </Badge>
            </div>
-           <Badge variant="gold" className="text-[9px]">
-             {predictions.mrr.confidence}% confiance
-           </Badge>
-         </div>
+         )}
  
          <Link to="/hq/growth">
            <Button variant="ghost" size="sm" className="w-full text-xs text-platform-growth hover:text-platform-growth/80">

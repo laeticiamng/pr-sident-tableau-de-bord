@@ -40,12 +40,13 @@
  
    // Analyze metrics and generate alerts
    const alerts = useMemo<GrowthAlert[]>(() => {
-     if (isLoading || !metrics) return [];
+     // Ne générer des alertes que si on a des données réelles
+     if (isLoading || !metrics || !metrics.isRealData) return [];
      
      const newAlerts: GrowthAlert[] = [];
  
      // 1. Churn Risk Detection
-     if (metrics.churn.value >= THRESHOLDS.churn.critical) {
+     if (metrics.churn.value > 0 && metrics.churn.value >= THRESHOLDS.churn.critical) {
        newAlerts.push({
          id: "churn_critical",
          type: "churn_risk",
@@ -57,7 +58,7 @@
          threshold: THRESHOLDS.churn.critical,
          action: "Lancer une campagne de rétention urgente",
        });
-     } else if (metrics.churn.value >= THRESHOLDS.churn.warning) {
+     } else if (metrics.churn.value > 0 && metrics.churn.value >= THRESHOLDS.churn.warning) {
        newAlerts.push({
          id: "churn_warning",
          type: "churn_risk",
@@ -72,7 +73,7 @@
      }
  
      // 2. Churn Prediction Alert
-     if (predictions.churn.predicted30d > metrics.churn.value + 1) {
+     if (predictions && predictions.churn.predicted30d > metrics.churn.value + 1) {
        newAlerts.push({
          id: "churn_prediction",
          type: "churn_risk",
@@ -87,7 +88,7 @@
      }
  
      // 3. LTV:CAC Ratio Alerts
-     if (metrics.ltvCacRatio.value < THRESHOLDS.ltvCacRatio.minimum) {
+     if (metrics.ltvCacRatio.value > 0 && metrics.ltvCacRatio.value < THRESHOLDS.ltvCacRatio.minimum) {
        newAlerts.push({
          id: "ltv_cac_low",
          type: "benchmark_warning",
@@ -114,7 +115,7 @@
      }
  
      // 4. MRR Growth Opportunities
-     if (metrics.mrr.trend >= THRESHOLDS.mrrGrowth.excellent) {
+     if (metrics.mrr.value > 0 && metrics.mrr.trend >= THRESHOLDS.mrrGrowth.excellent) {
        newAlerts.push({
          id: "mrr_growth_milestone",
          type: "milestone",
@@ -126,7 +127,7 @@
          threshold: THRESHOLDS.mrrGrowth.excellent,
          action: "Capitaliser sur le momentum",
        });
-     } else if (metrics.mrr.trend < THRESHOLDS.mrrGrowth.stagnation) {
+     } else if (metrics.mrr.value > 0 && metrics.mrr.trend < THRESHOLDS.mrrGrowth.stagnation && metrics.mrr.trend !== 0) {
        newAlerts.push({
          id: "mrr_stagnation",
          type: "benchmark_warning",
@@ -141,46 +142,51 @@
      }
  
      // 5. Engagement Alerts
-     if (metrics.dauMauRatio.value < THRESHOLDS.dauMauRatio.low) {
-       newAlerts.push({
-         id: "engagement_low",
-         type: "churn_risk",
-         severity: "medium",
-         title: "📉 Engagement Faible",
-         message: `Le ratio DAU/MAU de ${metrics.dauMauRatio.value}% indique un engagement insuffisant.`,
-         metric: "dauMauRatio",
-         value: metrics.dauMauRatio.value,
-         threshold: THRESHOLDS.dauMauRatio.low,
-         action: "Améliorer l'onboarding et les notifications push",
-       });
-     } else if (metrics.dauMauRatio.value >= THRESHOLDS.dauMauRatio.high) {
-       newAlerts.push({
-         id: "engagement_excellent",
-         type: "growth_opportunity",
-         severity: "low",
-         title: "⭐ Engagement Exemplaire",
-         message: `Le ratio DAU/MAU de ${metrics.dauMauRatio.value}% témoigne d'une forte adhésion produit.`,
-         metric: "dauMauRatio",
-         value: metrics.dauMauRatio.value,
-         threshold: THRESHOLDS.dauMauRatio.high,
-         action: "Exploiter pour le referral et l'upsell",
-       });
+     // DAU/MAU alerts only if we have analytics data (value > 0)
+     if (metrics.dauMauRatio.value > 0) {
+       if (metrics.dauMauRatio.value < THRESHOLDS.dauMauRatio.low) {
+         newAlerts.push({
+           id: "engagement_low",
+           type: "churn_risk",
+           severity: "medium",
+           title: "📉 Engagement Faible",
+           message: `Le ratio DAU/MAU de ${metrics.dauMauRatio.value}% indique un engagement insuffisant.`,
+           metric: "dauMauRatio",
+           value: metrics.dauMauRatio.value,
+           threshold: THRESHOLDS.dauMauRatio.low,
+           action: "Améliorer l'onboarding et les notifications push",
+         });
+       } else if (metrics.dauMauRatio.value >= THRESHOLDS.dauMauRatio.high) {
+         newAlerts.push({
+           id: "engagement_excellent",
+           type: "growth_opportunity",
+           severity: "low",
+           title: "⭐ Engagement Exemplaire",
+           message: `Le ratio DAU/MAU de ${metrics.dauMauRatio.value}% témoigne d'une forte adhésion produit.`,
+           metric: "dauMauRatio",
+           value: metrics.dauMauRatio.value,
+           threshold: THRESHOLDS.dauMauRatio.high,
+           action: "Exploiter pour le referral et l'upsell",
+         });
+       }
      }
  
      // 6. MRR Prediction Opportunity
-     const mrrGrowthPredicted = ((predictions.mrr.predicted90d - predictions.mrr.current) / predictions.mrr.current) * 100;
-     if (mrrGrowthPredicted >= 25) {
-       newAlerts.push({
-         id: "mrr_prediction_opportunity",
-         type: "growth_opportunity",
-         severity: "low",
-         title: "📈 Potentiel de Croissance Fort",
-         message: `L'IA prédit +${mrrGrowthPredicted.toFixed(0)}% de MRR sur 90 jours (€${predictions.mrr.predicted90d.toLocaleString("fr-FR")}).`,
-         metric: "mrr_predicted",
-         value: predictions.mrr.predicted90d,
-         threshold: predictions.mrr.current * 1.25,
-         action: "Préparer l'infrastructure pour la montée en charge",
-       });
+     if (predictions && predictions.mrr.current > 0) {
+       const mrrGrowthPredicted = ((predictions.mrr.predicted90d - predictions.mrr.current) / predictions.mrr.current) * 100;
+       if (mrrGrowthPredicted >= 25) {
+         newAlerts.push({
+           id: "mrr_prediction_opportunity",
+           type: "growth_opportunity",
+           severity: "low",
+           title: "📈 Potentiel de Croissance Fort",
+           message: `L'IA prédit +${mrrGrowthPredicted.toFixed(0)}% de MRR sur 90 jours (€${predictions.mrr.predicted90d.toLocaleString("fr-FR")}).`,
+           metric: "mrr_predicted",
+           value: predictions.mrr.predicted90d,
+           threshold: predictions.mrr.current * 1.25,
+           action: "Préparer l'infrastructure pour la montée en charge",
+         });
+       }
      }
  
      return newAlerts;

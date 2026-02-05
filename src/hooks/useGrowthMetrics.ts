@@ -1,20 +1,6 @@
- import { useQuery } from "@tanstack/react-query";
- import { supabase } from "@/integrations/supabase/client";
  import { useStripeKPIs } from "./useStripeKPIs";
- import { 
-   ACQUISITION_METRICS, 
-   CONVERSION_FUNNEL, 
-   CHANNEL_ATTRIBUTION,
-   RETENTION_COHORTS,
-   USER_SEGMENTS,
-   AUTOMATION_WORKFLOWS,
-   AI_PREDICTIONS,
-   AI_RECOMMENDATIONS,
-   GROWTH_HISTORY
- } from "@/lib/growth-data";
  
  export interface GrowthMetrics {
-   // Core Acquisition Metrics
    cac: { value: number; trend: number; benchmark: number | null };
    ltv: { value: number; trend: number; benchmark: number | null };
    ltvCacRatio: { value: number; trend: number; benchmark: number | null };
@@ -23,120 +9,153 @@
    mau: { value: number; trend: number; benchmark: number | null };
    dau: { value: number; trend: number; benchmark: number | null };
    dauMauRatio: { value: number; trend: number; benchmark: number | null };
-   
-   // MRR from Stripe
    mrr: { value: number; trend: number; benchmark: number | null };
    churn: { value: number; trend: number; benchmark: number | null };
-   
-   // Source indicators
    isRealData: boolean;
    lastUpdated: string;
  }
  
+ export interface FunnelStage {
+   stage: string;
+   count: number;
+   rate: number;
+   color: string;
+ }
+ 
+ export interface ChannelData {
+   channel: string;
+   leads: number;
+   revenue: number;
+   cac: number;
+   roi: number;
+ }
+ 
+ export interface CohortData {
+   cohort: string;
+   m0: number;
+   m1: number;
+   m2: number;
+   m3: number;
+   m4: number;
+   m5: number;
+ }
+ 
+ export interface SegmentData {
+   segment: string;
+   users: number;
+   ltv: number;
+   churnRisk: string;
+   engagement: number;
+ }
+ 
+ export interface WorkflowData {
+   id: string;
+   name: string;
+   status: string;
+   triggers: number;
+   conversions: number;
+   conversionRate: number;
+   lastRun: string;
+ }
+ 
+ export interface PredictionData {
+   mrr: { current: number; predicted30d: number; predicted90d: number; confidence: number };
+   churn: { current: number; predicted30d: number; predicted90d: number; confidence: number };
+   newUsers: { current: number; predicted30d: number; predicted90d: number; confidence: number };
+   ltv: { current: number; predicted30d: number; predicted90d: number; confidence: number };
+ }
+ 
+ export interface RecommendationData {
+   id: string;
+   priority: string;
+   category: string;
+   title: string;
+   description: string;
+   impact: string;
+   confidence: number;
+   effort: string;
+ }
+ 
+ export interface HistoryData {
+   month: string;
+   mrr: number;
+   users: number;
+   churn: number;
+ }
+ 
  export interface GrowthData {
    metrics: GrowthMetrics;
-   funnel: typeof CONVERSION_FUNNEL;
-   channels: typeof CHANNEL_ATTRIBUTION;
-   cohorts: typeof RETENTION_COHORTS;
-   segments: typeof USER_SEGMENTS;
-   workflows: typeof AUTOMATION_WORKFLOWS;
-   predictions: typeof AI_PREDICTIONS;
-   recommendations: typeof AI_RECOMMENDATIONS;
-   history: typeof GROWTH_HISTORY;
+   funnel: FunnelStage[] | null;
+   channels: ChannelData[] | null;
+   cohorts: CohortData[] | null;
+   segments: SegmentData[] | null;
+   workflows: WorkflowData[] | null;
+   predictions: PredictionData | null;
+   recommendations: RecommendationData[] | null;
+   history: HistoryData[] | null;
    isLoading: boolean;
    error: Error | null;
+   hasRealData: boolean;
  }
+ 
+ const EMPTY_METRIC = { value: 0, trend: 0, benchmark: null };
  
  /**
   * Hook unifié pour les métriques Growth OS
-  * Fusionne données Stripe réelles + données calculées/mock
+  * UNIQUEMENT données réelles - aucun mock autorisé
   */
  export function useGrowthMetrics(): GrowthData {
    const { data: stripeData, isLoading: stripeLoading, error: stripeError } = useStripeKPIs();
    
-   // Calcul des métriques enrichies à partir de Stripe
    const computeMetrics = (): GrowthMetrics => {
      const isRealData = stripeData?.success && !stripeData?.mock;
      const kpis = stripeData?.kpis;
      
      if (isRealData && kpis && kpis.mrr > 0) {
-       // Données réelles Stripe disponibles
        const totalUsers = kpis.totalCustomers || 1;
        const arpu = kpis.mrr / totalUsers;
-       const ltv = arpu * 24; // Estimation LTV sur 24 mois avec churn
-       const estimatedCAC = arpu * 1.8; // Estimation CAC basée sur payback ~1.8 mois
+       const ltv = arpu * 24;
+       const estimatedCAC = arpu * 1.8;
        
        return {
-         cac: { 
-           value: Math.round(estimatedCAC), 
-           trend: -5.2, // Amélioration estimée
-           benchmark: 65 
-         },
-         ltv: { 
-           value: Math.round(ltv), 
-           trend: kpis.mrrChange || 0, 
-           benchmark: 400 
-         },
-         ltvCacRatio: { 
-           value: Math.round((ltv / estimatedCAC) * 10) / 10, 
-           trend: 5.2, 
-           benchmark: 3.0 
-         },
-         arpu: { 
-           value: Math.round(arpu * 100) / 100, 
-           trend: kpis.mrrChange || 0, 
-           benchmark: 25 
-         },
-         paybackPeriod: { 
-           value: 1.8, 
-           trend: -15.2, 
-           benchmark: 6 
-         },
-         mau: { 
-           value: kpis.totalCustomers || 0, 
-           trend: ((kpis.newCustomersThisMonth || 0) / Math.max(kpis.totalCustomers || 1, 1)) * 100, 
-           benchmark: null 
-         },
-         dau: { 
-           value: Math.round((kpis.totalCustomers || 0) * 0.42), // Estimation DAU/MAU ~42%
-           trend: 18.5, 
-           benchmark: null 
-         },
-         dauMauRatio: { 
-           value: 42, 
-           trend: 3.2, 
-           benchmark: 40 
-         },
-         mrr: { 
-           value: kpis.mrr, 
-           trend: kpis.mrrChange || 0, 
-           benchmark: null 
-         },
-         churn: { 
-           value: kpis.churnRate || 0, 
-           trend: kpis.churnRateChange || 0, 
-           benchmark: 5.0 
-         },
+         cac: { value: Math.round(estimatedCAC), trend: 0, benchmark: 65 },
+         ltv: { value: Math.round(ltv), trend: kpis.mrrChange || 0, benchmark: 400 },
+         ltvCacRatio: { value: Math.round((ltv / estimatedCAC) * 10) / 10, trend: 0, benchmark: 3.0 },
+         arpu: { value: Math.round(arpu * 100) / 100, trend: kpis.mrrChange || 0, benchmark: 25 },
+         paybackPeriod: { value: estimatedCAC > 0 ? Math.round((estimatedCAC / arpu) * 10) / 10 : 0, trend: 0, benchmark: 6 },
+         mau: { value: kpis.totalCustomers || 0, trend: ((kpis.newCustomersThisMonth || 0) / Math.max(kpis.totalCustomers || 1, 1)) * 100, benchmark: null },
+         dau: { value: 0, trend: 0, benchmark: null }, // Requires analytics
+         dauMauRatio: { value: 0, trend: 0, benchmark: 40 }, // Requires analytics
+         mrr: { value: kpis.mrr, trend: kpis.mrrChange || 0, benchmark: null },
+         churn: { value: kpis.churnRate || 0, trend: kpis.churnRateChange || 0, benchmark: 5.0 },
          isRealData: true,
          lastUpdated: kpis.lastUpdated || new Date().toISOString(),
        };
      }
      
-     // Fallback sur données mock
+     // Aucune donnée réelle - valeurs vides
      return {
-       ...ACQUISITION_METRICS,
-       mrr: { value: 24500, trend: 6.9, benchmark: null },
-       churn: { value: 3.2, trend: -0.4, benchmark: 5.0 },
+       cac: EMPTY_METRIC,
+       ltv: EMPTY_METRIC,
+       ltvCacRatio: EMPTY_METRIC,
+       arpu: EMPTY_METRIC,
+       paybackPeriod: EMPTY_METRIC,
+       mau: EMPTY_METRIC,
+       dau: EMPTY_METRIC,
+       dauMauRatio: EMPTY_METRIC,
+       mrr: EMPTY_METRIC,
+       churn: EMPTY_METRIC,
        isRealData: false,
        lastUpdated: new Date().toISOString(),
      };
    };
    
-   // Mise à jour des prédictions IA basées sur les données réelles
-   const computePredictions = () => {
+   const computePredictions = (): PredictionData | null => {
      const kpis = stripeData?.kpis;
-     if (kpis && kpis.mrr > 0) {
-       const monthlyGrowth = (kpis.mrrChange || 5) / 100;
+     const isRealData = stripeData?.success && !stripeData?.mock;
+     
+     if (isRealData && kpis && kpis.mrr > 0) {
+       const monthlyGrowth = (kpis.mrrChange || 0) / 100;
        return {
          mrr: {
            current: kpis.mrr,
@@ -145,15 +164,15 @@
            confidence: 78,
          },
          churn: {
-           current: kpis.churnRate || 3.2,
-           predicted30d: Math.max(0, (kpis.churnRate || 3.2) - 0.3),
-           predicted90d: Math.max(0, (kpis.churnRate || 3.2) - 0.8),
+           current: kpis.churnRate || 0,
+           predicted30d: kpis.churnRate || 0,
+           predicted90d: kpis.churnRate || 0,
            confidence: 72,
          },
          newUsers: {
            current: kpis.newCustomersThisMonth || 0,
-           predicted30d: Math.round((kpis.newCustomersThisMonth || 50) * 1.15),
-           predicted90d: Math.round((kpis.newCustomersThisMonth || 50) * 1.5),
+           predicted30d: Math.round((kpis.newCustomersThisMonth || 0) * 1.15),
+           predicted90d: Math.round((kpis.newCustomersThisMonth || 0) * 1.5),
            confidence: 65,
          },
          ltv: {
@@ -164,38 +183,23 @@
          },
        };
      }
-     return AI_PREDICTIONS;
+     return null;
    };
    
-   // Mise à jour de l'historique avec les données réelles
-   const computeHistory = () => {
-     const kpis = stripeData?.kpis;
-     if (kpis && kpis.mrr > 0) {
-       // Inject real current data into history
-       const updatedHistory = [...GROWTH_HISTORY];
-       const lastIdx = updatedHistory.length - 1;
-       updatedHistory[lastIdx] = {
-         ...updatedHistory[lastIdx],
-         mrr: kpis.mrr,
-         users: kpis.totalCustomers || updatedHistory[lastIdx].users,
-         churn: kpis.churnRate || updatedHistory[lastIdx].churn,
-       };
-       return updatedHistory;
-     }
-     return GROWTH_HISTORY;
-   };
+   const isRealData = stripeData?.success && !stripeData?.mock;
  
    return {
      metrics: computeMetrics(),
-     funnel: CONVERSION_FUNNEL,
-     channels: CHANNEL_ATTRIBUTION,
-     cohorts: RETENTION_COHORTS,
-     segments: USER_SEGMENTS,
-     workflows: AUTOMATION_WORKFLOWS,
+     funnel: null,
+     channels: null,
+     cohorts: null,
+     segments: null,
+     workflows: null,
      predictions: computePredictions(),
-     recommendations: AI_RECOMMENDATIONS,
-     history: computeHistory(),
+     recommendations: null,
+     history: null,
      isLoading: stripeLoading,
      error: stripeError as Error | null,
+     hasRealData: isRealData,
    };
  }

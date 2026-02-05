@@ -2,7 +2,7 @@
  import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
  import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { TrendingUp, Activity, Database, Cloud } from "lucide-react";
+ import { TrendingUp, Activity, Database, Link2 } from "lucide-react";
 import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
  export function GrowthTrendChart() {
@@ -22,9 +22,37 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
      );
    }
  
-   const latestMRR = history[history.length - 1].mrr;
-   const previousMRR = history[history.length - 2].mrr;
-   const mrrGrowth = (((latestMRR - previousMRR) / previousMRR) * 100).toFixed(1);
+   // État vide - aucune donnée réelle
+   if (!history || history.length < 2) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+             Tendances de Croissance
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             MRR, utilisateurs et churn sur 6 mois
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Historique non disponible</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Les tendances nécessitent des données historiques.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Growth OS API
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const latestMRR = history[history.length - 1]?.mrr || 0;
+   const previousMRR = history[history.length - 2]?.mrr || 1;
+   const mrrGrowth = previousMRR > 0 ? (((latestMRR - previousMRR) / previousMRR) * 100).toFixed(1) : "0";
    
    return (
      <Card className="card-executive">
@@ -44,12 +72,10 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
                <TrendingUp className="h-3 w-3 mr-1" />
                +{mrrGrowth}% MoM
              </Badge>
-             {metrics.isRealData && (
-               <Badge variant="subtle" className="text-[9px]">
-                 <Database className="h-2.5 w-2.5 mr-0.5" />
-                 Live
-               </Badge>
-             )}
+             <Badge variant="subtle" className="text-[9px]">
+               <Database className="h-2.5 w-2.5 mr-0.5" />
+               Live
+             </Badge>
            </div>
          </div>
        </CardHeader>
