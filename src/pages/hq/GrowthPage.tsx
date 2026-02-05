@@ -14,9 +14,11 @@ import { Skeleton } from "@/components/ui/skeleton";
    Sparkles,
    Database,
    Cloud,
-   AlertCircle
+  AlertCircle,
+  Bell
  } from "lucide-react";
 import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
+import { useGrowthAlerts } from "@/hooks/useGrowthAlerts";
 import { toast } from "sonner";
  
  // Growth OS Components
@@ -29,9 +31,11 @@ import { toast } from "sonner";
  import { AIPredictionsWidget } from "@/components/hq/growth/AIPredictionsWidget";
  import { AIRecommendationsWidget } from "@/components/hq/growth/AIRecommendationsWidget";
  import { GrowthTrendChart } from "@/components/hq/growth/GrowthTrendChart";
+import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
  
  export default function GrowthPage() {
    const { metrics, isLoading, error } = useGrowthMetrics();
+  const { hasCritical, criticalAlerts } = useGrowthAlerts();
  
    const handleRefresh = () => {
      window.location.reload();
@@ -103,6 +107,24 @@ import { toast } from "sonner";
          </div>
        )}
  
+      {/* Critical Alerts Banner */}
+      {hasCritical && criticalAlerts.length > 0 && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-destructive/10 border border-destructive/30 animate-pulse">
+          <Bell className="h-5 w-5 text-destructive flex-shrink-0" />
+          <div className="flex-1">
+            <span className="text-sm font-semibold text-destructive">
+              {criticalAlerts.length} alerte{criticalAlerts.length > 1 ? "s" : ""} critique{criticalAlerts.length > 1 ? "s" : ""}
+            </span>
+            <span className="text-xs text-muted-foreground ml-2">
+              {criticalAlerts[0]?.title}
+            </span>
+          </div>
+          <Badge variant="destructive" className="text-xs">
+            Action requise
+          </Badge>
+        </div>
+      )}
+
        {/* KPI Metrics Bar */}
        <GrowthMetricsGrid />
  
@@ -170,7 +192,8 @@ import { toast } from "sonner";
  
          {/* Intelligence Tab */}
          <TabsContent value="intelligence" className="space-y-4 mt-4">
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <GrowthAlertsWidget />
              <AIPredictionsWidget />
              <AIRecommendationsWidget />
            </div>
