@@ -1,9 +1,9 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Button } from "@/components/ui/button";
- import { Lightbulb, ArrowRight, Target, Users, Filter, Rocket, CheckCircle2 } from "lucide-react";
+ import { Lightbulb, ArrowRight, Target, Users, Filter, Rocket, CheckCircle2, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { AI_RECOMMENDATIONS } from "@/lib/growth-data";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  import { useState } from "react";
  
  const categoryIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -27,8 +27,37 @@
  
  export function AIRecommendationsWidget() {
    const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+   const { recommendations } = useGrowthMetrics();
    
-   const activeRecommendations = AI_RECOMMENDATIONS.filter(r => !dismissedIds.includes(r.id));
+   // État vide - aucune donnée réelle
+   if (!recommendations || recommendations.length === 0) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
+             Recommandations IA
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Actions stratégiques suggérées
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Analyse en attente</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             L'IA générera des recommandations après analyse des données.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Growth OS API
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const activeRecommendations = recommendations.filter(r => !dismissedIds.includes(r.id));
    
    return (
      <Card className="card-executive">

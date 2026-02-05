@@ -1,15 +1,45 @@
  import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
  import { Badge } from "@/components/ui/badge";
  import { Switch } from "@/components/ui/switch";
- import { Workflow, Play, Pause, CheckCircle2, Clock } from "lucide-react";
+ import { Workflow, Play, Pause, CheckCircle2, Clock, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
- import { AUTOMATION_WORKFLOWS } from "@/lib/growth-data";
+ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  import { formatDistanceToNow } from "date-fns";
  import { fr } from "date-fns/locale";
  
  export function AutomationWorkflowsWidget() {
-   const activeCount = AUTOMATION_WORKFLOWS.filter(w => w.status === "active").length;
-   const totalTriggers = AUTOMATION_WORKFLOWS.reduce((sum, w) => sum + w.triggers, 0);
+   const { workflows } = useGrowthMetrics();
+   
+   // État vide - aucune donnée réelle
+   if (!workflows || workflows.length === 0) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Workflow className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+             Workflows Automatisés
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Séquences et orchestration
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Workflows non configurés</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Configurez vos workflows via Growth OS.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Growth OS API
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+   
+   const activeCount = workflows.filter(w => w.status === "active").length;
+   const totalTriggers = workflows.reduce((sum, w) => sum + w.triggers, 0);
    
    return (
      <Card className="card-executive">
@@ -35,7 +65,7 @@
          </div>
        </CardHeader>
        <CardContent className="space-y-3">
-         {AUTOMATION_WORKFLOWS.map((workflow) => (
+       {workflows.map((workflow) => (
            <div 
              key={workflow.id}
              className={cn(

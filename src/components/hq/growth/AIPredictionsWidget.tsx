@@ -2,7 +2,7 @@
  import { Badge } from "@/components/ui/badge";
  import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Brain, TrendingUp, TrendingDown, Sparkles, Database, Cloud } from "lucide-react";
+ import { Brain, TrendingUp, TrendingDown, Database, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
 import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  
@@ -32,6 +32,34 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
      );
    }
  
+   // État vide - aucune donnée réelle
+   if (!predictions) {
+     return (
+       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+         <CardHeader className="pb-2">
+           <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+             <Brain className="h-4 w-4 sm:h-5 sm:w-5 text-accent" />
+             Prédictions IA
+           </CardTitle>
+           <CardDescription className="text-xs sm:text-sm">
+             Projections à 30 et 90 jours
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="py-8 text-center">
+           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+           <h3 className="text-sm font-semibold mb-1">Données insuffisantes</h3>
+           <p className="text-xs text-muted-foreground mb-3">
+             Les prédictions IA nécessitent des données Stripe réelles.
+           </p>
+           <Badge variant="outline" className="text-[10px] gap-1">
+             <Link2 className="h-2.5 w-2.5" />
+             Source requise : Stripe
+           </Badge>
+         </CardContent>
+       </Card>
+     );
+   }
+ 
    return (
      <Card className="card-executive relative overflow-hidden">
        {/* Subtle AI glow */}
@@ -49,18 +77,9 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
              </CardDescription>
            </div>
            <div className="flex items-center gap-1">
-             <Badge variant={metrics.isRealData ? "success" : "gold"} className="text-[9px]">
-               {metrics.isRealData ? (
-                 <>
-                   <Database className="h-2.5 w-2.5 mr-0.5" />
-                   Live
-                 </>
-               ) : (
-                 <>
-                   <Sparkles className="h-2.5 w-2.5 mr-0.5" />
-                   ML
-                 </>
-               )}
+             <Badge variant="success" className="text-[9px]">
+               <Database className="h-2.5 w-2.5 mr-0.5" />
+               Live
              </Badge>
            </div>
          </div>
