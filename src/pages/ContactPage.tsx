@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, MapPin, Building2, Clock, Phone, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,21 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // SEO: Update document meta for this page
+  useEffect(() => {
+    document.title = "Contact — EMOTIONSCARE SASU";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Contactez EMOTIONSCARE SASU à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
+    }
+    return () => {
+      document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+      if (metaDescription) {
+        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
+      }
+    };
+  }, []);
 
   const { 
     register, 
@@ -223,6 +238,34 @@ export default function ContactPage() {
                     <h3 className="font-semibold mb-1">Email</h3>
                     <p className="text-muted-foreground">contact@emotionscare.fr</p>
                   </div>
+                </div>
+              </div>
+
+              {/* Liens LinkedIn */}
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                  <Linkedin className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-1">Retrouvez-nous</h3>
+                  <a
+                    href="https://www.linkedin.com/in/laeticia-motongane/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-accent hover:underline"
+                  >
+                    <span>Laeticia Motongane</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/emotionscare/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 text-muted-foreground hover:text-accent hover:underline text-sm mt-1"
+                  >
+                    <span>EMOTIONSCARE SASU</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 </div>
               </div>
 
