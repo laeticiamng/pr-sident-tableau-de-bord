@@ -25,6 +25,7 @@ import {
   Scale,
   BarChart3,
   X,
+   Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,7 @@ const sidebarLinks = [
       { href: "/hq/cockpit", label: "Cockpit Dirigeant", icon: Gauge },
       { href: "/hq/plateformes", label: "Plateformes", icon: Layers },
       { href: "/hq/equipe-executive", label: "Workforce Growth Copilot", icon: Users },
+       { href: "/hq/growth", label: "Growth OS", icon: Rocket },
     ],
   },
   {
