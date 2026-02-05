@@ -81,6 +81,7 @@ const sidebarLinks = [
       { href: "/hq/rh", label: "Ressources & Agents", icon: Bot },
       { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
       { href: "/hq/data", label: "Data & Analytics", icon: BarChart3 },
+      { href: "/hq/settings", label: "Paramètres", icon: Settings },
     ],
   },
 ];

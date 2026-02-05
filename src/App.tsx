@@ -58,6 +58,7 @@ const DiagnosticsPage = lazy(() => import("@/pages/hq/DiagnosticsPage"));
 const RHPage = lazy(() => import("@/pages/hq/RHPage"));
 const ConformitePage = lazy(() => import("@/pages/hq/ConformitePage"));
 const DataAnalyticsPage = lazy(() => import("@/pages/hq/DataAnalyticsPage"));
+const SettingsPage = lazy(() => import("@/pages/hq/SettingsPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -126,6 +127,7 @@ const App = () => (
                     <Route path="/hq/rh" element={<RHPage />} />
                     <Route path="/hq/conformite" element={<ConformitePage />} />
                     <Route path="/hq/data" element={<DataAnalyticsPage />} />
+                    <Route path="/hq/settings" element={<SettingsPage />} />
                   </Route>
                 </Route>
 

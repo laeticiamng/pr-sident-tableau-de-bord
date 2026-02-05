@@ -23,6 +23,9 @@ verify_jwt = false
 
 [functions.platform-analysis]
 verify_jwt = false
- 
- [functions.growth-analytics]
- verify_jwt = false
+
+[functions.growth-analytics]
+verify_jwt = false
+
+[functions.check-api-status]
+verify_jwt = false

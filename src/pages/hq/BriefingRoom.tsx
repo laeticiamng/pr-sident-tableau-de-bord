@@ -22,6 +22,7 @@ import { PlatformHealthGrid } from "@/components/hq/PlatformHealthGrid";
 import { AIInsightsWidget } from "@/components/hq/AIInsightsWidget";
 import { AutopilotControl } from "@/components/hq/AutopilotControl";
 import { AITransparencyPanel } from "@/components/hq/AITransparencyPanel";
+import { RunResultPanel } from "@/components/hq/RunResultPanel";
 import { RecentActivityFeed } from "@/components/hq/briefing/RecentActivityFeed";
 import { QuickMetricsBar } from "@/components/hq/briefing/QuickMetricsBar";
 import { GrowthSummaryWidget } from "@/components/hq/growth/GrowthSummaryWidget";
@@ -211,8 +212,16 @@ export default function BriefingRoom() {
         </Card>
       </div>
 
+      {/* Run Result Panel (expandable markdown panel) */}
+      <RunResultPanel 
+        runResult={lastRunResult} 
+        onClose={() => setLastRunResult(null)}
+      />
+
       {/* AI Transparency Panel */}
       <AITransparencyPanel runResult={lastRunResult} />
+
+      {/* Recent Activity & Platform Status */}
 
       {/* Recent Activity & Platform Status */}
       <div className="grid gap-6 lg:grid-cols-3">
