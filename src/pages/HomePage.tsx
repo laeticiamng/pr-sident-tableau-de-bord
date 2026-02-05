@@ -298,15 +298,15 @@ export default function HomePage() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-              Prêt à piloter vos plateformes ?
+              Centre de Gouvernance
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-              Accédez au centre de commandement et prenez le contrôle de votre écosystème SaaS.
+              Tableau de bord interne pour piloter les 5 plateformes EMOTIONSCARE.
             </p>
             
             <Link to="/auth">
               <Button variant="executive" size="lg" className="group min-w-[240px]">
-                <span>Accéder au HQ</span>
+                <span>Accès HQ</span>
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
