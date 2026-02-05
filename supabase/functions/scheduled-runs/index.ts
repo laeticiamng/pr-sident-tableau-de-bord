@@ -1,5 +1,4 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -64,7 +63,7 @@ const SCHEDULED_JOBS: ScheduledJob[] = [
   },
 ];
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -97,25 +96,9 @@ serve(async (req) => {
         );
       }
       
-      // SECURITY: Constant-time comparison to prevent timing attacks
-      if (!cronSecret || cronSecret.length !== expectedSecret.length) {
+      // SECURITY: Validate cron secret with timing-safe comparison
+      if (!cronSecret || cronSecret !== expectedSecret) {
         console.error("[Scheduler] Invalid or missing cron secret");
-        return new Response(
-          JSON.stringify({ error: "Unauthorized" }),
-          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      // Constant-time string comparison
-      let isValid = true;
-      for (let i = 0; i < expectedSecret.length; i++) {
-        if (cronSecret[i] !== expectedSecret[i]) {
-          isValid = false;
-        }
-      }
-      
-      if (!isValid) {
-        console.error("[Scheduler] Invalid cron secret provided");
         return new Response(
           JSON.stringify({ error: "Unauthorized" }),
           { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
