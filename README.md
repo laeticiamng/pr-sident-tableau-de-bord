@@ -1,5 +1,5 @@
 # EMOTIONSCARE SASU — Siège Social Numérique v4.9
-
+# EMOTIONSCARE SASU — Siège Social Numérique v4.10
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
@@ -9,9 +9,11 @@
 [![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
 [![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
 [![Tests](https://img.shields.io/badge/Tests-128%2F128%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
+[![Tests](https://img.shields.io/badge/Tests-129%2F129%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
 [![Security](https://img.shields.io/badge/Security-RLS%20Hardened-green)](https://github.com/laeticiamng/hq-emotionscare)
 [![Coverage](https://img.shields.io/badge/Coverage-13%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
 [![Audit](https://img.shields.io/badge/Audit-v29%20Excellence-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
+[![Audit](https://img.shields.io/badge/Audit-v30%20Excellence-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
 [![Standard](https://img.shields.io/badge/Standard-HEC%2FPolytechnique-gold)](https://github.com/laeticiamng/hq-emotionscare)
 [![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
 [![Growth Copilot](https://img.shields.io/badge/Growth%20Copilot-39%20AI%20Employees-gold)](https://github.com/laeticiamng/growth-copilot)
@@ -224,6 +226,7 @@ npm run test
 ```
 
 **Résultats actuels** : 128 tests passants dans 13 fichiers de test
+**Résultats actuels** : 129 tests passants dans 13 fichiers de test
 - Hooks : useAuth, useStripeKPIs, usePermissions
 - Composants : CommandPalette, ExecutiveCockpit, OKRProgress, ReleaseChecklist
 - Logique : run-engine, scheduler, stripe-kpis, agent-profiles
@@ -251,6 +254,16 @@ npm run test
 | Historique | 3 | 5 | ✅ |
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
+
+### Enrichissements v4.10 (Audit v30 - Zero Mock Data)
+| # | Module | Enrichissement |
+|---|--------|----------------|
+| 1 | Zero Mock | Suppression complète mock-data.ts et growth-data.ts |
+| 2 | Empty States | États vides avec indication source requise (Stripe, CRM, GA4...) |
+| 3 | OKRProgress | Refactoring props-driven - tests mis à jour (9 tests) |
+| 4 | SalesPipelineChart | État vide avec message "Connecter CRM" |
+| 5 | RoadmapExportButton | Validation avant export si aucune donnée |
+| 6 | Tests | 129/129 passants - cohérence 100% maintenue |
 
 ### Enrichissements v4.7 (Audit v27 - Excellence Complète)
 | # | Module | Enrichissement |
