@@ -1,22 +1,13 @@
-# EMOTIONSCARE SASU — Siège Social Numérique v4.11
+# EMOTIONSCARE SASU — Siège Social Numérique
 > **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb)](https://reactjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
-[![CI](https://github.com/laeticiamng/hq-emotionscare/actions/workflows/ci.yml/badge.svg)](https://github.com/laeticiamng/hq-emotionscare/actions)
-[![codecov](https://codecov.io/gh/laeticiamng/hq-emotionscare/branch/main/graph/badge.svg)](https://codecov.io/gh/laeticiamng/hq-emotionscare)
-[![Tests](https://img.shields.io/badge/Tests-129%2F129%20passing-success)](https://github.com/laeticiamng/hq-emotionscare)
-[![Security](https://img.shields.io/badge/Security-RLS%20Hardened-green)](https://github.com/laeticiamng/hq-emotionscare)
-[![Coverage](https://img.shields.io/badge/Coverage-13%20test%20suites-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![Audit](https://img.shields.io/badge/Audit-v31%20Excellence-brightgreen)](https://github.com/laeticiamng/hq-emotionscare)
-[![Standard](https://img.shields.io/badge/Standard-HEC%2FPolytechnique-gold)](https://github.com/laeticiamng/hq-emotionscare)
-[![Modules](https://img.shields.io/badge/Modules-20%20HQ%20pages-purple)](https://github.com/laeticiamng/hq-emotionscare)
-[![Growth Copilot](https://img.shields.io/badge/Growth%20Copilot-39%20AI%20Employees-gold)](https://github.com/laeticiamng/growth-copilot)
-[![Edge Functions](https://img.shields.io/badge/Edge%20Functions-9%20deployed-blue)](https://github.com/laeticiamng/hq-emotionscare)
-[![GitHub Sync](https://img.shields.io/badge/GitHub-13.5K%20commits%20|%20912%20tests-181717?logo=github)](https://github.com/laeticiamng)
-[![Validation](https://img.shields.io/badge/Validation-Zod%20Schemas-orange)](https://github.com/laeticiamng/hq-emotionscare)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e)](https://supabase.com/)
+[![Edge Functions](https://img.shields.io/badge/Edge_Functions-9_deployed-blue)](https://supabase.com/docs/guides/functions)
+[![Status](https://img.shields.io/badge/Status-Beta_Privée-orange)]()
 
 ---
 
@@ -28,6 +19,24 @@ Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour pe
 - Le HQ analyse et propose des actions
 - Le Président décide et approuve
 - L'IA exécute avec supervision
+
+---
+
+## ⚡ Statut Actuel
+
+> **Version Beta Privée** — La plateforme est en phase de déploiement progressif.
+
+### Modules Opérationnels
+- ✅ Briefing Room (Dashboard exécutif avec KPIs temps réel)
+- ✅ Executive AI Runs (7 types : brief quotidien, standup, audit sécurité, veille concurrentielle...)
+- ✅ Plateformes (monitoring des 5 SaaS avec GitHub sync)
+- ✅ Engineering (commits, PRs, issues GitHub)
+- ✅ Audit Log (journal des actions système)
+- ✅ Approbations (workflow de validation)
+- ✅ Finance (KPIs Stripe — nécessite connexion Stripe)
+
+### Modules en Développement
+- 🔧 Ventes, Marketing, Support, Réunions, RH, Data Analytics, Conformité
 
 ---
 
@@ -47,11 +56,11 @@ Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour pe
 
 | Plateforme | Description | Status |
 |------------|-------------|--------|
-| **EmotionsCare** | Plateforme principale de gestion émotionnelle | ✅ Production |
-| **Pixel Perfect Replica** | Réplication d'interfaces haute fidélité | 🚧 Prototype |
-| **System Compass** | Navigation et orientation systémique | ✅ Production |
-| **Growth Copilot** | Intelligence marketing et croissance | ✅ Production |
-| **Med MNG** | Gestion médicale et suivi santé | ✅ Production |
+| **EmotionsCare** | Plateforme de gestion du bien-être émotionnel pour les professionnels de santé | ✅ Production |
+| **Pixel Perfect Replica** | PWA mobile-first de connexion sociale avec radar temps réel | 🚧 Prototype |
+| **System Compass** | Plateforme d'aide à la décision pour relocalisation internationale | ✅ Production |
+| **Growth Copilot** | Growth OS avec 39 employés IA répartis dans 11 départements | ✅ Production |
+| **Med MNG** | Plateforme anti-panique cognitive pour étudiants en médecine | ✅ Production |
 
 ---
 
@@ -251,151 +260,8 @@ npm run test
 | Approbations | 3 | 4 | ✅ |
 | Sécurité | 5 | 8 | ✅ |
 
-### Enrichissements v4.11 (Audit v31 - Bug Fix Scheduler)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | scheduled-runs | Fix double JSON parsing (body consommé 2 fois) |
-| 2 | Edge Function | Action "status" fonctionne maintenant correctement |
-| 3 | SchedulerPanel | Affichage des 5 jobs CRON configurés validé |
-| 4 | README | Nettoyage des duplications de badges/lignes |
-| 5 | Tests | 129/129 passants - cohérence 100% maintenue |
-
-### Enrichissements v4.10 (Audit v30 - Zero Mock Data)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Zero Mock | Suppression complète mock-data.ts et growth-data.ts |
-| 2 | Empty States | États vides avec indication source requise (Stripe, CRM, GA4...) |
-| 3 | OKRProgress | Refactoring props-driven - tests mis à jour (9 tests) |
-| 4 | SalesPipelineChart | État vide avec message "Connecter CRM" |
-| 5 | RoadmapExportButton | Validation avant export si aucune donnée |
-| 6 | Tests | 129/129 passants - cohérence 100% maintenue |
-
-### Enrichissements v4.7 (Audit v27 - Excellence Complète)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | README | Correction doublon ligne Réunions |
-| 2 | ProduitPage | Suppression section Feature Requests redondante |
-| 3 | VentesPage | Correction layout grid (lg:grid-cols-2 au lieu de lg:grid-cols-3) |
-| 4 | mock-data.ts | Mise à jour dates 2025 → 2026 (cohérence temporelle) |
-| 5 | Tests | 128/128 passants - cohérence 100% maintenue |
-
-### Enrichissements v4.6 (Audit v26 - Excellence Totale)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | ContactPage | Validation Zod complète + sanitization XSS + react-hook-form |
-| 2 | VisionPage | Section Engagements + Timeline enrichie (5 étapes) + hover effects |
-| 3 | SupportPage | Tendances KPIs + refresh interactif + descriptions améliorées |
-| 4 | Accessibilité | aria-invalid sur formulaires + labels explicites |
-| 5 | Tests | 128/128 passants - cohérence 100% maintenue |
-
-### Enrichissements v4.5 (Audit v25 - Excellence HEC/Polytechnique)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Standards académiques | Composants ExecutiveHeader, DataSourceIndicator, MethodologyDisclosure |
-| 2 | Traçabilité données | Source, horodatage, fiabilité et méthodologie affichés sur tous les KPIs |
-| 3 | Rigueur analytique | Formules de calcul, hypothèses et limitations documentées |
-| 4 | Pages enrichies | Finance, Cockpit, Diagnostics, Entreprise avec standards HEC |
-| 5 | Tests | 128/128 passants - cohérence 100% maintenue |
-
-### Enrichissements v4.3 (Audit v23 - FINAL)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Audit complet | 20 pages HQ vérifiées - 100% fonctionnelles |
-| 2 | Tests | 128/128 passants (13 suites) - couverture complète |
-| 3 | Sécurité | Tous les findings RLS ignorés (faux positifs confirmés) |
-| 4 | Diagnostics | Health checks complets + latence mesurée |
-| 5 | Cohérence | Backend/Frontend/README à 100% |
-
-### Enrichissements v4.2 (Audit v22)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Audit global | 20 pages HQ vérifiées - 100% fonctionnelles |
-| 2 | Tests | 128/128 passants (13 suites) - couverture complète |
-| 3 | Sécurité | RLS hardened, 1 warning ignoré (config Cloud manuelle) |
-| 4 | Widgets | 98+ widgets métier intégrés et vérifiés |
-| 5 | Documentation | Cohérence 100% README/code/backend validée |
-
-### Enrichissements v4.1 (Audit v21)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | constants.ts | Growth Copilot description mise à jour (39 employés IA, 11 départements métier) |
-| 2 | BriefingRoom | Bouton "Workforce Copilot" au lieu de "Équipe Executive" |
-| 3 | RHPage | Clarification : distinction entre agents HQ et 39 employés Growth Copilot |
-| 4 | Sidebar | Labels mis à jour : "Ressources & Agents", "Workforce Growth Copilot" |
-| 5 | Security | Findings RLS ignorés (faux positifs - is_owner() est SECURITY DEFINER) |
-
-### Enrichissements v4.0 (Audit v20)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Workforce Growth Copilot | Page renommée pour clarifier qu'elle affiche les agents de Growth Copilot |
-| 2 | agent-profiles.ts | Documentation mise à jour (agents = Growth Copilot, pas HQ) |
-| 3 | Tests | 128 tests passants (100%) |
-| 4 | Sidebar | Label "Workforce Growth Copilot" pour éviter la confusion |
-| 5 | Documentation | Cohérence 100% README/code/backend validée |
-
-### Enrichissements v3.9 (Audit v19)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Équipe Executive | Affichage des 5 catégories (direction, c_suite, function_head, platform_gm, department) |
-| 2 | RLS Hardening | Politiques RESTRICTIVE pour INSERT/UPDATE/DELETE sur user_roles et role_permissions |
-| 3 | EmotionsCare | Stats mises à jour (37 modules, 294 tests) |
-| 4 | agent-profiles.ts | Fonction getAgentStats() pour comptage par catégorie |
-| 5 | UI | Icônes Crown et Briefcase pour nouvelles catégories |
-
-### Enrichissements v3.8 (Audit v18)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Agents IA | Extension à 39 employés IA (37 départements + 2 Direction CGO/QCO) |
-| 2 | RLS | Correction des politiques RESTRICTIVE → PERMISSIVE |
-| 3 | Growth Copilot | Description mise à jour avec structure 39 agents |
-| 4 | agent-profiles.ts | Ajout catégorie "direction" et 16 agents département |
-| 5 | Documentation | Cohérence 100% README/code/backend validée |
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Audit | DateRangeFilter + AuditStats intégrés |
-| 2 | Documentation | Cohérence 100% modules/widgets/README validée |
-| 3 | Tests | 100/100 tests passants (12 suites) |
-| 4 | Widgets | 98+ widgets fonctionnels vérifiés |
-| 5 | Architecture | 20 modules HQ tous complets |
-
-### Enrichissements v3.4 (Audit v12)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Plateformes | MultiPlatformUptimeChart intégré (uptime comparatif 7j) |
-| 2 | Documentation | Cohérence 100% backend/frontend/README validée |
-| 3 | Tests | 100/100 tests passants confirmés |
-| 4 | Widgets | 95+ widgets fonctionnels vérifiés |
-
-### Enrichissements v3.3 (Audit v11)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Briefing Room | QuickMetricsBar intégré (MRR, Utilisateurs, Uptime, Sécurité) |
-| 2 | Engineering | CodeCoverageWidget intégré (couverture par plateforme) |
-| 3 | RLS | Correction vulnérabilités sur user_roles et role_permissions |
-| 4 | Security | Scan complet - 1 warning restant (Leaked Password Protection) |
-
-### Enrichissements v3.2 (Audit v10)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Marketing | CampaignPerformance + PlatformTrafficWidget intégrés |
-| 2 | Finance | CashFlowForecast (prévision trésorerie) intégré |
-| 3 | Diagnostics | SystemAlerts widget intégré |
-| 4 | Ventes | DealVelocityWidget intégré |
-| 5 | Entreprise | StrategicGoals widget intégré |
-| 6 | Conformité | ComplianceAlerts widget intégré |
-| 7 | Réunions | ActionItems widget intégré |
-| 8 | Engineering | OpenPRsWidget intégré |
-| 9 | Support | TicketDistributionChart intégré |
-
-### Enrichissements v3.0 (Audit Final)
-| # | Module | Enrichissement |
-|---|--------|----------------|
-| 1 | Produit | Export Roadmap en Markdown |
-| 2 | Approbations | Historique des décisions |
-| 3 | Sécurité | Compteur jours sans incident |
-| 4 | Support | Graphique tendance tickets |
-| 5 | Conformité | Checklist AIPD interactive |
-| 6 | Historique | Export runs en TSV |
+### Historique des versions
+Consultez les [commits](https://github.com/laeticiamng/pr-sident-tableau-de-bord/commits/main/) pour l'historique détaillé des changements.
 
 ---
 
