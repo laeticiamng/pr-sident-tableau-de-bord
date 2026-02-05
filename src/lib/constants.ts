@@ -50,7 +50,7 @@ export const MANAGED_PLATFORMS = [
     description: "Growth OS : 39 employés IA premium (2 Direction CGO/QCO + 37 agents répartis dans 11 départements). Core OS avec RBAC, Approval Gate, Audit Log, Scheduler. 30 tables, 25 Edge Functions. Automatisation complète Marketing, Ventes, Finance, Produit, Engineering.",
     tagline: "Compétence premium, livrée simplement",
     github: "https://github.com/laeticiamng/growth-copilot",
-    liveUrl: "https://agent-growth-automator.com",
+    liveUrl: "https://www.agent-growth-automator.com",
     color: "bg-accent",
     stats: { modules: 11, tables: 30, edgeFunctions: 25, branches: 5, commits: 2134, tests: 128 },
     features: ["39 employés IA (2 Dir + 37 Dept)", "11 départements métier", "Approval Gate", "Voice Commands", "Scheduler automatisé"],

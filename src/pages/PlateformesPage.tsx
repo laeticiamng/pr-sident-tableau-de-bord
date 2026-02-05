@@ -79,7 +79,7 @@ const platformLiveUrls: Record<string, string> = {
   "emotionscare": "https://emotionscare.com",
   "pixel-perfect-replica": "https://pixel-perfect-clone-6574.lovable.app",
   "system-compass": "https://world-alignment.lovable.app",
-  "growth-copilot": "https://agent-growth-automator.com",
+  "growth-copilot": "https://www.agent-growth-automator.com",
   "med-mng": "https://medmng.com",
 };
 
