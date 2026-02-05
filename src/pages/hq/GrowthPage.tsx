@@ -32,6 +32,7 @@ import { toast } from "sonner";
  import { AIRecommendationsWidget } from "@/components/hq/growth/AIRecommendationsWidget";
  import { GrowthTrendChart } from "@/components/hq/growth/GrowthTrendChart";
 import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
+ import { GrowthAnalyticsSyncWidget } from "@/components/hq/growth/GrowthAnalyticsSyncWidget";
  
  export default function GrowthPage() {
    const { metrics, isLoading, error } = useGrowthMetrics();
@@ -192,8 +193,9 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
  
          {/* Intelligence Tab */}
          <TabsContent value="intelligence" className="space-y-4 mt-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <GrowthAlertsWidget />
+           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+             <GrowthAnalyticsSyncWidget />
+             <GrowthAlertsWidget />
              <AIPredictionsWidget />
              <AIRecommendationsWidget />
            </div>
