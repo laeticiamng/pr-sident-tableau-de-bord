@@ -2,13 +2,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Target, ChevronDown, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
-import { PRODUCT_OKRS } from "@/lib/mock-data";
+import { Target, ChevronDown, TrendingUp, AlertTriangle, CheckCircle, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
+interface KeyResult {
+  name: string;
+  progress: number;
+}
+
+interface OKR {
+  objective: string;
+  progress: number;
+  status: string;
+  keyResults: KeyResult[];
+}
+
 interface OKRProgressProps {
   loading?: boolean;
+  okrs?: OKR[];
 }
 
 const statusConfig = {
@@ -32,7 +44,7 @@ const statusConfig = {
   },
 };
 
-export function OKRProgress({ loading }: OKRProgressProps) {
+export function OKRProgress({ loading, okrs = [] }: OKRProgressProps) {
   const [openOKRs, setOpenOKRs] = useState<Set<number>>(new Set([0]));
 
   const toggleOKR = (index: number) => {
@@ -45,8 +57,8 @@ export function OKRProgress({ loading }: OKRProgressProps) {
     setOpenOKRs(newOpen);
   };
 
-  const avgProgress = PRODUCT_OKRS.reduce((sum, okr) => sum + okr.progress, 0) / PRODUCT_OKRS.length;
-  const onTrackCount = PRODUCT_OKRS.filter(okr => okr.status === "on_track").length;
+  const avgProgress = okrs.length > 0 ? okrs.reduce((sum, okr) => sum + okr.progress, 0) / okrs.length : 0;
+  const onTrackCount = okrs.filter(okr => okr.status === "on_track").length;
 
   if (loading) {
     return (
@@ -57,6 +69,26 @@ export function OKRProgress({ loading }: OKRProgressProps) {
               <div key={i} className="h-20 bg-muted/30 animate-pulse rounded-lg" />
             ))}
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (okrs.length === 0) {
+    return (
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="p-3 rounded-full bg-muted/50 mb-3">
+            <Database className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Aucun OKR configuré</h3>
+          <p className="text-xs text-muted-foreground max-w-[250px]">
+            Connectez un outil de gestion produit (Linear, Jira, Notion) pour synchroniser vos OKRs.
+          </p>
+          <Badge variant="outline" className="text-[10px] mt-3 gap-1">
+            <AlertTriangle className="h-2.5 w-2.5" />
+            Source requise : Linear / Jira
+          </Badge>
         </CardContent>
       </Card>
     );
@@ -74,12 +106,12 @@ export function OKRProgress({ loading }: OKRProgressProps) {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="subtle">{avgProgress.toFixed(0)}% global</Badge>
-          <Badge variant="success">{onTrackCount}/{PRODUCT_OKRS.length} on track</Badge>
+          <Badge variant="success">{onTrackCount}/{okrs.length} on track</Badge>
         </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {PRODUCT_OKRS.map((okr, index) => {
+          {okrs.map((okr, index) => {
             const status = statusConfig[okr.status as keyof typeof statusConfig] || statusConfig.on_track;
             const isOpen = openOKRs.has(index);
 
