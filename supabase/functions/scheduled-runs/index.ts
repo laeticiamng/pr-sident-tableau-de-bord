@@ -78,7 +78,9 @@ serve(async (req) => {
       throw new Error("Configuration Supabase manquante");
     }
 
-    const { action } = await req.json().catch(() => ({}));
+    // Parse request body ONCE and reuse
+    const requestBody = await req.json().catch(() => ({}));
+    const { action, job_key } = requestBody;
 
     // Action: cron_trigger - Special case for pg_cron (no auth needed for internal calls)
     // This is triggered by pg_cron internally and MUST be secured by a shared secret
@@ -228,11 +230,8 @@ serve(async (req) => {
     // END AUTHENTICATION CHECK
     // ============================================
 
-    const requestBody = await req.json().catch(() => ({}));
-    const { job_key, action: requestAction } = requestBody;
-
     // Action: list - Retourne la liste des jobs configurés
-    if (requestAction === "list") {
+    if (action === "list") {
       console.log("[Scheduler] Listing configured jobs");
       return new Response(
         JSON.stringify({ 
@@ -245,7 +244,7 @@ serve(async (req) => {
     }
 
     // Action: status - Retourne le statut d'exécution des jobs
-    if (requestAction === "status") {
+    if (action === "status") {
       console.log("[Scheduler] Fetching job execution status");
       
       // Récupérer les derniers runs par type
@@ -272,7 +271,7 @@ serve(async (req) => {
     }
 
     // Action: execute - Exécute un job spécifique
-    if (requestAction === "execute" && job_key) {
+    if (action === "execute" && job_key) {
       const job = SCHEDULED_JOBS.find(j => j.key === job_key);
       
       if (!job) {
