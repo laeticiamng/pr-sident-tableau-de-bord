@@ -2,8 +2,19 @@ import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Layers, Shield, Zap, Sparkles, Globe } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  ArrowRight, 
+  Sparkles, 
+  Brain, 
+  Activity, 
+  CheckCircle, 
+  Search,
+  ExternalLink,
+  Building2
+} from "lucide-react";
 import { CardGridLoader } from "@/components/ui/skeleton-loader";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 // Lazy load heavy component
 const PlatformShowcase = lazy(() => 
@@ -12,74 +23,112 @@ const PlatformShowcase = lazy(() =>
   }))
 );
 
+// Feature cards data
+const FEATURES = [
+  {
+    icon: Brain,
+    title: "Executive AI Runs",
+    description: "Briefings quotidiens générés par IA avec données GitHub réelles. 7 types de runs : brief exécutif, standup CEO, audit sécurité, veille concurrentielle...",
+    color: "text-accent",
+    bgColor: "bg-accent/10",
+  },
+  {
+    icon: Activity,
+    title: "Monitoring 5 plateformes",
+    description: "Statuts temps réel, uptime, derniers commits GitHub synchronisés. Vue unifiée de l'état de santé de tout l'écosystème.",
+    color: "text-success",
+    bgColor: "bg-success/10",
+  },
+  {
+    icon: CheckCircle,
+    title: "Approbations",
+    description: "Workflow de validation pour les actions critiques. Owner Approval Gate obligatoire pour déploiements, secrets, et modifications de schéma.",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
+  },
+  {
+    icon: Search,
+    title: "Veille stratégique",
+    description: "Intelligence concurrentielle via Perplexity AI. Recherche temps réel sur les tendances marché, analyse SWOT automatisée.",
+    color: "text-warning",
+    bgColor: "bg-warning/10",
+  },
+];
+
+// Platform status badge
+function PlatformStatusBadge({ status }: { status: string }) {
+  const variants: Record<string, { label: string; className: string }> = {
+    production: { label: "Production", className: "bg-success/10 text-success border-success/20" },
+    prototype: { label: "Prototype", className: "bg-warning/10 text-warning border-warning/20" },
+    development: { label: "En développement", className: "bg-muted text-muted-foreground border-muted" },
+  };
+  const variant = variants[status] || variants.development;
+  return (
+    <Badge variant="outline" className={variant.className}>
+      {variant.label}
+    </Badge>
+  );
+}
+
 export default function HomePage() {
   return (
     <div className="flex flex-col">
-      {/* Hero Section — Full Screen Immersive */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-hero-gradient" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--accent)/0.15),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(var(--primary)/0.3),transparent)]" />
+      {/* ============================================ */}
+      {/* HERO SECTION */}
+      {/* ============================================ */}
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--accent)/0.2),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(var(--primary-foreground)/0.1),transparent)]" />
         
-        {/* Floating Orbs - Hidden on very small screens */}
-        <div className="hidden sm:block absolute top-1/4 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-accent/5 rounded-full blur-3xl animate-pulse" />
-        <div className="hidden sm:block absolute bottom-1/4 right-1/4 w-48 md:w-80 h-48 md:h-80 bg-primary-foreground/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-        
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.1)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.1)_1px,transparent_1px)] bg-[size:40px_40px] sm:bg-[size:60px_60px]" />
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--primary-foreground)/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary-foreground)/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
-        <div className="container relative z-10 py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="container relative z-10 py-16 md:py-24 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
-            {/* Pre-title Badge */}
-            <div className="mb-6 sm:mb-8 animate-fade-in">
-              <Badge variant="gold" className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium tracking-wide glow-gold">
-                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+            {/* Badge */}
+            <div className="mb-8 animate-fade-in">
+              <Badge variant="gold" className="px-4 py-2 text-sm font-medium tracking-wide">
+                <Building2 className="w-4 h-4 mr-2" />
                 Siège Social Numérique
               </Badge>
             </div>
 
             {/* Main Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] font-bold tracking-tighter text-primary-foreground mb-2 animate-slide-up leading-[0.95]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 animate-slide-up">
               EMOTIONSCARE
             </h1>
-            <div className="flex items-center justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-accent/50" />
-              <span className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-accent tracking-[0.2em] sm:tracking-[0.3em]">
-                SASU
-              </span>
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-accent/50" />
-            </div>
 
-            {/* Tagline */}
-            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-4 sm:mb-6 max-w-2xl mx-auto animate-slide-up font-light tracking-wide px-4" style={{ animationDelay: "0.15s" }}>
-              Éditeur de logiciels applicatifs
+            {/* Subtitle */}
+            <p className="text-xl sm:text-2xl md:text-3xl text-primary-foreground/90 mb-4 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
+              Siège Social Numérique
             </p>
-            <p className="text-base sm:text-lg text-white/70 mb-8 sm:mb-12 max-w-xl mx-auto animate-slide-up px-4" style={{ animationDelay: "0.2s" }}>
-              5 plateformes innovantes pilotées depuis notre siège numérique
+            <p className="text-base sm:text-lg md:text-xl text-primary-foreground/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
+              Pilotez vos 5 plateformes SaaS depuis un centre de commandement unique, propulsé par l'IA
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center animate-slide-up px-4" style={{ animationDelay: "0.25s" }}>
-              <Link to="/plateformes" className="w-full sm:w-auto">
-                <Button variant="hero" size="lg" className="group w-full sm:w-auto sm:min-w-[200px] md:min-w-[220px]">
-                  <span>Découvrir</span>
-                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.2s" }}>
+              <Link to="/auth">
+                <Button variant="hero" size="lg" className="group min-w-[200px]">
+                  <span>Accéder au HQ</span>
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/vision" className="w-full sm:w-auto">
+              <Link to="/plateformes">
                 <Button 
                   variant="ghost" 
                   size="lg" 
-                  className="w-full sm:w-auto sm:min-w-[200px] md:min-w-[220px] border border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/40"
+                  className="min-w-[200px] border border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/50"
                 >
-                  Notre vision
+                  Découvrir les plateformes
                 </Button>
               </Link>
             </div>
 
-            {/* Scroll Indicator - Hidden on mobile */}
-            <div className="hidden sm:block mt-16 md:mt-20 animate-bounce">
+            {/* Scroll Indicator */}
+            <div className="hidden sm:block mt-20 animate-bounce">
               <div className="w-6 h-10 mx-auto border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
                 <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
               </div>
@@ -88,94 +137,148 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Value Proposition — Minimalist */}
-      <section className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background">
+      {/* ============================================ */}
+      {/* FEATURES SECTION */}
+      {/* ============================================ */}
+      <section className="py-20 md:py-32 bg-background">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-6xl">
             {/* Section Header */}
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <p className="text-xs sm:text-sm font-medium text-accent tracking-[0.15em] sm:tracking-[0.2em] uppercase mb-3 sm:mb-4">
-                Pourquoi nous choisir
+            <div className="text-center mb-16">
+              <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
+                Centre de Commandement
               </p>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-balance mb-4 sm:mb-6 px-2">
-                L'excellence par la <span className="text-accent">simplicité</span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
+                Fonctionnalités du <span className="text-accent">HQ</span>
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-                Une approche centralisée et structurée pour piloter l'innovation technologique.
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Un tableau de bord exécutif complet pour piloter l'ensemble de l'écosystème EMOTIONSCARE
               </p>
             </div>
-            
+
             {/* Features Grid */}
-            <div className="grid gap-6 sm:gap-8 md:gap-12 grid-cols-1 sm:grid-cols-3">
-              {[
-                {
-                  icon: Layers,
-                  title: "5 Plateformes",
-                  description: "Un écosystème cohérent de solutions logicielles, toutes pilotées depuis un seul centre de commandement.",
-                },
-                {
-                  icon: Shield,
-                  title: "Sécurité",
-                  description: "Standards de sécurité unifiés et gouvernance centralisée pour toutes nos solutions.",
-                },
-                {
-                  icon: Zap,
-                  title: "Agilité",
-                  description: "Décisions rapides et informées grâce à un système de pilotage exécutif intelligent.",
-                },
-              ].map((feature, index) => (
-                <div
+            <div className="grid gap-6 md:grid-cols-2">
+              {FEATURES.map((feature, index) => (
+                <Card 
                   key={feature.title}
-                  className="group text-center p-6 sm:p-8 rounded-2xl hover:bg-secondary/50 transition-all duration-500 animate-fade-in"
+                  className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="mx-auto mb-4 sm:mb-6 flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-xl sm:rounded-2xl bg-accent/10 text-accent transition-all duration-300 group-hover:bg-accent group-hover:text-accent-foreground group-hover:scale-110 group-hover:shadow-lg">
-                    <feature.icon className="h-6 w-6 sm:h-8 sm:w-8" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">{feature.title}</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
-                </div>
+                  <CardContent className="p-8">
+                    <div className="flex items-start gap-5">
+                      <div className={`p-3 rounded-xl ${feature.bgColor} transition-transform group-hover:scale-110`}>
+                        <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                        <p className="text-muted-foreground leading-relaxed">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Platforms Showcase — Premium Apple-like (Lazy Loaded) */}
-      <Suspense fallback={
-        <section className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background">
-          <div className="container px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <div className="h-8 w-48 mx-auto bg-muted/50 rounded-full animate-pulse mb-6" />
-              <div className="h-12 w-64 mx-auto bg-muted/50 rounded-lg animate-pulse mb-4" />
-              <div className="h-6 w-96 max-w-full mx-auto bg-muted/30 rounded-lg animate-pulse" />
-            </div>
-            <CardGridLoader count={4} />
-          </div>
-        </section>
-      }>
-        <PlatformShowcase />
-      </Suspense>
-
-      {/* Stats Section — Minimal & Impactful */}
-      <section className="py-16 sm:py-24 md:py-32 bg-primary text-primary-foreground">
+      {/* ============================================ */}
+      {/* MANAGED PLATFORMS SECTION */}
+      {/* ============================================ */}
+      <section className="py-20 md:py-32 bg-secondary/30">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 sm:gap-12 grid-cols-2 md:grid-cols-4 text-center">
+          <div className="mx-auto max-w-6xl">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
+                Écosystème
+              </p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
+                5 Plateformes <span className="text-accent">Managées</span>
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Un portefeuille cohérent de solutions logicielles, toutes pilotées depuis le siège numérique
+              </p>
+            </div>
+
+            {/* Platforms Grid */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {MANAGED_PLATFORMS.map((platform, index) => (
+                <Card 
+                  key={platform.key}
+                  className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 animate-fade-in overflow-hidden"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className={`w-3 h-3 rounded-full ${platform.color}`} />
+                      <PlatformStatusBadge status={platform.status} />
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold mb-2">{platform.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {platform.shortDescription}
+                    </p>
+                    
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                      <span>{platform.stats.commits.toLocaleString()} commits</span>
+                      <span>•</span>
+                      <span>{platform.stats.tables} tables</span>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {platform.liveUrl && (
+                        <a 
+                          href={platform.liveUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+                        >
+                          Voir le site <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="text-center mt-12">
+              <Link to="/plateformes">
+                <Button variant="outline" size="lg" className="group">
+                  Voir toutes les plateformes en détail
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* STATS SECTION */}
+      {/* ============================================ */}
+      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: "5", label: "Plateformes" },
-              { value: "1", label: "Siège Unifié" },
+              { value: "9", label: "Edge Functions" },
               { value: "100%", label: "Made in France" },
-              { value: "∞", label: "Possibilités" },
+              { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
               <div 
                 key={stat.label}
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-accent mb-1 sm:mb-3">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-accent mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm sm:text-base md:text-lg text-primary-foreground/60 tracking-wide">
+                <div className="text-sm md:text-base text-primary-foreground/70 tracking-wide">
                   {stat.label}
                 </div>
               </div>
@@ -184,33 +287,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Final CTA — Full Width Premium */}
-      <section className="py-20 sm:py-28 md:py-32 lg:py-40 bg-background relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-16 sm:h-24 bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
-        
+      {/* ============================================ */}
+      {/* FINAL CTA SECTION */}
+      {/* ============================================ */}
+      <section className="py-20 md:py-32 bg-background">
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl bg-accent/10 text-accent mb-6 sm:mb-8">
-              <Globe className="h-7 w-7 sm:h-10 sm:w-10" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent/10 text-accent mb-8">
+              <Sparkles className="h-8 w-8" />
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 sm:mb-6">
-              Prêt à collaborer ?
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
+              Prêt à piloter vos plateformes ?
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-xl mx-auto px-4">
-              Discutons de vos besoins et découvrez comment notre écosystème peut vous accompagner.
+            <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
+              Accédez au centre de commandement et prenez le contrôle de votre écosystème SaaS.
             </p>
             
-            <Link to="/contact" className="inline-block">
-              <Button variant="executive" size="lg" className="group min-w-[200px] sm:min-w-[240px]">
-                <span>Nous contacter</span>
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
+            <Link to="/auth">
+              <Button variant="executive" size="lg" className="group min-w-[240px]">
+                <span>Accéder au HQ</span>
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
             
-            <p className="mt-6 sm:mt-8 text-xs sm:text-sm text-muted-foreground">
-              Basé à Amiens, France
+            <p className="mt-8 text-sm text-muted-foreground">
+              EMOTIONSCARE SASU — Basé à Amiens, France
             </p>
           </div>
         </div>
