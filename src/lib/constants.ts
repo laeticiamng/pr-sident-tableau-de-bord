@@ -1,5 +1,5 @@
 // Constantes pour les 5 plateformes managées (immuable)
-// Données synchronisées depuis GitHub - 4 Février 2026
+// Données synchronisées depuis GitHub - 5 Février 2026
 export const MANAGED_PLATFORMS = [
   {
     key: "emotionscare",
@@ -13,7 +13,7 @@ export const MANAGED_PLATFORMS = [
     stats: { modules: 37, tables: 723, edgeFunctions: 261, branches: 635, commits: 7723, tests: 294 },
     features: ["Scan émotionnel IA", "Coach IA Nyvée", "Musicothérapie Suno", "Dashboard B2B RH", "Gamification XP"],
     status: "production",
-    lastCommit: "2026-02-03",
+    lastCommit: "2026-02-05",
   },
   {
     key: "pixel-perfect-replica",
@@ -27,7 +27,7 @@ export const MANAGED_PLATFORMS = [
     stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 4, commits: 847, tests: 42 },
     features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
     status: "prototype",
-    lastCommit: "2026-01-28",
+    lastCommit: "2026-01-27",
   },
   {
     key: "system-compass",
@@ -41,7 +41,7 @@ export const MANAGED_PLATFORMS = [
     stats: { modules: 20, tables: 57, edgeFunctions: 25, branches: 1, commits: 1272, tests: 718 },
     features: ["Exit Keys personnalisées", "Profils 50+ pays", "Simulateur fiscal", "TraceOS audit", "Life Game gamifié"],
     status: "production",
-    lastCommit: "2026-02-03",
+    lastCommit: "2026-02-05",
   },
   {
     key: "growth-copilot",
@@ -55,7 +55,7 @@ export const MANAGED_PLATFORMS = [
     stats: { modules: 11, tables: 30, edgeFunctions: 25, branches: 5, commits: 2134, tests: 128 },
     features: ["39 employés IA (2 Dir + 37 Dept)", "11 départements métier", "Approval Gate", "Voice Commands", "Scheduler automatisé"],
     status: "production",
-    lastCommit: "2026-02-02",
+    lastCommit: "2026-02-05",
   },
   {
     key: "med-mng",
@@ -69,7 +69,7 @@ export const MANAGED_PLATFORMS = [
     stats: { modules: 15, tables: 50, edgeFunctions: 30, branches: 238, commits: 4522, tests: 156 },
     features: ["Medical AI Copilot", "Génération musicale IA", "Streaming SSE", "Mode recherche Perplexity", "PWA offline"],
     status: "production",
-    lastCommit: "2026-02-03",
+    lastCommit: "2026-02-05",
   },
 ] as const;
 

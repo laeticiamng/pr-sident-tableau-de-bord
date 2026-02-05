@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,21 @@ const platformBorders: Record<string, string> = {
 
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+
+  // SEO: Update document meta for this page
+  useEffect(() => {
+    document.title = "Nos Plateformes — EMOTIONSCARE SASU";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Découvrez les 5 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot et Pixel Perfect Replica. 16K+ commits, 875 tables, 349 Edge Functions.");
+    }
+    return () => {
+      document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+      if (metaDescription) {
+        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
+      }
+    };
+  }, []);
 
   // Use static data from constants (public page, no auth required)
   const platforms = MANAGED_PLATFORMS;
