@@ -35,7 +35,7 @@ const BriefingRoom = lazy(() => import("@/pages/hq/BriefingRoom"));
 const CockpitPage = lazy(() => import("@/pages/hq/CockpitPage"));
 const HQPlateformesPage = lazy(() => import("@/pages/hq/HQPlateformesPage"));
 const EquipeExecutivePage = lazy(() => import("@/pages/hq/EquipeExecutivePage"));
- const GrowthPage = lazy(() => import("@/pages/hq/GrowthPage"));
+const GrowthPage = lazy(() => import("@/pages/hq/GrowthPage"));
 
 // HQ Pages - Opérations (lazy loaded)
 const ReunionsPage = lazy(() => import("@/pages/hq/ReunionsPage"));
@@ -104,7 +104,7 @@ const App = () => (
                     <Route path="/hq/cockpit" element={<CockpitPage />} />
                     <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
                     <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
-                     <Route path="/hq/growth" element={<GrowthPage />} />
+                    <Route path="/hq/growth" element={<GrowthPage />} />
                     
                     {/* Opérations */}
                     <Route path="/hq/reunions" element={<ReunionsPage />} />
