@@ -13,7 +13,6 @@ const emailSchema = z.string().email("Email invalide");
 const passwordSchema = z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères");
 
 export default function AuthPage() {
-  const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -39,50 +38,24 @@ export default function AuthPage() {
     }
 
     try {
-      if (mode === "login") {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast.error("Identifiants incorrects");
-          } else {
-            toast.error(error.message);
-          }
-          setIsLoading(false);
-          return;
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("Identifiants incorrects");
+        } else {
+          toast.error(error.message);
         }
+        setIsLoading(false);
+        return;
+      }
 
-        if (data.user) {
-          toast.success("Bienvenue, Madame la Présidente");
-          navigate("/hq");
-        }
-      } else {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/hq`,
-          },
-        });
-
-        if (error) {
-          if (error.message.includes("already registered")) {
-            toast.error("Cet email est déjà enregistré");
-          } else {
-            toast.error(error.message);
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        if (data.user) {
-          toast.success("Compte créé !", {
-            description: "Vérifiez votre email pour confirmer votre inscription.",
-          });
-        }
+      if (data.user) {
+        toast.success("Bienvenue, Madame la Présidente");
+        navigate("/hq");
       }
     } catch (error) {
       toast.error("Une erreur est survenue");
@@ -131,25 +104,17 @@ export default function AuthPage() {
                 </div>
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-              {mode === "login" ? "Espace Président" : "Créer un compte"}
-            </h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Espace Président</h1>
             <p className="text-muted-foreground text-base sm:text-lg">
-              {mode === "login"
-                ? "Accédez au siège social numérique"
-                : "Inscrivez-vous pour accéder au HQ"}
+              Accédez au siège social numérique
             </p>
           </div>
 
           {/* Mobile Title */}
           <div className="lg:hidden text-center mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold mb-1">
-              {mode === "login" ? "Espace Président" : "Créer un compte"}
-            </h1>
+            <h1 className="text-xl sm:text-2xl font-bold mb-1">Espace Président</h1>
             <p className="text-muted-foreground text-sm sm:text-base">
-              {mode === "login"
-                ? "Accédez au siège social numérique"
-                : "Inscrivez-vous pour accéder au HQ"}
+              Accédez au siège social numérique
             </p>
           </div>
 
@@ -185,7 +150,7 @@ export default function AuthPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
+                  autoComplete="current-password"
                   className="pl-10 h-11 sm:h-12 text-base"
                 />
               </div>
@@ -201,27 +166,13 @@ export default function AuthPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                  {mode === "login" ? "Connexion..." : "Création..."}
+                  Connexion...
                 </>
-              ) : mode === "login" ? (
-                "Se connecter"
               ) : (
-                "Créer le compte"
+                "Se connecter"
               )}
             </Button>
           </form>
-
-          <div className="mt-6 sm:mt-8 text-center">
-            <button
-              type="button"
-              onClick={() => setMode(mode === "login" ? "signup" : "login")}
-              className="text-sm text-muted-foreground hover:text-accent transition-colors"
-            >
-              {mode === "login"
-                ? "Pas encore de compte ? S'inscrire"
-                : "Déjà un compte ? Se connecter"}
-            </button>
-          </div>
 
           <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <div className="p-1.5 rounded-full bg-success/10">
