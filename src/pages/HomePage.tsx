@@ -112,19 +112,14 @@ export default function HomePage() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.2s" }}>
-              <Link to="/auth" className="w-full sm:w-auto">
-                <Button variant="hero" size="lg" className="group w-full min-w-[200px]">
-                  <span>Se connecter</span>
-                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
               <Link to="/plateformes" className="w-full sm:w-auto">
                 <Button 
-                  variant="ghost" 
+                  variant="hero" 
                   size="lg" 
-                  className="w-full min-w-[200px] border border-white/30 text-white hover:bg-white/10 hover:border-white/50"
+                  className="group w-full min-w-[200px]"
                 >
                   Découvrir les plateformes
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
             </div>
