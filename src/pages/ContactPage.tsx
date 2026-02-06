@@ -95,16 +95,16 @@ export default function ContactPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-subtle-gradient">
+      <section className="py-20 md:py-28 bg-hero-gradient text-white">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="gold" className="mb-6">
               Contact
             </Badge>
-            <h1 className="text-headline-1 md:text-display-2 mb-6">
+            <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">
               Prenons contact
             </h1>
-            <p className="text-body-lg text-muted-foreground">
+            <p className="text-body-lg text-white/80">
               Une question, un projet, une idée ? Nous sommes à votre écoute.
             </p>
           </div>

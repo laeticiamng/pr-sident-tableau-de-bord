@@ -48,7 +48,7 @@ export function PublicHeader() {
           </div>
           <div className="flex flex-col">
             <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-            <span className="text-[10px] sm:text-xs text-muted-foreground">SASU</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground">Éditeur de logiciels</span>
           </div>
         </Link>
 
@@ -79,7 +79,7 @@ export function PublicHeader() {
           
           <Link to="/auth" className="hidden sm:block">
             <Button variant="executive-outline" size="sm" className="text-xs sm:text-sm">
-              Espace Président
+              Connexion
             </Button>
           </Link>
           
@@ -123,7 +123,7 @@ export function PublicHeader() {
           <div className="pt-2 border-t mt-2">
             <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="executive" size="sm" className="w-full">
-                Espace Président
+                Connexion
               </Button>
             </Link>
           </div>

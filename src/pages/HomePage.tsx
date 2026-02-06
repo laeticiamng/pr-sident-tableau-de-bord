@@ -19,21 +19,21 @@ import { MANAGED_PLATFORMS } from "@/lib/constants";
 const FEATURES = [
   {
     icon: Brain,
-    title: "Executive AI Runs",
+    title: "Intelligence IA",
     description: "Briefings quotidiens générés par IA avec données GitHub réelles. 7 types de runs : brief exécutif, standup CEO, audit sécurité, veille concurrentielle...",
     color: "text-accent",
     bgColor: "bg-accent/10",
   },
   {
     icon: Activity,
-    title: "Monitoring 5 plateformes",
+    title: "Supervision en temps réel",
     description: "Statuts temps réel, uptime, derniers commits GitHub synchronisés. Vue unifiée de l'état de santé de tout l'écosystème.",
     color: "text-success",
     bgColor: "bg-success/10",
   },
   {
     icon: CheckCircle,
-    title: "Approbations",
+    title: "Validation des actions",
     description: "Workflow de validation pour les actions critiques. Owner Approval Gate obligatoire pour déploiements, secrets, et modifications de schéma.",
     color: "text-primary",
     bgColor: "bg-primary/10",
@@ -63,13 +63,6 @@ function PlatformStatusBadge({ status }: { status: string }) {
 }
 
 export default function HomePage() {
-  // Calculate totals from platforms
-  const totals = MANAGED_PLATFORMS.reduce(
-    (acc, p) => ({
-      edgeFunctions: acc.edgeFunctions + (p.stats?.edgeFunctions || 0),
-    }),
-    { edgeFunctions: 0 }
-  );
 
   // SEO: Update document meta for this page
   useEffect(() => {
@@ -111,10 +104,10 @@ export default function HomePage() {
 
             {/* Subtitle */}
             <p className="text-xl sm:text-2xl md:text-3xl text-white/90 mb-4 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
-              Siège Social Numérique
+              Éditeur de logiciels SaaS — Santé, Éducation, International
             </p>
             <p className="text-base sm:text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
-              5 plateformes SaaS depuis un centre de commandement unique, propulsé par l'IA
+              5 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance et le social
             </p>
 
             {/* CTA Buttons */}
@@ -154,9 +147,9 @@ export default function HomePage() {
           <div className="mx-auto max-w-6xl">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
-                Centre de Commandement
-              </p>
+               <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
+                 Fonctionnalités
+               </p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
                 Fonctionnalités du <span className="text-accent">HQ</span>
               </h2>
@@ -275,7 +268,7 @@ export default function HomePage() {
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: "5", label: "Plateformes" },
-              { value: `${totals.edgeFunctions}`, label: "Edge Functions" },
+              { value: "1 300+", label: "Tests automatisés" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
@@ -307,15 +300,15 @@ export default function HomePage() {
             </div>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-              Centre de Gouvernance
+              Explorez l'écosystème
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-              Tableau de bord interne pour piloter les 5 plateformes EMOTIONSCARE.
+              Découvrez nos 5 plateformes innovantes et comment elles transforment leurs secteurs.
             </p>
             
-            <Link to="/auth">
+            <Link to="/plateformes">
               <Button variant="executive" size="lg" className="group min-w-[240px]">
-                <span>Accès HQ</span>
+                <span>Voir les plateformes en détail</span>
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
