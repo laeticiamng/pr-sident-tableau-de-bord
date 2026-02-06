@@ -145,7 +145,7 @@ export default function VisionPage() {
               {
                 icon: Rocket,
                 title: "Performance",
-                stat: "Haute",
+                stat: "99.9%",
                 description: "Disponibilité visée"
               },
             ].map((engagement, index) => (
