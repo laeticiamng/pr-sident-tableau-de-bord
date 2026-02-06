@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,15 +13,7 @@ import {
   ExternalLink,
   Building2
 } from "lucide-react";
-import { CardGridLoader } from "@/components/ui/skeleton-loader";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
-
-// Lazy load heavy component
-const PlatformShowcase = lazy(() => 
-  import("@/components/home/PlatformShowcase").then(module => ({
-    default: module.PlatformShowcase
-  }))
-);
 
 // Feature cards data
 const FEATURES = [
