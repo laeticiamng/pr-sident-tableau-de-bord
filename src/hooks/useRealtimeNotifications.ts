@@ -112,7 +112,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
       })
       .subscribe((status) => {
         setIsConnected(status === "SUBSCRIBED");
-        console.log("[Realtime] Channel status:", status);
+        console.debug("[Realtime] Channel status:", status);
       });
 
     setChannel(realtimeChannel);

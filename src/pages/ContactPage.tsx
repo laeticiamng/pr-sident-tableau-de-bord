@@ -59,7 +59,7 @@ export default function ContactPage() {
       message: sanitizeHtml(data.message),
     };
     
-    console.log("[Contact] Form submitted:", { 
+    console.debug("[Contact] Form submitted:", { 
       ...sanitizedData, 
       timestamp: new Date().toISOString() 
     });
