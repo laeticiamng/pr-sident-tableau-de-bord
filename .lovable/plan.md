@@ -73,4 +73,3 @@ Les corrections des audits precedents sont bien en place :
 ## Conclusion
 
 **Aucune correction necessaire.** L'application est complete, fonctionnelle et prete pour la production. Toutes les pages se chargent correctement, la console est propre, et l'experience utilisateur est fluide en francais.
-
