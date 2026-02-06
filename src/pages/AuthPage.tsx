@@ -167,6 +167,7 @@ export default function AuthPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
+                  autoComplete="email"
                   className="pl-10 h-11 sm:h-12 text-base"
                 />
               </div>
