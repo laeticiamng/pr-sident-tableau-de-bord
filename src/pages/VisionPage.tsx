@@ -22,11 +22,11 @@ export default function VisionPage() {
       {/* Hero */}
       <section className="py-20 md:py-28 bg-hero-gradient text-primary-foreground">
         <div className="container">
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-3xl text-center px-4">
             <Badge variant="gold" className="mb-6">
               Notre Vision
             </Badge>
-            <h1 className="text-headline-1 md:text-display-2 mb-6">
+            <h1 className="text-headline-1 md:text-display-2 mb-6 text-primary-foreground">
               Construire l'avenir
               <span className="block text-accent">du logiciel</span>
             </h1>

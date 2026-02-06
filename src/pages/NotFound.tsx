@@ -18,12 +18,12 @@ const NotFound = () => {
       
       <div className="relative z-10 text-center px-4 max-w-md mx-auto">
         {/* Icon */}
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-warning/10 text-warning mb-8">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-warning/10 text-warning mb-4">
           <AlertTriangle className="h-10 w-10" />
         </div>
 
         {/* Badge */}
-        <Badge variant="outline" className="mb-6 text-muted-foreground">
+        <Badge variant="outline" className="mb-8 text-muted-foreground">
           Erreur 404
         </Badge>
 
