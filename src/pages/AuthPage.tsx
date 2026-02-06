@@ -96,7 +96,7 @@ export default function AuthPage() {
           <div className="hidden lg:block text-center mb-10">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-xl">
+                <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl sm:rounded-3xl bg-gradient-to-br from-primary to-primary/80 text-white shadow-xl">
                   <Building2 className="h-8 w-8 sm:h-10 sm:w-10" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg">
@@ -197,7 +197,7 @@ export default function AuthPage() {
         {/* Grid Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.1)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
         
-        <div className="relative z-10 max-w-md xl:max-w-lg text-center text-primary-foreground">
+        <div className="relative z-10 max-w-md xl:max-w-lg text-center text-white">
           <div className="mb-6 xl:mb-8 animate-fade-in">
             <Badge variant="gold" className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm glow-gold">
               <Sparkles className="h-3 w-3 xl:h-4 xl:w-4 mr-1.5 xl:mr-2" />
@@ -214,23 +214,23 @@ export default function AuthPage() {
             <div className="h-px w-10 xl:w-12 bg-gradient-to-l from-transparent to-accent/50" />
           </div>
           
-          <p className="text-base xl:text-xl text-primary-foreground/70 mb-8 xl:mb-12 animate-slide-up leading-relaxed px-4" style={{ animationDelay: "0.2s" }}>
+          <p className="text-base xl:text-xl text-white/70 mb-8 xl:mb-12 animate-slide-up leading-relaxed px-4" style={{ animationDelay: "0.2s" }}>
             Votre cockpit exécutif pour piloter les 5 plateformes de l'entreprise avec une précision chirurgicale.
           </p>
           
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 xl:gap-6 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10">
+            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">5</div>
-              <div className="text-xs xl:text-sm text-primary-foreground/60">Plateformes</div>
+              <div className="text-xs xl:text-sm text-white/60">Plateformes</div>
             </div>
-            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10">
+            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">39</div>
-              <div className="text-xs xl:text-sm text-primary-foreground/60">Agents IA</div>
+              <div className="text-xs xl:text-sm text-white/60">Agents IA</div>
             </div>
-            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10">
+            <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">∞</div>
-              <div className="text-xs xl:text-sm text-primary-foreground/60">Ambition</div>
+              <div className="text-xs xl:text-sm text-white/60">Ambition</div>
             </div>
           </div>
         </div>

@@ -89,10 +89,10 @@ export default function HomePage() {
         {/* Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/90" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--accent)/0.2),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(var(--primary-foreground)/0.1),transparent)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" />
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--primary-foreground)/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary-foreground)/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(0_0%_100%/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(0_0%_100%/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
 
         <div className="container relative z-10 py-16 md:py-24 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
@@ -105,15 +105,15 @@ export default function HomePage() {
             </div>
 
             {/* Main Title */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 animate-slide-up">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 animate-slide-up">
               EMOTIONSCARE
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl sm:text-2xl md:text-3xl text-primary-foreground/90 mb-4 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
+            <p className="text-xl sm:text-2xl md:text-3xl text-white/90 mb-4 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
               Siège Social Numérique
             </p>
-            <p className="text-base sm:text-lg md:text-xl text-primary-foreground/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
+            <p className="text-base sm:text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
               5 plateformes SaaS depuis un centre de commandement unique, propulsé par l'IA
             </p>
 
@@ -129,7 +129,7 @@ export default function HomePage() {
                 <Button 
                   variant="ghost" 
                   size="lg" 
-                  className="w-full min-w-[200px] border border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:border-primary-foreground/50"
+                  className="w-full min-w-[200px] border border-white/30 text-white hover:bg-white/10 hover:border-white/50"
                 >
                   Découvrir les plateformes
                 </Button>
@@ -138,7 +138,7 @@ export default function HomePage() {
 
             {/* Scroll Indicator */}
             <div className="hidden sm:block mt-20 animate-bounce">
-              <div className="w-6 h-10 mx-auto border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
+              <div className="w-6 h-10 mx-auto border-2 border-white/30 rounded-full flex items-start justify-center p-1">
                 <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function HomePage() {
       {/* ============================================ */}
       {/* STATS SECTION */}
       {/* ============================================ */}
-      <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+      <section className="py-16 md:py-24 bg-primary text-white">
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
@@ -287,7 +287,7 @@ export default function HomePage() {
                 <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-accent mb-2">
                   {stat.value}
                 </div>
-                <div className="text-sm md:text-base text-primary-foreground/70 tracking-wide">
+                <div className="text-sm md:text-base text-white/70 tracking-wide">
                   {stat.label}
                 </div>
               </div>
