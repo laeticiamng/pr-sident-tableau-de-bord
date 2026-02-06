@@ -1,57 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { UserPlus, CheckCircle, Clock, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const ONBOARDING_DATA = [
-  { 
-    agent: "CFO Agent", 
-    role: "Directeur Financier", 
-    progress: 100,
-    status: "completed",
-    startedAt: "2026-01-15"
-  },
-  { 
-    agent: "CMO Agent", 
-    role: "Directeur Marketing", 
-    progress: 85,
-    status: "in_progress",
-    startedAt: "2026-01-28"
-  },
-  { 
-    agent: "CTO Agent", 
-    role: "Directeur Technique", 
-    progress: 100,
-    status: "completed",
-    startedAt: "2026-01-10"
-  },
-  { 
-    agent: "Support Lead", 
-    role: "Responsable Support", 
-    progress: 60,
-    status: "in_progress",
-    startedAt: "2026-02-01"
-  },
-  { 
-    agent: "Sales Director", 
-    role: "Directeur Commercial", 
-    progress: 30,
-    status: "pending",
-    startedAt: "2026-02-03"
-  },
-];
-
-const statusConfig = {
-  completed: { icon: CheckCircle, color: "text-success", label: "Terminé", badge: "success" as const },
-  in_progress: { icon: Clock, color: "text-primary", label: "En cours", badge: "default" as const },
-  pending: { icon: AlertCircle, color: "text-warning", label: "En attente", badge: "warning" as const },
-};
+import { UserPlus, Bot } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function OnboardingTracker() {
-  const completed = ONBOARDING_DATA.filter(a => a.status === "completed").length;
-  const inProgress = ONBOARDING_DATA.filter(a => a.status === "in_progress").length;
-  const total = ONBOARDING_DATA.length;
+  const { data: agents, isLoading } = useQuery({
+    queryKey: ["hq-agents-onboarding"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_agents");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const hasAgents = agents && agents.length > 0;
+  const enabledCount = agents?.filter(a => a.is_enabled).length || 0;
 
   return (
     <Card className="card-executive">
@@ -61,57 +25,49 @@ export function OnboardingTracker() {
           Suivi Onboarding Agents
         </CardTitle>
         <CardDescription>
-          {completed}/{total} agents opérationnels • {inProgress} en formation
+          {hasAgents
+            ? `${enabledCount}/${agents.length} agents actifs`
+            : "Statut des agents IA"}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="text-center p-3 rounded-lg bg-success/10">
-            <p className="text-2xl font-bold text-success">{completed}</p>
-            <p className="text-xs text-muted-foreground">Opérationnels</p>
+        {isLoading ? (
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-14 bg-muted/30 animate-pulse rounded-lg" />
+            ))}
           </div>
-          <div className="text-center p-3 rounded-lg bg-primary/10">
-            <p className="text-2xl font-bold text-primary">{inProgress}</p>
-            <p className="text-xs text-muted-foreground">En formation</p>
+        ) : !hasAgents ? (
+          <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-muted-foreground/20 rounded-lg">
+            <Bot className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">Aucun agent configuré</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              Les agents IA apparaîtront ici une fois configurés
+            </p>
           </div>
-          <div className="text-center p-3 rounded-lg bg-muted">
-            <p className="text-2xl font-bold">{total - completed - inProgress}</p>
-            <p className="text-xs text-muted-foreground">En attente</p>
-          </div>
-        </div>
-
-        {/* Agent List */}
-        <div className="space-y-3">
-          {ONBOARDING_DATA.map((agent) => {
-            const config = statusConfig[agent.status as keyof typeof statusConfig];
-            const StatusIcon = config.icon;
-            
-            return (
-              <div 
-                key={agent.agent}
+        ) : (
+          <div className="space-y-3">
+            {agents.map((agent) => (
+              <div
+                key={agent.id}
                 className="p-4 rounded-lg border hover:shadow-sm transition-shadow"
               >
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <StatusIcon className={cn("h-4 w-4", config.color)} />
+                    <Bot className={`h-4 w-4 ${agent.is_enabled ? "text-success" : "text-muted-foreground"}`} />
                     <div>
-                      <p className="font-medium text-sm">{agent.agent}</p>
-                      <p className="text-xs text-muted-foreground">{agent.role}</p>
+                      <p className="font-medium text-sm">{agent.name}</p>
+                      <p className="text-xs text-muted-foreground">{agent.role_title_fr}</p>
                     </div>
                   </div>
-                  <Badge variant={config.badge}>{config.label}</Badge>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Progress value={agent.progress} className="flex-1 h-2" />
-                  <span className="text-xs font-mono text-muted-foreground w-10">
-                    {agent.progress}%
-                  </span>
+                  <Badge variant={agent.is_enabled ? "success" : "warning"}>
+                    {agent.is_enabled ? "Actif" : "Inactif"}
+                  </Badge>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
