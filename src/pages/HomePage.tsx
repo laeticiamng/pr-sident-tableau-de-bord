@@ -86,9 +86,9 @@ export default function HomePage() {
       {/* HERO SECTION */}
       {/* ============================================ */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-primary/90" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--accent)/0.2),transparent)]" />
+        {/* Background — Fixed navy regardless of theme */}
+        <div className="absolute inset-0 bg-hero-gradient" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.2),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" />
         
         {/* Grid Pattern */}
@@ -270,7 +270,7 @@ export default function HomePage() {
       {/* ============================================ */}
       {/* STATS SECTION */}
       {/* ============================================ */}
-      <section className="py-16 md:py-24 bg-primary text-white">
+      <section className="py-16 md:py-24 bg-hero-gradient text-white">
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
