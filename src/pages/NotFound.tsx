@@ -18,7 +18,7 @@ const NotFound = () => {
       
       <div className="relative z-10 text-center px-4 max-w-md mx-auto">
         {/* Icon */}
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-warning/10 text-warning mb-4">
+        <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-warning/10 text-warning mb-4 mx-auto">
           <AlertTriangle className="h-10 w-10" />
         </div>
 
