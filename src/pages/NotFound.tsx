@@ -8,7 +8,7 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    document.title = "Page introuvable — EMOTIONSCARE SASU";
+    document.title = "Page introuvable — EMOTIONSCARE";
   }, []);
 
   return (

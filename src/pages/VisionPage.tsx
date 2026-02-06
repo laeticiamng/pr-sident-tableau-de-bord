@@ -8,7 +8,7 @@ export default function VisionPage() {
     document.title = "Notre Vision — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez la vision et les valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.");
+      metaDescription.setAttribute("content", "Découvrez la vision et les valeurs d'EMOTIONSCARE : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.");
     }
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";
