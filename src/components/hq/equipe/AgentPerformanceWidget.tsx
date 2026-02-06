@@ -1,36 +1,59 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Bot, Zap, Clock, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
+import { Bot, Database } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface AgentPerformance {
-  id: string;
-  name: string;
-  role: string;
-  runsCompleted: number;
-  avgResponseTime: number; // secondes
-  successRate: number;
-  lastActive: string;
-  status: "active" | "idle" | "error";
-}
-
-const AGENT_PERFORMANCES: AgentPerformance[] = [
-  { id: "1", name: "DG Agent", role: "Directeur Général", runsCompleted: 156, avgResponseTime: 2.3, successRate: 98.5, lastActive: "Il y a 2 min", status: "active" },
-  { id: "2", name: "CFO Agent", role: "Directeur Financier", runsCompleted: 89, avgResponseTime: 3.1, successRate: 97.2, lastActive: "Il y a 15 min", status: "active" },
-  { id: "3", name: "CMO Agent", role: "Directeur Marketing", runsCompleted: 124, avgResponseTime: 2.8, successRate: 96.8, lastActive: "Il y a 1h", status: "idle" },
-  { id: "4", name: "CTO Agent", role: "Directeur Technique", runsCompleted: 203, avgResponseTime: 4.2, successRate: 99.1, lastActive: "Il y a 5 min", status: "active" },
-  { id: "5", name: "Security Agent", role: "Responsable Sécurité", runsCompleted: 78, avgResponseTime: 5.6, successRate: 100, lastActive: "Il y a 30 min", status: "idle" },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AgentPerformanceWidgetProps {
   className?: string;
 }
 
 export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProps) {
-  const avgSuccessRate = (AGENT_PERFORMANCES.reduce((sum, a) => sum + a.successRate, 0) / AGENT_PERFORMANCES.length).toFixed(1);
-  const totalRuns = AGENT_PERFORMANCES.reduce((sum, a) => sum + a.runsCompleted, 0);
-  const activeAgents = AGENT_PERFORMANCES.filter(a => a.status === "active").length;
+  const { data: agents, isLoading } = useQuery({
+    queryKey: ["hq-agents-performance"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_agents");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Card className={cn("card-executive", className)}>
+        <CardContent className="p-6">
+          <div className="animate-pulse space-y-3">
+            <div className="h-4 bg-muted rounded w-1/3" />
+            <div className="h-20 bg-muted rounded" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!agents || agents.length === 0) {
+    return (
+      <Card className={cn("card-executive", className)}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary" />
+            Performance des Agents IA
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-muted-foreground/20 rounded-lg">
+            <Database className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">Aucun agent configuré</p>
+            <p className="text-xs text-muted-foreground mt-1">Les agents IA apparaîtront ici une fois configurés</p>
+            <Badge variant="outline" className="mt-3">Base de données HQ</Badge>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const enabledAgents = agents.filter(a => a.is_enabled).length;
 
   return (
     <Card className={cn("card-executive", className)}>
@@ -42,79 +65,42 @@ export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProp
               Performance des Agents IA
             </CardTitle>
             <CardDescription>
-              Métriques d'exécution et fiabilité
+              Agents configurés et leur statut
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Badge variant="success">{activeAgents} actifs</Badge>
-            <Badge variant="subtle">{avgSuccessRate}% succès</Badge>
+            <Badge variant="success">{enabledAgents} actifs</Badge>
+            <Badge variant="subtle">{agents.length} total</Badge>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-3 rounded-lg bg-muted/50">
-            <div className="text-2xl font-bold text-primary">{totalRuns}</div>
-            <div className="text-xs text-muted-foreground">Runs Total</div>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-muted/50">
-            <div className="text-2xl font-bold text-success">{avgSuccessRate}%</div>
-            <div className="text-xs text-muted-foreground">Taux Succès</div>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-muted/50">
-            <div className="text-2xl font-bold">
-              {(AGENT_PERFORMANCES.reduce((sum, a) => sum + a.avgResponseTime, 0) / AGENT_PERFORMANCES.length).toFixed(1)}s
-            </div>
-            <div className="text-xs text-muted-foreground">Temps Moyen</div>
-          </div>
-        </div>
-
-        {/* Agent List */}
         <div className="space-y-3">
-          {AGENT_PERFORMANCES.map((agent) => (
+          {agents.map((agent) => (
             <div key={agent.id} className="p-3 rounded-lg border hover:bg-muted/30 transition-colors">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "h-2 w-2 rounded-full",
-                    agent.status === "active" ? "bg-success animate-pulse" :
-                    agent.status === "idle" ? "bg-muted-foreground" : "bg-destructive"
+                    agent.is_enabled ? "bg-success animate-pulse" : "bg-muted-foreground"
                   )} />
                   <div>
                     <h4 className="font-medium text-sm">{agent.name}</h4>
-                    <p className="text-xs text-muted-foreground">{agent.role}</p>
+                    <p className="text-xs text-muted-foreground">{agent.role_title_fr}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  {agent.lastActive}
+                <div className="flex items-center gap-2">
+                  <Badge variant={agent.is_enabled ? "success" : "subtle"} className="text-xs">
+                    {agent.is_enabled ? "Actif" : "Désactivé"}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs font-mono">
+                    {agent.model_preference}
+                  </Badge>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                <div className="flex items-center gap-1 text-xs">
-                  <Zap className="h-3 w-3 text-primary" />
-                  <span>{agent.runsCompleted} runs</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs">
-                  <Clock className="h-3 w-3 text-muted-foreground" />
-                  <span>{agent.avgResponseTime}s moy</span>
-                </div>
-                <div className="flex items-center gap-1 text-xs">
-                  {agent.successRate >= 98 ? (
-                    <CheckCircle className="h-3 w-3 text-success" />
-                  ) : (
-                    <AlertTriangle className="h-3 w-3 text-warning" />
-                  )}
-                  <span>{agent.successRate}%</span>
-                </div>
-              </div>
-              
-              <Progress 
-                value={agent.successRate} 
-                className="h-1 mt-2" 
-              />
+              <p className="text-xs text-muted-foreground mt-2">
+                Catégorie : {agent.role_category} • Aucune métrique d'exécution disponible
+              </p>
             </div>
           ))}
         </div>
