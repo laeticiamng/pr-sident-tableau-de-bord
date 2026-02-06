@@ -66,10 +66,10 @@ export default function HomePage() {
 
   // SEO: Update document meta for this page
   useEffect(() => {
-    document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+    document.title = "EMOTIONSCARE — Siège Social Numérique";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens. 16K+ commits, 349 Edge Functions.");
+      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens. 16K+ commits, 1 300+ tests.");
     }
   }, []);
 
