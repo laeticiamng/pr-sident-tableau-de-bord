@@ -114,7 +114,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/auth" className="w-full sm:w-auto">
                 <Button variant="hero" size="lg" className="group w-full min-w-[200px]">
-                  <span>Accéder au HQ</span>
+                  <span>Se connecter</span>
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -151,7 +151,7 @@ export default function HomePage() {
                  Fonctionnalités
                </p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-                Fonctionnalités du <span className="text-accent">HQ</span>
+                Fonctionnalités du <span className="text-accent">Siège Numérique</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Un tableau de bord exécutif complet pour piloter l'ensemble de l'écosystème EMOTIONSCARE

@@ -22,7 +22,7 @@ export default function ContactPage() {
     document.title = "Contact — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Contactez EMOTIONSCARE SASU à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
+      metaDescription.setAttribute("content", "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
     }
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";
