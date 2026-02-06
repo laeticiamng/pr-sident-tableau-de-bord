@@ -148,12 +148,12 @@ export default function BriefingRoom() {
       </div>
 
       {/* Main Grid */}
-       <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3">
         {/* AI Insights Widget */}
-         <AIInsightsWidget className="" />
+        <AIInsightsWidget className="" />
  
-         {/* Growth OS Summary */}
-         <GrowthSummaryWidget />
+        {/* Growth OS Summary */}
+        <GrowthSummaryWidget />
 
         {/* Approvals Inbox */}
         <Card className="card-executive">
@@ -220,8 +220,6 @@ export default function BriefingRoom() {
 
       {/* AI Transparency Panel */}
       <AITransparencyPanel runResult={lastRunResult} />
-
-      {/* Recent Activity & Platform Status */}
 
       {/* Recent Activity & Platform Status */}
       <div className="grid gap-6 lg:grid-cols-3">

@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface SkeletonLoaderProps {
@@ -68,18 +69,21 @@ export function SkeletonLoader({ className, variant = "card" }: SkeletonLoaderPr
   return null;
 }
 
-export function PageLoader() {
-  return (
-    <div className="min-h-[60vh] flex items-center justify-center bg-background">
-      <div className="text-center space-y-4">
-        <div className="relative">
-          <div className="w-12 h-12 border-4 border-muted rounded-full animate-spin border-t-accent" />
+export const PageLoader = forwardRef<HTMLDivElement, Record<string, never>>(
+  function PageLoader(_, ref) {
+    return (
+      <div ref={ref} className="min-h-[60vh] flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <div className="relative">
+            <div className="w-12 h-12 border-4 border-muted rounded-full animate-spin border-t-accent" />
+          </div>
+          <p className="text-sm text-muted-foreground animate-pulse">Chargement...</p>
         </div>
-        <p className="text-sm text-muted-foreground animate-pulse">Chargement...</p>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
+PageLoader.displayName = "PageLoader";
 
 export function CardGridLoader({ count = 4 }: { count?: number }) {
   return (
