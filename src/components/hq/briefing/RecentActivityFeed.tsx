@@ -1,92 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Activity, 
-  CheckCircle, 
-  AlertTriangle, 
-  FileText, 
-  Shield,
-  Rocket,
-  Users,
-  Clock
-} from "lucide-react";
+import { Activity, FileText, Shield, Clock } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface ActivityItem {
-  id: string;
-  type: "run" | "approval" | "alert" | "release" | "security";
-  title: string;
-  description: string;
-  timestamp: Date;
-  status: "success" | "warning" | "error" | "info";
-}
-
-const mockActivities: ActivityItem[] = [
-  {
-    id: "1",
-    type: "run",
-    title: "Brief Exécutif terminé",
-    description: "Analyse quotidienne des 5 plateformes",
-    timestamp: new Date(Date.now() - 1000 * 60 * 15),
-    status: "success",
-  },
-  {
-    id: "2",
-    type: "approval",
-    title: "Action approuvée",
-    description: "Mise à jour du pipeline marketing",
-    timestamp: new Date(Date.now() - 1000 * 60 * 45),
-    status: "info",
-  },
-  {
-    id: "3",
-    type: "security",
-    title: "Audit sécurité complété",
-    description: "RLS vérifié sur toutes les tables",
-    timestamp: new Date(Date.now() - 1000 * 60 * 120),
-    status: "success",
-  },
-  {
-    id: "4",
-    type: "alert",
-    title: "Latence détectée",
-    description: "Growth Copilot - API response > 2s",
-    timestamp: new Date(Date.now() - 1000 * 60 * 180),
-    status: "warning",
-  },
-  {
-    id: "5",
-    type: "release",
-    title: "Release déployée",
-    description: "EmotionsCare v2.4.1",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4),
-    status: "success",
-  },
-];
-
-const getIcon = (type: ActivityItem["type"]) => {
-  switch (type) {
-    case "run": return FileText;
-    case "approval": return CheckCircle;
-    case "alert": return AlertTriangle;
-    case "release": return Rocket;
-    case "security": return Shield;
-    default: return Activity;
-  }
+const getIcon = (action: string) => {
+  if (action.includes("run")) return FileText;
+  if (action.includes("config") || action.includes("action")) return Shield;
+  return Activity;
 };
 
-const getStatusColor = (status: ActivityItem["status"]) => {
-  switch (status) {
-    case "success": return "text-success";
-    case "warning": return "text-warning";
-    case "error": return "text-destructive";
-    default: return "text-primary";
-  }
+const getStatusColor = (action: string) => {
+  if (action.includes("approved")) return "text-success";
+  if (action.includes("rejected")) return "text-destructive";
+  return "text-primary";
 };
 
-function formatTimeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  
+function formatTimeAgo(dateStr: string): string {
+  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
   if (seconds < 60) return "À l'instant";
   if (seconds < 3600) return `Il y a ${Math.floor(seconds / 60)}min`;
   if (seconds < 86400) return `Il y a ${Math.floor(seconds / 3600)}h`;
@@ -99,7 +31,23 @@ interface RecentActivityFeedProps {
 }
 
 export function RecentActivityFeed({ className, maxItems = 5 }: RecentActivityFeedProps) {
-  const activities = mockActivities.slice(0, maxItems);
+  const { data: logs, isLoading } = useQuery({
+    queryKey: ["audit-logs-recent", maxItems],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_audit_logs", { limit_count: maxItems });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Card className={`card-executive ${className}`}>
+        <CardHeader><CardTitle className="flex items-center gap-3"><Activity className="h-5 w-5 text-primary" />Activité Récente</CardTitle></CardHeader>
+        <CardContent><div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-14 w-full" />)}</div></CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className={`card-executive ${className}`}>
@@ -110,33 +58,38 @@ export function RecentActivityFeed({ className, maxItems = 5 }: RecentActivityFe
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[280px] pr-4">
-          <div className="space-y-4">
-            {activities.map((activity) => {
-              const Icon = getIcon(activity.type);
-              return (
-                <div
-                  key={activity.id}
-                  className="flex items-start gap-3 p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-                >
-                  <div className={`mt-0.5 ${getStatusColor(activity.status)}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{activity.title}</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {activity.description}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    {formatTimeAgo(activity.timestamp)}
-                  </div>
-                </div>
-              );
-            })}
+        {!logs || logs.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="font-medium">Aucune activité enregistrée</p>
+            <p className="text-sm mt-1">Les actions apparaîtront ici après utilisation du système.</p>
           </div>
-        </ScrollArea>
+        ) : (
+          <ScrollArea className="h-[280px] pr-4">
+            <div className="space-y-4">
+              {logs.map((log) => {
+                const Icon = getIcon(log.action);
+                return (
+                  <div key={log.id} className="flex items-start gap-3 p-3 rounded-lg border hover:bg-muted/30 transition-colors">
+                    <div className={`mt-0.5 ${getStatusColor(log.action)}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{log.action}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {log.resource_type} • {log.actor_type}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      {formatTimeAgo(log.created_at)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        )}
       </CardContent>
     </Card>
   );

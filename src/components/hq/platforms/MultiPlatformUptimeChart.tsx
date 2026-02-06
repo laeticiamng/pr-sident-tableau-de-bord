@@ -12,15 +12,6 @@ interface PlatformData {
   pixelPerfect: number;
 }
 
-const mockData: PlatformData[] = [
-  { date: "Lun", emotionscare: 99.9, growthCopilot: 98.5, systemCompass: 99.8, medMng: 99.7, pixelPerfect: 99.9 },
-  { date: "Mar", emotionscare: 99.8, growthCopilot: 99.1, systemCompass: 99.9, medMng: 99.5, pixelPerfect: 100 },
-  { date: "Mer", emotionscare: 99.9, growthCopilot: 97.8, systemCompass: 99.7, medMng: 99.9, pixelPerfect: 99.8 },
-  { date: "Jeu", emotionscare: 100, growthCopilot: 99.2, systemCompass: 99.9, medMng: 99.8, pixelPerfect: 99.9 },
-  { date: "Ven", emotionscare: 99.7, growthCopilot: 98.9, systemCompass: 99.8, medMng: 100, pixelPerfect: 99.7 },
-  { date: "Sam", emotionscare: 99.9, growthCopilot: 99.5, systemCompass: 99.9, medMng: 99.9, pixelPerfect: 100 },
-  { date: "Dim", emotionscare: 99.9, growthCopilot: 99.0, systemCompass: 99.9, medMng: 99.8, pixelPerfect: 99.9 },
-];
 
 const platformColors = {
   emotionscare: "hsl(var(--primary))",
