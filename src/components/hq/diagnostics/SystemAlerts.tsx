@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Bell, 
   AlertTriangle, 
@@ -13,6 +14,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useConsolidatedMetrics, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
 
 interface Alert {
   id: string;
@@ -23,34 +25,6 @@ interface Alert {
   platform?: string;
   acknowledged: boolean;
 }
-
-const MOCK_ALERTS: Alert[] = [
-  {
-    id: "1",
-    type: "warning",
-    title: "Latence élevée détectée",
-    message: "La latence moyenne sur EmotionsCare dépasse le seuil de 500ms",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    platform: "EmotionsCare",
-    acknowledged: false,
-  },
-  {
-    id: "2",
-    type: "info",
-    title: "Mise à jour système planifiée",
-    message: "Maintenance prévue le 10 février à 03h00 UTC",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    acknowledged: true,
-  },
-  {
-    id: "3",
-    type: "warning",
-    title: "Quota API proche de la limite",
-    message: "85% du quota Stripe API utilisé ce mois",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    acknowledged: false,
-  },
-];
 
 const alertConfig = {
   critical: { 
@@ -77,19 +51,71 @@ const alertConfig = {
 };
 
 export function SystemAlerts() {
-  const [alerts, setAlerts] = useState<Alert[]>(MOCK_ALERTS);
+  const { metrics, isLoading, isCritical } = useConsolidatedMetrics();
+  const refreshMonitor = useRefreshPlatformMonitor();
+
+  // Generate alerts from real platform monitoring data
+  const generatedAlerts: Alert[] = [];
+  
+  if (!isLoading) {
+    metrics.platforms.forEach((platform) => {
+      if (platform.status === "red") {
+        generatedAlerts.push({
+          id: `${platform.key}-red`,
+          type: "critical",
+          title: `${platform.key.replace(/-/g, " ")} — Indisponible`,
+          message: platform.error || "La plateforme ne répond pas",
+          timestamp: new Date().toISOString(),
+          platform: platform.key,
+          acknowledged: false,
+        });
+      } else if (platform.status === "amber") {
+        generatedAlerts.push({
+          id: `${platform.key}-amber`,
+          type: "warning",
+          title: `${platform.key.replace(/-/g, " ")} — Latence élevée`,
+          message: platform.responseTime 
+            ? `Temps de réponse : ${platform.responseTime}ms` 
+            : "Performance dégradée détectée",
+          timestamp: new Date().toISOString(),
+          platform: platform.key,
+          acknowledged: false,
+        });
+      }
+    });
+  }
+
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const [acknowledgedIds, setAcknowledgedIds] = useState<Set<string>>(new Set());
+
+  const visibleAlerts = generatedAlerts.filter(a => !dismissedIds.has(a.id));
+  const unacknowledgedCount = visibleAlerts.filter(a => !acknowledgedIds.has(a.id)).length;
 
   const handleAcknowledge = (alertId: string) => {
-    setAlerts(prev => 
-      prev.map(a => a.id === alertId ? { ...a, acknowledged: true } : a)
-    );
+    setAcknowledgedIds(prev => new Set([...prev, alertId]));
   };
 
   const handleDismiss = (alertId: string) => {
-    setAlerts(prev => prev.filter(a => a.id !== alertId));
+    setDismissedIds(prev => new Set([...prev, alertId]));
   };
 
-  const unacknowledgedCount = alerts.filter(a => !a.acknowledged).length;
+  if (isLoading) {
+    return (
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <Bell className="h-5 w-5 text-primary" />
+            Alertes Système
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[1, 2].map(i => <Skeleton key={i} className="h-16 w-full" />)}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="card-executive">
@@ -102,11 +128,11 @@ export function SystemAlerts() {
           )}
         </CardTitle>
         <CardDescription>
-          Notifications et alertes de surveillance
+          Alertes générées depuis le monitoring en temps réel
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {alerts.length === 0 ? (
+        {visibleAlerts.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <CheckCircle className="h-12 w-12 mx-auto mb-4 text-success opacity-50" />
             <p className="font-medium">Aucune alerte active</p>
@@ -114,9 +140,10 @@ export function SystemAlerts() {
           </div>
         ) : (
           <div className="space-y-3">
-            {alerts.map((alert) => {
+            {visibleAlerts.map((alert) => {
               const config = alertConfig[alert.type];
               const AlertIcon = config.icon;
+              const isAcknowledged = acknowledgedIds.has(alert.id);
               
               return (
                 <div 
@@ -125,7 +152,7 @@ export function SystemAlerts() {
                     "p-4 rounded-lg border transition-all",
                     config.bg,
                     config.border,
-                    alert.acknowledged && "opacity-60"
+                    isAcknowledged && "opacity-60"
                   )}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -143,8 +170,8 @@ export function SystemAlerts() {
                         <p className="text-sm text-muted-foreground">{alert.message}</p>
                         <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                           <Clock className="h-3 w-3" />
-                          {new Date(alert.timestamp).toLocaleString("fr-FR")}
-                          {alert.acknowledged && (
+                          Détecté maintenant
+                          {isAcknowledged && (
                             <Badge variant="subtle" className="text-xs">
                               <CheckCircle className="h-3 w-3 mr-1" />
                               Acquitté
@@ -155,7 +182,7 @@ export function SystemAlerts() {
                     </div>
                     
                     <div className="flex items-center gap-1">
-                      {!alert.acknowledged && (
+                      {!isAcknowledged && (
                         <Button
                           variant="ghost"
                           size="sm"
@@ -183,8 +210,14 @@ export function SystemAlerts() {
 
         {/* Refresh Button */}
         <div className="mt-4 pt-4 border-t text-center">
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <RefreshCw className="h-3 w-3 mr-2" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-muted-foreground"
+            onClick={() => refreshMonitor.mutate(undefined)}
+            disabled={refreshMonitor.isPending}
+          >
+            <RefreshCw className={cn("h-3 w-3 mr-2", refreshMonitor.isPending && "animate-spin")} />
             Actualiser les alertes
           </Button>
         </div>

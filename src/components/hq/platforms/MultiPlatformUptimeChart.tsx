@@ -42,7 +42,27 @@ interface MultiPlatformUptimeChartProps {
   data?: PlatformData[];
 }
 
-export function MultiPlatformUptimeChart({ data = mockData }: MultiPlatformUptimeChartProps) {
+export function MultiPlatformUptimeChart({ data }: MultiPlatformUptimeChartProps) {
+  if (!data || data.length === 0) {
+    return (
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Uptime Multi-Plateformes
+          </CardTitle>
+          <CardDescription>Aucune donnée d'uptime disponible</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="font-medium">Données de monitoring en attente</p>
+            <p className="text-sm mt-1">Les données d'uptime apparaîtront après le premier cycle de monitoring</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   // Calculate averages
   const avgUptime = data.reduce((acc, d) => {
     return acc + (d.emotionscare + d.growthCopilot + d.systemCompass + d.medMng + d.pixelPerfect) / 5;

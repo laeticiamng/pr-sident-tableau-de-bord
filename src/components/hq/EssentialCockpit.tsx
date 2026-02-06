@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { usePendingApprovals } from "@/hooks/useHQData";
 import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
+import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { cn } from "@/lib/utils";
 
 interface EssentialCockpitProps {
@@ -19,12 +20,19 @@ interface EssentialCockpitProps {
 }
 
 export function EssentialCockpit({ className }: EssentialCockpitProps) {
-  const { metrics, isLoading, isHealthy, isCritical } = useConsolidatedMetrics();
+  const { metrics, isLoading: monitorLoading, isHealthy, isCritical } = useConsolidatedMetrics();
   const { data: approvals, isLoading: approvalsLoading } = usePendingApprovals();
+  const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
+  const stripeKPIs = stripeData?.kpis;
+
+  const isLoading = monitorLoading || stripeLoading;
 
   // KPIs essentiels uniquement
   const essentialKPIs = {
-    mrr: { value: "€12,450", change: "+8.2%", trend: "up" as const },
+    mrr: { 
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
+      change: stripeKPIs ? formatPercentage(stripeKPIs.mrrChange) : "—",
+    },
     platforms: {
       green: metrics.greenPlatforms,
       amber: metrics.amberPlatforms,
@@ -99,9 +107,9 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
               <div>
                 <p className="text-sm text-muted-foreground">Revenu Mensuel</p>
                 <p className="text-3xl font-bold mt-1">{essentialKPIs.mrr.value}</p>
-                <p className="text-sm text-success flex items-center gap-1 mt-1">
-                  <TrendingUp className="h-4 w-4" />
-                  {essentialKPIs.mrr.change} ce mois
+                <p className={cn("text-sm flex items-center gap-1 mt-1", stripeKPIs ? "text-success" : "text-muted-foreground")}>
+                  {stripeKPIs ? <TrendingUp className="h-4 w-4" /> : null}
+                  {stripeKPIs ? `${essentialKPIs.mrr.change} ce mois` : "Données Stripe"}
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-accent/10">
