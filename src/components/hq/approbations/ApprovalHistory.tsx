@@ -1,49 +1,43 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
-
-// Mock approval history - in production would come from database
-const APPROVAL_HISTORY = [
-  {
-    id: "1",
-    title: "Déploiement EmotionsCare v2.1",
-    decision: "approved",
-    decidedAt: "2026-02-03T14:30:00",
-    reason: "Validation après tests QA complets",
-  },
-  {
-    id: "2",
-    title: "Modification schéma base de données",
-    decision: "approved",
-    decidedAt: "2026-02-02T10:15:00",
-    reason: null,
-  },
-  {
-    id: "3",
-    title: "Accès API externe non vérifié",
-    decision: "rejected",
-    decidedAt: "2026-02-01T16:45:00",
-    reason: "Risque de sécurité - audit requis",
-  },
-  {
-    id: "4",
-    title: "Newsletter automatique février",
-    decision: "approved",
-    decidedAt: "2026-01-31T09:00:00",
-    reason: null,
-  },
-  {
-    id: "5",
-    title: "Mise à jour tarifs Stripe",
-    decision: "approved",
-    decidedAt: "2026-01-30T11:20:00",
-    reason: "Validé après analyse finance",
-  },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export function ApprovalHistory() {
-  const approvedCount = APPROVAL_HISTORY.filter(a => a.decision === "approved").length;
-  const rejectedCount = APPROVAL_HISTORY.filter(a => a.decision === "rejected").length;
+  const { data: logs, isLoading, error } = useQuery({
+    queryKey: ["hq-audit-logs-approvals"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_audit_logs", { limit_count: 20 });
+      if (error) throw new Error(error.message);
+      return (data || []).filter((log: any) => 
+        log.action?.startsWith("action.") || log.action?.startsWith("run.")
+      );
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  if (isLoading) {
+    return (
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <Clock className="h-5 w-5 text-primary" />
+            Historique des Décisions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 w-full" />)}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const approvedCount = logs?.filter((l: any) => l.action === "action.approved").length || 0;
+  const rejectedCount = logs?.filter((l: any) => l.action === "action.rejected").length || 0;
 
   return (
     <Card className="card-executive">
@@ -53,47 +47,59 @@ export function ApprovalHistory() {
           Historique des Décisions
         </CardTitle>
         <CardDescription>
-          {approvedCount} approuvées • {rejectedCount} rejetées (30 derniers jours)
+          {logs?.length ? `${approvedCount} approuvées • ${rejectedCount} rejetées` : "Aucune décision enregistrée"}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {APPROVAL_HISTORY.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                {item.decision === "approved" ? (
-                  <CheckCircle className="h-5 w-5 text-success" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-destructive" />
-                )}
-                <div>
-                  <p className="font-medium text-sm">{item.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(item.decidedAt).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+        {error ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="font-medium">Impossible de charger l'historique</p>
+            <p className="text-sm mt-1">{error.message}</p>
+          </div>
+        ) : !logs?.length ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="font-medium">Aucune décision enregistrée</p>
+            <p className="text-sm mt-1">Les approbations et actions apparaîtront ici</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {logs.map((item: any) => {
+              const isApproved = item.action?.includes("approved") || item.action?.includes("created");
+              const isRejected = item.action?.includes("rejected");
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    {isRejected ? (
+                      <XCircle className="h-5 w-5 text-destructive" />
+                    ) : (
+                      <CheckCircle className="h-5 w-5 text-success" />
+                    )}
+                    <div>
+                      <p className="font-medium text-sm">{item.action}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(item.created_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                        {item.resource_type && ` • ${item.resource_type}`}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge variant={isRejected ? "destructive" : "success"}>
+                    {isRejected ? "Rejeté" : isApproved ? "Approuvé" : item.action}
+                  </Badge>
                 </div>
-              </div>
-              <div className="text-right">
-                <Badge variant={item.decision === "approved" ? "success" : "destructive"}>
-                  {item.decision === "approved" ? "Approuvé" : "Rejeté"}
-                </Badge>
-                {item.reason && (
-                  <p className="text-xs text-muted-foreground mt-1 max-w-[150px] truncate">
-                    {item.reason}
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,47 +1,92 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, ArrowDownRight, TrendingUp, Users, DollarSign, Activity, Shield } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowUpRight, ArrowDownRight, Users, DollarSign, Activity, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface MetricItem {
-  label: string;
-  value: string;
-  change?: number;
-  trend?: "up" | "down" | "neutral";
-  icon: React.ElementType;
-}
+import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
+import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
 
 interface QuickMetricsBarProps {
   className?: string;
 }
 
-const METRICS: MetricItem[] = [
-  { label: "MRR", value: "€45.2K", change: 12.5, trend: "up", icon: DollarSign },
-  { label: "Utilisateurs", value: "2,847", change: 8.3, trend: "up", icon: Users },
-  { label: "Uptime", value: "99.9%", trend: "neutral", icon: Activity },
-  { label: "Sécurité", value: "A+", trend: "neutral", icon: Shield },
-];
-
 export function QuickMetricsBar({ className }: QuickMetricsBarProps) {
+  const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
+  const { metrics, isLoading: monitorLoading } = useConsolidatedMetrics();
+  const stripeKPIs = stripeData?.kpis;
+
+  type MetricItem = {
+    label: string;
+    value: string;
+    change?: number;
+    trend: "up" | "down" | "neutral";
+    icon: React.ElementType;
+    loading: boolean;
+  };
+
+  const metricsItems: MetricItem[] = [
+    { 
+      label: "MRR", 
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—",
+      change: stripeKPIs?.mrrChange,
+      trend: stripeKPIs ? (stripeKPIs.mrrChange > 0 ? "up" : stripeKPIs.mrrChange < 0 ? "down" : "neutral") : "neutral",
+      icon: DollarSign,
+      loading: stripeLoading,
+    },
+    { 
+      label: "Clients", 
+      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : "—",
+      change: stripeKPIs?.newCustomersThisMonth,
+      trend: stripeKPIs && stripeKPIs.newCustomersThisMonth > 0 ? "up" : "neutral",
+      icon: Users,
+      loading: stripeLoading,
+    },
+    { 
+      label: "Uptime", 
+      value: monitorLoading ? "—" : `${metrics.uptimePercent.toFixed(1)}%`,
+      trend: "neutral",
+      icon: Activity,
+      loading: monitorLoading,
+    },
+    { 
+      label: "Plateformes", 
+      value: monitorLoading ? "—" : `${metrics.greenPlatforms}/${metrics.totalPlatforms}`,
+      trend: "neutral",
+      icon: Shield,
+      loading: monitorLoading,
+    },
+  ];
+
   return (
     <div className={cn("grid grid-cols-2 md:grid-cols-4 gap-3", className)}>
-      {METRICS.map((metric) => {
+      {metricsItems.map((metric) => {
         const Icon = metric.icon;
+
+        if (metric.loading) {
+          return (
+            <Card key={metric.label} className="card-executive">
+              <CardContent className="p-4">
+                <Skeleton className="h-12 w-full" />
+              </CardContent>
+            </Card>
+          );
+        }
+
         return (
           <Card key={metric.label} className="card-executive">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
                 <Icon className="h-4 w-4 text-primary" />
-                {metric.trend === "up" && (
+                {metric.trend === "up" && metric.change !== undefined && (
                   <Badge variant="success" className="text-xs flex items-center gap-0.5">
                     <ArrowUpRight className="h-3 w-3" />
-                    {metric.change}%
+                    {typeof metric.change === 'number' ? formatPercentage(metric.change) : metric.change}
                   </Badge>
                 )}
-                {metric.trend === "down" && (
+                {metric.trend === "down" && metric.change !== undefined && (
                   <Badge variant="destructive" className="text-xs flex items-center gap-0.5">
                     <ArrowDownRight className="h-3 w-3" />
-                    {metric.change}%
+                    {typeof metric.change === 'number' ? formatPercentage(metric.change) : metric.change}
                   </Badge>
                 )}
                 {metric.trend === "neutral" && (

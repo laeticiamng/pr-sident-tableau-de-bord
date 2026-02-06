@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
 import { useConsolidatedMetrics, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
+import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { cn } from "@/lib/utils";
 
 interface MetricCardProps {
@@ -103,17 +104,30 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
   const failedRuns = runs?.filter(r => r.status === "failed").length || 0;
   const runSuccessRate = runs?.length ? (completedRuns / runs.length) * 100 : 0;
 
-  // Mock KPIs (to be connected to real Stripe/analytics data)
-  const mockKPIs = {
-    mrr: { value: "€12,450", change: 8.2, trend: "up" as const },
-    activeUsers: { value: "1,247", change: 12.5, trend: "up" as const },
-    churnRate: { value: "2.1%", change: -0.3, trend: "up" as const },
-    nps: { value: "72", change: 5, trend: "up" as const },
-    ticketsOpen: { value: "23", change: -15, trend: "up" as const },
-    avgResponseTime: { value: `${metrics.avgResponseTime}ms`, change: -8, trend: "up" as const },
+  // Real Stripe KPIs
+  const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
+  const stripeKPIs = stripeData?.kpis;
+
+  const realKPIs = {
+    mrr: { 
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
+      change: stripeKPIs?.mrrChange ?? undefined, 
+      trend: stripeKPIs ? (stripeKPIs.mrrChange > 0 ? "up" as const : stripeKPIs.mrrChange < 0 ? "down" as const : "neutral" as const) : "neutral" as const 
+    },
+    activeUsers: { 
+      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : "—", 
+      change: stripeKPIs?.newCustomersThisMonth ?? undefined, 
+      trend: stripeKPIs && stripeKPIs.newCustomersThisMonth > 0 ? "up" as const : "neutral" as const 
+    },
+    churnRate: { 
+      value: stripeKPIs ? formatPercentage(stripeKPIs.churnRate, false) : "—", 
+      change: stripeKPIs?.churnRateChange ?? undefined, 
+      trend: stripeKPIs ? (stripeKPIs.churnRateChange < 0 ? "up" as const : stripeKPIs.churnRateChange > 0 ? "down" as const : "neutral" as const) : "neutral" as const 
+    },
+    avgResponseTime: { value: `${metrics.avgResponseTime}ms`, change: undefined, trend: "neutral" as const },
   };
 
-  const isLoading = metricsLoading || approvalsLoading || runsLoading;
+  const isLoading = metricsLoading || approvalsLoading || runsLoading || stripeLoading;
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -182,49 +196,35 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <MetricCard
           title="MRR"
-          value={mockKPIs.mrr.value}
-          change={mockKPIs.mrr.change}
-          trend={mockKPIs.mrr.trend}
+          value={realKPIs.mrr.value}
+          change={realKPIs.mrr.change}
+          changeLabel="vs mois dernier"
+          trend={realKPIs.mrr.trend}
           icon={<DollarSign className="h-5 w-5 text-accent" />}
           loading={isLoading}
         />
         <MetricCard
-          title="Utilisateurs Actifs"
-          value={mockKPIs.activeUsers.value}
-          change={mockKPIs.activeUsers.change}
-          trend={mockKPIs.activeUsers.trend}
+          title="Clients Stripe"
+          value={realKPIs.activeUsers.value}
+          change={realKPIs.activeUsers.change}
+          changeLabel="nouveaux ce mois"
+          trend={realKPIs.activeUsers.trend}
           icon={<Users className="h-5 w-5 text-accent" />}
           loading={isLoading}
         />
         <MetricCard
           title="Taux de Churn"
-          value={mockKPIs.churnRate.value}
-          change={mockKPIs.churnRate.change}
-          trend={mockKPIs.churnRate.trend}
+          value={realKPIs.churnRate.value}
+          change={realKPIs.churnRate.change}
+          trend={realKPIs.churnRate.trend}
           icon={<TrendingDown className="h-5 w-5 text-accent" />}
           loading={isLoading}
         />
         <MetricCard
-          title="NPS Score"
-          value={mockKPIs.nps.value}
-          change={mockKPIs.nps.change}
-          trend={mockKPIs.nps.trend}
-          icon={<BarChart3 className="h-5 w-5 text-accent" />}
-          loading={isLoading}
-        />
-        <MetricCard
-          title="Tickets Ouverts"
-          value={mockKPIs.ticketsOpen.value}
-          change={mockKPIs.ticketsOpen.change}
-          trend={mockKPIs.ticketsOpen.trend}
-          icon={<AlertTriangle className="h-5 w-5 text-accent" />}
-          loading={isLoading}
-        />
-        <MetricCard
           title="Temps Réponse"
-          value={mockKPIs.avgResponseTime.value}
-          change={mockKPIs.avgResponseTime.change}
-          trend={mockKPIs.avgResponseTime.trend}
+          value={realKPIs.avgResponseTime.value}
+          change={realKPIs.avgResponseTime.change}
+          trend={realKPIs.avgResponseTime.trend}
           icon={<Clock className="h-5 w-5 text-accent" />}
           loading={isLoading}
         />
