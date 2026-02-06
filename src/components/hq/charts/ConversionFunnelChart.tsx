@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUp, Users } from "lucide-react";
+import { TrendingUp, Users, Link2 } from "lucide-react";
 
 interface FunnelStage {
   stage: string;
@@ -15,17 +15,7 @@ interface ConversionFunnelChartProps {
   loading?: boolean;
 }
 
-const DEFAULT_FUNNEL: FunnelStage[] = [
-  { stage: "Visiteurs", count: 10000, percentage: 100 },
-  { stage: "Inscriptions", count: 2500, percentage: 25, conversionRate: 25 },
-  { stage: "Activation", count: 1200, percentage: 12, conversionRate: 48 },
-  { stage: "Premier achat", count: 450, percentage: 4.5, conversionRate: 37.5 },
-  { stage: "Récurrence", count: 180, percentage: 1.8, conversionRate: 40 },
-];
-
-export function ConversionFunnelChart({ data = DEFAULT_FUNNEL, loading }: ConversionFunnelChartProps) {
-  const overallConversion = data[data.length - 1]?.percentage || 0;
-
+export function ConversionFunnelChart({ data, loading }: ConversionFunnelChartProps) {
   if (loading) {
     return (
       <Card className="card-executive">
@@ -39,6 +29,30 @@ export function ConversionFunnelChart({ data = DEFAULT_FUNNEL, loading }: Conver
       </Card>
     );
   }
+
+  if (!data || data.length === 0) {
+    return (
+      <Card className="card-executive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            Funnel de Conversion
+          </CardTitle>
+          <CardDescription>Parcours utilisateur de la visite à la récurrence</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-muted-foreground/20 rounded-lg">
+            <Link2 className="h-10 w-10 text-muted-foreground/40 mb-3" />
+            <p className="text-sm font-medium text-muted-foreground">Connexion Analytics requise</p>
+            <p className="text-xs text-muted-foreground/60 mt-1">Connectez GA4 ou Mixpanel pour visualiser le funnel</p>
+            <Badge variant="outline" className="mt-3">Analytics</Badge>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const overallConversion = data[data.length - 1]?.percentage || 0;
 
   return (
     <Card className="card-executive">
@@ -80,17 +94,7 @@ export function ConversionFunnelChart({ data = DEFAULT_FUNNEL, loading }: Conver
                   </Badge>
                 </div>
               </div>
-              <div className="relative">
-                <Progress value={stage.percentage} className="h-3" />
-                {index > 0 && stage.conversionRate && (
-                  <div 
-                    className="absolute -top-1 text-[10px] text-muted-foreground"
-                    style={{ left: `${stage.percentage}%`, transform: "translateX(-50%)" }}
-                  >
-                    ↓{stage.conversionRate}%
-                  </div>
-                )}
-              </div>
+              <Progress value={stage.percentage} className="h-3" />
             </div>
           ))}
         </div>
