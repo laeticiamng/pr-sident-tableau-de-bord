@@ -20,17 +20,17 @@ export default function VisionPage() {
   return (
     <div className="flex flex-col">
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-hero-gradient text-primary-foreground">
+      <section className="py-20 md:py-28 bg-hero-gradient text-white">
         <div className="container">
           <div className="mx-auto max-w-3xl text-center px-4">
             <Badge variant="gold" className="mb-6">
               Notre Vision
             </Badge>
-            <h1 className="text-headline-1 md:text-display-2 mb-6 text-primary-foreground">
+            <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">
               Construire l'avenir
               <span className="block text-accent">du logiciel</span>
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground font-medium leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed">
               Chez EMOTIONSCARE, nous croyons que la technologie doit servir 
               l'humain, pas l'inverse. Notre mission : créer des outils 
               qui simplifient la vie et libèrent le potentiel de chacun.
