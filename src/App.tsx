@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
 import { PageLoader } from "@/components/ui/skeleton-loader";
+import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 
 // Layouts - loaded immediately (needed for structure)
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -79,6 +80,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <AnalyticsProvider />
               <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Public Routes */}
