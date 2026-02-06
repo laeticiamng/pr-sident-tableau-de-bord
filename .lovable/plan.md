@@ -1,123 +1,85 @@
 
-# Audit C-Suite Complet (12 roles) - Corrections et Ameliorations
+# Audit C-Suite Complet (12 roles) - Phase 2
 
-## Score Global : 4.2 / 5
+## Score Global : 3.8 / 5
 
-Audit multi-role realise par exploration approfondie du code source, de l'architecture, des edge functions et des composants UI.
-
----
-
-## Probleme Critique #1 : Donnees Fictives dans le Cockpit Dirigeant (CEO + CFO + CDO)
-
-**Gravite : CRITIQUE** — Viole directement la regle "Interdiction formelle de donnees fictives"
-
-Le composant `ExecutiveCockpit.tsx` affiche des KPIs hardcodes (MRR "12 450 EUR", 1 247 utilisateurs, NPS 72, etc.) alors que le hook `useStripeKPIs` existe et fonctionne. Le composant `EssentialCockpit.tsx` fait la meme chose avec "12 450 EUR" en dur.
-
-**Correction :** Connecter `ExecutiveCockpit.tsx` et `EssentialCockpit.tsx` au hook `useStripeKPIs` pour afficher les donnees reelles Stripe, ou un etat "Connexion requise" explicite.
-
-**Fichiers :** `src/components/hq/ExecutiveCockpit.tsx`, `src/components/hq/EssentialCockpit.tsx`
+L'audit precedent a corrige 11 fichiers. Il reste **12 composants** contenant des donnees fictives hardcodees, en violation directe de la regle "Interdiction formelle de donnees fictives".
 
 ---
 
-## Probleme Critique #2 : QuickMetricsBar avec donnees hardcodees (CEO + CDO)
+## Constat Critique : 12 fichiers avec donnees mock restants
 
-**Gravite : CRITIQUE**
-
-Le composant `QuickMetricsBar.tsx` affiche "45.2K EUR", "2,847 utilisateurs", "99.9% uptime", "A+ Securite" en constantes statiques.
-
-**Correction :** Connecter aux hooks reels (`useStripeKPIs`, `useConsolidatedMetrics`) ou afficher "—" quand les donnees ne sont pas disponibles.
-
-**Fichier :** `src/components/hq/briefing/QuickMetricsBar.tsx`
+Chaque fichier ci-dessous contient un tableau `const mock*` ou `const STATIC_DATA` avec des donnees inventees affichees a l'ecran comme si elles etaient reelles.
 
 ---
 
-## Probleme Majeur #3 : Code mort `useBusinessMetrics.ts` (CTO)
+## Corrections a appliquer
 
-**Gravite : HAUTE**
+Chaque composant sera converti en etat "Connexion requise" avec indication explicite de la source de donnees manquante, ou connecte aux donnees reelles quand elles existent.
 
-Le fichier `src/hooks/useBusinessMetrics.ts` (273 lignes) exporte 5 hooks (`useFinanceMetrics`, `useSalesMetrics`, etc.) qui ne sont importes par aucun fichier du projet. C'est du code mort contenant des fonctions `getMock*` renvoyant des zeros.
+### Fichier 1 : `src/components/hq/finance/RevenueBreakdown.tsx`
+- **Probleme** : `mockRevenueSources` avec 4 plateformes et revenus inventes (12 500, 8 200, etc.)
+- **Correction** : Etat "Connexion Stripe requise" — la repartition par plateforme n'est pas disponible via l'API Stripe actuelle (qui ne distingue pas les produits par plateforme)
 
-**Correction :** Supprimer le fichier entier.
+### Fichier 2 : `src/components/hq/marketing/CampaignPerformance.tsx`
+- **Probleme** : `mockCampaigns` avec 3 campagnes inventees (budgets, leads, CPL fictifs)
+- **Correction** : Etat "Connexion Marketing requise" (GA4 / HubSpot)
 
-**Fichier :** `src/hooks/useBusinessMetrics.ts`
+### Fichier 3 : `src/components/hq/conformite/ComplianceAlerts.tsx`
+- **Probleme** : `COMPLIANCE_ALERTS` avec 4 alertes conformite statiques
+- **Correction** : Etat "Configuration Compliance requise" — ces alertes devraient provenir d'un calendrier reglementaire en base de donnees
 
----
+### Fichier 4 : `src/components/hq/product/FeatureRequests.tsx`
+- **Probleme** : `mockRequests` avec 3 demandes inventees (votes, statuts fictifs)
+- **Correction** : Etat "Connexion Produit requise" (Jira / Linear / Canny)
 
-## Probleme Majeur #4 : Widgets avec mock data hardcodees (CDO + COO)
+### Fichier 5 : `src/components/hq/rh/PerformanceReview.tsx`
+- **Probleme** : `mockEmployees` avec 3 agents et notes fictives
+- **Correction** : Connecter aux agents reels en DB via `get_hq_agents` RPC, afficher les agents avec un etat "Evaluation non configuree"
 
-**Gravite : HAUTE** — 6 composants affichent des donnees fictives statiques
+### Fichier 6 : `src/components/hq/support/EscalationQueue.tsx`
+- **Probleme** : `mockEscalations` avec 2 tickets fictifs
+- **Correction** : Etat "Connexion Support requise" (Zendesk / Intercom)
 
-| Composant | Donnees fictives | Correction |
-|---|---|---|
-| `OpenPRsWidget.tsx` | 4 PRs inventees | Afficher "Connexion GitHub requise" ou lire depuis `github-sync` |
-| `ApprovalHistory.tsx` | 5 approbations fictives | Lire depuis `get_hq_audit_logs` (donnees reelles existantes en DB) |
-| `SystemAlerts.tsx` | 3 alertes inventees | Generer depuis les statuts plateforme reels ou afficher etat vide |
-| `DealVelocityWidget.tsx` | Pipeline fictif | Afficher "Connexion CRM requise" (HubSpot/Pipedrive non integre) |
-| `PlatformTrafficWidget.tsx` | Trafic fictif | Afficher "Connexion GA4 requise" |
-| `TicketDistributionChart.tsx` | Repartition fictive | Afficher "Connexion Zendesk requise" |
+### Fichier 7 : `src/components/hq/security/VulnerabilityScanner.tsx`
+- **Probleme** : `mockVulnerabilities` avec 2 vulnerabilites inventees
+- **Correction** : Le scan simule un progres sans resultat reel. Etat "Aucun scan effectue" avec indication que le scan de securite Lovable est disponible dans les parametres
 
-**Fichiers :** 6 composants listes ci-dessus
+### Fichier 8 : `src/components/hq/data/UserSegmentation.tsx`
+- **Probleme** : `mockSegments` avec 4 segments inventes (Enterprise, Pro, Starter, Free Trial)
+- **Correction** : Etat "Connexion Analytics requise" (Stripe Billing / GA4)
 
----
+### Fichier 9 : `src/components/hq/briefing/RecentActivityFeed.tsx`
+- **Probleme** : `mockActivities` avec 5 activites inventees
+- **Correction** : Connecter au journal d'audit reel via `get_hq_audit_logs` RPC (les donnees existent en DB)
 
-## Probleme Moyen #5 : MultiPlatformUptimeChart avec fallback mock (CTO)
+### Fichier 10 : `src/components/hq/engineering/DeploymentStatus.tsx`
+- **Probleme** : `mockDeployments` avec 3 deploiements inventes (versions, commits fictifs)
+- **Correction** : Etat "Connexion CI/CD requise" (GitHub Actions / Vercel)
 
-**Gravite : MOYENNE**
+### Fichier 11 : `src/components/hq/meetings/ActionItems.tsx`
+- **Probleme** : `ACTION_ITEMS` avec 5 actions fictives
+- **Correction** : Etat "Aucune action enregistree" — les actions de reunion devraient provenir d'une table dediee ou d'un outil de gestion de projet
 
-Le composant utilise `data = mockData` comme valeur par defaut, affichant un graphique d'uptime fictif quand aucune donnee n'est passee.
-
-**Correction :** Remplacer le fallback par un etat vide explicite.
-
-**Fichier :** `src/components/hq/platforms/MultiPlatformUptimeChart.tsx`
-
----
-
-## Resume des Actions
-
-### Phase 1 — Suppression code mort
-1. Supprimer `src/hooks/useBusinessMetrics.ts` (273 lignes, zero imports)
-
-### Phase 2 — Connexion donnees reelles dans le Cockpit
-2. `ExecutiveCockpit.tsx` : Remplacer `mockKPIs` par `useStripeKPIs()` avec fallback "—"
-3. `EssentialCockpit.tsx` : Remplacer MRR hardcode par `useStripeKPIs()` avec fallback "—"
-4. `QuickMetricsBar.tsx` : Connecter aux hooks reels (`useStripeKPIs` + `useConsolidatedMetrics`)
-
-### Phase 3 — Widgets "Connexion requise"
-5. `ApprovalHistory.tsx` : Lire depuis `get_hq_audit_logs` RPC (donnees reelles)
-6. `SystemAlerts.tsx` : Generer alertes depuis les statuts plateforme reels
-7. `OpenPRsWidget.tsx` : Afficher etat "Connexion GitHub requise" avec indication explicite
-8. `DealVelocityWidget.tsx` : Afficher "Connexion CRM requise"
-9. `PlatformTrafficWidget.tsx` : Afficher "Connexion GA4 requise"
-10. `TicketDistributionChart.tsx` : Afficher "Connexion Support requise"
-
-### Phase 4 — Nettoyage fallback
-11. `MultiPlatformUptimeChart.tsx` : Etat vide au lieu de mock data par defaut
+### Fichier 12 : `src/components/hq/platforms/MultiPlatformUptimeChart.tsx`
+- **Probleme** : `mockData` declare (lignes 15-23) mais jamais utilise grace au fix precedent qui gere `!data`. Le code mort reste dans le fichier.
+- **Correction** : Supprimer la declaration `mockData` inutilisee
 
 ---
 
-## Section Technique
+## Strategie de correction
 
-### Fichiers a modifier (11 fichiers)
+Pour chaque fichier, le pattern applique est :
 
 ```text
-SUPPRIMER :
-  src/hooks/useBusinessMetrics.ts
-
-MODIFIER :
-  src/components/hq/ExecutiveCockpit.tsx        (remplacer mockKPIs par useStripeKPIs)
-  src/components/hq/EssentialCockpit.tsx         (remplacer MRR hardcode par useStripeKPIs)
-  src/components/hq/briefing/QuickMetricsBar.tsx (connecter hooks reels)
-  src/components/hq/approbations/ApprovalHistory.tsx (lire audit_logs DB)
-  src/components/hq/diagnostics/SystemAlerts.tsx     (alertes depuis monitoring reel)
-  src/components/hq/engineering/OpenPRsWidget.tsx     (etat "Connexion requise")
-  src/components/hq/sales/DealVelocityWidget.tsx      (etat "Connexion CRM requise")
-  src/components/hq/marketing/PlatformTrafficWidget.tsx (etat "Connexion GA4 requise")
-  src/components/hq/support/TicketDistributionChart.tsx  (etat "Connexion Support requise")
-  src/components/hq/platforms/MultiPlatformUptimeChart.tsx (etat vide)
+1. Supprimer le tableau mock/static
+2. Si une source reelle existe en DB (audit_logs, agents) -> connecter via useQuery/RPC
+3. Si aucune source reelle -> afficher un etat vide "Connexion [Source] requise"
+   avec icone Link2, texte explicatif, et Badge indiquant la source attendue
 ```
 
 ### Dependances
 Aucune nouvelle dependance.
 
 ### Risque
-Faible. Les donnees fictives sont remplacees par des donnees reelles (Stripe, monitoring) ou un etat vide explicite. Aucun changement structurel.
+Faible. Les widgets afficheront des etats vides explicites au lieu de donnees fictives. Les 2 composants connectes aux donnees reelles (RecentActivityFeed, PerformanceReview) utiliseront les RPC existantes.
