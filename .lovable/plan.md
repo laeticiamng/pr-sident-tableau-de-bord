@@ -1,106 +1,87 @@
 
-# Audit UX Complet - Beta-Testeur (EMOTIONSCARE SASU HQ)
 
-## Resume Executif
+# Désactivation de l'Inscription - Accès Exclusif Présidente
 
-J'ai parcouru l'ensemble du site comme un utilisateur final, testant toutes les pages publiques, le formulaire de contact, la page d'authentification, les pages legales et la page 404.
+## Objectif
 
-**Score Global : 4.9/5**
-
-L'application est **prete pour la production** avec une seule amelioration mineure necessaire.
+Supprimer complètement la possibilité de créer un compte. Seule la Présidente (vous) doit pouvoir se connecter avec son compte existant.
 
 ---
 
-## Tests Effectues
+## Ce qui va changer
 
-| Page | Resultat | Observations |
-|------|----------|--------------|
-| Accueil `/` | OK | Design premium, statistiques dynamiques, scroll indicator |
-| Plateformes `/plateformes` | OK | 5 plateformes, statistiques calculees correctement |
-| Vision `/vision` | OK | Page bien structuree |
-| Contact `/contact` | OK | Formulaire avec validation Zod |
-| Auth `/auth` | OK | Interface split-screen, toggle login/signup |
-| 404 `/test-404` | OK | Page en francais "Page introuvable" |
-| Mentions legales `/legal/mentions` | OK | Donnees SIREN/SIRET correctes |
+| Avant | Après |
+|-------|-------|
+| Bouton "Pas encore de compte ? S'inscrire" visible | Bouton supprimé |
+| Formulaire permet login ET signup | Formulaire uniquement connexion |
+| Titre dynamique "Espace Président" / "Créer un compte" | Titre fixe "Espace Président" |
 
 ---
 
-## Points Positifs Identifies
+## Modifications prévues
 
-| Element | Observation |
-|---------|-------------|
-| Console | Propre, zero erreur React |
-| Page 404 | Correctement traduite en francais |
-| Theme Toggle | Harmonise avec `variant="minimal"` dans le footer |
-| Navigation | Fluide et responsive |
-| Formulaires | Validation en francais avec messages explicites |
-| SEO | Meta tags dynamiques par page |
-| Securite | Connexion securisee mentionnee sur la page auth |
+### Page d'authentification (`src/pages/AuthPage.tsx`)
+
+1. **Supprimer le mode "signup"** - Le formulaire reste en mode "login" uniquement
+2. **Retirer le bouton de bascule** - Plus de lien "Pas encore de compte ? S'inscrire"
+3. **Supprimer le code d'inscription** - Retirer la logique `signUp` du formulaire
+4. **Simplifier les titres** - Afficher uniquement "Espace Président" et "Accédez au siège social numérique"
 
 ---
 
-## Probleme Identifie
-
-### Champ Email Sans Autocomplete (Priorite: Moyenne)
-
-**Symptome :** Le navigateur affiche une recommandation dans la console :
-> "Input elements should have autocomplete attributes (suggested: username)"
-
-**Localisation :** `src/pages/AuthPage.tsx`, champ email (ligne 162)
-
-**Impact :** 
-- Accessibilite reduite pour les utilisateurs avec gestionnaires de mots de passe
-- Experience utilisateur moins fluide (pas de suggestion automatique)
-- Non-conformite aux bonnes pratiques WCAG
-
-**Correction proposee :** Ajouter `autoComplete="email"` au champ email
-
----
-
-## Plan d'Implementation
-
-### Etape 1 : Ajouter autoComplete au champ email
-
-Modifier `src/pages/AuthPage.tsx` ligne 162-170 :
+## Aperçu visuel après modification
 
 ```text
-Avant:
-<Input
-  id="email"
-  type="email"
-  placeholder="president@emotionscare.fr"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  required
-  disabled={isLoading}
-  className="pl-10 h-11 sm:h-12 text-base"
-/>
-
-Apres:
-<Input
-  id="email"
-  type="email"
-  placeholder="president@emotionscare.fr"
-  value={email}
-  onChange={(e) => setEmail(e.target.value)}
-  required
-  disabled={isLoading}
-  autoComplete="email"
-  className="pl-10 h-11 sm:h-12 text-base"
-/>
+┌─────────────────────────────────────┐
+│         EMOTIONSCARE SASU           │
+│                                     │
+│          Espace Président           │
+│   Accédez au siège social numérique │
+│                                     │
+│   ┌─────────────────────────────┐   │
+│   │ 📧 president@emotionscare.fr│   │
+│   └─────────────────────────────┘   │
+│   ┌─────────────────────────────┐   │
+│   │ 🔒 ••••••••                 │   │
+│   └─────────────────────────────┘   │
+│                                     │
+│   [ ══════ Se connecter ══════ ]    │
+│                                     │
+│   🔒 Connexion sécurisée et chiffrée│
+└─────────────────────────────────────┘
 ```
+
+**Éléments supprimés :**
+- ❌ "Pas encore de compte ? S'inscrire"
+- ❌ Mode "Créer un compte"
+- ❌ Logique `supabase.auth.signUp`
 
 ---
 
-## Fichiers a Modifier
+## Sécurité renforcée
+
+Cette modification garantit que :
+- ✅ Aucun visiteur ne peut créer de compte
+- ✅ Seul votre compte existant (`m.laeticia@hotmail.fr`) peut accéder au HQ
+- ✅ L'interface reflète le caractère exclusif de l'accès
+
+---
+
+## Section Technique
+
+### Fichier modifié
 
 | Fichier | Modification |
 |---------|--------------|
-| `src/pages/AuthPage.tsx` | Ajouter `autoComplete="email"` au champ email |
+| `src/pages/AuthPage.tsx` | Suppression du mode signup, du bouton de bascule et de la logique d'inscription |
 
----
+### Code simplifié
 
-## Impact Utilisateur
+```tsx
+// Avant : état avec mode login/signup
+const [mode, setMode] = useState<"login" | "signup">("login");
 
-- **Avant** : Recommandation navigateur dans la console, pas de suggestions d'email automatiques
-- **Apres** : Conformite WCAG, experience utilisateur amelioree avec auto-remplissage des emails
+// Après : plus besoin de cet état, uniquement login
+// Le formulaire appelle directement signInWithPassword
+```
+
