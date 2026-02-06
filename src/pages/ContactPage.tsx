@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, sanitizeHtml } from "@/lib/validation";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -59,20 +60,36 @@ export default function ContactPage() {
       message: sanitizeHtml(data.message),
     };
     
-    console.debug("[Contact] Form submitted:", { 
-      ...sanitizedData, 
-      timestamp: new Date().toISOString() 
-    });
-    
-    // Simulated submission with realistic delay
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    
-    toast.success("Message envoyé avec succès !", {
-      description: "Nous vous répondrons sous 24 à 48 heures ouvrées.",
-    });
-    
-    reset();
-    setIsSubmitting(false);
+    try {
+      const { data, error } = await supabase.functions.invoke("contact-form", {
+        body: sanitizedData,
+      });
+
+      if (error) {
+        console.error("[Contact] Edge function error:", error);
+        toast.error("Erreur lors de l'envoi", {
+          description: "Veuillez réessayer ou nous contacter directement par email.",
+        });
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      toast.success("Message envoyé avec succès !", {
+        description: "Nous vous répondrons sous 24 à 48 heures ouvrées.",
+      });
+      reset();
+    } catch (err) {
+      console.error("[Contact] Unexpected error:", err);
+      toast.error("Erreur de connexion", {
+        description: "Vérifiez votre connexion internet et réessayez.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
