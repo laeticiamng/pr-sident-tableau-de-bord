@@ -139,14 +139,14 @@ export default function VisionPage() {
               {
                 icon: Award,
                 title: "Qualité",
-                stat: "128+",
+                stat: "1 200+",
                 description: "Tests automatisés"
               },
               {
                 icon: Rocket,
                 title: "Performance",
-                stat: "99.9%",
-                description: "Uptime garanti"
+                stat: "Haute",
+                description: "Disponibilité visée"
               },
             ].map((engagement, index) => (
               <div
