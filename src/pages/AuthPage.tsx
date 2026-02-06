@@ -73,15 +73,15 @@ export default function AuthPage() {
       <div className="lg:hidden relative z-10 bg-hero-gradient py-8 px-4 text-center">
         <div className="flex justify-center mb-4">
           <div className="relative">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-foreground/20 to-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20">
-              <Building2 className="h-8 w-8 text-primary-foreground" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm border border-white/20">
+              <Building2 className="h-8 w-8 text-white" />
             </div>
             <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg">
               <Sparkles className="h-2.5 w-2.5" />
             </div>
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-primary-foreground mb-1">EMOTIONSCARE</h2>
+        <h2 className="text-2xl font-bold text-white mb-1">EMOTIONSCARE</h2>
         <div className="flex items-center justify-center gap-2">
           <div className="h-px w-8 bg-gradient-to-r from-transparent to-accent/50" />
           <span className="text-lg font-light text-accent tracking-[0.2em]">SASU</span>
