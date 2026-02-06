@@ -184,6 +184,7 @@ export default function AuthPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
                   className="pl-10 h-11 sm:h-12 text-base"
                 />
               </div>
