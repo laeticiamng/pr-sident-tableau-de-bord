@@ -84,12 +84,13 @@ import { createClient } from "npm:@supabase/supabase-js@2";
      const { action, params = {} } = body;
  
      const growthOsToken = Deno.env.get("GROWTH_OS_API_TOKEN");
-     if (!growthOsToken) {
-       return new Response(JSON.stringify({ error: "GROWTH_OS_API_TOKEN not configured" }), {
-         status: 500,
-         headers: { ...corsHeaders, "Content-Type": "application/json" },
-       });
-     }
+      if (!growthOsToken) {
+        console.error("Growth Analytics: Required API token not configured");
+        return new Response(JSON.stringify({ error: "Service temporarily unavailable" }), {
+          status: 503,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
  
      console.log(`Growth Analytics: Processing action "${action}"`);
  
