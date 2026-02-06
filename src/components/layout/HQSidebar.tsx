@@ -30,17 +30,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Routes that are still in development (show "Bientôt" badge)
-const COMING_SOON_ROUTES = [
-  "/hq/ventes",
-  "/hq/marketing",
-  "/hq/support",
-  "/hq/reunions",
-  "/hq/rh",
-  "/hq/data",
-  "/hq/conformite",
-];
-
 const sidebarLinks = [
   {
     label: "Cockpit",
@@ -146,7 +135,6 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
               <ul className="space-y-1">
                 {section.items.map((link) => {
                   const isActive = location.pathname === link.href;
-                  const isComingSoon = COMING_SOON_ROUTES.includes(link.href);
                   return (
                     <li key={link.href}>
                       <Link
@@ -161,12 +149,7 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                       >
                         <link.icon className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{link.label}</span>
-                        {isComingSoon && (
-                          <Badge variant="outline" className="ml-auto text-[10px] px-1.5 py-0 text-muted-foreground/60">
-                            Bientôt
-                          </Badge>
-                        )}
-                        {isActive && !isComingSoon && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                        {isActive && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
                       </Link>
                     </li>
                   );
