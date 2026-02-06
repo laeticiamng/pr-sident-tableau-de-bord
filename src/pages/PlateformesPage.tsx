@@ -357,7 +357,7 @@ export default function PlateformesPage() {
       {/* ============================================ */}
       {/* GOVERNANCE SECTION */}
       {/* ============================================ */}
-      <section className="py-20 md:py-32 bg-primary text-white relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-hero-gradient text-white relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,hsl(var(--accent)/0.1),transparent)]" />
         
