@@ -1,93 +1,96 @@
 
 
-## Audit Visuel & Branding Premium - Corrections Prioritaires
+## Audit Visuel & Branding Premium — Corrections Post-V1
 
-Apres inspection complete de toutes les pages publiques (Accueil, Plateformes, Vision, Contact, Auth) en desktop et mobile, voici les corrections classees par priorite.
-
----
-
-### PRIORITE 1 — Bugs critiques (visibilite cassee)
-
-**1. Hero de /plateformes invisible en mode sombre**
-La section Hero de la page Plateformes utilise encore `bg-gradient-to-br from-primary via-primary` au lieu de `bg-hero-gradient`. En dark mode, `--primary` devient blanc, rendant le fond blanc avec du texte blanc = invisible. C'est le meme bug qui a ete corrige sur HomePage mais pas applique ici.
-
-- Fichier : `src/pages/PlateformesPage.tsx` ligne 122
-- Correction : remplacer `bg-gradient-to-br from-primary via-primary to-primary/90` par `bg-hero-gradient`
+Apres inspection des 5 pages publiques en desktop (1920px) et relecture complete du code, les corrections majeures du plan precedent ont ete appliquees. Voici les problemes restants, classes par priorite.
 
 ---
 
-### PRIORITE 2 — Clarte du message en 3 secondes
+### PRIORITE 1 — Incoherences residuelles de la V1
 
-**2. Sous-titre Hero trop generique**
-"Siege Social Numerique" ne dit rien a un visiteur exterieur. En 3 secondes, il ne comprend pas ce qu'EMOTIONSCARE fait. Le sous-titre actuel est un terme interne, pas une proposition de valeur.
+**1. Page /plateformes : "Edge Functions" toujours present dans 2 endroits**
+Le hero de PlateformesPage affiche toujours "Edge Functions" dans les stats du hero (ligne 153) et dans la section gouvernance finale (ligne 389). Ce terme technique reste incomprehensible pour un visiteur non-technique.
 
-- Correction : remplacer "Siege Social Numerique" par une ligne plus descriptive comme : **"Editeur de logiciels SaaS — Sante, Education, International"**
-- Le badge au-dessus garde "Siege Social Numerique" pour le contexte institutionnel
+- Fichier : `src/pages/PlateformesPage.tsx` lignes 153 et 389
+- Correction : remplacer par "Modules" ou "Fonctions" dans les deux endroits
 
-**3. Description Hero trop vague**
-"5 plateformes SaaS depuis un centre de commandement unique, propulse par l'IA" — le mot "commandement" est jargonnant. Un visiteur ne sait toujours pas ce que font ces plateformes.
+**2. Page /plateformes : CTA final "Acceder au HQ" non corrige**
+Le bouton CTA de la section Gouvernance (ligne 410) dit encore "Acceder au HQ" au lieu d'un CTA oriente visiteur.
 
-- Correction : remplacer par quelque chose comme **"5 plateformes innovantes pour la sante, l'education medicale, la relocalisation, la croissance et le social"**
+- Fichier : `src/pages/PlateformesPage.tsx` ligne 410
+- Correction : remplacer par "Decouvrir nos solutions" et pointer vers `/contact` ou garder `/auth` mais avec un label moins interne
 
----
+**3. Page /plateformes : stat labels "Edge Fns" dans les cartes plateformes**
+Chaque carte plateforme montre "Edge Fns" (ligne 317) — meme probleme de jargon technique.
 
-### PRIORITE 3 — Hierarchie visuelle et conversion
+- Fichier : `src/pages/PlateformesPage.tsx` ligne 317
+- Correction : remplacer "Edge Fns" par "Fonctions" ou "API"
 
-**4. Section Features : titres en anglais**
-"Executive AI Runs", "Monitoring 5 plateformes" — melange anglais/francais incoherent. Pour un site francais cible stakeholders francophones, tout doit etre en francais.
+**4. Page /auth : "SASU" tres visible**
+La page Auth affiche "SASU" en gros sur le panneau droit desktop (ligne 213, avec tracking large et lignes decoratives) et sur le header mobile (ligne 88). Selon les conventions du projet, le suffixe legal ne doit pas etre mis en avant visuellement.
 
-- Correction : renommer en "Intelligence IA", "Supervision en temps reel", "Validation des actions", "Veille strategique"
+- Fichier : `src/pages/AuthPage.tsx` lignes 87-89 et 211-214
+- Correction : retirer les lignes "SASU" des deux emplacements, ou les remplacer par "Editeur de logiciels" comme dans le header
 
-**5. Section Stats : "Edge Functions" incomprehensible**
-Un visiteur non-technique ne sait pas ce qu'est une "Edge Function". La stat "349 Edge Functions" n'a aucun impact emotionnel.
+**5. Page /auth : titre "Espace President" encore present**
+Le titre de la page Auth (lignes 107 et 115) dit "Espace President" — un terme interne qui n'est pas standard et qui devrait etre "Connexion" ou "Espace client" pour rester coherent avec le bouton du header.
 
-- Correction : remplacer par une metrique comprehensible : "16K+ Lignes de code" ou "875 Tables de donnees" ou "1 300+ Tests"
-
-**6. CTA final peu engageant**
-"Acces HQ" ne communique aucune valeur. Le texte "Centre de Gouvernance" est interne.
-
-- Correction du titre : "Decouvrez nos solutions" ou "Explorez l'ecosysteme"
-- CTA : "Voir les plateformes en detail" au lieu de "Acces HQ" (qui est reserve aux admins)
-
----
-
-### PRIORITE 4 — Coherence de l'identite
-
-**7. Mention "SASU" dans le header**
-Le suffixe legal "SASU" apparait sous le logo dans le header — c'est du bruit visuel. Comme dit dans les conventions du projet, le branding public doit etre epure sans suffixe legal.
-
-- Correction : retirer "SASU" du header, le garder uniquement dans le footer
-
-**8. Page Contact : hero sans fond immersif**
-La page Contact utilise `bg-subtle-gradient` (fond blanc leger) contrairement aux autres pages qui ont un hero navy immersif. Cela casse la coherence visuelle du parcours.
-
-- Correction : utiliser `bg-hero-gradient text-white` pour le hero Contact, comme Vision et Plateformes
+- Fichier : `src/pages/AuthPage.tsx` lignes 107 et 115
+- Correction : remplacer "Espace President" par "Connexion" dans les deux emplacements
 
 ---
 
-### PRIORITE 5 — Ameliorations UX/Mobile
+### PRIORITE 2 — Coherence du parcours visiteur
 
-**9. Bouton "Espace President" visible publiquement**
-Le bouton "Espace President" dans le header est destine a l'admin unique. Pour un visiteur lambda, c'est confus. Il devrait etre discret.
+**6. Page /auth : description "cockpit executif" et "precision chirurgicale"**
+Le texte du panneau droit (ligne 218) parle de "cockpit executif" et "precision chirurgicale" — jargon interne incomprehensible pour un visiteur externe.
 
-- Correction : renommer en "Connexion" (standard) ou le deplacer dans le footer
+- Fichier : `src/pages/AuthPage.tsx` ligne 217-218
+- Correction : remplacer par "Accedez a votre espace de gestion pour piloter vos plateformes et suivre vos indicateurs."
 
-**10. Page Vision : section "Engagements" stat floue**
-La stat "Haute" pour Performance est vague et non-premium. Toutes les autres stats sont precises ("100%", "WCAG AA", "1 200+").
+**7. Page /auth : stat "Ambition : infini" non-credible**
+La stat "infini" pour "Ambition" (ligne 233) est floue et non-premium. Les deux autres stats sont precises ("5 Plateformes", "39 Agents IA").
 
-- Correction : remplacer par "99.9%" avec description "Disponibilite visee"
+- Fichier : `src/pages/AuthPage.tsx` ligne 232-233
+- Correction : remplacer par une stat concrete comme "24/7" avec label "Monitoring" ou "100%" avec "Made in France"
+
+**8. Page /plateformes : donnees meta SEO mentionnent "Edge Functions"**
+La meta description (ligne 83) inclut "349 Edge Functions" — a aligner avec le changement de stat.
+
+- Fichier : `src/pages/PlateformesPage.tsx` ligne 83
+- Correction : remplacer "349 Edge Functions" par "1 300+ tests"
 
 ---
 
-### Resume technique des modifications
+### PRIORITE 3 — Ameliorations de finesse
 
-| Fichier | Modification |
-|---|---|
-| `src/pages/PlateformesPage.tsx` l.122 | `bg-hero-gradient` au lieu de `from-primary via-primary` |
-| `src/pages/HomePage.tsx` | Sous-titre Hero + description + labels features FR + stat Edge Functions + CTA final |
-| `src/components/layout/PublicHeader.tsx` | Retirer "SASU" sous le logo |
-| `src/pages/ContactPage.tsx` | Hero `bg-hero-gradient text-white` |
-| `src/pages/VisionPage.tsx` l.148-149 | Stat "99.9%" au lieu de "Haute" |
+**9. Footer : sous-titre "SASU" sans contexte**
+Le footer affiche "SASU" sous le logo (ligne 20) sans description. Le header utilise maintenant "Editeur de logiciels". Le footer devrait etre coherent mais peut garder la mention legale complete.
 
-Total : 5 fichiers, ~15 modifications ponctuelles, zero risque de regression.
+- Fichier : `src/components/layout/PublicFooter.tsx` ligne 20
+- Correction : remplacer par "Editeur de logiciels" pour coherence avec le header, la mention SASU etant deja dans le copyright en bas
+
+**10. Meta titles utilisent "SASU" partout**
+Toutes les pages (PlateformesPage l.80, VisionPage l.8, ContactPage l.22, HomePage l.69) utilisent "EMOTIONSCARE SASU" dans les titres SEO. Pour la coherence de marque publique, le titre devrait etre "EMOTIONSCARE" sans SASU.
+
+- Correction : retirer "SASU" des document.title de toutes les pages publiques
+
+---
+
+### Resume technique
+
+| # | Fichier | Modification |
+|---|---|---|
+| 1 | `PlateformesPage.tsx` l.153, l.389 | "Edge Functions" → "Modules" |
+| 2 | `PlateformesPage.tsx` l.410 | CTA "Acceder au HQ" → "Nous contacter" |
+| 3 | `PlateformesPage.tsx` l.317 | "Edge Fns" → "Fonctions" |
+| 4 | `AuthPage.tsx` l.87-89, l.211-214 | Retirer "SASU" visible |
+| 5 | `AuthPage.tsx` l.107, l.115 | "Espace President" → "Connexion" |
+| 6 | `AuthPage.tsx` l.217-218 | Description accessible |
+| 7 | `AuthPage.tsx` l.232-233 | Stat "infini" → stat concrete |
+| 8 | `PlateformesPage.tsx` l.83 | Meta description sans "Edge Functions" |
+| 9 | `PublicFooter.tsx` l.20 | "SASU" → "Editeur de logiciels" |
+| 10 | 4 fichiers | Retirer "SASU" des document.title |
+
+Total : 4 fichiers, ~20 modifications ponctuelles, zero risque de regression.
 
