@@ -5,13 +5,13 @@ import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket } fr
 export default function VisionPage() {
   // SEO: Update document meta for this page
   useEffect(() => {
-    document.title = "Notre Vision — EMOTIONSCARE SASU";
+    document.title = "Notre Vision — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute("content", "Découvrez la vision et les valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.");
     }
     return () => {
-      document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+      document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
         metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
       }

@@ -19,13 +19,13 @@ export default function ContactPage() {
 
   // SEO: Update document meta for this page
   useEffect(() => {
-    document.title = "Contact — EMOTIONSCARE SASU";
+    document.title = "Contact — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute("content", "Contactez EMOTIONSCARE SASU à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
     }
     return () => {
-      document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+      document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
         metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
       }

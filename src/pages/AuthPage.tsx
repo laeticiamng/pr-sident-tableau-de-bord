@@ -82,11 +82,7 @@ export default function AuthPage() {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-white mb-1">EMOTIONSCARE</h2>
-        <div className="flex items-center justify-center gap-2">
-          <div className="h-px w-8 bg-gradient-to-r from-transparent to-accent/50" />
-          <span className="text-lg font-light text-accent tracking-[0.2em]">SASU</span>
-          <div className="h-px w-8 bg-gradient-to-l from-transparent to-accent/50" />
-        </div>
+        <p className="text-sm text-white/70">Éditeur de logiciels</p>
       </div>
       
       {/* Left Panel - Form */}
@@ -104,7 +100,7 @@ export default function AuthPage() {
                 </div>
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Espace Président</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Connexion</h1>
             <p className="text-muted-foreground text-base sm:text-lg">
               Accédez au siège social numérique
             </p>
@@ -112,7 +108,7 @@ export default function AuthPage() {
 
           {/* Mobile Title */}
           <div className="lg:hidden text-center mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold mb-1">Espace Président</h1>
+            <h1 className="text-xl sm:text-2xl font-bold mb-1">Connexion</h1>
             <p className="text-muted-foreground text-sm sm:text-base">
               Accédez au siège social numérique
             </p>
@@ -208,14 +204,12 @@ export default function AuthPage() {
           <h2 className="text-3xl xl:text-5xl font-bold mb-3 xl:mb-4 animate-slide-up tracking-tight">
             EMOTIONSCARE
           </h2>
-          <div className="flex items-center justify-center gap-3 xl:gap-4 mb-6 xl:mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            <div className="h-px w-10 xl:w-12 bg-gradient-to-r from-transparent to-accent/50" />
-            <span className="text-2xl xl:text-3xl font-light text-accent tracking-[0.3em]">SASU</span>
-            <div className="h-px w-10 xl:w-12 bg-gradient-to-l from-transparent to-accent/50" />
-          </div>
+          <p className="text-base xl:text-lg text-white/60 mb-6 xl:mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+            Éditeur de logiciels
+          </p>
           
           <p className="text-base xl:text-xl text-white/70 mb-8 xl:mb-12 animate-slide-up leading-relaxed px-4" style={{ animationDelay: "0.2s" }}>
-            Votre cockpit exécutif pour piloter les 5 plateformes de l'entreprise avec une précision chirurgicale.
+            Accédez à votre espace de gestion pour piloter vos plateformes et suivre vos indicateurs.
           </p>
           
           {/* Stats */}
@@ -229,8 +223,8 @@ export default function AuthPage() {
               <div className="text-xs xl:text-sm text-white/60">Agents IA</div>
             </div>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">∞</div>
-              <div className="text-xs xl:text-sm text-white/60">Ambition</div>
+              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">24/7</div>
+              <div className="text-xs xl:text-sm text-white/60">Monitoring</div>
             </div>
           </div>
         </div>

@@ -77,13 +77,13 @@ export default function PlateformesPage() {
 
   // SEO: Update document meta for this page
   useEffect(() => {
-    document.title = "Nos Plateformes — EMOTIONSCARE SASU";
+    document.title = "Nos Plateformes — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez les 5 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot et Pixel Perfect Replica. 16K+ commits, 875 tables, 349 Edge Functions.");
+      metaDescription.setAttribute("content", "Découvrez les 5 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot et Pixel Perfect Replica. 16K+ commits, 875 tables, 1 300+ tests.");
     }
     return () => {
-      document.title = "EMOTIONSCARE SASU — Siège Social Numérique";
+      document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
         metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
       }
@@ -150,7 +150,7 @@ export default function PlateformesPage() {
                 { value: formatNumber(totals.commits), label: "Commits" },
                 { value: formatNumber(totals.tests), label: "Tests" },
                 { value: `${totals.tables}`, label: "Tables DB" },
-                { value: `${totals.functions}`, label: "Edge Functions" },
+                { value: `${totals.functions}`, label: "Modules" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -314,7 +314,7 @@ export default function PlateformesPage() {
                           { icon: Database, value: platform.stats.tables, label: "Tables DB" },
                           { icon: TestTube2, value: formatNumber(platform.stats.tests), label: "Tests" },
                           { icon: GitBranch, value: platform.stats.branches, label: "Branches" },
-                          { icon: Cpu, value: platform.stats.edgeFunctions, label: "Edge Fns" },
+                          { icon: Cpu, value: platform.stats.edgeFunctions, label: "Fonctions" },
                           { icon: Layers, value: platform.stats.modules, label: "Modules" },
                         ].map((stat) => (
                           <div 
@@ -386,7 +386,7 @@ export default function PlateformesPage() {
                 { value: formatNumber(totals.commits), label: "Commits", icon: GitCommit },
                 { value: formatNumber(totals.tests), label: "Tests", icon: TestTube2 },
                 { value: `${totals.tables}`, label: "Tables DB", icon: Database },
-                { value: `${totals.functions}`, label: "Edge Functions", icon: Cpu },
+                { value: `${totals.functions}`, label: "Modules", icon: Cpu },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -405,9 +405,9 @@ export default function PlateformesPage() {
             </div>
 
             {/* CTA */}
-            <Link to="/auth">
+            <Link to="/contact">
               <Button variant="hero" size="lg" className="group">
-                Accéder au HQ
+                Nous contacter
                 <ArrowRight className="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>

@@ -17,7 +17,7 @@ export function PublicFooter() {
               </div>
               <div className="flex flex-col">
                 <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-                <span className="text-[10px] sm:text-xs text-muted-foreground">SASU</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">Éditeur de logiciels</span>
               </div>
             </Link>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-4">
