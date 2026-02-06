@@ -266,7 +266,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-1">Retrouvez-nous</h3>
                   <a
-                    href="https://www.linkedin.com/in/laeticia-motongane/"
+                    href="https://www.linkedin.com/in/laeticiamotongane/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-accent hover:underline"
