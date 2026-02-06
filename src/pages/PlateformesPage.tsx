@@ -125,7 +125,7 @@ export default function PlateformesPage() {
         <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-platform-compass/10 rounded-full blur-[120px]" />
         
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--primary-foreground)/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--primary-foreground)/0.05)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(0_0%_100%/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(0_0%_100%/0.05)_1px,transparent_1px)] bg-[size:80px_80px]" />
 
         <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
@@ -134,11 +134,11 @@ export default function PlateformesPage() {
               Écosystème Complet
             </Badge>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-primary-foreground mb-6 leading-[0.95]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[0.95]">
               Nos <span className="text-accent">Plateformes</span>
             </h1>
             
-            <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
               Cinq solutions innovantes, une vision unifiée. 
               Chaque plateforme excelle dans son domaine.
             </p>
@@ -154,13 +154,13 @@ export default function PlateformesPage() {
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-5 md:p-6 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-primary-foreground/10 hover:border-accent/30"
+                  className="p-5 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
                   <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-xs md:text-sm text-primary-foreground/70">
+                  <div className="text-xs md:text-sm text-white/70">
                     {stat.label}
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export default function PlateformesPage() {
       {/* ============================================ */}
       {/* GOVERNANCE SECTION */}
       {/* ============================================ */}
-      <section className="py-20 md:py-32 bg-primary text-primary-foreground relative overflow-hidden">
+      <section className="py-20 md:py-32 bg-primary text-white relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,hsl(var(--accent)/0.1),transparent)]" />
         
@@ -374,7 +374,7 @@ export default function PlateformesPage() {
               <span className="text-accent">Cinq excellences.</span>
             </h2>
             
-            <p className="text-lg md:text-xl text-primary-foreground/80 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl mx-auto">
               Toutes nos plateformes partagent la même infrastructure backend, 
               les mêmes standards de sécurité et la même rigueur d'exécution.
             </p>
@@ -390,14 +390,14 @@ export default function PlateformesPage() {
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
-                  className="p-5 md:p-6 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-primary-foreground/10 hover:border-accent/30"
+                  className="p-5 md:p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:border-accent/30"
                   style={{ animationDelay: `${i * 0.1}s` }}
                 >
                   <stat.icon className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2 md:mb-3 text-accent" />
                   <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-xs md:text-sm text-primary-foreground/70">
+                  <div className="text-xs md:text-sm text-white/70">
                     {stat.label}
                   </div>
                 </div>
