@@ -1,85 +1,123 @@
 
-# Audit C-Suite Complet (12 roles) - Phase 2
 
-## Score Global : 3.8 / 5
+# Audit C-Suite Phase 3 - Elimination finale des donnees fictives
 
-L'audit precedent a corrige 11 fichiers. Il reste **12 composants** contenant des donnees fictives hardcodees, en violation directe de la regle "Interdiction formelle de donnees fictives".
+## Score Global : 4.2 / 5
 
----
-
-## Constat Critique : 12 fichiers avec donnees mock restants
-
-Chaque fichier ci-dessous contient un tableau `const mock*` ou `const STATIC_DATA` avec des donnees inventees affichees a l'ecran comme si elles etaient reelles.
+Phases 1 et 2 ont corrige 23 fichiers. Il reste **20 composants** contenant des donnees fictives hardcodees.
 
 ---
 
-## Corrections a appliquer
+## Inventaire des 20 fichiers restants
 
-Chaque composant sera converti en etat "Connexion requise" avec indication explicite de la source de donnees manquante, ou connecte aux donnees reelles quand elles existent.
+### Categorie A : Composants avec donnees fictives presentees comme reelles (CRITIQUE - 14 fichiers)
 
-### Fichier 1 : `src/components/hq/finance/RevenueBreakdown.tsx`
-- **Probleme** : `mockRevenueSources` avec 4 plateformes et revenus inventes (12 500, 8 200, etc.)
-- **Correction** : Etat "Connexion Stripe requise" — la repartition par plateforme n'est pas disponible via l'API Stripe actuelle (qui ne distingue pas les produits par plateforme)
+Ces composants affichent des chiffres inventes sans aucune indication qu'il s'agit de donnees fictives.
 
-### Fichier 2 : `src/components/hq/marketing/CampaignPerformance.tsx`
-- **Probleme** : `mockCampaigns` avec 3 campagnes inventees (budgets, leads, CPL fictifs)
-- **Correction** : Etat "Connexion Marketing requise" (GA4 / HubSpot)
+| # | Fichier | Donnees fictives | Correction |
+|---|---------|-----------------|------------|
+| 1 | `entreprise/StrategicGoals.tsx` | 3 objectifs OKR inventes (72%, 45%, 88%) | Etat vide "Aucun objectif configure" |
+| 2 | `entreprise/QuarterlyObjectives.tsx` | 5 objectifs Q1 inventes (MRR 45200, etc.) | Etat vide "Aucun objectif Q1 configure" |
+| 3 | `diagnostics/LiveActivityStream.tsx` | `generateMockEvent()` generant des evenements aleatoires en boucle | Connecter aux audit_logs reels via Supabase Realtime ou afficher etat vide |
+| 4 | `marketing/ContentCalendar.tsx` | 6 contenus inventes (articles, posts, webinars) | Etat vide "Calendrier non configure" |
+| 5 | `engineering/PullRequestsWidget.tsx` | 4 PRs inventees (titres, repos, auteurs fictifs) | Etat vide "Connexion GitHub requise" |
+| 6 | `support/TicketTrendChart.tsx` | 5 semaines de tendance tickets inventees | Etat vide "Connexion Support requise" |
+| 7 | `support/SLAMonitor.tsx` | 4 metriques SLA inventees (95%, 92%, etc.) | Etat vide "Connexion Support requise" |
+| 8 | `rh/OnboardingTracker.tsx` | 5 agents onboarding inventes | Connecter aux agents reels via `get_hq_agents` |
+| 9 | `rh/TrainingCompletionWidget.tsx` | 5 modules de formation inventes | Etat vide "Aucune formation configuree" |
+| 10 | `rh/TeamPerformanceMetrics.tsx` | 4 metriques performance inventees (1247 taches, etc.) | Etat vide "Metriques non disponibles" |
+| 11 | `sales/WinLossWidget.tsx` | Pipeline fictif (24 wins, 8 losses, 4850 EUR) | Etat vide "Connexion CRM requise" |
+| 12 | `meetings/MeetingNotes.tsx` | 3 comptes-rendus inventes | Etat vide "Aucune note de reunion" |
+| 13 | `meetings/UpcomingMeetings.tsx` | 4 reunions inventees | Etat vide "Aucune reunion planifiee" |
+| 14 | `meetings/ParticipationIndicator.tsx` | Taux de participation inventes (94%, etc.) | Etat vide "Donnees de participation non disponibles" |
 
-### Fichier 3 : `src/components/hq/conformite/ComplianceAlerts.tsx`
-- **Probleme** : `COMPLIANCE_ALERTS` avec 4 alertes conformite statiques
-- **Correction** : Etat "Configuration Compliance requise" — ces alertes devraient provenir d'un calendrier reglementaire en base de donnees
+### Categorie B : Graphiques/Charts avec donnees par defaut fictives (MAJEUR - 6 fichiers)
 
-### Fichier 4 : `src/components/hq/product/FeatureRequests.tsx`
-- **Probleme** : `mockRequests` avec 3 demandes inventees (votes, statuts fictifs)
-- **Correction** : Etat "Connexion Produit requise" (Jira / Linear / Canny)
+Ces composants acceptent des `data` en props mais ont un fallback DEFAULT_DATA fictif.
 
-### Fichier 5 : `src/components/hq/rh/PerformanceReview.tsx`
-- **Probleme** : `mockEmployees` avec 3 agents et notes fictives
-- **Correction** : Connecter aux agents reels en DB via `get_hq_agents` RPC, afficher les agents avec un etat "Evaluation non configuree"
+| # | Fichier | Donnees fictives | Correction |
+|---|---------|-----------------|------------|
+| 15 | `charts/ConversionFunnelChart.tsx` | DEFAULT_FUNNEL (10000 visiteurs, 2500 inscriptions...) | Remplacer default par `[]` + etat vide |
+| 16 | `charts/ARPUTrendChart.tsx` | DEFAULT_DATA (6 mois ARPU invente) | Remplacer default par `[]` + etat vide |
+| 17 | `charts/MRRChart.tsx` | DEFAULT_DATA (6 mois MRR invente) | Remplacer default par `[]` + etat vide |
+| 18 | `data/LTVSegmentChart.tsx` | SEGMENT_DATA (Enterprise 2400, Pro 890...) | Etat vide "Connexion Analytics requise" |
+| 19 | `data/CohortRetentionTable.tsx` | DEFAULT_COHORT_DATA (5 cohortes inventees) | Remplacer default par `[]` + etat vide |
+| 20 | `data/CohortAnalysis.tsx` | COHORT_DATA (5 cohortes inventees) | Etat vide "Connexion Analytics requise" |
+| | `data/FeatureAdoptionChart.tsx` | FEATURE_USAGE_DATA (8 features inventees) | Etat vide "Donnees d'adoption non disponibles" |
+| | `platforms/PlatformUptimeChart.tsx` | DEFAULT_DATA (7 jours uptime invente) | Remplacer default par `[]` + etat vide |
+| | `finance/CashFlowForecast.tsx` | DEFAULT_DATA (5 mois cashflow invente) | Remplacer default par `[]` + etat vide |
+| | `finance/UnitEconomicsDisplay.tsx` | DEFAULT_DATA (CAC 52, LTV 487...) | Supprimer default, exiger data en props |
 
-### Fichier 6 : `src/components/hq/support/EscalationQueue.tsx`
-- **Probleme** : `mockEscalations` avec 2 tickets fictifs
-- **Correction** : Etat "Connexion Support requise" (Zendesk / Intercom)
+**Note** : Le total reel est 24 fichiers a corriger (14 categorie A + 10 categorie B).
 
-### Fichier 7 : `src/components/hq/security/VulnerabilityScanner.tsx`
-- **Probleme** : `mockVulnerabilities` avec 2 vulnerabilites inventees
-- **Correction** : Le scan simule un progres sans resultat reel. Etat "Aucun scan effectue" avec indication que le scan de securite Lovable est disponible dans les parametres
+---
 
-### Fichier 8 : `src/components/hq/data/UserSegmentation.tsx`
-- **Probleme** : `mockSegments` avec 4 segments inventes (Enterprise, Pro, Starter, Free Trial)
-- **Correction** : Etat "Connexion Analytics requise" (Stripe Billing / GA4)
+### Composant deja correct (pas de mock)
 
-### Fichier 9 : `src/components/hq/briefing/RecentActivityFeed.tsx`
-- **Probleme** : `mockActivities` avec 5 activites inventees
-- **Correction** : Connecter au journal d'audit reel via `get_hq_audit_logs` RPC (les donnees existent en DB)
-
-### Fichier 10 : `src/components/hq/engineering/DeploymentStatus.tsx`
-- **Probleme** : `mockDeployments` avec 3 deploiements inventes (versions, commits fictifs)
-- **Correction** : Etat "Connexion CI/CD requise" (GitHub Actions / Vercel)
-
-### Fichier 11 : `src/components/hq/meetings/ActionItems.tsx`
-- **Probleme** : `ACTION_ITEMS` avec 5 actions fictives
-- **Correction** : Etat "Aucune action enregistree" — les actions de reunion devraient provenir d'une table dediee ou d'un outil de gestion de projet
-
-### Fichier 12 : `src/components/hq/platforms/MultiPlatformUptimeChart.tsx`
-- **Probleme** : `mockData` declare (lignes 15-23) mais jamais utilise grace au fix precedent qui gere `!data`. Le code mort reste dans le fichier.
-- **Correction** : Supprimer la declaration `mockData` inutilisee
+- `security/SecretsRegistry.tsx` : Les noms de secrets sont des constantes legitimes (liste reelle des secrets configures dans le projet)
+- `security/RLSAuditTable.tsx` : Les tables HQ listees sont les vraies tables du schema `hq`
+- `product/OKRProgress.tsx` : Deja corrige, affiche etat vide "Aucun OKR configure"
+- `charts/SalesPipelineChart.tsx` : Deja corrige, default a `[]` avec etat vide
 
 ---
 
 ## Strategie de correction
 
-Pour chaque fichier, le pattern applique est :
+Le pattern uniforme applique a chaque fichier :
 
 ```text
-1. Supprimer le tableau mock/static
-2. Si une source reelle existe en DB (audit_logs, agents) -> connecter via useQuery/RPC
-3. Si aucune source reelle -> afficher un etat vide "Connexion [Source] requise"
-   avec icone Link2, texte explicatif, et Badge indiquant la source attendue
+1. Supprimer le tableau const MOCK/DEFAULT_DATA
+2. Si une source reelle existe en DB -> connecter via useQuery/RPC
+3. Sinon -> afficher un etat vide avec :
+   - Icone Database ou Link2
+   - Titre "Connexion [Source] requise" ou "Aucune donnee configuree"
+   - Badge indiquant la source attendue
+   - Style border-dashed border-2 border-muted-foreground/20
+```
+
+Pour les composants acceptant `data` en props (charts) :
+- Changer le default de `data = DEFAULT_DATA` a `data` (optionnel)
+- Ajouter un rendu conditionnel si `!data || data.length === 0`
+
+### Connexions reelles possibles (2 fichiers)
+- `OnboardingTracker.tsx` : connecter a `get_hq_agents` RPC
+- `LiveActivityStream.tsx` : connecter a `get_hq_audit_logs` RPC avec polling
+
+---
+
+## Section Technique
+
+### Fichiers a modifier (24 fichiers)
+
+```text
+src/components/hq/entreprise/StrategicGoals.tsx
+src/components/hq/entreprise/QuarterlyObjectives.tsx
+src/components/hq/diagnostics/LiveActivityStream.tsx
+src/components/hq/marketing/ContentCalendar.tsx
+src/components/hq/engineering/PullRequestsWidget.tsx
+src/components/hq/support/TicketTrendChart.tsx
+src/components/hq/support/SLAMonitor.tsx
+src/components/hq/rh/OnboardingTracker.tsx
+src/components/hq/rh/TrainingCompletionWidget.tsx
+src/components/hq/rh/TeamPerformanceMetrics.tsx
+src/components/hq/sales/WinLossWidget.tsx
+src/components/hq/meetings/MeetingNotes.tsx
+src/components/hq/meetings/UpcomingMeetings.tsx
+src/components/hq/meetings/ParticipationIndicator.tsx
+src/components/hq/charts/ConversionFunnelChart.tsx
+src/components/hq/charts/ARPUTrendChart.tsx
+src/components/hq/charts/MRRChart.tsx
+src/components/hq/data/LTVSegmentChart.tsx
+src/components/hq/data/CohortRetentionTable.tsx
+src/components/hq/data/CohortAnalysis.tsx
+src/components/hq/data/FeatureAdoptionChart.tsx
+src/components/hq/platforms/PlatformUptimeChart.tsx
+src/components/hq/finance/CashFlowForecast.tsx
+src/components/hq/finance/UnitEconomicsDisplay.tsx
 ```
 
 ### Dependances
 Aucune nouvelle dependance.
 
 ### Risque
-Faible. Les widgets afficheront des etats vides explicites au lieu de donnees fictives. Les 2 composants connectes aux donnees reelles (RecentActivityFeed, PerformanceReview) utiliseront les RPC existantes.
+Faible. Les widgets afficheront des etats vides explicites. Les 2 composants connectes aux donnees reelles (OnboardingTracker, LiveActivityStream) utiliseront les RPC existantes deja testees.
