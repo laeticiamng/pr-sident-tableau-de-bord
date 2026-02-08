@@ -21,7 +21,7 @@ export function PublicFooter() {
               </div>
             </Link>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-4">
-              Siège social numérique pilotant 5 plateformes innovantes. 
+              Siège social numérique pilotant 7 plateformes innovantes. 
               Éditeur de logiciels applicatifs basé à Amiens.
             </p>
             {/* Theme Toggle */}
