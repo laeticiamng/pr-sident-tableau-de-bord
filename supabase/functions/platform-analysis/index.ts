@@ -14,10 +14,10 @@ const PLATFORMS = [
     name: "EmotionsCare"
   },
   { 
-    key: "pixel-perfect-replica", 
-    repo: "laeticiamng/pixel-perfect-replica",
+    key: "nearvity", 
+    repo: "laeticiamng/nearvity",
     liveUrl: "https://pixel-perfect-clone-6574.lovable.app",
-    name: "Pixel Perfect Replica"
+    name: "NEARVITY"
   },
   { 
     key: "system-compass", 
