@@ -1,113 +1,55 @@
 
 
-## Audit Detaille -- Navigation Reelle de Chaque Page
+## Ajout de 2 nouvelles plateformes au registre EMOTIONSCARE
 
-### Methodologie
-Navigation reelle effectuee sur chaque route (desktop 1920x1080 + mobile 390x844), verification console errors, linter RLS, et tracking analytique en base.
+### Contexte
+Le registre passe de **5 a 7 plateformes**. Cela impacte 7 fichiers et necessite 2 nouvelles couleurs semantiques.
 
----
+### Plateformes a ajouter
 
-### 1. Page Accueil (`/`)
+**1. Swift Care Hub** (prototype - solution urgences hopitaux)
+- Key: `swift-care-hub`
+- Description: Plateforme innovante dediee aux urgences hospitalieres. Triage intelligent, gestion des flux patients en temps reel, coordination des equipes soignantes et analytics de performance.
+- Tagline: "Chaque seconde compte aux urgences"
+- GitHub: `https://github.com/laeticiamng/swift-care-hub`
+- Statut: prototype (d'apres ta reponse "1 prototype + 1 production")
 
-**Desktop** : Hero avec gradient premium, titre "EMOTIONSCARE", sous-titre "Editeur de logiciels SaaS", 1 CTA "Decouvrir les plateformes" fonctionnel. Section features, showcase plateformes, stats, footer complet.
-**Mobile** : Rendu propre, CTA pleine largeur, pas de chevauchement.
-**Boutons** : CTA Hero → `/plateformes` (OK). Header : Plateformes, Vision, Contact, Se connecter (tous OK). Footer : 4 liens legaux + LinkedIn (tous OK).
-**Verdict** : OK -- 0 probleme
+**2. Track Triumph Tavern** (production)
+- Key: `track-triumph-tavern`  
+- Description: A definir depuis le README (stats, fonctionnalites, etc.)
+- GitHub: `https://github.com/laeticiamng/track-triumph-tavern`
+- Statut: production
 
----
-
-### 2. Page Plateformes (`/plateformes`)
-
-**Desktop** : Hero + 5 cartes plateformes avec descriptions, statuts, liens externes.
-**Mobile** : Cartes empilees verticalement, lisibles.
-**Boutons/Liens** : Liens externes vers les plateformes (OK). CTA de contact (OK).
-**Verdict** : OK -- 0 probleme
-
----
-
-### 3. Page Vision (`/vision`)
-
-**Desktop** : Hero + Valeurs + Mission + Engagements + Timeline.
-**Mobile** : Contenu lisible, spacing correct.
-**Boutons** : Page informative sans CTA interactif -- normal.
-**Verdict** : OK -- 0 probleme
+> **NOTE IMPORTANTE** : Les repos sont prives et inaccessibles. Les descriptions, taglines, stats (commits, tables, edge functions, tests) et URLs live seront remplis avec des valeurs placeholder. **Tu devras me fournir ces informations** pour que les fiches soient exactes, ou copier-coller les READMEs dans le chat apres approbation.
 
 ---
 
-### 4. Page Contact (`/contact`)
+### Fichiers impactes
 
-**Desktop** : Formulaire (nom, email, sujet, message) + coordonnees + lien LinkedIn.
-**Mobile** : Formulaire responsive, champs pleine largeur.
-**Boutons** : Submit fonctionnel (Edge Function backend + toast feedback). LinkedIn lien OK.
-**Etats UI** : Loading (spinner pendant envoi), Success (toast), Error (toast + validation Zod).
-**Verdict** : OK -- 0 probleme
+| # | Fichier | Modification |
+|---|---------|-------------|
+| 1 | `src/lib/constants.ts` | Ajouter les 2 plateformes au tableau `MANAGED_PLATFORMS`, mettre a jour le commentaire (5 → 7) |
+| 2 | `src/index.css` | Ajouter 2 couleurs CSS : `--platform-emergency` (rouge urgence) et `--platform-triumph` (orange/dore) |
+| 3 | `tailwind.config.ts` | Ajouter `emergency` et `triumph` dans `platform` colors |
+| 4 | `src/components/home/PlatformShowcase.tsx` | Ajouter les 2 cles dans les maps `platformIcons`, `platformGradients`, `platformAccents`, `platformBorders`, `platformBgAccents`. Mettre a jour le texte "Cinq plateformes" → "Sept plateformes". Ajuster le grid (4 → 6 cards sous le hero) |
+| 5 | `src/pages/PlateformesPage.tsx` | Ajouter les 2 cles dans les maps d'icones/couleurs. Mettre a jour texte "Cinq" → "Sept", meta SEO "5 plateformes" → "7 plateformes" |
+| 6 | `src/pages/HomePage.tsx` | Mettre a jour "5 Plateformes" → "7 Plateformes" |
+| 7 | `src/test/components.test.tsx` | Mettre a jour le test pour passer de 5 → 7 plateformes, ajouter les 2 nouvelles cles |
+| 8 | `src/pages/hq/HQPlateformesPage.tsx` | Aucune modification necessaire (dynamique via `usePlatforms()` + `MANAGED_PLATFORMS`) |
 
----
+### Icones Lucide choisies
+- **Swift Care Hub** : `Siren` ou `HeartPulse` (urgences medicales)
+- **Track Triumph Tavern** : `Trophy` (triomphe/performance)
 
-### 5. Page Auth (`/auth`)
+### Couleurs semantiques
+- `--platform-emergency` : rouge urgence ~`0 85% 45%` (HSL)
+- `--platform-triumph` : dore/ambre ~`32 90% 50%` (HSL)
 
-**Desktop** : Split layout -- formulaire login a gauche, branding premium a droite.
-**Mobile** : Header branding compact + formulaire centre.
-**Boutons** : "Se connecter" fonctionnel (Supabase Auth). Validation Zod (email + mot de passe 6 chars min).
-**Securite** : Pas de signup public (login only), messages d'erreur generiques.
-**Verdict** : OK -- 0 probleme
+### Section technique
 
----
-
-### 6. Mentions Legales (`/legal/mentions`)
-
-**Desktop/Mobile** : Contenu juridique complet, bien structure avec sections.
-**Verdict** : OK -- 0 probleme
-
----
-
-### 7. Politique Confidentialite (`/legal/confidentialite`)
-
-**Desktop/Mobile** : Politique complete, sections claires.
-**Verdict** : OK -- 0 probleme
-
----
-
-### 8. CGV (`/legal/cgv`)
-
-**Desktop/Mobile** : Conditions generales completes.
-**Verdict** : OK -- 0 probleme
-
----
-
-### 9. Registre RGPD (`/legal/rgpd`)
-
-**Desktop/Mobile** : Registre des traitements affiche.
-**Verdict** : OK -- 0 probleme
-
----
-
-### 10. Page 404 (`/this-page-does-not-exist`)
-
-**Desktop/Mobile** : Icone avertissement + "Page introuvable" + affichage URL tentee + bouton "Retour a l'accueil".
-**Bouton** : Retour accueil fonctionnel.
-**Verdict** : OK -- 0 probleme
-
----
-
-### 11. Verifications Transversales
-
-| Critere | Resultat |
-|---|---|
-| Console errors | **0 erreur** (0 warning bloquant) |
-| RLS Linter | **1 warning** : INSERT `true` sur `analytics_events` -- choix architectural documente (tracking anonyme) |
-| Analytics tracking | **Operationnel** -- chaque navigation genere un `page_view` en base avec `page_path`, `session_id`, `user_agent` |
-| Mobile responsive | **Verifie** -- 390x844 sans chevauchement ni overflow |
-| Liens morts | **0** |
-| Boutons sans action | **0** |
-| Securite | RLS toutes tables, JWT Edge Functions, Zod validation, rate limiting |
-| RGPD | 4 pages legales accessibles depuis footer |
-
----
-
-### 12. Verdict Final
-
-**READY TO PUBLISH = OUI**
-
-0 correction necessaire. Les 10 routes publiques + 404 sont fonctionnelles, responsives, securisees et trackees. Aucun deal-breaker identifie.
+Les modifications suivent le pattern existant :
+1. Chaque plateforme a une entree `as const` dans `MANAGED_PLATFORMS` avec `key`, `name`, `shortDescription`, `description`, `tagline`, `github`, `liveUrl`, `color`, `stats`, `features`, `status`, `lastCommit`
+2. Chaque composant UI utilise des dictionnaires `Record<string, string>` pour mapper les cles aux couleurs/icones
+3. Le type `PlatformKey` est automatiquement derive du tableau, donc il s'etendra naturellement
+4. Les totaux (commits, tables, tests) sont calcules dynamiquement via `reduce`
 
