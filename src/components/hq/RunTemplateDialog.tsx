@@ -56,7 +56,7 @@ export function RunTemplateDialog({ open, onOpenChange, preselectedTemplate }: R
   // Platform options for platform-type variables
   const platformOptions = [
     { value: "emotionscare", label: "EmotionsCare" },
-    { value: "pixel-perfect-replica", label: "Pixel Perfect Replica" },
+    { value: "nearvity", label: "NEARVITY" },
     { value: "system-compass", label: "System Compass" },
     { value: "growth-copilot", label: "Growth Copilot" },
     { value: "med-mng", label: "Med MNG" },

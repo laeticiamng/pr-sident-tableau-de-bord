@@ -35,7 +35,7 @@ const statusLabels = {
 // Icon mapping for each platform
 const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "emotionscare": Heart,
-  "pixel-perfect-replica": Users,
+  "nearvity": Users,
   "system-compass": Compass,
   "growth-copilot": Rocket,
   "med-mng": Music,
@@ -46,7 +46,7 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
 // Platform accent colors (semantic tokens)
 const platformAccents: Record<string, string> = {
   "emotionscare": "text-platform-health",
-  "pixel-perfect-replica": "text-platform-social",
+  "nearvity": "text-platform-social",
   "system-compass": "text-platform-compass",
   "growth-copilot": "text-platform-growth",
   "med-mng": "text-platform-medical",
@@ -56,7 +56,7 @@ const platformAccents: Record<string, string> = {
 
 const platformBgAccents: Record<string, string> = {
   "emotionscare": "bg-platform-health",
-  "pixel-perfect-replica": "bg-platform-social",
+  "nearvity": "bg-platform-social",
   "system-compass": "bg-platform-compass",
   "growth-copilot": "bg-platform-growth",
   "med-mng": "bg-platform-medical",
@@ -66,7 +66,7 @@ const platformBgAccents: Record<string, string> = {
 
 const platformGradients: Record<string, string> = {
   "emotionscare": "from-platform-health/20 via-platform-health/5 to-transparent",
-  "pixel-perfect-replica": "from-platform-social/20 via-platform-social/5 to-transparent",
+  "nearvity": "from-platform-social/20 via-platform-social/5 to-transparent",
   "system-compass": "from-platform-compass/20 via-platform-compass/5 to-transparent",
   "growth-copilot": "from-platform-growth/20 via-platform-growth/5 to-transparent",
   "med-mng": "from-platform-medical/20 via-platform-medical/5 to-transparent",
@@ -76,7 +76,7 @@ const platformGradients: Record<string, string> = {
 
 const platformBorders: Record<string, string> = {
   "emotionscare": "hover:border-platform-health/40",
-  "pixel-perfect-replica": "hover:border-platform-social/40",
+  "nearvity": "hover:border-platform-social/40",
   "system-compass": "hover:border-platform-compass/40",
   "growth-copilot": "hover:border-platform-growth/40",
   "med-mng": "hover:border-platform-medical/40",
@@ -92,7 +92,7 @@ export default function PlateformesPage() {
     document.title = "Nos Plateformes — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, Pixel Perfect Replica, Swift Care Hub et Track Triumph Tavern.");
+      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, Swift Care Hub et Track Triumph Tavern.");
     }
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";

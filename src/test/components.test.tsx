@@ -93,7 +93,7 @@ describe("Constants Validation", () => {
   it("should have exactly 7 managed platforms", () => {
     const MANAGED_PLATFORMS = [
       "emotionscare",
-      "pixel-perfect-replica",
+      "nearvity",
       "system-compass",
       "growth-copilot",
       "med-mng",
@@ -107,7 +107,7 @@ describe("Constants Validation", () => {
   it("should have all platform keys as valid strings", () => {
     const MANAGED_PLATFORMS = [
       "emotionscare",
-      "pixel-perfect-replica",
+      "nearvity",
       "system-compass",
       "growth-copilot",
       "med-mng",

@@ -193,7 +193,7 @@ export default function VisionPage() {
                 <h3 className="text-xl font-semibold mb-2">Lancement des premières plateformes</h3>
                 <p className="text-muted-foreground">
                   Développement et mise en production de l'écosystème fondateur : 
-                  EmotionsCare, Pixel Perfect Replica, System Compass, Growth Copilot et Med MNG.
+                  EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG.
                 </p>
               </div>
               <div className="relative">

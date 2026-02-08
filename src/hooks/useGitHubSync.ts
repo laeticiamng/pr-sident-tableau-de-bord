@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 // The 5 managed repositories
 const MANAGED_REPOS = [
   { key: "emotionscare", repo: "laeticiamng/emotionscare" },
-  { key: "pixel-perfect-replica", repo: "laeticiamng/pixel-perfect-replica" },
+  { key: "nearvity", repo: "laeticiamng/nearvity" },
   { key: "system-compass", repo: "laeticiamng/system-compass" },
   { key: "growth-copilot", repo: "laeticiamng/growth-copilot" },
   { key: "med-mng", repo: "laeticiamng/med-mng" },

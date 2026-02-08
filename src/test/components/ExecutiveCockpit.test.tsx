@@ -20,7 +20,7 @@ vi.mock("@/hooks/usePlatformMonitor", () => ({
         { key: "med-mng", status: "amber", responseTime: 800, error: "Latence élevée" },
         { key: "system-compass", status: "green", responseTime: 150, error: null },
         { key: "growth-copilot", status: "green", responseTime: 220, error: null },
-        { key: "pixel-perfect-replica", status: "green", responseTime: 180, error: null },
+        { key: "nearvity", status: "green", responseTime: 180, error: null },
       ],
     },
     isLoading: false,

@@ -82,7 +82,7 @@ export const approvalSchema = z.object({
 // Platform key validation
 export const platformKeySchema = z.enum([
   "emotionscare",
-  "pixel-perfect-replica",
+  "nearvity",
   "system-compass",
   "growth-copilot",
   "med-mng",
