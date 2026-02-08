@@ -159,10 +159,10 @@ export default function PlateformesPage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
                 { value: "7", label: "Plateformes" },
-                { value: formatNumber(totals.commits), label: "Commits" },
+                { value: formatNumber(totals.commits), label: "Évolutions" },
                 { value: formatNumber(totals.tests), label: "Tests" },
-                { value: `${totals.tables}`, label: "Tables DB" },
-                { value: `${totals.functions}`, label: "Modules" },
+                { value: `${totals.tables}`, label: "Structures" },
+                { value: `${totals.functions}`, label: "Intégrations" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -322,11 +322,11 @@ export default function PlateformesPage() {
                     <div className={cn(!isEven && "md:order-1")}>
                       <div className="grid grid-cols-3 md:grid-cols-2 gap-3 md:gap-4">
                         {[
-                          { icon: GitCommit, value: formatNumber(platform.stats.commits), label: "Commits" },
-                          { icon: Database, value: platform.stats.tables, label: "Tables DB" },
+                          { icon: GitCommit, value: formatNumber(platform.stats.commits), label: "Évolutions" },
+                          { icon: Database, value: platform.stats.tables, label: "Structures" },
                           { icon: TestTube2, value: formatNumber(platform.stats.tests), label: "Tests" },
-                          { icon: GitBranch, value: platform.stats.branches, label: "Branches" },
-                          { icon: Cpu, value: platform.stats.edgeFunctions, label: "Fonctions" },
+                          { icon: GitBranch, value: platform.stats.branches, label: "Versions" },
+                          { icon: Cpu, value: platform.stats.edgeFunctions, label: "Intégrations" },
                           { icon: Layers, value: platform.stats.modules, label: "Modules" },
                         ].map((stat) => (
                           <div 
@@ -395,10 +395,10 @@ export default function PlateformesPage() {
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-12">
               {[
                 { value: "7", label: "Plateformes", icon: Layers },
-                { value: formatNumber(totals.commits), label: "Commits", icon: GitCommit },
+                { value: formatNumber(totals.commits), label: "Évolutions", icon: GitCommit },
                 { value: formatNumber(totals.tests), label: "Tests", icon: TestTube2 },
-                { value: `${totals.tables}`, label: "Tables DB", icon: Database },
-                { value: `${totals.functions}`, label: "Modules", icon: Cpu },
+                { value: `${totals.tables}`, label: "Structures", icon: Database },
+                { value: `${totals.functions}`, label: "Intégrations", icon: Cpu },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
