@@ -78,7 +78,7 @@ export const MANAGED_PLATFORMS = [
     description: "Plateforme complète dédiée aux urgences hospitalières. Triage intelligent par IA, gestion des flux patients en temps réel, coordination des équipes soignantes et analytics de performance. Optimisation des temps d'attente et alertes critiques.",
     tagline: "Chaque seconde compte aux urgences",
     github: "https://github.com/laeticiamng/swift-care-hub",
-    liveUrl: "https://swift-care-hub.lovable.app",
+    liveUrl: "https://flow-pulse-assist.lovable.app",
     color: "bg-destructive",
     stats: { modules: 8, tables: 12, edgeFunctions: 6, branches: 3, commits: 320, tests: 45 },
     features: ["Triage IA intelligent", "Flux patients temps réel", "Coordination équipes", "Analytics urgences", "Alertes critiques"],
