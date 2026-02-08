@@ -190,10 +190,10 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                   {/* Right — Stats Grid - Real GitHub Stats */}
                   <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
                     {[
-                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: "Commits", suffix: "" },
-                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: "Tables", suffix: "" },
+                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: "Évolutions", suffix: "" },
+                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: "Structures", suffix: "" },
                       { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: "Tests", suffix: "" },
-                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: "Branches", suffix: "" },
+                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: "Versions", suffix: "" },
                     ].map((stat) => (
                       <div 
                         key={stat.label}
@@ -277,9 +277,9 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
 
                       {/* Stats Row - Real GitHub Stats */}
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
-                        <span>{platform.stats.commits > 0 ? (platform.stats.commits > 1000 ? `${(platform.stats.commits / 1000).toFixed(1)}K` : platform.stats.commits) : "0"}</span>
+                        <span>{platform.stats.modules} modules</span>
                         <span className="hidden md:inline">•</span>
-                        <span className="hidden md:inline">{platform.stats.tables} tables</span>
+                        <span className="hidden md:inline">{platform.stats.tables} structures</span>
                       </div>
 
                       {/* Action Buttons */}
