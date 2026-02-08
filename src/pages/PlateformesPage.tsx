@@ -92,7 +92,7 @@ export default function PlateformesPage() {
     document.title = "Nos Plateformes — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, Swift Care Hub et Track Triumph Tavern.");
+      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, UrgenceOS et Track Triumph.");
     }
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";

@@ -214,7 +214,11 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="flex flex-col gap-8">
               <div>
-                <h2 className="text-2xl font-semibold mb-6">Nos coordonnées</h2>
+              <h2 className="text-2xl font-semibold mb-4">Nous sommes à votre écoute</h2>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/20 text-success text-sm font-medium mb-6">
+                  <Clock className="h-4 w-4" />
+                  Réponse garantie sous 48h
+                </div>
                 <p className="text-muted-foreground mb-8">
                   N'hésitez pas à nous contacter directement. Nous répondons 
                   généralement sous 24 à 48 heures ouvrées.
@@ -301,11 +305,15 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="mt-4 rounded-xl bg-gradient-to-br from-accent/5 to-transparent border h-48 flex flex-col items-center justify-center">
-                <div className="text-4xl mb-2">📍</div>
-                <p className="text-foreground font-medium">Amiens, Hauts-de-France</p>
-                <p className="text-muted-foreground text-sm">Préfecture de la Somme</p>
+              {/* Map Stylisée */}
+              <div className="mt-4 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-border/60 h-52 flex flex-col items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                <div className="relative z-10 text-center">
+                  <MapPin className="h-8 w-8 text-accent mx-auto mb-2" />
+                  <p className="text-foreground font-semibold text-lg">Amiens, Hauts-de-France</p>
+                  <p className="text-muted-foreground text-sm">49.8941° N, 2.2958° E</p>
+                  <p className="text-muted-foreground text-xs mt-1">Préfecture de la Somme</p>
+                </div>
               </div>
             </div>
           </div>
