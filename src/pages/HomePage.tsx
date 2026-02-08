@@ -69,7 +69,7 @@ export default function HomePage() {
     document.title = "EMOTIONSCARE — Siège Social Numérique";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens. 16K+ commits, 1 300+ tests.");
+      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.");
     }
   }, []);
 
@@ -107,7 +107,7 @@ export default function HomePage() {
               Éditeur de logiciels SaaS — Santé, Éducation, International
             </p>
             <p className="text-base sm:text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
-              5 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance et le social
+              7 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences et la performance
             </p>
 
             {/* CTA Buttons */}
@@ -193,7 +193,7 @@ export default function HomePage() {
                 Écosystème
               </p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-                5 Plateformes <span className="text-accent">Managées</span>
+                7 Plateformes <span className="text-accent">Managées</span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Un portefeuille cohérent de solutions logicielles, toutes pilotées depuis le siège numérique
@@ -262,7 +262,7 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: "5", label: "Plateformes" },
+              { value: "7", label: "Plateformes" },
               { value: "1 300+", label: "Tests automatisés" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
@@ -298,7 +298,7 @@ export default function HomePage() {
               Explorez l'écosystème
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-              Découvrez nos 5 plateformes innovantes et comment elles transforment leurs secteurs.
+              Découvrez nos 7 plateformes innovantes et comment elles transforment leurs secteurs.
             </p>
             
             <Link to="/plateformes">

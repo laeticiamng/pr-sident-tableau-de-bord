@@ -16,7 +16,9 @@ import {
   GitBranch,
   Sparkles,
   GitCommit,
-  TestTube2
+  TestTube2,
+  HeartPulse,
+  Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +29,8 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
   "system-compass": Compass,
   "growth-copilot": Rocket,
   "med-mng": Music,
+  "swift-care-hub": HeartPulse,
+  "track-triumph-tavern": Trophy,
 };
 
 // Unique gradient for each platform (using semantic tokens via opacity)
@@ -36,6 +40,8 @@ const platformGradients: Record<string, string> = {
   "system-compass": "from-platform-compass/20 via-platform-compass/10 to-transparent",
   "growth-copilot": "from-platform-growth/20 via-platform-growth/10 to-transparent",
   "med-mng": "from-platform-medical/20 via-platform-medical/10 to-transparent",
+  "swift-care-hub": "from-platform-emergency/20 via-platform-emergency/10 to-transparent",
+  "track-triumph-tavern": "from-platform-triumph/20 via-platform-triumph/10 to-transparent",
 };
 
 // Accent colors per platform (semantic tokens)
@@ -45,6 +51,8 @@ const platformAccents: Record<string, string> = {
   "system-compass": "text-platform-compass",
   "growth-copilot": "text-platform-growth",
   "med-mng": "text-platform-medical",
+  "swift-care-hub": "text-platform-emergency",
+  "track-triumph-tavern": "text-platform-triumph",
 };
 
 const platformBorders: Record<string, string> = {
@@ -53,6 +61,8 @@ const platformBorders: Record<string, string> = {
   "system-compass": "group-hover:border-platform-compass/30",
   "growth-copilot": "group-hover:border-platform-growth/30",
   "med-mng": "group-hover:border-platform-medical/30",
+  "swift-care-hub": "group-hover:border-platform-emergency/30",
+  "track-triumph-tavern": "group-hover:border-platform-triumph/30",
 };
 
 const platformBgAccents: Record<string, string> = {
@@ -61,6 +71,8 @@ const platformBgAccents: Record<string, string> = {
   "system-compass": "bg-platform-compass",
   "growth-copilot": "bg-platform-growth",
   "med-mng": "bg-platform-medical",
+  "swift-care-hub": "bg-platform-emergency",
+  "track-triumph-tavern": "bg-platform-triumph",
 };
 
 export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
@@ -82,7 +94,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
               Écosystème Premium
             </Badge>
             <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-3 sm:mb-4 md:mb-6 px-1 sm:px-2">
-              Cinq plateformes.
+            Sept plateformes.
               <br />
               <span className="text-gradient">Une vision.</span>
             </h2>
@@ -203,7 +215,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
           </div>
 
           {/* Other Platforms — Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-6">
             {MANAGED_PLATFORMS.slice(1).map((platform, index) => {
               const Icon = platformIcons[platform.key] || Rocket;
               const isHovered = hoveredPlatform === platform.key;

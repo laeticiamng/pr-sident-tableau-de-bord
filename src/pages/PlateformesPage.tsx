@@ -19,7 +19,9 @@ import {
   Layers,
   TestTube2,
   Calendar,
-  ArrowRight
+  ArrowRight,
+  HeartPulse,
+  Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -37,6 +39,8 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
   "system-compass": Compass,
   "growth-copilot": Rocket,
   "med-mng": Music,
+  "swift-care-hub": HeartPulse,
+  "track-triumph-tavern": Trophy,
 };
 
 // Platform accent colors (semantic tokens)
@@ -46,6 +50,8 @@ const platformAccents: Record<string, string> = {
   "system-compass": "text-platform-compass",
   "growth-copilot": "text-platform-growth",
   "med-mng": "text-platform-medical",
+  "swift-care-hub": "text-platform-emergency",
+  "track-triumph-tavern": "text-platform-triumph",
 };
 
 const platformBgAccents: Record<string, string> = {
@@ -54,6 +60,8 @@ const platformBgAccents: Record<string, string> = {
   "system-compass": "bg-platform-compass",
   "growth-copilot": "bg-platform-growth",
   "med-mng": "bg-platform-medical",
+  "swift-care-hub": "bg-platform-emergency",
+  "track-triumph-tavern": "bg-platform-triumph",
 };
 
 const platformGradients: Record<string, string> = {
@@ -62,6 +70,8 @@ const platformGradients: Record<string, string> = {
   "system-compass": "from-platform-compass/20 via-platform-compass/5 to-transparent",
   "growth-copilot": "from-platform-growth/20 via-platform-growth/5 to-transparent",
   "med-mng": "from-platform-medical/20 via-platform-medical/5 to-transparent",
+  "swift-care-hub": "from-platform-emergency/20 via-platform-emergency/5 to-transparent",
+  "track-triumph-tavern": "from-platform-triumph/20 via-platform-triumph/5 to-transparent",
 };
 
 const platformBorders: Record<string, string> = {
@@ -70,6 +80,8 @@ const platformBorders: Record<string, string> = {
   "system-compass": "hover:border-platform-compass/40",
   "growth-copilot": "hover:border-platform-growth/40",
   "med-mng": "hover:border-platform-medical/40",
+  "swift-care-hub": "hover:border-platform-emergency/40",
+  "track-triumph-tavern": "hover:border-platform-triumph/40",
 };
 
 export default function PlateformesPage() {
@@ -80,12 +92,12 @@ export default function PlateformesPage() {
     document.title = "Nos Plateformes — EMOTIONSCARE";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez les 5 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot et Pixel Perfect Replica. 16K+ commits, 875 tables, 1 300+ tests.");
+      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, Pixel Perfect Replica, Swift Care Hub et Track Triumph Tavern.");
     }
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
+        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
       }
     };
   }, []);
@@ -139,14 +151,14 @@ export default function PlateformesPage() {
             </h1>
             
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
-              Cinq solutions innovantes, une vision unifiée. 
+              Sept solutions innovantes, une vision unifiée. 
               Chaque plateforme excelle dans son domaine.
             </p>
 
             {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
-                { value: "5", label: "Plateformes" },
+                { value: "7", label: "Plateformes" },
                 { value: formatNumber(totals.commits), label: "Commits" },
                 { value: formatNumber(totals.tests), label: "Tests" },
                 { value: `${totals.tables}`, label: "Tables DB" },
@@ -371,7 +383,7 @@ export default function PlateformesPage() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Un siège.
               <br />
-              <span className="text-accent">Cinq excellences.</span>
+              <span className="text-accent">Sept excellences.</span>
             </h2>
             
             <p className="text-lg md:text-xl text-white/80 mb-12 max-w-2xl mx-auto">
@@ -382,7 +394,7 @@ export default function PlateformesPage() {
             {/* Final Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-12">
               {[
-                { value: "5", label: "Plateformes", icon: Layers },
+                { value: "7", label: "Plateformes", icon: Layers },
                 { value: formatNumber(totals.commits), label: "Commits", icon: GitCommit },
                 { value: formatNumber(totals.tests), label: "Tests", icon: TestTube2 },
                 { value: `${totals.tables}`, label: "Tables DB", icon: Database },

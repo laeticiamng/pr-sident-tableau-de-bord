@@ -75,6 +75,8 @@
     --platform-compass: 217 91% 45%;
     --platform-growth: 263 70% 40%;
     --platform-medical: 350 89% 50%;
+    --platform-emergency: 0 85% 45%;
+    --platform-triumph: 32 90% 50%;
 
     /* Sidebar */
     --sidebar-background: 222 47% 11%;

@@ -90,16 +90,18 @@ describe("App Navigation", () => {
 });
 
 describe("Constants Validation", () => {
-  it("should have exactly 5 managed platforms", () => {
+  it("should have exactly 7 managed platforms", () => {
     const MANAGED_PLATFORMS = [
       "emotionscare",
       "pixel-perfect-replica",
       "system-compass",
       "growth-copilot",
       "med-mng",
+      "swift-care-hub",
+      "track-triumph-tavern",
     ];
 
-    expect(MANAGED_PLATFORMS.length).toBe(5);
+    expect(MANAGED_PLATFORMS.length).toBe(7);
   });
 
   it("should have all platform keys as valid strings", () => {
@@ -109,6 +111,8 @@ describe("Constants Validation", () => {
       "system-compass",
       "growth-copilot",
       "med-mng",
+      "swift-care-hub",
+      "track-triumph-tavern",
     ];
 
     MANAGED_PLATFORMS.forEach((platform) => {
