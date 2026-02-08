@@ -10,10 +10,9 @@ import {
   Activity, 
   CheckCircle, 
   Search,
-  ExternalLink,
   Building2
 } from "lucide-react";
-import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 
@@ -48,21 +47,6 @@ const FEATURES = [
     bgColor: "bg-warning/10",
   },
 ];
-
-// Platform status badge
-function PlatformStatusBadge({ status }: { status: string }) {
-  const variants: Record<string, { label: string; className: string }> = {
-    production: { label: "Production", className: "bg-success/10 text-success border-success/20" },
-    prototype: { label: "Prototype", className: "bg-warning/10 text-warning border-warning/20" },
-    development: { label: "En développement", className: "bg-muted text-muted-foreground border-muted" },
-  };
-  const variant = variants[status] || variants.development;
-  return (
-    <Badge variant="outline" className={variant.className}>
-      {variant.label}
-    </Badge>
-  );
-}
 
 // Animated section wrapper
 function ScrollReveal({ 
@@ -213,78 +197,9 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* MANAGED PLATFORMS SECTION */}
+      {/* MANAGED PLATFORMS SECTION — Premium Showcase */}
       {/* ============================================ */}
-      <section className="py-20 md:py-32 bg-secondary/30">
-        <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            {/* Section Header */}
-            <ScrollReveal className="text-center mb-16">
-              <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
-                Écosystème
-              </p>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">
-                7 Plateformes <span className="text-accent">Managées</span>
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Un portefeuille cohérent de solutions logicielles, toutes pilotées depuis le siège numérique
-              </p>
-            </ScrollReveal>
-
-            {/* Platforms Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {MANAGED_PLATFORMS.map((platform, index) => (
-                <ScrollReveal key={platform.key} delay={index * 80}>
-                  <Card 
-                    className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 overflow-hidden h-full"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className={`w-3 h-3 rounded-full ${platform.color}`} />
-                        <PlatformStatusBadge status={platform.status} />
-                      </div>
-                      
-                      <h3 className="text-xl font-semibold mb-2">{platform.name}</h3>
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {platform.shortDescription}
-                      </p>
-                      
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                        <span>{platform.stats.commits.toLocaleString()} commits</span>
-                        <span>•</span>
-                        <span>{platform.stats.tables} tables</span>
-                      </div>
-
-                      <div className="flex gap-2">
-                        {platform.liveUrl && (
-                          <a 
-                            href={platform.liveUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
-                          >
-                            Voir le site <ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </ScrollReveal>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <ScrollReveal className="text-center mt-12">
-              <Link to="/plateformes">
-                <Button variant="outline" size="lg" className="group">
-                  Voir toutes les plateformes en détail
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
+      <PlatformShowcase />
 
       {/* ============================================ */}
       {/* STATS SECTION */}
