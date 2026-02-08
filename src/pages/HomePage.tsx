@@ -14,6 +14,8 @@ import {
   Building2
 } from "lucide-react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { cn } from "@/lib/utils";
 
 // Feature cards data
 const FEATURES = [
@@ -59,6 +61,35 @@ function PlatformStatusBadge({ status }: { status: string }) {
     <Badge variant="outline" className={variant.className}>
       {variant.label}
     </Badge>
+  );
+}
+
+// Animated section wrapper
+function ScrollReveal({ 
+  children, 
+  className, 
+  delay = 0 
+}: { 
+  children: React.ReactNode; 
+  className?: string; 
+  delay?: number;
+}) {
+  const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
+  
+  return (
+    <div 
+      ref={ref}
+      className={cn(
+        "transition-all duration-700 ease-out",
+        isVisible 
+          ? "opacity-100 translate-y-0" 
+          : "opacity-0 translate-y-8",
+        className
+      )}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -141,7 +172,7 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <ScrollReveal className="text-center mb-16">
                <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
                  Fonctionnalités
                </p>
@@ -151,30 +182,30 @@ export default function HomePage() {
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Un tableau de bord exécutif complet pour piloter l'ensemble de l'écosystème EMOTIONSCARE
               </p>
-            </div>
+            </ScrollReveal>
 
             {/* Features Grid */}
             <div className="grid gap-6 md:grid-cols-2">
               {FEATURES.map((feature, index) => (
-                <Card 
-                  key={feature.title}
-                  className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <CardContent className="p-8">
-                    <div className="flex items-start gap-5">
-                      <div className={`p-3 rounded-xl ${feature.bgColor} transition-transform group-hover:scale-110`}>
-                        <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                <ScrollReveal key={feature.title} delay={index * 100}>
+                  <Card 
+                    className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 h-full"
+                  >
+                    <CardContent className="p-8">
+                      <div className="flex items-start gap-5">
+                        <div className={`p-3 rounded-xl ${feature.bgColor} transition-transform group-hover:scale-110`}>
+                          <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {feature.description}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -188,7 +219,7 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <ScrollReveal className="text-center mb-16">
               <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
                 Écosystème
               </p>
@@ -198,59 +229,59 @@ export default function HomePage() {
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                 Un portefeuille cohérent de solutions logicielles, toutes pilotées depuis le siège numérique
               </p>
-            </div>
+            </ScrollReveal>
 
             {/* Platforms Grid */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {MANAGED_PLATFORMS.map((platform, index) => (
-                <Card 
-                  key={platform.key}
-                  className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 animate-fade-in overflow-hidden"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className={`w-3 h-3 rounded-full ${platform.color}`} />
-                      <PlatformStatusBadge status={platform.status} />
-                    </div>
-                    
-                    <h3 className="text-xl font-semibold mb-2">{platform.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {platform.shortDescription}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
-                      <span>{platform.stats.commits.toLocaleString()} commits</span>
-                      <span>•</span>
-                      <span>{platform.stats.tables} tables</span>
-                    </div>
+                <ScrollReveal key={platform.key} delay={index * 80}>
+                  <Card 
+                    className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 overflow-hidden h-full"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`w-3 h-3 rounded-full ${platform.color}`} />
+                        <PlatformStatusBadge status={platform.status} />
+                      </div>
+                      
+                      <h3 className="text-xl font-semibold mb-2">{platform.name}</h3>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {platform.shortDescription}
+                      </p>
+                      
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground mb-4">
+                        <span>{platform.stats.commits.toLocaleString()} commits</span>
+                        <span>•</span>
+                        <span>{platform.stats.tables} tables</span>
+                      </div>
 
-                    <div className="flex gap-2">
-                      {platform.liveUrl && (
-                        <a 
-                          href={platform.liveUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
-                        >
-                          Voir le site <ExternalLink className="h-3 w-3" />
-                        </a>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                      <div className="flex gap-2">
+                        {platform.liveUrl && (
+                          <a 
+                            href={platform.liveUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
+                          >
+                            Voir le site <ExternalLink className="h-3 w-3" />
+                          </a>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
               ))}
             </div>
 
             {/* CTA */}
-            <div className="text-center mt-12">
+            <ScrollReveal className="text-center mt-12">
               <Link to="/plateformes">
                 <Button variant="outline" size="lg" className="group">
                   Voir toutes les plateformes en détail
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
@@ -267,10 +298,9 @@ export default function HomePage() {
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
-              <div 
+              <ScrollReveal
                 key={stat.label}
-                className="animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                delay={index * 100}
               >
                 <div className="text-4xl md:text-5xl lg:text-6xl font-bold text-accent mb-2">
                   {stat.value}
@@ -278,7 +308,7 @@ export default function HomePage() {
                 <div className="text-sm md:text-base text-white/70 tracking-wide">
                   {stat.label}
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -289,7 +319,7 @@ export default function HomePage() {
       {/* ============================================ */}
       <section className="py-20 md:py-32 bg-background">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
+          <ScrollReveal className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent/10 text-accent mb-8">
               <Sparkles className="h-8 w-8" />
             </div>
@@ -311,7 +341,7 @@ export default function HomePage() {
             <p className="mt-8 text-sm text-muted-foreground">
               EMOTIONSCARE SASU — SIREN 944 505 445 — Amiens, France
             </p>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
     </div>
