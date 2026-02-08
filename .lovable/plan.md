@@ -1,59 +1,113 @@
 
 
-# Optimisation commerciale des descriptions de plateformes
+# Audit C-Suite complet et corrections pre-publication
 
-## Diagnostic
+## Synthese de l'audit multi-persona
 
-Les descriptions actuelles dans `src/lib/constants.ts` sont des copies de README techniques, pas du copywriting marketing. Problemes identifies :
+### Directeur Marketing (CRITIQUE)
 
-1. **Jargon technique interdit en public** : "Stack : React 18, Supabase", "Edge Functions", "RLS", "SSE", "lazy-loaded" — viole la regle de branding (remplacer par termes accessibles)
-2. **Donnees redondantes** : les descriptions repetent les stats (commits, tables, tests) alors que la grille de stats les affiche deja visuellement
-3. **Aucune proposition de valeur claire** : le visiteur ne comprend pas en 3 secondes ce que la plateforme resout
-4. **Ton inconsistant** : certaines descriptions parlent au "tu" (NEARVITY), d'autres sont impersonnelles
+**Probleme 1 — Jargon technique sur les pages publiques**
+Les descriptions de fonctionnalites sur la HomePage (section "Fonctionnalites du Siege Numerique") contiennent du jargon interne interdit en vitrine :
+- "7 types de runs : brief executif, standup CEO" — terme "runs" incomprehensible
+- "Owner Approval Gate obligatoire" — terme technique interne
+- "Intelligence concurrentielle via Perplexity AI" — cite un fournisseur externe
+- "Workflow de validation" — anglicisme technique
+- "GitHub reelles" / "commits GitHub synchronises" — termes dev
 
-## Corrections proposees dans `src/lib/constants.ts`
+**Probleme 2 — Labels techniques dans la grille de stats PlateformesPage**
+Les labels "Tables DB", "Commits", "Branches", "Fonctions" dans les grilles de stats de `/plateformes` sont du jargon technique pur. Un visiteur non-technique ne comprend pas "Tables DB" ou "Branches". Il faut les renommer en termes business.
 
-### EmotionsCare
-- **Actuel** : "Plateforme de gestion du bien-etre emotionnel pour les professionnels de sante et etudiants en medecine. 37 modules (Scan IA, Coach Nyvee, Musicotherapie, VR, Gamification XP). Stack : React 18, Supabase, 261 Edge Functions, 723 tables, 7 723 commits, 294 tests."
-- **Propose** : "Premiere plateforme francaise dediee au bien-etre emotionnel des soignants et etudiants en medecine. 37 modules integres : scan emotionnel par IA, coaching personnalise avec Nyvee, musicotherapie, realite virtuelle et gamification. Concu pour reduire l'epuisement professionnel et renforcer la resilience au quotidien."
-- **shortDescription** : "Bien-etre emotionnel des soignants et etudiants en medecine"
+**Probleme 3 — Stats de la HomePage vs PlateformesPage**
+La HomePage affiche "1 400+" tests mais la PlateformesPage calcule dynamiquement le total (actuellement 1 455). Coherence correcte.
 
-### NEARVITY
-- **Actuel** : "PWA mobile-first de connexion sociale. Radar temps reel pour visualiser les personnes disponibles autour de toi (3 etats : ouvert, conditionnel, occupe). Sessions binome, ghost mode, chat de groupe. Stack : React 18, Mapbox, Lovable Cloud, 15 tables, 8 Edge Functions."
-- **Propose** : "Application mobile de connexion sociale en temps reel pour etudiants. Un radar intelligent detecte qui est disponible autour de vous selon 3 signaux (ouvert, conditionnel, occupe). Sessions en binome, mode fantome et messagerie de groupe pour des rencontres authentiques sur le campus."
+**Probleme 4 — Features pills contiennent du jargon**
+Les `features` dans `constants.ts` contiennent : "Streaming SSE", "Mode recherche Perplexity", "PWA offline", "RBAC", "Approval Gate" — visibles sur `/plateformes`.
 
-### System Compass
-- **Actuel** : "Plateforme d'aide a la decision pour relocalisation internationale (B2C expats/nomades, B2B entrepreneurs/institutions). Exit Keys personnalisees, analyse 50+ pays, simulation fiscale, gamification. 1 272 commits, 718 tests passants, 103 routes lazy-loaded, 57 tables avec RLS, 25 Edge Functions."
-- **Propose** : "Intelligence decisionnelle pour la relocalisation internationale. Analyse personnalisee de 50+ pays avec simulation fiscale, comparaison qualite de vie et recommandations sur mesure. Pour expatries, nomades digitaux, entrepreneurs et institutions cherchant le meilleur alignement pays-profil."
+### CEO — Audit strategique
+- Structure de navigation OK (/, /plateformes, /vision, /contact + legal)
+- CTA clair vers `/plateformes` depuis la homepage
+- Timeline Vision coherente avec l'historique reel
+- Pas de page "A propos" separee mais `/vision` remplit ce role
 
-### Growth Copilot
-- **Actuel** : "Growth OS : 39 employes IA premium (2 Direction CGO/QCO + 37 agents repartis dans 11 departements). Core OS avec RBAC, Approval Gate, Audit Log, Scheduler. 30 tables, 25 Edge Functions. Automatisation complete Marketing, Ventes, Finance, Produit, Engineering."
-- **Propose** : "Votre equipe de 39 experts IA prets a l'emploi. 2 directeurs et 37 agents specialises couvrent 11 departements : marketing, ventes, finance, produit, engineering et plus. Chaque tache est validee, tracee et automatisee. La competence premium d'une equipe complete, sans la complexite."
+### CISO — Audit securite
+- Auth page : login-only (pas de signup expose) — correct
+- ProtectedRoute sur toutes les routes /hq — correct
+- Pas de secrets cote client visibles
+- Edge functions securisees avec JWT/RBAC
 
-### Med MNG
-- **Actuel** : "Plateforme anti-panique cognitive pour etudiants en medecine (ECN/EDN). Une chanson = un item medical maitrise. Medical AI Copilot (GPT-4o, Perplexity, Firecrawl), streaming SSE, generation musicale IA. 4 522 commits, 50 tables, 30 Edge Functions. Score audit 20/20, Grade Securite A+."
-- **Propose** : "Revolution de l'apprentissage medical par la musique. Chaque item ECN/EDN devient une chanson generee par IA que vous retenez naturellement. Copilote medical intelligent pour la recherche, la revision et la comprehension. L'anti-panique cognitif des futurs medecins — securite certifiee A+."
+### DPO — Audit RGPD
+- Pages legales presentes : mentions, confidentialite, CGV, registre RGPD
+- Formulaire contact avec validation Zod + sanitisation
+- Lien confidentialite visible dans le footer
 
-### Swift Care Hub
-- **Actuel** : "Plateforme complete dediee aux urgences hospitalieres. Triage intelligent par IA, gestion des flux patients en temps reel, coordination des equipes soignantes et analytics de performance. Optimisation des temps d'attente et alertes critiques."
-- **Propose** : "Solution de pilotage des urgences hospitalieres. Triage intelligent par IA, suivi des flux patients en temps reel, coordination des equipes soignantes et tableaux de bord de performance. Chaque seconde gagnee peut sauver une vie."
+### Head of Design — Audit UX
+- Hierarchie visuelle excellente avec les gradients Hero
+- Mobile responsive avec tailles granulaires
+- Contraste Hero bg-hero-gradient + text-white : conforme
+- Scroll animations implementees sur la HomePage
 
-### Track Triumph Tavern
-- **Actuel** : "Plateforme de tracking de performances avec gamification integree. Classements dynamiques, defis personnalises, recompenses et analytics avancees. Suivi en temps reel des objectifs et progression communautaire."
-- **Propose** : "Plateforme de suivi de performances qui transforme chaque objectif en defi motivant. Classements dynamiques, recompenses personnalisees et progression communautaire. Suivez vos performances en temps reel et celebrez chaque victoire avec votre equipe."
+### Beta testeur — Points critiques restants
+- Les features pills techniques sur `/plateformes` cassent l'immersion premium
+- Le terme "Modules" dans la grille de stats est ambigu a cote de "Fonctions"
 
-## Principes appliques
+---
 
-- **Zero jargon technique** : plus aucune mention de Stack, Edge Functions, tables, commits, RLS, SSE dans les descriptions (les stats sont deja dans la grille visuelle)
-- **Proposition de valeur en premiere phrase** : le visiteur comprend en 3 secondes
-- **Ton uniforme** : vouvoiement professionnel partout
-- **Accroche emotionnelle** : chaque description se termine par un benefice humain, pas une spec technique
+## Plan de corrections (3 fichiers)
 
-## Section technique
+### 1. `src/pages/HomePage.tsx` — Rewrite des descriptions features
 
-**Fichier modifie** : `src/lib/constants.ts` uniquement (7 champs `description` + ajustements mineurs sur `shortDescription`)
+Remplacer les 4 descriptions de la section "Fonctionnalites du Siege Numerique" pour eliminer tout jargon :
 
-**Risque** : Faible — modifications textuelles pures, aucun changement de structure ni de logique.
+| Feature | Avant | Apres |
+|---------|-------|-------|
+| Intelligence IA | "...7 types de runs : brief executif, standup CEO..." | "Rapports strategiques generes automatiquement chaque jour. Briefings de direction, audits de securite, veille concurrentielle — tout est synthetise pour vous." |
+| Supervision en temps reel | "...commits GitHub synchronises..." | "Visualisez l'etat de sante de toutes vos plateformes en un coup d'oeil. Disponibilite, mises a jour et alertes centralises." |
+| Validation des actions | "...Owner Approval Gate obligatoire..." | "Chaque action critique passe par une validation presidentialle. Deployements, modifications sensibles : rien ne se fait sans votre accord." |
+| Veille strategique | "...via Perplexity AI..." | "Recherche automatisee sur les tendances de votre marche. Analyse concurrentielle et opportunites identifiees en temps reel." |
 
-**Impact** : Les descriptions sont utilisees sur `/plateformes` (description complete) et sur `/` + `PlatformShowcase` (shortDescription). Tous les champs `features`, `stats`, `tagline` restent inchanges.
+### 2. `src/lib/constants.ts` — Nettoyage des features pills
+
+Remplacer les termes techniques dans les tableaux `features` de chaque plateforme :
+
+| Plateforme | Avant | Apres |
+|-----------|-------|-------|
+| Med MNG | "Streaming SSE" | "Ecoute en continu" |
+| Med MNG | "Mode recherche Perplexity" | "Recherche medicale IA" |
+| Med MNG | "PWA offline" | "Disponible hors connexion" |
+| Growth Copilot | "Approval Gate" | "Validation presidentialle" |
+| Growth Copilot | "Voice Commands" | "Commandes vocales" |
+
+### 3. `src/pages/PlateformesPage.tsx` — Labels stats business-friendly
+
+Renommer les labels techniques de la grille de stats individuelles et du hero :
+
+| Avant | Apres |
+|-------|-------|
+| "Tables DB" | "Structures" |
+| "Commits" | "Evolutions" |
+| "Branches" | "Versions" |
+| "Fonctions" (hero + gouvernance) | "Modules" |
+| "Modules" (hero + gouvernance) | "Modules" (pas de doublon — fusionner "Fonctions" en "Modules") |
+
+Dans le hero de `/plateformes`, la grille affiche "Modules" ET "Fonctions" ce qui est redondant. Remplacer :
+- "Tables DB" → "Structures"
+- "Modules" (label actuel pour `totals.functions`) → "Integrations"
+
+Et dans les cartes individuelles :
+- "Tables DB" → "Structures"
+- "Commits" → "Evolutions"
+- "Branches" → "Versions"
+- "Fonctions" → "Integrations"
+
+### Fichiers non modifies (passes avec succes)
+
+- Auth page : login-only, zero signup expose
+- Pages legales : completes et conformes
+- NotFound : fonctionnel avec CTA de retour
+- PublicHeader/Footer : navigation coherente, liens legaux presents
+- VisionPage : timeline coherente, pas de jargon
+- ContactPage : formulaire valide avec Zod, sanitisation, rate-limiting edge function
+
+### Risque
+Faible — modifications textuelles uniquement (descriptions, labels). Aucun changement de structure, logique ou style.
 
