@@ -141,7 +141,7 @@ Les utilisateurs disposent des droits suivants :
 - Droit à la portabilité (Art. 20 RGPD)
 - Droit d'opposition (Art. 21 RGPD)
 
-Contact DPO : dpo@emotionscare.fr
+Contact DPO : contact@emotionscare.com
 Délai de réponse : 30 jours maximum
 
 --------------------------------------------------------------------------------

@@ -217,7 +217,7 @@ export default function ConformitePage() {
         <Button 
           variant="outline"
           onClick={() => {
-            window.open("mailto:dpo@emotionscare.fr?subject=Demande%20d%27audit%20RGPD", "_blank");
+            window.open("mailto:contact@emotionscare.com?subject=Demande%20d%27audit%20RGPD", "_blank");
           }}
         >
           Demander un audit
