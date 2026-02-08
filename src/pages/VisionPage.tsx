@@ -13,7 +13,7 @@ export default function VisionPage() {
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
+        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
       }
     };
   }, []);
@@ -139,7 +139,7 @@ export default function VisionPage() {
               {
                 icon: Award,
                 title: "Qualité",
-                stat: "1 200+",
+                stat: "1 400+",
                 description: "Tests automatisés"
               },
               {
@@ -190,19 +190,19 @@ export default function VisionPage() {
               <div className="relative">
                 <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/80" />
                 <div className="text-sm font-medium text-accent mb-2">2025</div>
-                <h3 className="text-xl font-semibold mb-2">Lancement des 5 plateformes</h3>
+                <h3 className="text-xl font-semibold mb-2">Lancement des premières plateformes</h3>
                 <p className="text-muted-foreground">
-                  Développement et mise en production de l'écosystème complet : 
+                  Développement et mise en production de l'écosystème fondateur : 
                   EmotionsCare, Pixel Perfect Replica, System Compass, Growth Copilot et Med MNG.
                 </p>
               </div>
               <div className="relative">
                 <div className="absolute -left-[41px] h-4 w-4 rounded-full bg-accent/60" />
                 <div className="text-sm font-medium text-accent mb-2">2026</div>
-                <h3 className="text-xl font-semibold mb-2">Siège Social Numérique</h3>
+                <h3 className="text-xl font-semibold mb-2">Siège Social Numérique & Expansion</h3>
                 <p className="text-muted-foreground">
-                  Création du HQ — Centre de commandement permettant de piloter 
-                  les 5 plateformes depuis une interface unifiée avec IA intégrée.
+                  Création du HQ — Centre de commandement unifié avec IA intégrée. 
+                  Lancement de Swift Care Hub (urgences hospitalières) et Track Triumph Tavern (performance & gamification), portant l'écosystème à 7 plateformes.
                 </p>
               </div>
               <div className="relative">

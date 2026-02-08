@@ -215,7 +215,7 @@ export default function AuthPage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 xl:gap-6 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">5</div>
+              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">7</div>
               <div className="text-xs xl:text-sm text-white/60">Plateformes</div>
             </div>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">

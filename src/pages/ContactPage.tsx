@@ -27,7 +27,7 @@ export default function ContactPage() {
     return () => {
       document.title = "EMOTIONSCARE — Siège Social Numérique";
       if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 5 plateformes innovantes pilotées depuis notre siège numérique.");
+        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
       }
     };
   }, []);
