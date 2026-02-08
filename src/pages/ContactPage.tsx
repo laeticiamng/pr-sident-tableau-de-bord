@@ -257,7 +257,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Email</h3>
-                    <p className="text-muted-foreground">contact@emotionscare.fr</p>
+                    <p className="text-muted-foreground">contact@emotionscare.com</p>
                   </div>
                 </div>
               </div>
