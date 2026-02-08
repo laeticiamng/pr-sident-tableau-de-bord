@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket } from "lucide-react";
+import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers } from "lucide-react";
+import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
 
 export default function VisionPage() {
   // SEO: Update document meta for this page
@@ -26,6 +27,9 @@ export default function VisionPage() {
             <Badge variant="gold" className="mb-6">
               Notre Vision
             </Badge>
+            <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
+              7 plateformes · 1 mission
+            </p>
             <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">
               Construire l'avenir
               <span className="block text-accent">du logiciel</span>
@@ -96,6 +100,34 @@ export default function VisionPage() {
         </div>
       </section>
 
+      {/* Chiffres Clés */}
+      <section className="py-16 md:py-24 bg-hero-gradient text-white">
+        <div className="container">
+          <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
+            {[
+              { value: 7, suffix: "", label: "Plateformes", icon: Layers },
+              { value: 39, suffix: "", label: "Agents IA", icon: Rocket },
+              { value: 100, suffix: "%", label: "Made in France", icon: Shield },
+              { value: 24, suffix: "/7", label: "Monitoring", icon: Award },
+            ].map((stat, index) => (
+              <div
+                key={stat.label}
+                className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <stat.icon className="w-6 h-6 text-accent mx-auto mb-3" />
+                <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-accent mb-1">
+                  <AnimatedCounter value={stat.value} duration={1200} suffix={stat.suffix} />
+                </div>
+                <div className="text-sm text-white/70 tracking-wide">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Mission Statement */}
       <section className="py-20 md:py-28 bg-secondary">
         <div className="container">
@@ -105,7 +137,11 @@ export default function VisionPage() {
               "Créer des logiciels qui transforment la complexité en simplicité, 
               et qui permettent à chacun de se concentrer sur ce qui compte vraiment."
             </blockquote>
-            <p className="mt-8 text-accent font-medium">
+            <p className="mt-6 text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
+              Depuis Amiens, nous construisons un écosystème technologique français 
+              au service de la santé, de l'éducation et de l'innovation.
+            </p>
+            <p className="mt-4 text-accent font-medium">
               — Motongane Laeticia, Présidente
             </p>
           </div>
@@ -193,7 +229,7 @@ export default function VisionPage() {
                 <h3 className="text-xl font-semibold mb-2">Lancement des premières plateformes</h3>
                 <p className="text-muted-foreground">
                   Développement et mise en production de l'écosystème fondateur : 
-                  EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG.
+                   EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG.
                 </p>
               </div>
               <div className="relative">
@@ -201,8 +237,8 @@ export default function VisionPage() {
                 <div className="text-sm font-medium text-accent mb-2">Début 2026</div>
                 <h3 className="text-xl font-semibold mb-2">Siège Social Numérique & Expansion</h3>
                 <p className="text-muted-foreground">
-                  Création du HQ — Centre de commandement unifié avec IA intégrée. 
-                  Lancement de Swift Care Hub (urgences hospitalières) et Track Triumph Tavern (performance & gamification), portant l'écosystème à 7 plateformes.
+                   Création du Siège Social Numérique — Centre de commandement unifié avec IA intégrée. 
+                   Lancement d'UrgenceOS (urgences hospitalières) et Track Triumph (compétition musicale), portant l'écosystème à 7 plateformes.
                 </p>
               </div>
               <div className="relative">

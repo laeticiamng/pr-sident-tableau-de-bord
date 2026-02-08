@@ -104,11 +104,14 @@ export default function HomePage() {
 
         <div className="container relative z-10 py-16 md:py-24 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
-            {/* Badge */}
-            <div className="mb-8 animate-fade-in">
+            {/* Badges */}
+            <div className="mb-8 animate-fade-in flex flex-wrap items-center justify-center gap-3">
               <Badge variant="gold" className="px-4 py-2 text-sm font-medium tracking-wide">
                 <Building2 className="w-4 h-4 mr-2" />
                 Siège Social Numérique
+              </Badge>
+              <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium text-white/80 border-white/20 backdrop-blur-sm">
+                🇫🇷 Made in France
               </Badge>
             </div>
 
@@ -209,7 +212,7 @@ export default function HomePage() {
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: "7", label: "Plateformes" },
-              { value: "1 400+", label: "Tests automatisés" },
+              { value: "1 400+", label: "Mises à jour" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
@@ -253,7 +256,10 @@ export default function HomePage() {
               </Button>
             </Link>
             
-            <p className="mt-8 text-sm text-muted-foreground">
+            <p className="mt-8 text-sm text-muted-foreground/80 italic">
+              Utilisé par des professionnels de santé, des étudiants et des entrepreneurs
+            </p>
+            <p className="mt-3 text-xs text-muted-foreground">
               EMOTIONSCARE SASU — SIREN 944 505 445 — Amiens, France
             </p>
           </ScrollReveal>

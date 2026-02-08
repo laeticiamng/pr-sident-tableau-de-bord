@@ -82,7 +82,7 @@ export default function AuthPage() {
           </div>
         </div>
         <h2 className="text-2xl font-bold text-white mb-1">EMOTIONSCARE</h2>
-        <p className="text-sm text-white/70">Éditeur de logiciels</p>
+        <p className="text-sm text-white/70">Siège Social Numérique</p>
       </div>
       
       {/* Left Panel - Form */}
@@ -100,7 +100,7 @@ export default function AuthPage() {
                 </div>
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Connexion</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Connexion à EMOTIONSCARE</h1>
             <p className="text-muted-foreground text-base sm:text-lg">
               Accédez au siège social numérique
             </p>
@@ -205,7 +205,7 @@ export default function AuthPage() {
             EMOTIONSCARE
           </h2>
           <p className="text-base xl:text-lg text-white/60 mb-6 xl:mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            Éditeur de logiciels
+            EMOTIONSCARE SASU — Siège Social Numérique
           </p>
           
           <p className="text-base xl:text-xl text-white/70 mb-8 xl:mb-12 animate-slide-up leading-relaxed px-4" style={{ animationDelay: "0.2s" }}>
