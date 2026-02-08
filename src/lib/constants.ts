@@ -22,7 +22,7 @@ export const MANAGED_PLATFORMS = [
     description: "Application mobile de connexion sociale en temps réel pour étudiants. Un radar intelligent détecte qui est disponible autour de vous selon 3 signaux (ouvert, conditionnel, occupé). Sessions en binôme, mode fantôme et messagerie de groupe pour des rencontres authentiques sur le campus.",
     tagline: "Connecte-toi avec les gens autour de toi",
     github: "https://github.com/laeticiamng/nearvity",
-    liveUrl: "https://nearvity.lovable.app",
+    liveUrl: "https://pixel-perfect-clone-6574.lovable.app",
     color: "bg-status-amber",
     stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 4, commits: 847, tests: 42 },
     features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
