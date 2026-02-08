@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 // Icon mapping for each platform
 const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "emotionscare": Heart,
-  "pixel-perfect-replica": Users,
+  "nearvity": Users,
   "system-compass": Compass,
   "growth-copilot": Rocket,
   "med-mng": Music,
@@ -36,7 +36,7 @@ const platformIcons: Record<string, React.ComponentType<{ className?: string }>>
 // Unique gradient for each platform (using semantic tokens via opacity)
 const platformGradients: Record<string, string> = {
   "emotionscare": "from-platform-health/20 via-platform-health/10 to-transparent",
-  "pixel-perfect-replica": "from-platform-social/20 via-platform-social/10 to-transparent",
+  "nearvity": "from-platform-social/20 via-platform-social/10 to-transparent",
   "system-compass": "from-platform-compass/20 via-platform-compass/10 to-transparent",
   "growth-copilot": "from-platform-growth/20 via-platform-growth/10 to-transparent",
   "med-mng": "from-platform-medical/20 via-platform-medical/10 to-transparent",
@@ -47,7 +47,7 @@ const platformGradients: Record<string, string> = {
 // Accent colors per platform (semantic tokens)
 const platformAccents: Record<string, string> = {
   "emotionscare": "text-platform-health",
-  "pixel-perfect-replica": "text-platform-social",
+  "nearvity": "text-platform-social",
   "system-compass": "text-platform-compass",
   "growth-copilot": "text-platform-growth",
   "med-mng": "text-platform-medical",
@@ -57,7 +57,7 @@ const platformAccents: Record<string, string> = {
 
 const platformBorders: Record<string, string> = {
   "emotionscare": "group-hover:border-platform-health/30",
-  "pixel-perfect-replica": "group-hover:border-platform-social/30",
+  "nearvity": "group-hover:border-platform-social/30",
   "system-compass": "group-hover:border-platform-compass/30",
   "growth-copilot": "group-hover:border-platform-growth/30",
   "med-mng": "group-hover:border-platform-medical/30",
@@ -67,7 +67,7 @@ const platformBorders: Record<string, string> = {
 
 const platformBgAccents: Record<string, string> = {
   "emotionscare": "bg-platform-health",
-  "pixel-perfect-replica": "bg-platform-social",
+  "nearvity": "bg-platform-social",
   "system-compass": "bg-platform-compass",
   "growth-copilot": "bg-platform-growth",
   "med-mng": "bg-platform-medical",
