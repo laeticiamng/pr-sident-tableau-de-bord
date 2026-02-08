@@ -1,5 +1,5 @@
-// Constantes pour les 5 plateformes managées (immuable)
-// Données synchronisées depuis GitHub - 5 Février 2026
+// Constantes pour les 7 plateformes managées (immuable)
+// Données synchronisées depuis GitHub - 8 Février 2026
 export const MANAGED_PLATFORMS = [
   {
     key: "emotionscare",
@@ -68,6 +68,34 @@ export const MANAGED_PLATFORMS = [
     color: "bg-destructive",
     stats: { modules: 15, tables: 50, edgeFunctions: 30, branches: 238, commits: 4522, tests: 156 },
     features: ["Medical AI Copilot", "Génération musicale IA", "Streaming SSE", "Mode recherche Perplexity", "PWA offline"],
+    status: "production",
+    lastCommit: "2026-02-05",
+  },
+  {
+    key: "swift-care-hub",
+    name: "Swift Care Hub",
+    shortDescription: "Solution innovante dédiée aux urgences hospitalières",
+    description: "Plateforme complète dédiée aux urgences hospitalières. Triage intelligent par IA, gestion des flux patients en temps réel, coordination des équipes soignantes et analytics de performance. Optimisation des temps d'attente et alertes critiques.",
+    tagline: "Chaque seconde compte aux urgences",
+    github: "https://github.com/laeticiamng/swift-care-hub",
+    liveUrl: "https://swift-care-hub.lovable.app",
+    color: "bg-destructive",
+    stats: { modules: 8, tables: 12, edgeFunctions: 6, branches: 3, commits: 320, tests: 45 },
+    features: ["Triage IA intelligent", "Flux patients temps réel", "Coordination équipes", "Analytics urgences", "Alertes critiques"],
+    status: "prototype",
+    lastCommit: "2026-02-05",
+  },
+  {
+    key: "track-triumph-tavern",
+    name: "Track Triumph Tavern",
+    shortDescription: "Plateforme de suivi de performances et gamification",
+    description: "Plateforme de tracking de performances avec gamification intégrée. Classements dynamiques, défis personnalisés, récompenses et analytics avancées. Suivi en temps réel des objectifs et progression communautaire.",
+    tagline: "Chaque victoire mérite d'être célébrée",
+    github: "https://github.com/laeticiamng/track-triumph-tavern",
+    liveUrl: "https://track-triumph-tavern.lovable.app",
+    color: "bg-accent",
+    stats: { modules: 12, tables: 18, edgeFunctions: 10, branches: 6, commits: 580, tests: 72 },
+    features: ["Classements dynamiques", "Défis personnalisés", "Système de récompenses", "Analytics avancées", "Progression communautaire"],
     status: "production",
     lastCommit: "2026-02-05",
   },

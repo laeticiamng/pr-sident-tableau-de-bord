@@ -76,6 +76,8 @@ export default {
           compass: "hsl(var(--platform-compass))",
           growth: "hsl(var(--platform-growth))",
           medical: "hsl(var(--platform-medical))",
+          emergency: "hsl(var(--platform-emergency))",
+          triumph: "hsl(var(--platform-triumph))",
         },
       },
       borderRadius: {
