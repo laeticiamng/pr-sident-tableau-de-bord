@@ -263,7 +263,7 @@ export default function HomePage() {
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: "7", label: "Plateformes" },
-              { value: "1 300+", label: "Tests automatisés" },
+              { value: "1 400+", label: "Tests automatisés" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (
