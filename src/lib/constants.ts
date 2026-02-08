@@ -22,7 +22,7 @@ export const MANAGED_PLATFORMS = [
     description: "PWA mobile-first de connexion sociale. Radar temps réel pour visualiser les personnes disponibles autour de toi (3 états : ouvert, conditionnel, occupé). Sessions binôme, ghost mode, chat de groupe. Stack : React 18, Mapbox, Lovable Cloud, 15 tables, 8 Edge Functions.",
     tagline: "Connecte-toi avec les gens autour de toi",
     github: "https://github.com/laeticiamng/nearvity",
-    liveUrl: "https://pixel-perfect-clone-6574.lovable.app",
+    liveUrl: "https://nearvity.lovable.app",
     color: "bg-status-amber",
     stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 4, commits: 847, tests: 42 },
     features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
