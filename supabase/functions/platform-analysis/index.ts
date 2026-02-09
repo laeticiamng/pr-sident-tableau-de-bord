@@ -37,6 +37,18 @@ const PLATFORMS = [
     liveUrl: "https://medmng.com",
     name: "Med MNG"
   },
+  { 
+    key: "swift-care-hub", 
+    repo: "laeticiamng/swift-care-hub",
+    liveUrl: "https://flow-pulse-assist.lovable.app",
+    name: "UrgenceOS"
+  },
+  { 
+    key: "track-triumph-tavern", 
+    repo: "laeticiamng/track-triumph-tavern",
+    liveUrl: "https://track-triumph-tavern.lovable.app",
+    name: "Track Triumph"
+  },
 ];
 
 interface AnalysisRequest {
