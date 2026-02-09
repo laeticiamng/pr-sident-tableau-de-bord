@@ -39,7 +39,7 @@ export default function CockpitPage() {
       <ExecutiveHeader
         title="Cockpit Dirigeant"
         subtitle="Centre de commandement opérationnel"
-        context="Agrégation en temps réel des KPIs des 5 plateformes. Décisions éclairées par données sourcées et recommandations IA."
+        context="Agrégation en temps réel des KPIs des 7 plateformes. Décisions éclairées par données sourcées et recommandations IA."
         source={{
           source: "realtime",
           lastUpdated: new Date(),

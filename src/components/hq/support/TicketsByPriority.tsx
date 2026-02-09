@@ -49,7 +49,7 @@ export function TicketsByPriority({ loading }: TicketsByPriorityProps) {
       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardHeader className="pb-2">
           <CardTitle>Tickets par Plateforme</CardTitle>
-          <CardDescription>Distribution sur les 5 plateformes</CardDescription>
+          <CardDescription>Distribution sur les 7 plateformes</CardDescription>
         </CardHeader>
         <CardContent className="py-8 text-center">
           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />

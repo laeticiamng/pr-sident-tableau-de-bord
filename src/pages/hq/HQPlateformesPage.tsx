@@ -98,7 +98,7 @@ export default function HQPlateformesPage() {
         <div>
           <h1 className="text-headline-1 mb-2">Cockpit Plateformes</h1>
           <p className="text-muted-foreground text-lg">
-            Supervision des 5 plateformes gérées.
+            Supervision des 7 plateformes gérées.
           </p>
         </div>
         <Button variant="outline" onClick={() => refetch()}>

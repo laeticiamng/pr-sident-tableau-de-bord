@@ -1,7 +1,7 @@
 /**
  * Growth Copilot - Agent AI Profiles
  * 
- * Ce fichier définit les 39 employés IA de Growth Copilot (une des 5 plateformes managées).
+ * Ce fichier définit les 39 employés IA de Growth Copilot (une des 7 plateformes managées).
  * Structure : 2 Direction (CGO/QCO) + 37 agents répartis dans 11 départements
  * 
  * NOTE: Ces agents appartiennent à Growth Copilot, PAS au HQ EmotionsCare SASU.

@@ -58,7 +58,7 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
         <div>
           <h2 className="text-2xl font-bold">Bonjour, Présidente</h2>
           <p className="text-muted-foreground">
-            Voici l'essentiel de vos 5 plateformes
+            Voici l'essentiel de vos 7 plateformes
           </p>
         </div>
         <Badge 

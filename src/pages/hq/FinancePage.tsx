@@ -85,7 +85,7 @@ export default function FinancePage() {
       {/* En-tête exécutif — Standard HEC/Polytechnique */}
       <ExecutiveHeader
         title="Finance & ROI"
-        subtitle="Vue financière consolidée des 5 plateformes"
+        subtitle="Vue financière consolidée des 7 plateformes"
         context="Indicateurs SaaS standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
         source={{
           source: isMock ? "mock" : "stripe",
@@ -267,7 +267,7 @@ export default function FinancePage() {
               Plateformes & Infrastructure
             </CardTitle>
             <CardDescription>
-              Statut des 5 plateformes gérées
+              Statut des 7 plateformes gérées
             </CardDescription>
           </CardHeader>
           <CardContent>

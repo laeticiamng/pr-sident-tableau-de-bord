@@ -26,7 +26,7 @@ export function PlatformTrafficWidget({ className }: PlatformTrafficWidgetProps)
           <Link2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
           <p className="font-medium">Connexion GA4 requise</p>
           <p className="text-sm mt-1">
-            Intégrez Google Analytics 4 pour afficher le trafic consolidé des 5 plateformes
+            Intégrez Google Analytics 4 pour afficher le trafic consolidé des 7 plateformes
           </p>
           <Badge variant="subtle" className="mt-3">
             <AlertCircle className="h-3 w-3 mr-1" />

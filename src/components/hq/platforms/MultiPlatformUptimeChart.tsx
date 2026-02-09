@@ -69,7 +69,7 @@ export function MultiPlatformUptimeChart({ data }: MultiPlatformUptimeChartProps
               Uptime Multi-Plateformes
             </CardTitle>
             <CardDescription>
-              Disponibilité des 5 plateformes sur 7 jours
+              Disponibilité des 7 plateformes sur 7 jours
             </CardDescription>
           </div>
           <Badge variant="success" className="text-sm">

@@ -5,13 +5,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Les 5 plateformes managées (registre immuable)
+// Les 7 plateformes managées (registre immuable)
 const MANAGED_REPOS = [
   { key: "emotionscare", repo: "laeticiamng/emotionscare" },
-  { key: "pixel-perfect-replica", repo: "laeticiamng/pixel-perfect-replica" },
+  { key: "nearvity", repo: "laeticiamng/nearvity" },
   { key: "system-compass", repo: "laeticiamng/system-compass" },
   { key: "growth-copilot", repo: "laeticiamng/growth-copilot" },
   { key: "med-mng", repo: "laeticiamng/med-mng" },
+  { key: "swift-care-hub", repo: "laeticiamng/swift-care-hub" },
+  { key: "track-triumph-tavern", repo: "laeticiamng/track-triumph-tavern" },
 ];
 
 interface RepoStats {
