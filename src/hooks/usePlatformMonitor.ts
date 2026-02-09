@@ -102,7 +102,7 @@ export function useConsolidatedMetrics() {
 
   // Calcul des métriques consolidées
   const metrics = {
-    totalPlatforms: monitorData?.summary.platforms_total || 5,
+    totalPlatforms: monitorData?.summary.platforms_total || 7,
     greenPlatforms: monitorData?.summary.platforms_green || 0,
     amberPlatforms: monitorData?.summary.platforms_amber || 0,
     redPlatforms: monitorData?.summary.platforms_red || 0,

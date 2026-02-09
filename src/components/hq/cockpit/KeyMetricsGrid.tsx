@@ -20,7 +20,7 @@ export function KeyMetricsGrid() {
   const isLoading = stripeLoading || platformsLoading;
 
   const healthyPlatforms = platforms?.filter(p => p.status === "green").length || 0;
-  const totalPlatforms = platforms?.length || 5;
+  const totalPlatforms = platforms?.length || 7;
 
   const metrics = [
     {

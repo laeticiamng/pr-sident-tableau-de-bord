@@ -12,7 +12,7 @@ vi.mock("@/hooks/usePlatformMonitor", () => ({
       greenPlatforms: 4,
       amberPlatforms: 1,
       redPlatforms: 0,
-      totalPlatforms: 5,
+      totalPlatforms: 7,
       uptimePercent: 99.5,
       avgResponseTime: 245,
       platforms: [

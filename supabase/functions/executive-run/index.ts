@@ -13,13 +13,15 @@ const MODEL_CONFIG = {
   summary: "google/gemini-2.5-flash",
 };
 
-// Les 5 plateformes (registre immuable)
+// Les 7 plateformes (registre immuable)
 const MANAGED_REPOS = [
   { key: "emotionscare", repo: "laeticiamng/emotionscare" },
-  { key: "pixel-perfect-replica", repo: "laeticiamng/pixel-perfect-replica" },
+  { key: "nearvity", repo: "laeticiamng/nearvity" },
   { key: "system-compass", repo: "laeticiamng/system-compass" },
   { key: "growth-copilot", repo: "laeticiamng/growth-copilot" },
   { key: "med-mng", repo: "laeticiamng/med-mng" },
+  { key: "swift-care-hub", repo: "laeticiamng/swift-care-hub" },
+  { key: "track-triumph-tavern", repo: "laeticiamng/track-triumph-tavern" },
 ];
 
 // Run type configurations with system prompts
@@ -407,7 +409,7 @@ Deno.serve(async (req) => {
 
 🏢 Entreprise: EMOTIONSCARE SASU — Éditeur de logiciels applicatifs
 📍 Siège: Amiens, France
-💼 5 Plateformes managées: EmotionsCare, Pixel Perfect Replica, System Compass, Growth Copilot, Med MNG
+💼 7 Plateformes managées: EmotionsCare, NEARVITY, System Compass, Growth Copilot, Med MNG, UrgenceOS, Track Triumph
 
 Type de run: ${run_type}
 ${additionalContext}

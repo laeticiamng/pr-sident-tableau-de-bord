@@ -51,7 +51,7 @@ export default function BriefingRoom() {
 
   // Calculate stats
   const greenCount = platforms?.filter(p => p.status === "green").length || 0;
-  const totalPlatforms = platforms?.length || 5;
+  const totalPlatforms = platforms?.length || 7;
 
   return (
     <div className="space-y-8 animate-fade-in">

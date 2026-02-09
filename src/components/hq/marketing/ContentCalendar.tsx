@@ -10,7 +10,7 @@ export function ContentCalendar() {
           <Calendar className="h-5 w-5 text-primary" />
           Calendrier de Contenu
         </CardTitle>
-        <CardDescription>Planification du contenu pour les 5 plateformes</CardDescription>
+        <CardDescription>Planification du contenu pour les 7 plateformes</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-muted-foreground/20 rounded-lg">

@@ -16,7 +16,7 @@ import { useAgents } from "@/hooks/useHQData";
 
 const COMPANY_CONSTANTS = {
   founded: "2025-05-15",
-  platforms: 5,
+  platforms: 7,
 };
 
 export function CompanyKPIs() {

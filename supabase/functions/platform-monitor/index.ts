@@ -5,13 +5,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// URLs de monitoring des 5 plateformes (à configurer selon les déploiements réels)
+// URLs de monitoring des 7 plateformes (à configurer selon les déploiements réels)
 const PLATFORM_ENDPOINTS: Record<string, string> = {
   emotionscare: "https://emotionscare.lovable.app",
-  "pixel-perfect-replica": "https://pixel-perfect-replica.lovable.app",
+  nearvity: "https://pixel-perfect-clone-6574.lovable.app",
   "system-compass": "https://system-compass.lovable.app",
   "growth-copilot": "https://growth-copilot.lovable.app",
   "med-mng": "https://med-mng.lovable.app",
+  "swift-care-hub": "https://flow-pulse-assist.lovable.app",
+  "track-triumph-tavern": "https://track-triumph-tavern.lovable.app",
 };
 
 interface HealthCheckResult {

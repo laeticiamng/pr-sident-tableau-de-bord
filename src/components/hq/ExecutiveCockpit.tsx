@@ -136,7 +136,7 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
         <div>
           <h2 className="text-xl font-semibold">Cockpit Dirigeant</h2>
           <p className="text-sm text-muted-foreground">
-            Vue consolidée des KPIs des 5 plateformes
+            Vue consolidée des KPIs des 7 plateformes
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -310,7 +310,7 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
             KPIs par Plateforme
           </CardTitle>
           <CardDescription>
-            Métriques consolidées des 5 plateformes
+            Métriques consolidées des 7 plateformes
           </CardDescription>
         </CardHeader>
         <CardContent>
