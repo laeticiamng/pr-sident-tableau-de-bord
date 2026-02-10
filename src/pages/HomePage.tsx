@@ -13,6 +13,7 @@ import {
   Building2
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
+import { ExecutiveDashboardSection } from "@/components/home/ExecutiveDashboardSection";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 
@@ -198,6 +199,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ============================================ */}
+      {/* EXECUTIVE DASHBOARD SECTION */}
+      {/* ============================================ */}
+      <ExecutiveDashboardSection />
 
       {/* ============================================ */}
       {/* MANAGED PLATFORMS SECTION — Premium Showcase */}
