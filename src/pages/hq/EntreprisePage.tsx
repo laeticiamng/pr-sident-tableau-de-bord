@@ -4,6 +4,7 @@ import { Building2, FileText, MapPin, Calendar, User, CreditCard } from "lucide-
 import { CompanyKPIs } from "@/components/hq/entreprise/CompanyKPIs";
 import { QuarterlyObjectives } from "@/components/hq/entreprise/QuarterlyObjectives";
 import { StrategicGoals } from "@/components/hq/entreprise/StrategicGoals";
+import { PlatformCompletionRoadmap } from "@/components/hq/entreprise/PlatformCompletionRoadmap";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 export default function EntreprisePage() {
@@ -130,6 +131,9 @@ export default function EntreprisePage() {
 
       {/* Strategic Goals */}
       <StrategicGoals />
+
+      {/* Plateformes - Audit & Plan de complétion */}
+      <PlatformCompletionRoadmap />
     </div>
   );
 }
