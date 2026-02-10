@@ -5,6 +5,27 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
+vi.mock("@/hooks/useStripeKPIs", () => ({
+  useStripeKPIs: () => ({
+    data: {
+      success: true,
+      mock: false,
+      kpis: {
+        mrr: 45200,
+        mrrChange: 12,
+        totalCustomers: 813,
+        newCustomersThisMonth: 37,
+        churnRate: 2.1,
+        churnRateChange: -0.4,
+        currency: "EUR",
+      },
+    },
+    isLoading: false,
+  }),
+  formatCurrency: (value: number) => `${value.toLocaleString("fr-FR")} €`,
+  formatPercentage: (value: number) => `${value.toFixed(1)}%`,
+}));
+
 // Mock platform monitor hooks
 vi.mock("@/hooks/usePlatformMonitor", () => ({
   useConsolidatedMetrics: () => ({
@@ -128,9 +149,9 @@ describe("ExecutiveCockpit", () => {
     render(<ExecutiveCockpit />, { wrapper: createWrapper() });
 
     expect(screen.getByText("MRR")).toBeInTheDocument();
-    expect(screen.getByText("Utilisateurs Actifs")).toBeInTheDocument();
+    expect(screen.getByText("Clients Stripe")).toBeInTheDocument();
     expect(screen.getByText("Taux de Churn")).toBeInTheDocument();
-    expect(screen.getByText("NPS Score")).toBeInTheDocument();
+    expect(screen.getByText("Temps Réponse")).toBeInTheDocument();
   });
 
   it("should display governance section", async () => {

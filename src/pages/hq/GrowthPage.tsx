@@ -41,10 +41,79 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
    const handleRefresh = () => {
      window.location.reload();
    };
+
+   const downloadFile = (content: string, filename: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+   };
+
+   const convertToCsv = (rows: Array<Record<string, string | number | boolean>>) => {
+    if (rows.length === 0) {
+      return "";
+    }
+
+    const headers = Object.keys(rows[0]);
+    const escape = (value: string | number | boolean) => `"${String(value).replaceAll('"', '""')}"`;
+
+    return [
+      headers.join(","),
+      ...rows.map((row) => headers.map((header) => escape(row[header] ?? "")).join(",")),
+    ].join("\n");
+   };
  
    const handleExport = () => {
-     toast.info("Export des données Growth OS en préparation...");
-     // TODO: Implement CSV/PDF export
+     try {
+      const now = new Date();
+      const timestamp = now.toISOString().replaceAll(":", "-");
+
+      const metricsRows = [
+        { metric: "CAC", value: metrics.cac.value, trendPercent: metrics.cac.trend, benchmark: metrics.cac.benchmark ?? "N/A" },
+        { metric: "LTV", value: metrics.ltv.value, trendPercent: metrics.ltv.trend, benchmark: metrics.ltv.benchmark ?? "N/A" },
+        { metric: "LTV:CAC", value: metrics.ltvCacRatio.value, trendPercent: metrics.ltvCacRatio.trend, benchmark: metrics.ltvCacRatio.benchmark ?? "N/A" },
+        { metric: "ARPU", value: metrics.arpu.value, trendPercent: metrics.arpu.trend, benchmark: metrics.arpu.benchmark ?? "N/A" },
+        { metric: "PaybackPeriod", value: metrics.paybackPeriod.value, trendPercent: metrics.paybackPeriod.trend, benchmark: metrics.paybackPeriod.benchmark ?? "N/A" },
+        { metric: "MAU", value: metrics.mau.value, trendPercent: metrics.mau.trend, benchmark: metrics.mau.benchmark ?? "N/A" },
+        { metric: "DAU", value: metrics.dau.value, trendPercent: metrics.dau.trend, benchmark: metrics.dau.benchmark ?? "N/A" },
+        { metric: "DAU:MAU", value: metrics.dauMauRatio.value, trendPercent: metrics.dauMauRatio.trend, benchmark: metrics.dauMauRatio.benchmark ?? "N/A" },
+        { metric: "MRR", value: metrics.mrr.value, trendPercent: metrics.mrr.trend, benchmark: metrics.mrr.benchmark ?? "N/A" },
+        { metric: "Churn", value: metrics.churn.value, trendPercent: metrics.churn.trend, benchmark: metrics.churn.benchmark ?? "N/A" },
+      ];
+
+      const alertRows = criticalAlerts.map((alert) => ({
+        id: alert.id,
+        severity: alert.severity,
+        title: alert.title,
+        metric: alert.metric,
+        value: alert.value,
+        threshold: alert.threshold,
+        action: alert.action,
+      }));
+
+      const metadataRows = [
+        {
+          generatedAt: now.toISOString(),
+          dataSource: metrics.isRealData ? "stripe_live" : "simulated",
+          hasCriticalAlerts: hasCritical,
+          criticalAlertsCount: criticalAlerts.length,
+        },
+      ];
+
+      downloadFile(convertToCsv(metricsRows), `growth-metrics-${timestamp}.csv`, "text/csv;charset=utf-8");
+      downloadFile(convertToCsv(alertRows), `growth-critical-alerts-${timestamp}.csv`, "text/csv;charset=utf-8");
+      downloadFile(JSON.stringify(metadataRows[0], null, 2), `growth-export-metadata-${timestamp}.json`, "application/json;charset=utf-8");
+
+      toast.success("Export Growth OS généré (CSV + JSON).");
+     } catch (exportError) {
+      console.error("Growth export failed", exportError);
+      toast.error("Échec de l'export Growth OS. Réessayez.");
+     }
    };
  
    return (
