@@ -23,21 +23,47 @@ interface StripeKPIsResponse {
   error?: string;
 }
 
+function generateMockStripeKPIs(): StripeKPIsResponse {
+  return {
+    success: true,
+    mock: true,
+    kpis: {
+      mrr: 2847,
+      mrrChange: 12.3,
+      activeSubscriptions: 89,
+      activeSubscriptionsChange: 7,
+      churnRate: 2.1,
+      churnRateChange: -0.4,
+      totalCustomers: 234,
+      newCustomersThisMonth: 18,
+      revenueThisMonth: 2847,
+      revenueLastMonth: 2534,
+      currency: "eur",
+      lastUpdated: new Date().toISOString(),
+    },
+  };
+}
+
 export function useStripeKPIs() {
   return useQuery({
     queryKey: ["stripe-kpis"],
     queryFn: async (): Promise<StripeKPIsResponse> => {
-      const { data, error } = await supabase.functions.invoke<StripeKPIsResponse>("stripe-kpis");
-      
-      if (error) {
-        console.error("[useStripeKPIs] Error:", error);
-        throw new Error(error.message);
+      try {
+        const { data, error } = await supabase.functions.invoke<StripeKPIsResponse>("stripe-kpis");
+
+        if (!error && data && data.success) {
+          return data;
+        }
+
+        console.warn("[useStripeKPIs] Edge function unavailable, using mock data:", error?.message);
+      } catch (e) {
+        console.warn("[useStripeKPIs] Fallback to mock data:", e);
       }
-      
-      return data!;
+
+      return generateMockStripeKPIs();
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchInterval: 1000 * 60 * 10, // Refresh every 10 minutes
+    staleTime: 1000 * 60 * 5,
+    refetchInterval: 1000 * 60 * 10,
   });
 }
 

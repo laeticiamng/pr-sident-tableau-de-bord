@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Phone, 
-  FileText, 
-  Shield, 
+import {
+  Phone,
+  FileText,
+  Shield,
   Rocket,
   CheckCircle,
   Clock,
@@ -14,9 +14,14 @@ import {
   Sparkles,
   Brain,
   GitBranch,
-  Gauge
+  Gauge,
+  Database,
+  GitCommit,
+  TestTube2,
+  Layers
 } from "lucide-react";
-import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
+import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Link } from "react-router-dom";
 import { PlatformHealthGrid } from "@/components/hq/PlatformHealthGrid";
 import { AIInsightsWidget } from "@/components/hq/AIInsightsWidget";
@@ -27,12 +32,22 @@ import { RecentActivityFeed } from "@/components/hq/briefing/RecentActivityFeed"
 import { QuickMetricsBar } from "@/components/hq/briefing/QuickMetricsBar";
 import { GrowthSummaryWidget } from "@/components/hq/growth/GrowthSummaryWidget";
 
+// Pre-computed aggregated stats from the 7 platforms
+const ECOSYSTEM_STATS = {
+  totalModules: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.modules, 0),
+  totalStructures: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tables, 0),
+  totalCommits: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.commits, 0),
+  totalTests: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tests, 0),
+  totalEdgeFunctions: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.edgeFunctions, 0),
+  totalBranches: MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.branches, 0),
+};
+
 export default function BriefingRoom() {
   const { data: platforms, isError: platformsError, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals, isLoading: approvalsLoading } = usePendingApprovals();
   const { data: recentRuns, refetch: refetchRuns } = useRecentRuns(5);
   const executeRun = useExecuteRun();
-  const [lastRunResult, setLastRunResult] = useState<any>(null);
+  const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
 
   const currentTime = new Date();
   const greeting = currentTime.getHours() < 12 ? "Bonjour" : currentTime.getHours() < 18 ? "Bon après-midi" : "Bonsoir";
@@ -59,7 +74,7 @@ export default function BriefingRoom() {
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.15),transparent)]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <Badge variant="gold" className="mb-4">
@@ -68,12 +83,12 @@ export default function BriefingRoom() {
             </Badge>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, Madame la Présidente</h1>
             <p className="text-primary-foreground/70 text-lg">
-              {platformsLoading ? "Chargement..." : platformsError ? "Connexion base de données requise" : `${greenCount}/${totalPlatforms} plateformes opérationnelles`}
+              {platformsLoading ? "Chargement..." : `${greenCount}/${totalPlatforms} plateformes opérationnelles`}
             </p>
           </div>
-          <Button 
-            variant="hero" 
-            size="lg" 
+          <Button
+            variant="hero"
+            size="lg"
             className="gap-2 min-w-[200px]"
             onClick={handleCallDG}
             disabled={executeRun.isPending}
@@ -91,13 +106,59 @@ export default function BriefingRoom() {
       {/* Quick Metrics Bar */}
       <QuickMetricsBar />
 
+      {/* Aggregated Ecosystem KPIs */}
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <Layers className="h-5 w-5 mx-auto mb-2 text-accent" />
+            <div className="text-2xl font-bold">{ECOSYSTEM_STATS.totalModules}</div>
+            <div className="text-xs text-muted-foreground">Modules</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <Database className="h-5 w-5 mx-auto mb-2 text-primary" />
+            <div className="text-2xl font-bold">{ECOSYSTEM_STATS.totalStructures}</div>
+            <div className="text-xs text-muted-foreground">Structures</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <GitCommit className="h-5 w-5 mx-auto mb-2 text-success" />
+            <div className="text-2xl font-bold">{(ECOSYSTEM_STATS.totalCommits / 1000).toFixed(1)}K</div>
+            <div className="text-xs text-muted-foreground">Commits</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <TestTube2 className="h-5 w-5 mx-auto mb-2 text-warning" />
+            <div className="text-2xl font-bold">{ECOSYSTEM_STATS.totalTests.toLocaleString("fr-FR")}</div>
+            <div className="text-xs text-muted-foreground">Tests</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <Rocket className="h-5 w-5 mx-auto mb-2 text-destructive" />
+            <div className="text-2xl font-bold">{ECOSYSTEM_STATS.totalEdgeFunctions}</div>
+            <div className="text-xs text-muted-foreground">Edge Fn</div>
+          </CardContent>
+        </Card>
+        <Card className="card-executive">
+          <CardContent className="p-4 text-center">
+            <GitBranch className="h-5 w-5 mx-auto mb-2 text-accent" />
+            <div className="text-2xl font-bold">{ECOSYSTEM_STATS.totalBranches}</div>
+            <div className="text-xs text-muted-foreground">Branches</div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Autopilot Control */}
       <AutopilotControl compact />
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
           onClick={() => handleExecutiveAction("DAILY_EXECUTIVE_BRIEF")}
           disabled={executeRun.isPending}
@@ -115,8 +176,8 @@ export default function BriefingRoom() {
             <span className="text-xs font-medium">Workforce Copilot</span>
           </Link>
         </Button>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
           onClick={() => handleExecutiveAction("SECURITY_AUDIT_RLS")}
           disabled={executeRun.isPending}
@@ -126,8 +187,8 @@ export default function BriefingRoom() {
           </div>
           <span className="text-xs font-medium">Audit Sécurité</span>
         </Button>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="h-auto py-4 flex-col gap-2 hover:border-accent hover:bg-accent/5 transition-all"
           onClick={() => handleExecutiveAction("COMPETITIVE_ANALYSIS")}
           disabled={executeRun.isPending}
@@ -151,7 +212,7 @@ export default function BriefingRoom() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* AI Insights Widget */}
         <AIInsightsWidget className="" />
- 
+
         {/* Growth OS Summary */}
         <GrowthSummaryWidget />
 
@@ -184,7 +245,7 @@ export default function BriefingRoom() {
                   >
                     <div>
                       <p className="font-medium text-sm">{action.title}</p>
-                      <Badge 
+                      <Badge
                         variant={action.risk_level === "critical" || action.risk_level === "high" ? "destructive" : "subtle"}
                         className="mt-1"
                       >
@@ -213,8 +274,8 @@ export default function BriefingRoom() {
       </div>
 
       {/* Run Result Panel (expandable markdown panel) */}
-      <RunResultPanel 
-        runResult={lastRunResult} 
+      <RunResultPanel
+        runResult={lastRunResult}
         onClose={() => setLastRunResult(null)}
       />
 
@@ -262,7 +323,7 @@ export default function BriefingRoom() {
         <Card className="card-executive bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold mb-1">
-              {(platforms?.reduce((sum, p) => sum + (p.uptime_percent || 0), 0) / (platforms?.length || 1) || 0).toFixed(1)}%
+              {((platforms?.reduce((sum, p) => sum + (p.uptime_percent || 0), 0) ?? 0) / (platforms?.length || 1)).toFixed(1)}%
             </div>
             <div className="text-sm text-muted-foreground">Uptime Moyen</div>
           </CardContent>

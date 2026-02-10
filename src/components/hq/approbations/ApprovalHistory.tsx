@@ -2,21 +2,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuditLogs } from "@/hooks/useHQData";
 
 export function ApprovalHistory() {
-  const { data: logs, isLoading, error } = useQuery({
-    queryKey: ["hq-audit-logs-approvals"],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_hq_audit_logs", { limit_count: 20 });
-      if (error) throw new Error(error.message);
-      return (data || []).filter((log: any) => 
-        log.action?.startsWith("action.") || log.action?.startsWith("run.")
-      );
-    },
-    staleTime: 1000 * 60 * 5,
-  });
+  const { data: allLogs, isLoading, isError } = useAuditLogs(20);
+
+  const logs = allLogs?.filter((log) =>
+    log.action?.startsWith("action.") || log.action?.startsWith("run.")
+  );
 
   if (isLoading) {
     return (
@@ -36,8 +29,8 @@ export function ApprovalHistory() {
     );
   }
 
-  const approvedCount = logs?.filter((l: any) => l.action === "action.approved").length || 0;
-  const rejectedCount = logs?.filter((l: any) => l.action === "action.rejected").length || 0;
+  const approvedCount = logs?.filter((l) => l.action === "action.approved").length || 0;
+  const rejectedCount = logs?.filter((l) => l.action === "action.rejected").length || 0;
 
   return (
     <Card className="card-executive">
@@ -51,11 +44,10 @@ export function ApprovalHistory() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {error ? (
+        {isError ? (
           <div className="text-center py-8 text-muted-foreground">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="font-medium">Impossible de charger l'historique</p>
-            <p className="text-sm mt-1">{error.message}</p>
           </div>
         ) : !logs?.length ? (
           <div className="text-center py-8 text-muted-foreground">
@@ -65,7 +57,7 @@ export function ApprovalHistory() {
           </div>
         ) : (
           <div className="space-y-3">
-            {logs.map((item: any) => {
+            {logs.map((item) => {
               const isApproved = item.action?.includes("approved") || item.action?.includes("created");
               const isRejected = item.action?.includes("rejected");
               return (
