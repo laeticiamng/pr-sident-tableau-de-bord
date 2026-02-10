@@ -1,5 +1,5 @@
 # EMOTIONSCARE SASU — Siège Social Numérique
-> **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 5 produits SaaS
+> **"Système d'exploitation du Président"** — Plateforme de gouvernance centralisée pour 7 produits SaaS
 
 [![Built with Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
@@ -29,7 +29,7 @@ Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour pe
 ### Modules Opérationnels
 - ✅ Briefing Room (Dashboard exécutif avec KPIs temps réel)
 - ✅ Executive AI Runs (7 types : brief quotidien, standup, audit sécurité, veille concurrentielle...)
-- ✅ Plateformes (monitoring des 5 SaaS avec GitHub sync)
+- ✅ Plateformes (monitoring des 7 SaaS avec GitHub sync)
 - ✅ Engineering (commits, PRs, issues GitHub)
 - ✅ Audit Log (journal des actions système)
 - ✅ Approbations (workflow de validation)
@@ -52,15 +52,17 @@ Le **HQ (Headquarters)** est un centre de commandement numérique conçu pour pe
 
 ---
 
-## 🚀 Les 5 Plateformes Managées
+## 🚀 Les 7 Plateformes Managées
 
 | Plateforme | Description | Status |
 |------------|-------------|--------|
 | **EmotionsCare** | Plateforme de gestion du bien-être émotionnel pour les professionnels de santé | ✅ Production |
-| **Pixel Perfect Replica** | PWA mobile-first de connexion sociale avec radar temps réel | 🚧 Prototype |
+| **NEARVITY** | Connexion sociale étudiants avec radar temps réel | 🚧 Prototype |
 | **System Compass** | Plateforme d'aide à la décision pour relocalisation internationale | ✅ Production |
 | **Growth Copilot** | Growth OS avec 39 employés IA répartis dans 11 départements | ✅ Production |
 | **Med MNG** | Plateforme anti-panique cognitive pour étudiants en médecine | ✅ Production |
+| **UrgenceOS** | Système d’exploitation des urgences hospitalières | 🚧 Prototype |
+| **Track Triumph** | Compétition musicale communautaire et classements | ✅ Production |
 
 ---
 
