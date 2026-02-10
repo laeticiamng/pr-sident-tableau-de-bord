@@ -86,6 +86,7 @@ const platformBorders: Record<string, string> = {
 
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | "production" | "prototype">("all");
 
   // SEO: Update document meta for this page
   useEffect(() => {
@@ -103,7 +104,13 @@ export default function PlateformesPage() {
   }, []);
 
   // Use static data from constants (public page, no auth required)
-  const platforms = MANAGED_PLATFORMS;
+  const allPlatforms = MANAGED_PLATFORMS;
+  const platforms = statusFilter === "all"
+    ? allPlatforms
+    : allPlatforms.filter(p => p.status === statusFilter);
+
+  const prodCount = allPlatforms.filter(p => p.status === "production").length;
+  const protoCount = allPlatforms.filter(p => p.status === "prototype").length;
 
   // Calculate totals
   const totals = platforms.reduce(
@@ -185,6 +192,43 @@ export default function PlateformesPage() {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden sm:block">
           <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
             <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* STATUS FILTER */}
+      {/* ============================================ */}
+      <section className="py-6 bg-background border-b">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button
+              variant={statusFilter === "all" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter("all")}
+              className="gap-2"
+            >
+              <Layers className="h-4 w-4" />
+              Toutes ({allPlatforms.length})
+            </Button>
+            <Button
+              variant={statusFilter === "production" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter("production")}
+              className="gap-2"
+            >
+              <CheckCircle className="h-4 w-4 text-success" />
+              Production ({prodCount})
+            </Button>
+            <Button
+              variant={statusFilter === "prototype" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setStatusFilter("prototype")}
+              className="gap-2"
+            >
+              <AlertCircle className="h-4 w-4 text-warning" />
+              Prototype ({protoCount})
+            </Button>
           </div>
         </div>
       </section>
