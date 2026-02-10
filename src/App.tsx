@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
@@ -51,6 +51,7 @@ const FinancePage = lazy(() => import("@/pages/hq/FinancePage"));
 const ProduitPage = lazy(() => import("@/pages/hq/ProduitPage"));
 const EngineeringPage = lazy(() => import("@/pages/hq/EngineeringPage"));
 const SupportPage = lazy(() => import("@/pages/hq/SupportPage"));
+const VeillePage = lazy(() => import("@/pages/hq/VeillePage"));
 
 // HQ Pages - Gouvernance (lazy loaded)
 const AuditPage = lazy(() => import("@/pages/hq/AuditPage"));
@@ -121,7 +122,8 @@ const App = () => (
                     <Route path="/hq/produit" element={<ProduitPage />} />
                     <Route path="/hq/engineering" element={<EngineeringPage />} />
                     <Route path="/hq/support" element={<SupportPage />} />
-                    
+                    <Route path="/hq/veille" element={<VeillePage />} />
+
                     {/* Gouvernance */}
                     <Route path="/hq/audit" element={<AuditPage />} />
                     <Route path="/hq/entreprise" element={<EntreprisePage />} />
@@ -132,6 +134,13 @@ const App = () => (
                     <Route path="/hq/settings" element={<SettingsPage />} />
                   </Route>
                 </Route>
+
+                {/* Dashboard aliases → redirect to HQ */}
+                <Route path="/dashboard" element={<Navigate to="/hq" replace />} />
+                <Route path="/dashboard/briefing" element={<Navigate to="/hq" replace />} />
+                <Route path="/dashboard/audit" element={<Navigate to="/hq/audit" replace />} />
+                <Route path="/dashboard/veille" element={<Navigate to="/hq/veille" replace />} />
+                <Route path="/dashboard/actions" element={<Navigate to="/hq/approbations" replace />} />
 
                 <Route path="*" element={<NotFound />} />
               </Routes>

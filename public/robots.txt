@@ -1,8 +1,14 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
 
 User-agent: Bingbot
 Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +18,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
+Sitemap: https://emotionscare-hq.lovable.app/sitemap.xml

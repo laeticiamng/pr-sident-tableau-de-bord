@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CheckCircle, XCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Loader2, Clock } from "lucide-react";
 import { usePendingApprovals, useApproveAction } from "@/hooks/useHQData";
 import { ApprovalHistory } from "@/components/hq/approbations/ApprovalHistory";
 import { ApprovalStats } from "@/components/hq/approbations/ApprovalStats";
@@ -28,10 +28,10 @@ export default function ApprobationsPage() {
   const { data: pendingApprovals, isLoading } = usePendingApprovals();
   const approveAction = useApproveAction();
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
-  const [decision, setDecision] = useState<"approved" | "rejected" | null>(null);
+  const [decision, setDecision] = useState<"approved" | "rejected" | "deferred" | null>(null);
   const [reason, setReason] = useState("");
 
-  const handleDecision = (actionId: string, dec: "approved" | "rejected") => {
+  const handleDecision = (actionId: string, dec: "approved" | "rejected" | "deferred") => {
     setSelectedAction(actionId);
     setDecision(dec);
   };
@@ -112,7 +112,7 @@ export default function ApprobationsPage() {
                   )}
                   
                   <div className="flex items-center gap-3">
-                    <Button 
+                    <Button
                       variant="executive"
                       onClick={() => handleDecision(action.id, "approved")}
                       disabled={approveAction.isPending}
@@ -120,13 +120,21 @@ export default function ApprobationsPage() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Approuver
                     </Button>
-                    <Button 
+                    <Button
                       variant="outline"
                       onClick={() => handleDecision(action.id, "rejected")}
                       disabled={approveAction.isPending}
                     >
                       <XCircle className="h-4 w-4 mr-2" />
                       Rejeter
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleDecision(action.id, "deferred")}
+                      disabled={approveAction.isPending}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      Reporter
                     </Button>
                   </div>
                 </div>
@@ -150,11 +158,13 @@ export default function ApprobationsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {decision === "approved" ? "Confirmer l'approbation" : "Confirmer le rejet"}
+              {decision === "approved" ? "Confirmer l'approbation" : decision === "deferred" ? "Reporter la décision" : "Confirmer le rejet"}
             </DialogTitle>
             <DialogDescription>
-              {decision === "approved" 
+              {decision === "approved"
                 ? "Cette action sera exécutée par l'agent responsable."
+                : decision === "deferred"
+                ? "L'action sera reportée et réapparaîtra ultérieurement."
                 : "L'action sera annulée et l'agent en sera informé."
               }
             </DialogDescription>
@@ -176,8 +186,8 @@ export default function ApprobationsPage() {
             <Button variant="outline" onClick={() => setSelectedAction(null)}>
               Annuler
             </Button>
-            <Button 
-              variant={decision === "approved" ? "executive" : "destructive"}
+            <Button
+              variant={decision === "approved" ? "executive" : decision === "deferred" ? "outline" : "destructive"}
               onClick={confirmDecision}
               disabled={approveAction.isPending}
             >
@@ -185,10 +195,12 @@ export default function ApprobationsPage() {
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : decision === "approved" ? (
                 <CheckCircle className="h-4 w-4 mr-2" />
+              ) : decision === "deferred" ? (
+                <Clock className="h-4 w-4 mr-2" />
               ) : (
                 <XCircle className="h-4 w-4 mr-2" />
               )}
-              {decision === "approved" ? "Approuver" : "Rejeter"}
+              {decision === "approved" ? "Approuver" : decision === "deferred" ? "Reporter" : "Rejeter"}
             </Button>
           </DialogFooter>
         </DialogContent>

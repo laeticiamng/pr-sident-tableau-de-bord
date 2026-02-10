@@ -27,6 +27,7 @@ import {
   BarChart3,
   X,
   Rocket,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +60,7 @@ const sidebarLinks = [
       { href: "/hq/produit", label: "Produit", icon: Package },
       { href: "/hq/engineering", label: "Engineering", icon: Settings },
       { href: "/hq/support", label: "Support", icon: HeadphonesIcon },
+      { href: "/hq/veille", label: "Veille Stratégique", icon: Eye },
     ],
   },
   {
