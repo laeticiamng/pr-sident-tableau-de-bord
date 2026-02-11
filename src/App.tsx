@@ -22,6 +22,7 @@ import NotFound from "@/pages/NotFound";
 
 // Public Pages - lazy loaded
 const PlateformesPage = lazy(() => import("@/pages/PlateformesPage"));
+const StatusPage = lazy(() => import("@/pages/StatusPage"));
 const VisionPage = lazy(() => import("@/pages/VisionPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 
@@ -88,6 +89,7 @@ const App = () => (
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/plateformes" element={<PlateformesPage />} />
+                  <Route path="/status" element={<StatusPage />} />
                   <Route path="/vision" element={<VisionPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/legal/mentions" element={<MentionsLegalesPage />} />

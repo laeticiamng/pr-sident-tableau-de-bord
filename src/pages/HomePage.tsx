@@ -3,18 +3,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  ArrowRight, 
-  Sparkles, 
-  Brain, 
-  Activity, 
-  CheckCircle, 
+import {
+  ArrowRight,
+  Sparkles,
+  Brain,
+  Activity,
+  CheckCircle,
   Search,
   Building2
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 // Feature cards data
 const FEATURES = [
@@ -211,8 +212,8 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: "7", label: "Plateformes" },
-              { value: "1 400+", label: "Mises à jour" },
+              { value: `${MANAGED_PLATFORMS.length}`, label: "Plateformes" },
+              { value: `${(MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.commits, 0) / 1000).toFixed(1)}K`, label: "Évolutions" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (

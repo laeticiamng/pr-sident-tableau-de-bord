@@ -46,6 +46,11 @@ export function PublicFooter() {
                 </Link>
               </li>
               <li>
+                <Link to="/status" className="hover:text-primary transition-colors">
+                  Statut
+                </Link>
+              </li>
+              <li>
                 <Link to="/vision" className="hover:text-primary transition-colors">
                   Vision
                 </Link>
