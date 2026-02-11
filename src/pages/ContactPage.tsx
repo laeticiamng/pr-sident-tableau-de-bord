@@ -275,7 +275,7 @@ export default function ContactPage() {
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-accent hover:underline"
                   >
-                    <span>Laeticia Motongane</span>
+                    <span>Motongane Laeticia</span>
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                   <a

@@ -46,7 +46,8 @@ const statusLabels = {
 export default function HQPlateformesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedPlatform = searchParams.get("platform") || "all";
-  const { data: platforms, isLoading, refetch } = usePlatforms();
+  const { data: platformsResult, isLoading, refetch } = usePlatforms();
+  const platforms = platformsResult?.platforms;
   const executeRun = useExecuteRun();
   const [preparingRelease, setPreparingRelease] = useState<string | null>(null);
   const [analysisDialogOpen, setAnalysisDialogOpen] = useState(false);

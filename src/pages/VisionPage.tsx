@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers } from "lucide-react";
 import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 export default function VisionPage() {
   // SEO: Update document meta for this page
@@ -175,7 +176,7 @@ export default function VisionPage() {
               {
                 icon: Award,
                 title: "Qualité",
-                stat: "1 400+",
+                stat: `${MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tests, 0).toLocaleString("fr-FR")}+`,
                 description: "Tests automatisés"
               },
               {

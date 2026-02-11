@@ -1,16 +1,12 @@
 import { useState, useEffect } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS, PLATFORM_GRADIENTS, PLATFORM_BORDERS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  ExternalLink, 
-  CheckCircle, 
-  AlertCircle, 
-  Heart,
-  Compass,
-  Rocket,
-  Music,
-  Users,
+import {
+  ExternalLink,
+  CheckCircle,
+  AlertCircle,
   Database,
   Cpu,
   GitBranch,
@@ -20,8 +16,6 @@ import {
   TestTube2,
   Calendar,
   ArrowRight,
-  HeartPulse,
-  Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -32,57 +26,11 @@ const statusLabels = {
   development: { label: "Développement", icon: Sparkles, color: "text-muted-foreground", bg: "bg-muted-foreground" },
 };
 
-// Icon mapping for each platform
-const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  "emotionscare": Heart,
-  "nearvity": Users,
-  "system-compass": Compass,
-  "growth-copilot": Rocket,
-  "med-mng": Music,
-  "swift-care-hub": HeartPulse,
-  "track-triumph-tavern": Trophy,
-};
-
-// Platform accent colors (semantic tokens)
-const platformAccents: Record<string, string> = {
-  "emotionscare": "text-platform-health",
-  "nearvity": "text-platform-social",
-  "system-compass": "text-platform-compass",
-  "growth-copilot": "text-platform-growth",
-  "med-mng": "text-platform-medical",
-  "swift-care-hub": "text-platform-emergency",
-  "track-triumph-tavern": "text-platform-triumph",
-};
-
-const platformBgAccents: Record<string, string> = {
-  "emotionscare": "bg-platform-health",
-  "nearvity": "bg-platform-social",
-  "system-compass": "bg-platform-compass",
-  "growth-copilot": "bg-platform-growth",
-  "med-mng": "bg-platform-medical",
-  "swift-care-hub": "bg-platform-emergency",
-  "track-triumph-tavern": "bg-platform-triumph",
-};
-
-const platformGradients: Record<string, string> = {
-  "emotionscare": "from-platform-health/20 via-platform-health/5 to-transparent",
-  "nearvity": "from-platform-social/20 via-platform-social/5 to-transparent",
-  "system-compass": "from-platform-compass/20 via-platform-compass/5 to-transparent",
-  "growth-copilot": "from-platform-growth/20 via-platform-growth/5 to-transparent",
-  "med-mng": "from-platform-medical/20 via-platform-medical/5 to-transparent",
-  "swift-care-hub": "from-platform-emergency/20 via-platform-emergency/5 to-transparent",
-  "track-triumph-tavern": "from-platform-triumph/20 via-platform-triumph/5 to-transparent",
-};
-
-const platformBorders: Record<string, string> = {
-  "emotionscare": "hover:border-platform-health/40",
-  "nearvity": "hover:border-platform-social/40",
-  "system-compass": "hover:border-platform-compass/40",
-  "growth-copilot": "hover:border-platform-growth/40",
-  "med-mng": "hover:border-platform-medical/40",
-  "swift-care-hub": "hover:border-platform-emergency/40",
-  "track-triumph-tavern": "hover:border-platform-triumph/40",
-};
+const platformIcons = PLATFORM_ICONS;
+const platformAccents = PLATFORM_ACCENTS;
+const platformBgAccents = PLATFORM_BG_ACCENTS;
+const platformGradients = PLATFORM_GRADIENTS;
+const platformBorders = PLATFORM_BORDERS;
 
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -7,50 +8,16 @@ import {
   CheckCircle,
   AlertCircle,
   ExternalLink,
-  Heart,
-  Compass,
   Rocket,
-  Music,
-  Users,
-  HeartPulse,
-  Trophy,
   Clock,
   RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-// Icônes par plateforme
-const iconesPlateforme: Record<string, React.ComponentType<{ className?: string }>> = {
-  "emotionscare": Heart,
-  "nearvity": Users,
-  "system-compass": Compass,
-  "growth-copilot": Rocket,
-  "med-mng": Music,
-  "swift-care-hub": HeartPulse,
-  "track-triumph-tavern": Trophy,
-};
-
-// Couleurs d'accentuation par plateforme
-const couleursAccent: Record<string, string> = {
-  "emotionscare": "text-platform-health",
-  "nearvity": "text-platform-social",
-  "system-compass": "text-platform-compass",
-  "growth-copilot": "text-platform-growth",
-  "med-mng": "text-platform-medical",
-  "swift-care-hub": "text-platform-emergency",
-  "track-triumph-tavern": "text-platform-triumph",
-};
-
-const couleursBgAccent: Record<string, string> = {
-  "emotionscare": "bg-platform-health",
-  "nearvity": "bg-platform-social",
-  "system-compass": "bg-platform-compass",
-  "growth-copilot": "bg-platform-growth",
-  "med-mng": "bg-platform-medical",
-  "swift-care-hub": "bg-platform-emergency",
-  "track-triumph-tavern": "bg-platform-triumph",
-};
+const iconesPlateforme = PLATFORM_ICONS;
+const couleursAccent = PLATFORM_ACCENTS;
+const couleursBgAccent = PLATFORM_BG_ACCENTS;
 
 // Configuration des statuts
 const configStatut = {

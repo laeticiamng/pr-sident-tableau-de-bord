@@ -22,4 +22,4 @@ Disallow: /hq/
 Disallow: /dashboard/
 Disallow: /auth
 
-Sitemap: https://emotionscare-hq.lovable.app/sitemap.xml
+Sitemap: https://president-cockpit-hq.lovable.app/sitemap.xml

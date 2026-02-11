@@ -22,7 +22,8 @@ import { VulnerabilityScanner } from "@/components/hq/security/VulnerabilityScan
 export default function SecuritePage() {
   const { toast } = useToast();
   const { data: autopilotConfig, isLoading: configLoading } = useSystemConfig("autopilot");
-  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
+  const { data: platformsResult, isLoading: platformsLoading } = usePlatforms();
+  const platforms = platformsResult?.platforms;
   const updateConfig = useUpdateConfig();
   const executeRun = useExecuteRun();
   const [panicMode, setPanicMode] = useState(false);

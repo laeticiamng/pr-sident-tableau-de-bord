@@ -43,7 +43,9 @@ const ECOSYSTEM_STATS = {
 };
 
 export default function BriefingRoom() {
-  const { data: platforms, isError: platformsError, isLoading: platformsLoading } = usePlatforms();
+  const { data: platformsResult, isError: platformsError, isLoading: platformsLoading } = usePlatforms();
+  const platforms = platformsResult?.platforms;
+  const isMockData = platformsResult?.isMockData ?? false;
   const { data: pendingApprovals, isLoading: approvalsLoading } = usePendingApprovals();
   const { data: recentRuns, refetch: refetchRuns } = useRecentRuns(5);
   const executeRun = useExecuteRun();
@@ -84,6 +86,11 @@ export default function BriefingRoom() {
             <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, Madame la Présidente</h1>
             <p className="text-primary-foreground/70 text-lg">
               {platformsLoading ? "Chargement..." : `${greenCount}/${totalPlatforms} plateformes opérationnelles`}
+              {isMockData && !platformsLoading && (
+                <Badge variant="outline" className="ml-3 text-xs border-amber-400/50 text-amber-300">
+                  Mode démo
+                </Badge>
+              )}
             </p>
           </div>
           <Button

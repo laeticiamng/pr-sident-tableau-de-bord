@@ -24,7 +24,8 @@ import { CodeCoverageWidget } from "@/components/hq/engineering/CodeCoverageWidg
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
-  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
+  const { data: platformsResult, isLoading: platformsLoading } = usePlatforms();
+  const platforms = platformsResult?.platforms;
   const { data: githubData, isLoading: githubLoading } = useGitHubData();
   const githubSync = useGitHubSync();
   const [runningCheck, setRunningCheck] = useState<string | null>(null);
