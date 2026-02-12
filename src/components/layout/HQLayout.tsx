@@ -14,9 +14,13 @@ import { RunQueueWidget } from "@/components/hq/RunQueueWidget";
 import { RunTemplateDialog } from "@/components/hq/RunTemplateDialog";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useRunQueue } from "@/hooks/useRunQueue";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export function HQLayout() {
   const { user } = useAuth();
+
+  // Prevent search engines from indexing authenticated HQ pages
+  usePageMeta({ title: "HQ", noindex: true });
   const [commandOpen, setCommandOpen] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);

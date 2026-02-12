@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS, PLATFORM_GRADIENTS, PLATFORM_BORDERS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const statusLabels = {
   production: { label: "Production", icon: CheckCircle, color: "text-success", bg: "bg-success" },
@@ -36,20 +37,10 @@ export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "production" | "prototype">("all");
 
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "Nos Plateformes — EMOTIONSCARE";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, UrgenceOS et Track Triumph.");
-    }
-    return () => {
-      document.title = "EMOTIONSCARE — Siège Social Numérique";
-      if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
-      }
-    };
-  }, []);
+  usePageMeta({
+    title: "Nos Plateformes",
+    description: "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, UrgenceOS et Track Triumph.",
+  });
 
   // Use static data from constants (public page, no auth required)
   const allPlatforms = MANAGED_PLATFORMS;

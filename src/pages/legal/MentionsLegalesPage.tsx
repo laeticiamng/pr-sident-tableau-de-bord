@@ -68,9 +68,26 @@ export default function MentionsLegalesPage() {
             </table>
 
             <h2>Hébergement</h2>
-            <p>
-              Ce site est hébergé par Lovable (via infrastructure cloud).
-            </p>
+            <table className="w-full text-sm">
+              <tbody>
+                <tr>
+                  <td className="font-medium py-2">Hébergeur</td>
+                  <td className="py-2">Lovable (Gptengineer, Inc.)</td>
+                </tr>
+                <tr>
+                  <td className="font-medium py-2">Infrastructure</td>
+                  <td className="py-2">Amazon Web Services (AWS) via Supabase — Région eu-west (Irlande, UE)</td>
+                </tr>
+                <tr>
+                  <td className="font-medium py-2">CDN / Frontend</td>
+                  <td className="py-2">Netlify / Cloudflare Pages</td>
+                </tr>
+                <tr>
+                  <td className="font-medium py-2">Contact hébergeur</td>
+                  <td className="py-2">support@lovable.dev</td>
+                </tr>
+              </tbody>
+            </table>
 
             <h2>Propriété intellectuelle</h2>
             <p>

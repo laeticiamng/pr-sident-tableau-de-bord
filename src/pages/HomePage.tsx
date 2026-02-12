@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 
@@ -80,14 +80,11 @@ function ScrollReveal({
 
 export default function HomePage() {
 
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "EMOTIONSCARE — Siège Social Numérique";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.");
-    }
-  }, []);
+  usePageMeta({
+    title: "Siège Social Numérique",
+    description: "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.",
+    canonicalPath: "/",
+  });
 
   return (
     <div className="flex flex-col">

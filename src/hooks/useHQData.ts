@@ -497,11 +497,7 @@ export function useRecentRuns(limit = 10) {
   return useQuery({
     queryKey: ["hq", "runs", "recent", limit],
     queryFn: async () => {
-      // Try local cache first
-      const cached = getCachedData<Run>(RUNS_CACHE_KEY);
-      if (cached.length > 0) return cached.slice(0, limit);
-
-      // Try database
+      // Try database first (source of truth)
       try {
         const { data, error } = await supabase.rpc("get_hq_recent_runs", { limit_count: limit });
 
@@ -511,6 +507,10 @@ export function useRecentRuns(limit = 10) {
       } catch (e) {
         logger.warn("[useRecentRuns] RPC unavailable:", e);
       }
+
+      // Then try local cache
+      const cached = getCachedData<Run>(RUNS_CACHE_KEY);
+      if (cached.length > 0) return cached.slice(0, limit);
 
       // Fallback to mock runs
       return generateMockRuns().slice(0, limit);
@@ -659,6 +659,7 @@ export function useApproveAction() {
       decision: "approved" | "rejected" | "deferred";
       reason?: string;
     }) => {
+      let simulated = false;
       try {
         const { error } = await supabase.rpc("approve_hq_action", {
           p_action_id: action_id,
@@ -668,10 +669,11 @@ export function useApproveAction() {
         if (error) throw error;
       } catch {
         // Simulated approval — works offline
+        simulated = true;
         logger.warn("[useApproveAction] RPC unavailable, simulating approval");
       }
 
-      return { action_id, decision };
+      return { action_id, decision, simulated };
     },
     onSuccess: (data) => {
       const labels: Record<string, string> = {
@@ -681,7 +683,10 @@ export function useApproveAction() {
       };
       toast({
         title: labels[data.decision] || "Décision enregistrée",
-        description: "Décision enregistrée",
+        description: data.simulated
+          ? "Mode démo — cette action n'a pas été enregistrée en base de données"
+          : "Décision enregistrée",
+        variant: data.simulated ? "destructive" : "default",
       });
       queryClient.invalidateQueries({ queryKey: ["hq", "actions"] });
     },

@@ -1,15 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Badge } from "@/components/ui/badge";
 import { Home, ArrowLeft, AlertTriangle } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
 
-  useEffect(() => {
-    document.title = "Page introuvable — EMOTIONSCARE";
-  }, []);
+  usePageMeta({ title: "Page introuvable", noindex: true });
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">

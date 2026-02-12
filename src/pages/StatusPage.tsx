@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS } from "@/lib/platformConfig";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -40,20 +41,10 @@ const configStatut = {
 export default function StatusPage() {
   const [derniereVerification, setDerniereVerification] = useState(new Date());
 
-  // SEO : Mise à jour des métadonnées de la page
-  useEffect(() => {
-    document.title = "Statut des plateformes — EMOTIONSCARE";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute(
-        "content",
-        "Statut en temps réel des 7 plateformes SaaS d'EMOTIONSCARE. Vérifiez la disponibilité de chaque service."
-      );
-    }
-    return () => {
-      document.title = "EMOTIONSCARE — Siège Social Numérique";
-    };
-  }, []);
+  usePageMeta({
+    title: "Statut des plateformes",
+    description: "Statut en temps réel des 7 plateformes SaaS d'EMOTIONSCARE. Vérifiez la disponibilité de chaque service.",
+  });
 
   const plateformesProduction = MANAGED_PLATFORMS.filter(
     (p) => p.status === "production"

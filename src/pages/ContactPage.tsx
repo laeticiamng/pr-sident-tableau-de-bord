@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { contactSchema, sanitizeHtml } from "@/lib/validation";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,20 +19,10 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "Contact — EMOTIONSCARE";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
-    }
-    return () => {
-      document.title = "EMOTIONSCARE — Siège Social Numérique";
-      if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
-      }
-    };
-  }, []);
+  usePageMeta({
+    title: "Contact",
+    description: "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.",
+  });
 
   const { 
     register, 

@@ -1,24 +1,14 @@
-import { useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers } from "lucide-react";
 import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 export default function VisionPage() {
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "Notre Vision — EMOTIONSCARE";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Découvrez la vision et les valeurs d'EMOTIONSCARE : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.");
-    }
-    return () => {
-      document.title = "EMOTIONSCARE — Siège Social Numérique";
-      if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
-      }
-    };
-  }, []);
+  usePageMeta({
+    title: "Notre Vision",
+    description: "Découvrez la vision et les valeurs d'EMOTIONSCARE : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.",
+  });
   return (
     <div className="flex flex-col">
       {/* Hero */}

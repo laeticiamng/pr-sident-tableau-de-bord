@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
 import { PageLoader } from "@/components/ui/skeleton-loader";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
@@ -79,6 +80,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
+          <AuthProvider>
           <NetworkStatusProvider>
             <Toaster />
             <Sonner />
@@ -151,6 +153,7 @@ const App = () => (
               </Suspense>
             </BrowserRouter>
           </NetworkStatusProvider>
+          </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
