@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { logger } from "@/lib/logger";
 
 export type AppRole = "owner" | "admin" | "finance" | "marketing" | "support" | "product" | "engineering" | "viewer";
 
@@ -57,7 +58,7 @@ export function useUserRoles() {
         .eq("user_id", user.id);
       
       if (error) {
-        console.error("[useUserRoles] Error:", error);
+        logger.error("[useUserRoles] Error:", error);
         return [];
       }
       
@@ -85,7 +86,7 @@ export function usePermissions(): UserPermissions & { isLoading: boolean } {
       });
       
       if (error) {
-        console.error("[usePermissions] Error:", error);
+        logger.error("[usePermissions] Error:", error);
         return [];
       }
       

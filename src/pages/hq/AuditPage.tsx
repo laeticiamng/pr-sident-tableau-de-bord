@@ -152,7 +152,7 @@ export default function AuditPage() {
                       {new Date(log.created_at).toLocaleString("fr-FR")}
                     </td>
                     <td className="p-4">
-                      <Badge variant={getActorBadgeVariant(log.actor_type) as any} className="font-mono text-xs">
+                      <Badge variant={getActorBadgeVariant(log.actor_type) as "default" | "secondary" | "destructive" | "outline"} className="font-mono text-xs">
                         {log.actor_type === "owner" ? "OWNER" : log.actor_id || log.actor_type.toUpperCase()}
                       </Badge>
                     </td>

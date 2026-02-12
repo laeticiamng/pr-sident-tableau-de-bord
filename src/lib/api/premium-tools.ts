@@ -17,7 +17,7 @@ export interface GitHubSyncResult {
       last_release: string | null;
     }[];
   };
-  data?: any[];
+  data?: Record<string, unknown>[];
 }
 
 export async function syncGitHub(platformKey?: string): Promise<GitHubSyncResult> {
@@ -67,7 +67,7 @@ export interface WebScraperResult {
   action?: string;
   markdown?: string;
   links?: string[];
-  data?: any[];
+  data?: Record<string, unknown>[];
   scraped_at?: string;
 }
 
@@ -112,7 +112,7 @@ export interface PlatformMonitorResult {
       error: string | null;
     }[];
   };
-  details?: any[];
+  details?: Record<string, unknown>[];
 }
 
 export async function monitorPlatforms(platformKey?: string): Promise<PlatformMonitorResult> {

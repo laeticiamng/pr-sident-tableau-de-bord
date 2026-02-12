@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 interface ApiStatus {
   github: boolean;
@@ -32,7 +33,7 @@ export function useApiStatus() {
       });
 
       if (error) {
-        console.error("[useApiStatus] Error:", error);
+        logger.error("[useApiStatus] Error:", error);
         throw new Error(error.message || "Erreur lors de la vérification");
       }
 

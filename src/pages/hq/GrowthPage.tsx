@@ -20,6 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
 import { useGrowthAlerts } from "@/hooks/useGrowthAlerts";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
  
  // Growth OS Components
  import { GrowthMetricsGrid } from "@/components/hq/growth/GrowthMetricsGrid";
@@ -111,7 +112,7 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
 
       toast.success("Export Growth OS généré (CSV + JSON).");
      } catch (exportError) {
-      console.error("Growth export failed", exportError);
+      logger.error("Growth export failed", exportError);
       toast.error("Échec de l'export Growth OS. Réessayez.");
      }
    };

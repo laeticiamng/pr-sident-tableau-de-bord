@@ -77,7 +77,7 @@ export const PLATFORMS_KPI_MOCK: PlatformKPI[] = [
     nom: "Growth Copilot",
     domaine: "Automatisation growth & IA",
     url: "https://agent-growth-automator.com",
-    modules: 39,
+    modules: 11,
     utilisateursActifs: 11640,
     uptime: 98.83,
     derniereMaj: "2026-02-09T22:55:00Z",

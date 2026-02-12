@@ -103,8 +103,8 @@ export function SalesPipelineChart({ data = [], loading }: SalesPipelineChartPro
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "8px",
                 }}
-                formatter={(value: number, name: string, props: any) => [
-                  `€${value.toLocaleString("fr-FR")} (${props.payload.count} deals)`,
+                formatter={(value: number, _name: string, props: { payload?: { count?: number } }) => [
+                  `€${value.toLocaleString("fr-FR")} (${props.payload?.count ?? 0} deals)`,
                   "Valeur"
                 ]}
               />

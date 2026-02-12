@@ -2,14 +2,17 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
-// The 5 managed repositories
+// The 7 managed repositories
 const MANAGED_REPOS = [
   { key: "emotionscare", repo: "laeticiamng/emotionscare" },
   { key: "nearvity", repo: "laeticiamng/nearvity" },
   { key: "system-compass", repo: "laeticiamng/system-compass" },
   { key: "growth-copilot", repo: "laeticiamng/growth-copilot" },
   { key: "med-mng", repo: "laeticiamng/med-mng" },
+  { key: "swift-care-hub", repo: "laeticiamng/swift-care-hub" },
+  { key: "track-triumph-tavern", repo: "laeticiamng/track-triumph-tavern" },
 ];
 
 export interface GitHubRepo {
@@ -76,7 +79,7 @@ export interface GitHubSyncSummary {
 export interface GitHubSyncResult {
   success: boolean;
   summary: GitHubSyncSummary;
-  data: any[];
+  data: Record<string, unknown>[];
   error?: string;
 }
 
@@ -100,19 +103,24 @@ export function useGitHubData() {
         if (error) throw error;
         
         // Transform the response to match our expected interface
+        interface RawCommit { sha: string; message: string; author: string; date: string }
+        interface RawIssue { number: number; title: string; state: string; labels?: string[]; created_at: string }
+        interface RawPR { number: number; title: string; state: string; author?: string; created_at: string }
+        interface RawRepo { key: string; repo: string; commits?: RawCommit[]; issues?: RawIssue[]; pullRequests?: RawPR[] }
+
         const transformedData: GitHubDataResult = {
           success: data.success,
-          repos: (data.data || []).map((repoData: any) => ({
+          repos: ((data.data || []) as RawRepo[]).map((repoData) => ({
             key: repoData.key,
             repo: repoData.repo,
-            commits: (repoData.commits || []).map((c: any) => ({
+            commits: (repoData.commits || []).map((c) => ({
               sha: c.sha,
               message: c.message,
               author: c.author,
               date: c.date,
               url: `https://github.com/${repoData.repo}/commit/${c.sha}`,
             })),
-            issues: (repoData.issues || []).map((i: any) => ({
+            issues: (repoData.issues || []).map((i) => ({
               number: i.number,
               title: i.title,
               state: i.state as "open" | "closed",
@@ -120,7 +128,7 @@ export function useGitHubData() {
               createdAt: i.created_at,
               url: `https://github.com/${repoData.repo}/issues/${i.number}`,
             })),
-            pullRequests: (repoData.pullRequests || []).map((pr: any) => ({
+            pullRequests: (repoData.pullRequests || []).map((pr) => ({
               number: pr.number,
               title: pr.title,
               state: pr.state as "open" | "closed" | "merged",
@@ -136,7 +144,7 @@ export function useGitHubData() {
         
         return transformedData;
       } catch (e) {
-        console.warn("GitHub sync failed:", e);
+        logger.warn("GitHub sync failed:", e);
         // Return empty data structure on error
         return {
           success: false,
@@ -172,7 +180,7 @@ export function useGitHubPlatform(platformKey: string) {
         
         return data as GitHubRepo;
       } catch (e) {
-        console.warn(`GitHub sync failed for ${platformKey}:`, e);
+        logger.warn(`GitHub sync failed for ${platformKey}:`, e);
         return null;
       }
     },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,32 +7,40 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
+import { loginSchema } from "@/lib/validation";
 
-const emailSchema = z.string().email("Email invalide");
-const passwordSchema = z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères");
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 60_000; // 1 minute
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+  const attemptsRef = useRef(0);
+  const lockoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+
+  const startLockout = useCallback(() => {
+    setIsLocked(true);
+    toast.error("Trop de tentatives", {
+      description: "Veuillez patienter 1 minute avant de réessayer.",
+    });
+    lockoutTimerRef.current = setTimeout(() => {
+      setIsLocked(false);
+      attemptsRef.current = 0;
+    }, LOCKOUT_DURATION_MS);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLocked) return;
     setIsLoading(true);
 
-    // Validate inputs
-    const emailResult = emailSchema.safeParse(email);
-    if (!emailResult.success) {
-      toast.error(emailResult.error.errors[0].message);
-      setIsLoading(false);
-      return;
-    }
-
-    const passwordResult = passwordSchema.safeParse(password);
-    if (!passwordResult.success) {
-      toast.error(passwordResult.error.errors[0].message);
+    // Validate inputs with shared schema
+    const validationResult = loginSchema.safeParse({ email, password });
+    if (!validationResult.success) {
+      toast.error(validationResult.error.errors[0].message);
       setIsLoading(false);
       return;
     }
@@ -44,8 +52,13 @@ export default function AuthPage() {
       });
 
       if (error) {
-        if (error.message.includes("Invalid login credentials")) {
-          toast.error("Identifiants incorrects");
+        attemptsRef.current += 1;
+        if (attemptsRef.current >= MAX_ATTEMPTS) {
+          startLockout();
+        } else if (error.message.includes("Invalid login credentials")) {
+          toast.error("Identifiants incorrects", {
+            description: `${MAX_ATTEMPTS - attemptsRef.current} tentative(s) restante(s)`,
+          });
         } else {
           toast.error(error.message);
         }
@@ -54,10 +67,11 @@ export default function AuthPage() {
       }
 
       if (data.user) {
+        attemptsRef.current = 0;
         toast.success("Bienvenue, Madame la Présidente");
         navigate("/hq");
       }
-    } catch (error) {
+    } catch {
       toast.error("Une erreur est survenue");
     } finally {
       setIsLoading(false);
@@ -157,9 +171,11 @@ export default function AuthPage() {
               variant="executive"
               size="lg"
               className="w-full h-11 sm:h-12 text-sm sm:text-base"
-              disabled={isLoading}
+              disabled={isLoading || isLocked}
             >
-              {isLoading ? (
+              {isLocked ? (
+                "Veuillez patienter..."
+              ) : isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                   Connexion...

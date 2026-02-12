@@ -77,7 +77,7 @@ export default function HQPlateformesPage() {
     });
   };
 
-  const handleOpenAnalysis = (platform: any) => {
+  const handleOpenAnalysis = (platform: { key: string; name: string }) => {
     const managedPlatform = MANAGED_PLATFORMS.find(p => p.key === platform.key);
     setSelectedPlatformForAnalysis({
       key: platform.key,

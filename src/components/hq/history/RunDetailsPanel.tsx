@@ -21,7 +21,7 @@ interface Run {
   platform_key?: string;
   owner_requested?: boolean;
   executive_summary?: string;
-  detailed_appendix?: any;
+  detailed_appendix?: Record<string, unknown>;
   created_at: string;
   started_at?: string;
   completed_at?: string;

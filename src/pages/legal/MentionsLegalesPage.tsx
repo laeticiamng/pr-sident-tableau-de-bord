@@ -61,7 +61,7 @@ export default function MentionsLegalesPage() {
                   <td className="py-2">{COMPANY_PROFILE.rcs}</td>
                 </tr>
                 <tr>
-                  <td className="font-medium py-2">Président</td>
+                  <td className="font-medium py-2">Présidente</td>
                   <td className="py-2">{COMPANY_PROFILE.president}</td>
                 </tr>
               </tbody>

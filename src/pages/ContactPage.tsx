@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { contactSchema, sanitizeHtml } from "@/lib/validation";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
@@ -66,7 +67,7 @@ export default function ContactPage() {
       });
 
       if (error) {
-        console.error("[Contact] Edge function error:", error);
+        logger.error("[Contact] Edge function error:", error);
         toast.error("Erreur lors de l'envoi", {
           description: "Veuillez réessayer ou nous contacter directement par email.",
         });
@@ -83,7 +84,7 @@ export default function ContactPage() {
       });
       reset();
     } catch (err) {
-      console.error("[Contact] Unexpected error:", err);
+      logger.error("[Contact] Unexpected error:", err);
       toast.error("Erreur de connexion", {
         description: "Vérifiez votre connexion internet et réessayez.",
       });

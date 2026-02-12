@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORMS_KPI_MOCK } from "@/data/executiveDashboardMock";
+import { logger } from "@/lib/logger";
 
 export interface PlatformHealthResult {
   key: string;
@@ -97,9 +98,9 @@ export function usePlatformMonitor(platformKey?: string) {
           return data as PlatformMonitorResponse;
         }
 
-        console.warn("[usePlatformMonitor] Edge function unavailable, using mock data:", error?.message);
+        logger.warn("[usePlatformMonitor] Edge function unavailable, using mock data:", error?.message);
       } catch (e) {
-        console.warn("[usePlatformMonitor] Fallback to mock data:", e);
+        logger.warn("[usePlatformMonitor] Fallback to mock data:", e);
       }
 
       return generateMockMonitorResponse();
