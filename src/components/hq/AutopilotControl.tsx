@@ -109,6 +109,7 @@ export function AutopilotControl({ className, compact = false }: AutopilotContro
               variant="ghost"
               size="icon"
               onClick={() => setShowSettings(!showSettings)}
+              aria-label="Paramètres"
             >
               <Settings className="h-4 w-4" />
             </Button>

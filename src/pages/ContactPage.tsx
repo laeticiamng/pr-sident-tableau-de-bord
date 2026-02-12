@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { contactSchema, sanitizeHtml } from "@/lib/validation";
+import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
@@ -116,6 +117,7 @@ export default function ContactPage() {
                   <Input
                     id="name"
                     placeholder="Votre nom complet"
+                    autoComplete="name"
                     {...register("name")}
                     aria-invalid={!!errors.name}
                     className={errors.name ? "border-destructive" : ""}
@@ -131,6 +133,7 @@ export default function ContactPage() {
                       id="email"
                       type="email"
                       placeholder="votre@email.com"
+                      autoComplete="email"
                       {...register("email")}
                       aria-invalid={!!errors.email}
                       className={errors.email ? "border-destructive" : ""}
@@ -145,6 +148,7 @@ export default function ContactPage() {
                       id="phone"
                       type="tel"
                       placeholder="+33 6 12 34 56 78"
+                      autoComplete="tel"
                       {...register("phone")}
                       aria-invalid={!!errors.phone}
                       className={errors.phone ? "border-destructive" : ""}
@@ -262,7 +266,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-1">Retrouvez-nous</h3>
                   <a
-                    href="https://www.linkedin.com/in/laeticiamotongane/"
+                    href={COMPANY_PROFILE.linkedinPresident}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-accent hover:underline"
@@ -271,7 +275,7 @@ export default function ContactPage() {
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                   <a
-                    href="https://www.linkedin.com/company/emotionscare/"
+                    href={COMPANY_PROFILE.linkedinCompany}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-muted-foreground hover:text-accent hover:underline text-sm mt-1"

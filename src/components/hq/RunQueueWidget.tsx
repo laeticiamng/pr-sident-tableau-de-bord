@@ -128,11 +128,12 @@ export function RunQueueWidget({ className, compact = false }: RunQueueWidgetPro
                 </Tooltip>
               </>
             )}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-7 w-7"
               onClick={() => setExpanded(!expanded)}
+              aria-label={expanded ? "Réduire la file" : "Développer la file"}
             >
               {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
             </Button>
@@ -171,21 +172,23 @@ export function RunQueueWidget({ className, compact = false }: RunQueueWidgetPro
                     <div className="flex items-center gap-1">
                       {getStatusBadge(run.status)}
                       {run.status === "queued" && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-6 w-6"
                           onClick={() => cancelRun(run.id)}
+                          aria-label="Annuler"
                         >
                           <X className="h-3 w-3" />
                         </Button>
                       )}
                       {run.status === "failed" && (
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
                           className="h-6 w-6"
                           onClick={() => retryRun(run.id)}
+                          aria-label="Réessayer"
                         >
                           <RefreshCw className="h-3 w-3" />
                         </Button>
