@@ -37,7 +37,8 @@ const statusConfig = {
 };
 
 export function PlatformHealthGrid({ compact, className }: PlatformHealthGridProps) {
-  const { data: platforms, isLoading } = usePlatforms();
+  const { data: platformsResult, isLoading } = usePlatforms();
+  const platforms = platformsResult?.platforms;
 
   if (isLoading) {
     return (

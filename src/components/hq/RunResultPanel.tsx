@@ -78,7 +78,7 @@ export function RunResultPanel({ runResult, onClose, className }: RunResultPanel
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-base flex items-center gap-2">
                     Résultat : {runTypeLabel}
-                    <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto">
+                    <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" aria-label={isExpanded ? "Réduire" : "Développer"}>
                       {isExpanded ? (
                         <ChevronUp className="h-4 w-4" />
                       ) : (

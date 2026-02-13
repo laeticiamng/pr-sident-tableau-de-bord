@@ -18,7 +18,7 @@ export function ShortcutsHelp() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
+        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Raccourcis clavier">
           <HelpCircle className="h-4 w-4" />
         </Button>
       </DialogTrigger>

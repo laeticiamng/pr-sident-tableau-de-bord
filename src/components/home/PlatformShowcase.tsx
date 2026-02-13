@@ -1,79 +1,26 @@
 import { useState, forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS, PLATFORM_GRADIENTS, PLATFORM_GROUP_BORDERS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  ArrowRight, 
+import {
+  ArrowRight,
   ChevronRight,
   Heart,
-  Compass,
-  Rocket,
-  Music,
-  Users,
   Database,
-  Cpu,
   GitBranch,
   Sparkles,
   GitCommit,
   TestTube2,
-  HeartPulse,
-  Trophy
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Icon mapping for each platform
-const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
-  "emotionscare": Heart,
-  "nearvity": Users,
-  "system-compass": Compass,
-  "growth-copilot": Rocket,
-  "med-mng": Music,
-  "swift-care-hub": HeartPulse,
-  "track-triumph-tavern": Trophy,
-};
-
-// Unique gradient for each platform (using semantic tokens via opacity)
-const platformGradients: Record<string, string> = {
-  "emotionscare": "from-platform-health/20 via-platform-health/10 to-transparent",
-  "nearvity": "from-platform-social/20 via-platform-social/10 to-transparent",
-  "system-compass": "from-platform-compass/20 via-platform-compass/10 to-transparent",
-  "growth-copilot": "from-platform-growth/20 via-platform-growth/10 to-transparent",
-  "med-mng": "from-platform-medical/20 via-platform-medical/10 to-transparent",
-  "swift-care-hub": "from-platform-emergency/20 via-platform-emergency/10 to-transparent",
-  "track-triumph-tavern": "from-platform-triumph/20 via-platform-triumph/10 to-transparent",
-};
-
-// Accent colors per platform (semantic tokens)
-const platformAccents: Record<string, string> = {
-  "emotionscare": "text-platform-health",
-  "nearvity": "text-platform-social",
-  "system-compass": "text-platform-compass",
-  "growth-copilot": "text-platform-growth",
-  "med-mng": "text-platform-medical",
-  "swift-care-hub": "text-platform-emergency",
-  "track-triumph-tavern": "text-platform-triumph",
-};
-
-const platformBorders: Record<string, string> = {
-  "emotionscare": "group-hover:border-platform-health/30",
-  "nearvity": "group-hover:border-platform-social/30",
-  "system-compass": "group-hover:border-platform-compass/30",
-  "growth-copilot": "group-hover:border-platform-growth/30",
-  "med-mng": "group-hover:border-platform-medical/30",
-  "swift-care-hub": "group-hover:border-platform-emergency/30",
-  "track-triumph-tavern": "group-hover:border-platform-triumph/30",
-};
-
-const platformBgAccents: Record<string, string> = {
-  "emotionscare": "bg-platform-health",
-  "nearvity": "bg-platform-social",
-  "system-compass": "bg-platform-compass",
-  "growth-copilot": "bg-platform-growth",
-  "med-mng": "bg-platform-medical",
-  "swift-care-hub": "bg-platform-emergency",
-  "track-triumph-tavern": "bg-platform-triumph",
-};
+const platformIcons = PLATFORM_ICONS;
+const platformGradients = PLATFORM_GRADIENTS;
+const platformAccents = PLATFORM_ACCENTS;
+const platformBorders = PLATFORM_GROUP_BORDERS;
+const platformBgAccents = PLATFORM_BG_ACCENTS;
 
 export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   (props, ref) => {

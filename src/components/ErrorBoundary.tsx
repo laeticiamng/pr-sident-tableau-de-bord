@@ -26,15 +26,17 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({ errorInfo });
 
-    // Log to console for debugging
-    console.group("🚨 Application Error");
-    console.error("Error:", error.message);
-    console.error("Stack:", error.stack);
-    console.error("Component Stack:", errorInfo.componentStack);
-    console.groupEnd();
+    // Only log in development to avoid leaking stack traces in production
+    if (import.meta.env.DEV) {
+      console.error("ErrorBoundary caught an error:", error, errorInfo);
+      console.group("Application Error");
+      console.error("Error:", error.message);
+      console.error("Stack:", error.stack);
+      console.error("Component Stack:", errorInfo.componentStack);
+      console.groupEnd();
+    }
   }
 
   private handleRetry = () => {

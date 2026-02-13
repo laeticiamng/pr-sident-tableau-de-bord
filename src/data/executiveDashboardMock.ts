@@ -77,7 +77,7 @@ export const PLATFORMS_KPI_MOCK: PlatformKPI[] = [
     nom: "Growth Copilot",
     domaine: "Automatisation growth & IA",
     url: "https://agent-growth-automator.com",
-    modules: 39,
+    modules: 11,
     utilisateursActifs: 11640,
     uptime: 98.83,
     derniereMaj: "2026-02-09T22:55:00Z",
@@ -99,7 +99,7 @@ export const PLATFORMS_KPI_MOCK: PlatformKPI[] = [
     variationUtilisateursPct: 1.9,
   },
   {
-    key: "urgenceos",
+    key: "swift-care-hub",
     nom: "UrgenceOS",
     domaine: "Urgences hospitalières",
     url: "https://flow-pulse-assist.lovable.app",
@@ -112,7 +112,7 @@ export const PLATFORMS_KPI_MOCK: PlatformKPI[] = [
     variationUtilisateursPct: -0.8,
   },
   {
-    key: "track-triumph",
+    key: "track-triumph-tavern",
     nom: "Track Triumph",
     domaine: "Compétition musicale",
     url: "https://track-triumph-tavern.lovable.app",
@@ -129,7 +129,7 @@ export const PLATFORMS_KPI_MOCK: PlatformKPI[] = [
 export const CRITICAL_ACTIONS_MOCK: CriticalAction[] = [
   {
     id: "ACT-4021",
-    plateformeKey: "urgenceos",
+    plateformeKey: "swift-care-hub",
     titre: "Déploiement correctif triage prioritaire",
     description: "Patch critique de latence sur l'orchestration des alertes SAMU.",
     niveauRisque: "Critique",

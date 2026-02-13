@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { RealtimeChannel } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 export interface RealtimeNotification {
   id: string;
@@ -112,7 +113,7 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
       })
       .subscribe((status) => {
         setIsConnected(status === "SUBSCRIBED");
-        console.debug("[Realtime] Channel status:", status);
+        logger.debug("[Realtime] Channel status:", status);
       });
 
     setChannel(realtimeChannel);
@@ -151,7 +152,8 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
 // Simple notification sound using Web Audio API
 function playNotificationSound() {
   try {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const audioContext = new AudioCtx();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -166,6 +168,6 @@ function playNotificationSound() {
     oscillator.start(audioContext.currentTime);
     oscillator.stop(audioContext.currentTime + 0.3);
   } catch (e) {
-    console.warn("Could not play notification sound:", e);
+    logger.warn("Could not play notification sound:", e);
   }
 }

@@ -1,20 +1,21 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  ArrowRight, 
-  Sparkles, 
-  Brain, 
-  Activity, 
-  CheckCircle, 
+import {
+  ArrowRight,
+  Sparkles,
+  Brain,
+  Activity,
+  CheckCircle,
   Search,
   Building2
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 // Feature cards data
 const FEATURES = [
@@ -79,28 +80,25 @@ function ScrollReveal({
 
 export default function HomePage() {
 
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "EMOTIONSCARE — Siège Social Numérique";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.");
-    }
-  }, []);
+  usePageMeta({
+    title: "Siège Social Numérique",
+    description: "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.",
+    canonicalPath: "/",
+  });
 
   return (
     <div className="flex flex-col">
       {/* ============================================ */}
       {/* HERO SECTION */}
       {/* ============================================ */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section aria-label="Presentation EMOTIONSCARE" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         {/* Background — Fixed navy regardless of theme */}
-        <div className="absolute inset-0 bg-hero-gradient" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.2),transparent)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" />
-        
+        <div className="absolute inset-0 bg-hero-gradient" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.2),transparent)]" aria-hidden="true" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" aria-hidden="true" />
+
         {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(0_0%_100%/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(0_0%_100%/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(0_0%_100%/0.05)_1px,transparent_1px),linear-gradient(90deg,hsl(0_0%_100%/0.05)_1px,transparent_1px)] bg-[size:60px_60px]" aria-hidden="true" />
 
         <div className="container relative z-10 py-16 md:py-24 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl text-center">
@@ -211,8 +209,8 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: "7", label: "Plateformes" },
-              { value: "1 400+", label: "Mises à jour" },
+              { value: `${MANAGED_PLATFORMS.length}`, label: "Plateformes" },
+              { value: `${(MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.commits, 0) / 1000).toFixed(1)}K`, label: "Évolutions" },
               { value: "100%", label: "Made in France" },
               { value: "24/7", label: "Monitoring" },
             ].map((stat, index) => (

@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORMS_KPI_MOCK, CRITICAL_ACTIONS_MOCK } from "@/data/executiveDashboardMock";
+import { logger } from "@/lib/logger";
 
 // Types for HQ data
 export interface Platform {
@@ -112,7 +113,7 @@ function setCachedData<T>(key: string, data: T[]): void {
   try {
     localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
-    console.warn("Failed to cache data:", e);
+    logger.warn("Failed to cache data:", e);
   }
 }
 
@@ -224,7 +225,7 @@ function generateMockAuditLogs(): AuditLog[] {
     { action: "action.created", actor_type: "agent" as const, resource_type: "action", details: { title: "Activation agent CRM" } },
     { action: "run.completed", actor_type: "system" as const, resource_type: "run", details: { run_type: "COMPETITIVE_ANALYSIS" } },
     { action: "action.rejected", actor_type: "owner" as const, resource_type: "action", details: { title: "Modification tarifs" } },
-    { action: "platform.status_changed", actor_type: "system" as const, resource_type: "platform", details: { key: "urgenceos", from: "amber", to: "red" } },
+    { action: "platform.status_changed", actor_type: "system" as const, resource_type: "platform", details: { key: "swift-care-hub", from: "amber", to: "red" } },
     { action: "run.completed", actor_type: "agent" as const, resource_type: "run", details: { run_type: "RELEASE_GATE_CHECK" } },
     { action: "action.approved", actor_type: "owner" as const, resource_type: "action", details: { title: "Mise à jour anti-spam" } },
   ];
@@ -384,37 +385,44 @@ function generateRunSimulation(runType: string, platformKey?: string): Executive
 
 // ─── Hooks ──────────────────────────────────────────────────────────────
 
+// Résultat enrichi avec indicateur de source
+export interface PlatformsResult {
+  platforms: Platform[];
+  isMockData: boolean;
+}
+
 // Hook: Fetch platforms from RPC with mock fallback
 export function usePlatforms() {
   return useQuery({
     queryKey: ["hq", "platforms"],
-    queryFn: async () => {
+    queryFn: async (): Promise<PlatformsResult> => {
       try {
         const { data, error } = await supabase.rpc("get_all_hq_platforms");
 
         if (error) {
-          console.warn("[usePlatforms] RPC unavailable, using mock data:", error.message);
-          return generateMockPlatforms();
+          logger.warn("[usePlatforms] RPC unavailable, using mock data:", error.message);
+          return { platforms: generateMockPlatforms(), isMockData: true };
         }
 
         if (data && Array.isArray(data) && data.length > 0) {
-          return data as Platform[];
+          return { platforms: data as Platform[], isMockData: false };
         }
       } catch (e) {
-        console.warn("[usePlatforms] Fallback to mock data:", e);
+        logger.warn("[usePlatforms] Fallback to mock data:", e);
       }
 
-      return generateMockPlatforms();
+      return { platforms: generateMockPlatforms(), isMockData: true };
     },
-    staleTime: 1000 * 60 * 5,
-    refetchInterval: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60 * 5, // 5 minutes (aligné sur staleTime)
     refetchIntervalInBackground: false,
   });
 }
 
 // Hook: Fetch single platform
 export function usePlatform(key: string) {
-  const { data: platforms } = usePlatforms();
+  const { data: platformsResult } = usePlatforms();
+  const platforms = platformsResult?.platforms;
 
   return useQuery({
     queryKey: ["hq", "platforms", key],
@@ -433,7 +441,7 @@ export function useOrgRoles() {
       const { data, error } = await supabase.rpc("get_hq_org_roles");
 
       if (error) {
-        console.warn("RPC error:", error.message);
+        logger.warn("RPC error:", error.message);
         return [];
       }
 
@@ -450,7 +458,7 @@ export function useAgents() {
       const { data, error } = await supabase.rpc("get_hq_agents");
 
       if (error) {
-        console.warn("RPC error:", error.message);
+        logger.warn("RPC error:", error.message);
         return [];
       }
 
@@ -468,7 +476,7 @@ export function usePendingApprovals() {
         const { data, error } = await supabase.rpc("get_hq_pending_actions");
 
         if (error) {
-          console.warn("[usePendingApprovals] RPC unavailable, using mock data:", error.message);
+          logger.warn("[usePendingApprovals] RPC unavailable, using mock data:", error.message);
           return generateMockPendingActions();
         }
 
@@ -476,7 +484,7 @@ export function usePendingApprovals() {
           return data as Action[];
         }
       } catch (e) {
-        console.warn("[usePendingApprovals] Fallback to mock data:", e);
+        logger.warn("[usePendingApprovals] Fallback to mock data:", e);
       }
 
       return generateMockPendingActions();
@@ -489,11 +497,7 @@ export function useRecentRuns(limit = 10) {
   return useQuery({
     queryKey: ["hq", "runs", "recent", limit],
     queryFn: async () => {
-      // Try local cache first
-      const cached = getCachedData<Run>(RUNS_CACHE_KEY);
-      if (cached.length > 0) return cached.slice(0, limit);
-
-      // Try database
+      // Try database first (source of truth)
       try {
         const { data, error } = await supabase.rpc("get_hq_recent_runs", { limit_count: limit });
 
@@ -501,8 +505,12 @@ export function useRecentRuns(limit = 10) {
           return data as Run[];
         }
       } catch (e) {
-        console.warn("[useRecentRuns] RPC unavailable:", e);
+        logger.warn("[useRecentRuns] RPC unavailable:", e);
       }
+
+      // Then try local cache
+      const cached = getCachedData<Run>(RUNS_CACHE_KEY);
+      if (cached.length > 0) return cached.slice(0, limit);
 
       // Fallback to mock runs
       return generateMockRuns().slice(0, limit);
@@ -519,7 +527,7 @@ export function useAuditLogs(limit = 50) {
         const { data, error } = await supabase.rpc("get_hq_audit_logs", { limit_count: limit });
 
         if (error) {
-          console.warn("[useAuditLogs] RPC unavailable, using mock data:", error.message);
+          logger.warn("[useAuditLogs] RPC unavailable, using mock data:", error.message);
           return generateMockAuditLogs().slice(0, limit);
         }
 
@@ -527,7 +535,7 @@ export function useAuditLogs(limit = 50) {
           return data as AuditLog[];
         }
       } catch (e) {
-        console.warn("[useAuditLogs] Fallback to mock data:", e);
+        logger.warn("[useAuditLogs] Fallback to mock data:", e);
       }
 
       return generateMockAuditLogs().slice(0, limit);
@@ -543,7 +551,7 @@ export function useSystemConfig(key: string) {
       const { data, error } = await supabase.rpc("get_hq_system_config", { config_key: key });
 
       if (error) {
-        console.warn("RPC error:", error.message);
+        logger.warn("RPC error:", error.message);
         return null;
       }
 
@@ -578,9 +586,9 @@ export function useExecuteRun() {
           return data as ExecutiveRunResult;
         }
 
-        console.warn("[useExecuteRun] Edge function unavailable, using simulation:", error?.message || data?.error);
+        logger.warn("[useExecuteRun] Edge function unavailable, using simulation:", error?.message || data?.error);
       } catch (e) {
-        console.warn("[useExecuteRun] Fallback to simulation:", e);
+        logger.warn("[useExecuteRun] Fallback to simulation:", e);
       }
 
       // Simulate a short delay for realism
@@ -651,6 +659,7 @@ export function useApproveAction() {
       decision: "approved" | "rejected" | "deferred";
       reason?: string;
     }) => {
+      let simulated = false;
       try {
         const { error } = await supabase.rpc("approve_hq_action", {
           p_action_id: action_id,
@@ -660,10 +669,11 @@ export function useApproveAction() {
         if (error) throw error;
       } catch {
         // Simulated approval — works offline
-        console.warn("[useApproveAction] RPC unavailable, simulating approval");
+        simulated = true;
+        logger.warn("[useApproveAction] RPC unavailable, simulating approval");
       }
 
-      return { action_id, decision };
+      return { action_id, decision, simulated };
     },
     onSuccess: (data) => {
       const labels: Record<string, string> = {
@@ -673,7 +683,10 @@ export function useApproveAction() {
       };
       toast({
         title: labels[data.decision] || "Décision enregistrée",
-        description: "Décision enregistrée",
+        description: data.simulated
+          ? "Mode démo — cette action n'a pas été enregistrée en base de données"
+          : "Décision enregistrée",
+        variant: data.simulated ? "destructive" : "default",
       });
       queryClient.invalidateQueries({ queryKey: ["hq", "actions"] });
     },

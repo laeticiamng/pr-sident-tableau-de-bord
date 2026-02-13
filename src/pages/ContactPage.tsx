@@ -4,33 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { contactSchema, sanitizeHtml } from "@/lib/validation";
+import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // SEO: Update document meta for this page
-  useEffect(() => {
-    document.title = "Contact — EMOTIONSCARE";
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute("content", "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.");
-    }
-    return () => {
-      document.title = "EMOTIONSCARE — Siège Social Numérique";
-      if (metaDescription) {
-        metaDescription.setAttribute("content", "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.");
-      }
-    };
-  }, []);
+  usePageMeta({
+    title: "Contact",
+    description: "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.",
+  });
 
   const { 
     register, 
@@ -66,7 +59,7 @@ export default function ContactPage() {
       });
 
       if (error) {
-        console.error("[Contact] Edge function error:", error);
+        logger.error("[Contact] Edge function error:", error);
         toast.error("Erreur lors de l'envoi", {
           description: "Veuillez réessayer ou nous contacter directement par email.",
         });
@@ -83,7 +76,7 @@ export default function ContactPage() {
       });
       reset();
     } catch (err) {
-      console.error("[Contact] Unexpected error:", err);
+      logger.error("[Contact] Unexpected error:", err);
       toast.error("Erreur de connexion", {
         description: "Vérifiez votre connexion internet et réessayez.",
       });
@@ -124,6 +117,7 @@ export default function ContactPage() {
                   <Input
                     id="name"
                     placeholder="Votre nom complet"
+                    autoComplete="name"
                     {...register("name")}
                     aria-invalid={!!errors.name}
                     className={errors.name ? "border-destructive" : ""}
@@ -139,6 +133,7 @@ export default function ContactPage() {
                       id="email"
                       type="email"
                       placeholder="votre@email.com"
+                      autoComplete="email"
                       {...register("email")}
                       aria-invalid={!!errors.email}
                       className={errors.email ? "border-destructive" : ""}
@@ -153,6 +148,7 @@ export default function ContactPage() {
                       id="phone"
                       type="tel"
                       placeholder="+33 6 12 34 56 78"
+                      autoComplete="tel"
                       {...register("phone")}
                       aria-invalid={!!errors.phone}
                       className={errors.phone ? "border-destructive" : ""}
@@ -270,16 +266,16 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold mb-1">Retrouvez-nous</h3>
                   <a
-                    href="https://www.linkedin.com/in/laeticiamotongane/"
+                    href={COMPANY_PROFILE.linkedinPresident}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-accent hover:underline"
                   >
-                    <span>Laeticia Motongane</span>
+                    <span>Motongane Laeticia</span>
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                   <a
-                    href="https://www.linkedin.com/company/emotionscare/"
+                    href={COMPANY_PROFILE.linkedinCompany}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1.5 text-muted-foreground hover:text-accent hover:underline text-sm mt-1"

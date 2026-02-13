@@ -114,6 +114,8 @@ export const COMPANY_PROFILE = {
   creationDate: "07/05/2025",
   rcs: "Amiens (inscrit le 21/05/2025)",
   president: "Motongane Laeticia",
+  linkedinPresident: "https://www.linkedin.com/in/laeticiamotongane/",
+  linkedinCompany: "https://www.linkedin.com/company/emotionscare/",
 } as const;
 
 export type PlatformKey = typeof MANAGED_PLATFORMS[number]["key"];

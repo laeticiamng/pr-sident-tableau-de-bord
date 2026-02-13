@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
 import "@testing-library/jest-dom";
 
 // Mock Supabase client at module level
 vi.mock("@/integrations/supabase/client", () => {
   const mockSession = { user: { id: "user-123", email: "test@example.com" } };
-  
+
   return {
     supabase: {
       auth: {
@@ -29,6 +30,13 @@ vi.mock("react-router-dom", () => ({
   useLocation: () => ({ pathname: "/test" }),
 }));
 
+// Wrapper that provides AuthProvider
+async function getWrapper() {
+  const { AuthProvider } = await import("@/contexts/AuthContext");
+  return ({ children }: { children: ReactNode }) =>
+    createElement(AuthProvider, null, children);
+}
+
 describe("useAuth", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -41,8 +49,9 @@ describe("useAuth", () => {
 
   it("should return user, session, loading, and signOut", async () => {
     const { useAuth } = await import("@/hooks/useAuth");
-    
-    const { result } = renderHook(() => useAuth());
+    const wrapper = await getWrapper();
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
     // Wait for state updates to complete
     await act(async () => {
@@ -58,8 +67,9 @@ describe("useAuth", () => {
 
   it("should have signOut as a function", async () => {
     const { useAuth } = await import("@/hooks/useAuth");
-    
-    const { result } = renderHook(() => useAuth());
+    const wrapper = await getWrapper();
+
+    const { result } = renderHook(() => useAuth(), { wrapper });
 
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 50));
@@ -77,8 +87,9 @@ describe("useRequireAuth", () => {
 
   it("should return user and loading", async () => {
     const { useRequireAuth } = await import("@/hooks/useAuth");
-    
-    const { result } = renderHook(() => useRequireAuth());
+    const wrapper = await getWrapper();
+
+    const { result } = renderHook(() => useRequireAuth(), { wrapper });
 
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 50));

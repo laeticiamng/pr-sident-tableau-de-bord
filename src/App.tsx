@@ -6,9 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
 import { PageLoader } from "@/components/ui/skeleton-loader";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 // Layouts - loaded immediately (needed for structure)
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -22,6 +24,7 @@ import NotFound from "@/pages/NotFound";
 
 // Public Pages - lazy loaded
 const PlateformesPage = lazy(() => import("@/pages/PlateformesPage"));
+const StatusPage = lazy(() => import("@/pages/StatusPage"));
 const VisionPage = lazy(() => import("@/pages/VisionPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 
@@ -77,10 +80,12 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
+          <AuthProvider>
           <NetworkStatusProvider>
             <Toaster />
             <Sonner />
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+              <ScrollToTop />
               <AnalyticsProvider />
               <Suspense fallback={<PageLoader />}>
               <Routes>
@@ -88,6 +93,7 @@ const App = () => (
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
                   <Route path="/plateformes" element={<PlateformesPage />} />
+                  <Route path="/status" element={<StatusPage />} />
                   <Route path="/vision" element={<VisionPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
@@ -147,6 +153,7 @@ const App = () => (
               </Suspense>
             </BrowserRouter>
           </NetworkStatusProvider>
+          </AuthProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

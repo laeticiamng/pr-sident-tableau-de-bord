@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export interface StripeKPIs {
   mrr: number;
@@ -55,9 +56,9 @@ export function useStripeKPIs() {
           return data;
         }
 
-        console.warn("[useStripeKPIs] Edge function unavailable, using mock data:", error?.message);
+        logger.warn("[useStripeKPIs] Edge function unavailable, using mock data:", error?.message);
       } catch (e) {
-        console.warn("[useStripeKPIs] Fallback to mock data:", e);
+        logger.warn("[useStripeKPIs] Fallback to mock data:", e);
       }
 
       return generateMockStripeKPIs();

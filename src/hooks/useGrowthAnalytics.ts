@@ -1,6 +1,7 @@
  import { useState, useCallback } from "react";
  import { supabase } from "@/integrations/supabase/client";
  import { useToast } from "@/hooks/use-toast";
+ import { logger } from "@/lib/logger";
  
  export type GrowthAnalyticsAction = 
    | "sync-ga4"
@@ -73,7 +74,7 @@
    success: boolean;
    action: string;
    timestamp: string;
-   data?: any;
+   data?: Record<string, unknown>;
    error?: string;
  }
  
@@ -84,7 +85,7 @@
  
    const executeAction = useCallback(async (
      action: GrowthAnalyticsAction,
-     params: Record<string, any> = {}
+     params: Record<string, unknown> = {}
    ): Promise<GrowthAnalyticsResult | null> => {
      setIsLoading(true);
      
@@ -94,7 +95,7 @@
        });
  
        if (error) {
-         console.error("Growth Analytics error:", error);
+         logger.error("Growth Analytics error:", error);
          toast({
            title: "Erreur Analytics",
            description: error.message || "Impossible de contacter l'API Growth OS",
@@ -114,7 +115,7 @@
  
        return data as GrowthAnalyticsResult;
      } catch (err) {
-       console.error("Growth Analytics call failed:", err);
+       logger.error("Growth Analytics call failed:", err);
        toast({
          title: "Erreur",
          description: "Échec de la connexion à Growth OS",
@@ -145,7 +146,7 @@
    const generateReport = useCallback((reportType?: string, format?: string) => 
      executeAction("generate-report", { reportType, format }), [executeAction]);
  
-   const getAIInsights = useCallback((question: string, dataContext?: any) => 
+   const getAIInsights = useCallback((question: string, dataContext?: Record<string, unknown>) =>
      executeAction("ai-insights", { question, dataContext }), [executeAction]);
  
    const fullSync = useCallback(() => 

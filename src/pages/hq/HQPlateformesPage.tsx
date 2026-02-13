@@ -46,7 +46,8 @@ const statusLabels = {
 export default function HQPlateformesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedPlatform = searchParams.get("platform") || "all";
-  const { data: platforms, isLoading, refetch } = usePlatforms();
+  const { data: platformsResult, isLoading, refetch } = usePlatforms();
+  const platforms = platformsResult?.platforms;
   const executeRun = useExecuteRun();
   const [preparingRelease, setPreparingRelease] = useState<string | null>(null);
   const [analysisDialogOpen, setAnalysisDialogOpen] = useState(false);
@@ -76,7 +77,7 @@ export default function HQPlateformesPage() {
     });
   };
 
-  const handleOpenAnalysis = (platform: any) => {
+  const handleOpenAnalysis = (platform: { key: string; name: string }) => {
     const managedPlatform = MANAGED_PLATFORMS.find(p => p.key === platform.key);
     setSelectedPlatformForAnalysis({
       key: platform.key,

@@ -44,10 +44,10 @@ export const PLATFORM_COMPLETION_ITEMS: PlatformCompletionItem[] = [
   {
     key: "growth-copilot",
     nom: "Growth Copilot",
-    modulesTotal: 39,
-    modulesCompletes: 29,
+    modulesTotal: 11,
+    modulesCompletes: 9,
     statut: "en_cours",
-    prochaineEtape: "Stabiliser le runbook d'orchestration des 39 experts IA.",
+    prochaineEtape: "Stabiliser le runbook d'orchestration des 11 départements IA.",
   },
   {
     key: "med-mng",
