@@ -97,7 +97,7 @@ export function ExecutiveDashboardSection() {
           <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase">Pilotage exécutif</p>
           <h2 className="text-3xl sm:text-4xl font-semibold">Dashboard présidentiel interactif</h2>
           <p className="text-muted-foreground max-w-3xl">
-            Vue unifiée des KPI, du monitoring temps réel, des validations critiques et de la veille stratégique. Les données sont mockées et prêtes à être branchées sur Supabase.
+            Vue unifiée des KPI, du monitoring temps réel, des validations critiques et de la veille stratégique.
           </p>
         </div>
 
