@@ -14,9 +14,12 @@ interface EssentialModeToggleProps {
 export function useEssentialMode() {
   const [isEssential, setIsEssential] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem(STORAGE_KEY) === "true";
+      const stored = localStorage.getItem(STORAGE_KEY);
+      // Par défaut activé — le dirigeant voit la vue simplifiée
+      if (stored === null) return true;
+      return stored === "true";
     }
-    return false;
+    return true;
   });
 
   useEffect(() => {

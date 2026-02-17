@@ -4,12 +4,8 @@ import { HQSidebar } from "./HQSidebar";
 import { MobileHQHeader } from "./MobileHQHeader";
 import { useAuth } from "@/hooks/useAuth";
 import { CommandPalette } from "@/components/hq/CommandPalette";
-import { LiveStatusWidget } from "@/components/hq/LiveStatusWidget";
-import { QuickActionsBar } from "@/components/hq/QuickActionsBar";
-import { FloatingActionButton } from "@/components/hq/FloatingActionButton";
-import { ShortcutsHelp } from "@/components/hq/ShortcutsHelp";
-import { NotificationCenter } from "@/components/hq/NotificationCenter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NotificationCenter } from "@/components/hq/NotificationCenter";
 import { RunQueueWidget } from "@/components/hq/RunQueueWidget";
 import { RunTemplateDialog } from "@/components/hq/RunTemplateDialog";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
@@ -19,7 +15,6 @@ import { usePageMeta } from "@/hooks/usePageMeta";
 export function HQLayout() {
   const { user } = useAuth();
 
-  // Prevent search engines from indexing authenticated HQ pages
   usePageMeta({ title: "HQ", noindex: true });
   const [commandOpen, setCommandOpen] = useState(false);
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
@@ -32,7 +27,7 @@ export function HQLayout() {
     setSidebarOpen(false);
   }, [location.pathname]);
 
-  // Register keyboard shortcuts for quick actions
+  // Les raccourcis clavier restent fonctionnels pour les utilisateurs avancés
   useKeyboardShortcuts({
     onBrief: () => enqueue("DAILY_EXECUTIVE_BRIEF"),
     onAudit: () => enqueue("SECURITY_AUDIT_RLS"),
@@ -43,67 +38,41 @@ export function HQLayout() {
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Mobile Header */}
-      <MobileHQHeader 
-        sidebarOpen={sidebarOpen} 
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} 
+      <MobileHQHeader
+        sidebarOpen={sidebarOpen}
+        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
       />
-      
+
       {/* Sidebar */}
       <HQSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      {/* Command Palette */}
+
+      {/* Command Palette (accessible via Cmd+K pour utilisateurs avancés) */}
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
-      
+
       <main className="lg:pl-64 pt-14 lg:pt-0">
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Top Bar - Desktop only */}
-          <div className="hidden lg:block mb-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <p className="text-sm text-muted-foreground">
-                    Connecté(e) : {user?.email}
-                  </p>
-                  <ShortcutsHelp />
-                </div>
-                <div className="flex items-center gap-2">
-                  <ThemeToggle />
-                  <NotificationCenter />
-                  <LiveStatusWidget />
-                </div>
-              </div>
-              
-              {/* Quick Actions Bar */}
-              <QuickActionsBar 
-                onOpenCommand={() => setCommandOpen(true)} 
-                onOpenTemplates={() => setTemplateDialogOpen(true)}
-              />
+          {/* Barre supérieure simplifiée — Desktop only */}
+          <div className="hidden lg:flex items-center justify-between mb-6">
+            <p className="text-sm text-muted-foreground">
+              Connecté(e) : {user?.email}
+            </p>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <NotificationCenter />
             </div>
           </div>
 
-          {/* Mobile Quick Actions */}
-          <div className="lg:hidden mb-4">
-            <QuickActionsBar 
-              onOpenCommand={() => setCommandOpen(true)} 
-              onOpenTemplates={() => setTemplateDialogOpen(true)}
-              compact
-            />
-          </div>
-          
-          {/* Run Queue Widget - shows when runs are in progress */}
+          {/* File d'attente des runs (uniquement si des runs sont en cours) */}
           <RunQueueWidget className="mb-4 lg:mb-6" compact />
-          
+
           <Outlet />
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      <FloatingActionButton onOpenTemplates={() => setTemplateDialogOpen(true)} />
-      
-      {/* Template Dialog */}
-      <RunTemplateDialog 
-        open={templateDialogOpen} 
-        onOpenChange={setTemplateDialogOpen} 
+      {/* Template Dialog (accessible via Command Palette) */}
+      <RunTemplateDialog
+        open={templateDialogOpen}
+        onOpenChange={setTemplateDialogOpen}
       />
     </div>
   );
