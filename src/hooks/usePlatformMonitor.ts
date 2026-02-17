@@ -1,8 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
-import { MANAGED_PLATFORMS } from "@/lib/constants";
-import { PLATFORMS_KPI_MOCK } from "@/data/executiveDashboardMock";
 import { logger } from "@/lib/logger";
 
 export interface PlatformHealthResult {
@@ -38,72 +36,25 @@ export interface PlatformMonitorResponse {
   error?: string;
 }
 
-function generateMockMonitorResponse(): PlatformMonitorResponse {
-  const now = new Date().toISOString();
-  const details: PlatformHealthResult[] = MANAGED_PLATFORMS.map(mp => {
-    const kpi = PLATFORMS_KPI_MOCK.find(k => k.key === mp.key);
-    const status: "green" | "amber" | "red" = kpi
-      ? kpi.statut === "orange" ? "amber" : (kpi.statut as "green" | "red")
-      : "green";
-    const responseTime = 80 + Math.floor(Math.random() * 200);
-    return {
-      key: mp.key,
-      url: mp.liveUrl,
-      status,
-      statusCode: status === "red" ? 503 : 200,
-      responseTime,
-      error: status === "red" ? "High latency detected" : null,
-      checkedAt: now,
-    };
-  });
-
-  const greens = details.filter(d => d.status === "green").length;
-  const ambers = details.filter(d => d.status === "amber").length;
-  const reds = details.filter(d => d.status === "red").length;
-  const avgResponse = Math.round(details.reduce((s, d) => s + (d.responseTime || 0), 0) / details.length);
-  const overall = reds > 0 ? "red" as const : ambers > 0 ? "amber" as const : "green" as const;
-
-  return {
-    success: true,
-    summary: {
-      checked_at: now,
-      overall_status: overall,
-      platforms_total: details.length,
-      platforms_green: greens,
-      platforms_amber: ambers,
-      platforms_red: reds,
-      avg_response_time_ms: avgResponse,
-      platforms: details.map(d => ({
-        key: d.key,
-        status: d.status,
-        response_time_ms: d.responseTime,
-        error: d.error,
-      })),
-    },
-    details,
-  };
-}
-
 // Hook pour récupérer le statut temps réel des plateformes
 export function usePlatformMonitor(platformKey?: string) {
   return useQuery({
     queryKey: ["platform-monitor", platformKey || "all"],
     queryFn: async (): Promise<PlatformMonitorResponse> => {
-      try {
-        const { data, error } = await supabase.functions.invoke("platform-monitor", {
-          body: platformKey ? { platform_key: platformKey } : {},
-        });
+      const { data, error } = await supabase.functions.invoke("platform-monitor", {
+        body: platformKey ? { platform_key: platformKey } : {},
+      });
 
-        if (!error && data && data.success) {
-          return data as PlatformMonitorResponse;
-        }
-
-        logger.warn("[usePlatformMonitor] Edge function unavailable, using mock data:", error?.message);
-      } catch (e) {
-        logger.warn("[usePlatformMonitor] Fallback to mock data:", e);
+      if (error) {
+        logger.error("[usePlatformMonitor] Edge function error:", error.message);
+        throw new Error(error.message || "Erreur de monitoring");
       }
 
-      return generateMockMonitorResponse();
+      if (!data || !data.success) {
+        throw new Error(data?.error || "Réponse invalide du monitoring");
+      }
+
+      return data as PlatformMonitorResponse;
     },
     staleTime: 1000 * 30,
     refetchInterval: 1000 * 60,
@@ -118,17 +69,19 @@ export function useRefreshPlatformMonitor() {
 
   return useMutation({
     mutationFn: async (platformKey?: string) => {
-      try {
-        const { data, error } = await supabase.functions.invoke("platform-monitor", {
-          body: platformKey ? { platform_key: platformKey } : {},
-        });
+      const { data, error } = await supabase.functions.invoke("platform-monitor", {
+        body: platformKey ? { platform_key: platformKey } : {},
+      });
 
-        if (!error && data) return data as PlatformMonitorResponse;
-      } catch {
-        // Fallback below
+      if (error) {
+        throw new Error(error.message || "Erreur de monitoring");
       }
 
-      return generateMockMonitorResponse();
+      if (!data) {
+        throw new Error("Réponse vide du monitoring");
+      }
+
+      return data as PlatformMonitorResponse;
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["platform-monitor", "all"], data);

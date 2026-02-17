@@ -19,49 +19,26 @@ export interface StripeKPIs {
 
 interface StripeKPIsResponse {
   success: boolean;
-  mock: boolean;
   kpis: StripeKPIs;
   error?: string;
-}
-
-function generateMockStripeKPIs(): StripeKPIsResponse {
-  return {
-    success: true,
-    mock: true,
-    kpis: {
-      mrr: 2847,
-      mrrChange: 12.3,
-      activeSubscriptions: 89,
-      activeSubscriptionsChange: 7,
-      churnRate: 2.1,
-      churnRateChange: -0.4,
-      totalCustomers: 234,
-      newCustomersThisMonth: 18,
-      revenueThisMonth: 2847,
-      revenueLastMonth: 2534,
-      currency: "eur",
-      lastUpdated: new Date().toISOString(),
-    },
-  };
 }
 
 export function useStripeKPIs() {
   return useQuery({
     queryKey: ["stripe-kpis"],
     queryFn: async (): Promise<StripeKPIsResponse> => {
-      try {
-        const { data, error } = await supabase.functions.invoke<StripeKPIsResponse>("stripe-kpis");
+      const { data, error } = await supabase.functions.invoke<StripeKPIsResponse>("stripe-kpis");
 
-        if (!error && data && data.success) {
-          return data;
-        }
-
-        logger.warn("[useStripeKPIs] Edge function unavailable, using mock data:", error?.message);
-      } catch (e) {
-        logger.warn("[useStripeKPIs] Fallback to mock data:", e);
+      if (error) {
+        logger.error("[useStripeKPIs] Edge function error:", error.message);
+        throw new Error(error.message || "Erreur de connexion à Stripe");
       }
 
-      return generateMockStripeKPIs();
+      if (!data || !data.success) {
+        throw new Error(data?.error || "Réponse invalide de l'API Stripe");
+      }
+
+      return data;
     },
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 10,

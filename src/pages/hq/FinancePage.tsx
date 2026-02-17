@@ -1,9 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  DollarSign, 
-  TrendingUp, 
+import {
+  DollarSign,
+  TrendingUp,
   TrendingDown,
   PieChart,
   BarChart3,
@@ -12,9 +12,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
-  AlertCircle,
   CheckCircle2,
-  Loader2,
   Users
 } from "lucide-react";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
@@ -32,7 +30,6 @@ export default function FinancePage() {
   const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
 
   const kpis = data?.kpis;
-  const isMock = data?.mock;
 
   // Financial KPIs from Stripe
   const financialKPIs = [
@@ -88,20 +85,14 @@ export default function FinancePage() {
         subtitle="Vue financière consolidée des 7 plateformes"
         context="Indicateurs SaaS standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
         source={{
-          source: isMock ? "mock" : "stripe",
+          source: "stripe",
           lastUpdated: kpis?.lastUpdated,
-          confidence: isMock ? "low" : "high",
+          confidence: "high",
           methodology: "Agrégation automatique des données de paiement Stripe",
         }}
         actions={
           <div className="flex items-center gap-3">
-            {isMock && (
-              <Badge variant="outline" className="border-warning text-warning">
-                <AlertCircle className="h-3 w-3 mr-1" />
-                Données mock
-              </Badge>
-            )}
-            {!isMock && kpis && (
+            {kpis && (
               <Badge variant="outline" className="border-success text-success">
                 <CheckCircle2 className="h-3 w-3 mr-1" />
                 Stripe connecté
@@ -301,7 +292,7 @@ export default function FinancePage() {
             name: "Stripe API",
             type: "api",
             refreshRate: "Temps réel",
-            reliability: isMock ? "simulated" : "verified",
+            reliability: "verified",
             description: "Données transactionnelles et subscriptions",
           },
           {
@@ -332,7 +323,7 @@ export default function FinancePage() {
           },
         ]}
         lastUpdated={kpis?.lastUpdated}
-        dataQuality={isMock ? "low" : "high"}
+        dataQuality="high"
       />
 
       {/* Last Updated */}

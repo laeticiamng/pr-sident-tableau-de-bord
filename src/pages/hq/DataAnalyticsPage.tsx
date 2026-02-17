@@ -100,7 +100,6 @@ const FUNNEL_DATA = [
 export default function DataAnalyticsPage() {
   const { data: stripeData, isLoading } = useStripeKPIs();
   const kpis = stripeData?.kpis;
-  const isMock = stripeData?.mock;
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -111,9 +110,6 @@ export default function DataAnalyticsPage() {
             Analyse des cohortes, LTV, ROI et métriques business.
           </p>
         </div>
-        {isMock && (
-          <Badge variant="subtle">Données simulées</Badge>
-        )}
       </div>
 
       {/* KPIs principaux depuis Stripe */}

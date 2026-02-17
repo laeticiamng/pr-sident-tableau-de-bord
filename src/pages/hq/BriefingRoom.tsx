@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Phone,
@@ -19,9 +18,7 @@ import { Link } from "react-router-dom";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
 
 export default function BriefingRoom() {
-  const { data: platformsResult, isLoading: platformsLoading } = usePlatforms();
-  const platforms = platformsResult?.platforms;
-  const isMockData = platformsResult?.isMockData ?? false;
+  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
   const { refetch: refetchRuns } = useRecentRuns(5);
   const executeRun = useExecuteRun();
@@ -111,11 +108,6 @@ export default function BriefingRoom() {
                   }
                   {pendingCount > 0 && ` ${pendingCount} décision${pendingCount > 1 ? "s" : ""} en attente.`}
                 </>
-              )}
-              {isMockData && !platformsLoading && (
-                <Badge variant="outline" className="ml-3 text-xs border-amber-400/50 text-amber-300">
-                  Mode démo
-                </Badge>
               )}
             </p>
           </div>
