@@ -6,6 +6,7 @@ import {
   Building2,
   LayoutDashboard,
   Gauge,
+  Crosshair,
   Layers,
   Users,
   Calendar,
@@ -37,6 +38,7 @@ const sidebarLinks = [
     items: [
       { href: "/hq", label: "Briefing Room", icon: LayoutDashboard },
       { href: "/hq/cockpit", label: "Cockpit Dirigeant", icon: Gauge },
+      { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
       { href: "/hq/plateformes", label: "Plateformes", icon: Layers },
       { href: "/hq/equipe-executive", label: "Workforce Growth Copilot", icon: Users },
       { href: "/hq/growth", label: "Growth OS", icon: Rocket },

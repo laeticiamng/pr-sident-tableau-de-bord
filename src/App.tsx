@@ -37,6 +37,7 @@ const RGPDRegistryPage = lazy(() => import("@/pages/legal/RGPDRegistryPage"));
 // HQ Pages - Cockpit (lazy loaded)
 const BriefingRoom = lazy(() => import("@/pages/hq/BriefingRoom"));
 const CockpitPage = lazy(() => import("@/pages/hq/CockpitPage"));
+const COSPage = lazy(() => import("@/pages/hq/COSPage"));
 const HQPlateformesPage = lazy(() => import("@/pages/hq/HQPlateformesPage"));
 const EquipeExecutivePage = lazy(() => import("@/pages/hq/EquipeExecutivePage"));
 const GrowthPage = lazy(() => import("@/pages/hq/GrowthPage"));
@@ -111,6 +112,7 @@ const App = () => (
                     {/* Cockpit */}
                     <Route path="/hq" element={<BriefingRoom />} />
                     <Route path="/hq/cockpit" element={<CockpitPage />} />
+                    <Route path="/hq/cos" element={<COSPage />} />
                     <Route path="/hq/plateformes" element={<HQPlateformesPage />} />
                     <Route path="/hq/equipe-executive" element={<EquipeExecutivePage />} />
                     <Route path="/hq/growth" element={<GrowthPage />} />
