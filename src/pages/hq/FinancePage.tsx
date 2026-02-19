@@ -13,7 +13,8 @@ import {
   ArrowDownRight,
   RefreshCw,
   CheckCircle2,
-  Users
+  Users,
+  AlertCircle,
 } from "lucide-react";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -85,7 +85,7 @@ export function OpenPRsWidget({ className }: OpenPRsWidgetProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {platformStats.map((platform: { key: string; open_prs: number; open_issues: number }) => (
+        {platformStats.map((platform: { key: string; open_prs: number; open_issues: number; commits?: number }) => (
           <div key={platform.key} className="p-3 rounded-lg border hover:shadow-sm transition-all">
             <div className="flex items-center justify-between">
               <div>
