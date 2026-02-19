@@ -14,8 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function KeyMetricsGrid() {
   const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
-  const { data: platformsResult, isLoading: platformsLoading } = usePlatforms();
-  const platforms = platformsResult?.platforms;
+  const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   
   const kpis = stripeData?.kpis;
   const isLoading = stripeLoading || platformsLoading;

@@ -16,6 +16,7 @@ import {
   TestTube2,
   Calendar,
   ArrowRight,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
@@ -52,14 +53,14 @@ export default function PlateformesPage() {
   const protoCount = allPlatforms.filter(p => p.status === "prototype").length;
 
   // Calculate totals
-  const totals = platforms.reduce(
+  const totals = (platforms as readonly typeof MANAGED_PLATFORMS[number][]).reduce(
     (acc, p) => ({
-      modules: acc.modules + (p.stats?.modules || 0),
-      tables: acc.tables + (p.stats?.tables || 0),
-      functions: acc.functions + (p.stats?.edgeFunctions || 0),
-      branches: acc.branches + (p.stats?.branches || 0),
-      commits: acc.commits + (p.stats?.commits || 0),
-      tests: acc.tests + (p.stats?.tests || 0),
+      modules: acc.modules + (p.stats.modules || 0),
+      tables: acc.tables + (p.stats.tables || 0),
+      functions: acc.functions + (p.stats.edgeFunctions || 0),
+      branches: acc.branches + (p.stats.branches || 0),
+      commits: acc.commits + (p.stats.commits || 0),
+      tests: acc.tests + (p.stats.tests || 0),
     }),
     { modules: 0, tables: 0, functions: 0, branches: 0, commits: 0, tests: 0 }
   );

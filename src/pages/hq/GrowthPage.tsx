@@ -61,7 +61,7 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
     }
 
     const headers = Object.keys(rows[0]);
-    const escape = (value: string | number | boolean) => `"${String(value).replaceAll('"', '""')}"`;
+    const escape = (value: string | number | boolean) => `"${String(value).replace(/"/g, '""')}"`;
 
     return [
       headers.join(","),
@@ -72,7 +72,7 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
    const handleExport = () => {
      try {
       const now = new Date();
-      const timestamp = now.toISOString().replaceAll(":", "-");
+      const timestamp = now.toISOString().replace(/:/g, "-");
 
       const metricsRows = [
         { metric: "CAC", value: metrics.cac.value, trendPercent: metrics.cac.trend, benchmark: metrics.cac.benchmark ?? "N/A" },

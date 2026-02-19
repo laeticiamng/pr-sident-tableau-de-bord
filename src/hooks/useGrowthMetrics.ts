@@ -108,7 +108,7 @@
    const { data: stripeData, isLoading: stripeLoading, error: stripeError } = useStripeKPIs();
    
    const computeMetrics = (): GrowthMetrics => {
-     const isRealData = stripeData?.success && !stripeData?.mock;
+      const isRealData = stripeData?.success === true;
      const kpis = stripeData?.kpis;
      
      if (isRealData && kpis && kpis.mrr > 0) {
@@ -152,7 +152,7 @@
    
    const computePredictions = (): PredictionData | null => {
      const kpis = stripeData?.kpis;
-     const isRealData = stripeData?.success && !stripeData?.mock;
+      const isRealData = stripeData?.success === true;
      
      if (isRealData && kpis && kpis.mrr > 0) {
        const monthlyGrowth = (kpis.mrrChange || 0) / 100;
@@ -186,7 +186,7 @@
      return null;
    };
    
-   const isRealData = stripeData?.success && !stripeData?.mock;
+   const isRealData = stripeData?.success === true;
  
    return {
      metrics: computeMetrics(),

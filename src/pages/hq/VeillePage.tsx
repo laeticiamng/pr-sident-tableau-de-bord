@@ -124,8 +124,8 @@ export default function VeillePage() {
 
   const handleCompetitiveAnalysis = async () => {
     const result = await executeRun.mutateAsync({ run_type: "COMPETITIVE_ANALYSIS" });
-    if (result?.output) {
-      setLastAnalysis(result.output);
+    if (result?.executive_summary) {
+      setLastAnalysis(result.executive_summary);
     }
   };
 
