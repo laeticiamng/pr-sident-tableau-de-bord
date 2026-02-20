@@ -3,15 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   TrendingUp, 
-  Target, 
-  Mail, 
-  Users, 
   Calendar,
   Loader2,
   Megaphone,
-  Database,
-  Link2,
-  AlertTriangle
+  RefreshCw,
+  Brain,
+  Clock,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
@@ -20,14 +19,21 @@ import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
 import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerformance";
 import { PlatformTrafficWidget } from "@/components/hq/marketing/PlatformTrafficWidget";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
+import ReactMarkdown from "react-markdown";
 
 export default function MarketingPage() {
   const executeRun = useExecuteRun();
-  const { data: runs, isLoading } = useRecentRuns(10);
+  const { data: runs, isLoading, refetch, isFetching } = useRecentRuns(20);
   const [generatingPlan, setGeneratingPlan] = useState(false);
 
-  const marketingRuns = runs?.filter(r => r.run_type === "MARKETING_WEEK_PLAN");
-  const latestPlan = marketingRuns?.[0];
+  const marketingRuns = runs?.filter(r => 
+    r.run_type === "MARKETING_WEEK_PLAN" || r.run_type === "COMPETITIVE_ANALYSIS"
+  );
+  const latestPlan = runs?.find(r => r.run_type === "MARKETING_WEEK_PLAN");
+  const latestCompetitive = runs?.find(r => r.run_type === "COMPETITIVE_ANALYSIS");
 
   const handleGeneratePlan = async () => {
     setGeneratingPlan(true);
@@ -38,120 +44,164 @@ export default function MarketingPage() {
     }
   };
 
+  const handleGenerateCompetitive = async () => {
+    try {
+      await executeRun.mutateAsync({ run_type: "COMPETITIVE_ANALYSIS" });
+    } catch {}
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-headline-1 mb-2">Marketing Command</h1>
           <p className="text-muted-foreground text-lg">
-            Pilotage marketing centralisé pour l'ensemble des plateformes.
+            Pilotage marketing centralisé — données générées par l'agent CMO IA.
           </p>
         </div>
-        <Button 
-          variant="executive"
-          onClick={handleGeneratePlan}
-          disabled={generatingPlan}
-        >
-          {generatingPlan ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Calendar className="h-4 w-4 mr-2" />
-          )}
-          Générer Plan Semaine
-        </Button>
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+            Actualiser
+          </Button>
+          <Button
+            variant="executive"
+            onClick={handleGeneratePlan}
+            disabled={generatingPlan || executeRun.isPending}
+          >
+            {generatingPlan ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Calendar className="h-4 w-4 mr-2" />
+            )}
+            Plan Semaine
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleGenerateCompetitive}
+            disabled={executeRun.isPending}
+          >
+            {executeRun.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Brain className="h-4 w-4 mr-2" />
+            )}
+            Analyse Concurrentielle
+          </Button>
+        </div>
       </div>
 
-      {/* KPIs - État vide, nécessite connexion GA4/Meta */}
-      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary" />
-              Métriques Marketing
-            </CardTitle>
-            <Badge variant="destructive" className="text-[9px]">
-              <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
-              Non connecté
-            </Badge>
-          </div>
-          <CardDescription>
-            Visiteurs, conversions, emails, engagement
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="py-6 text-center">
-          <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-          <h3 className="text-sm font-semibold mb-1">Connexion requise</h3>
-          <p className="text-xs text-muted-foreground mb-3">
-            Connectez Google Analytics, Meta Ads ou Growth OS pour les KPIs marketing.
-          </p>
-          <Badge variant="outline" className="text-[10px] gap-1">
-            <Link2 className="h-2.5 w-2.5" />
-            Sources : GA4, Meta Ads, Growth OS
-          </Badge>
-        </CardContent>
-      </Card>
+      {/* Historique des runs marketing */}
+      {marketingRuns && marketingRuns.length > 0 && (
+        <div className="flex flex-wrap gap-3">
+          {marketingRuns.slice(0, 4).map(run => (
+            <div key={run.id} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/40 border text-xs">
+              {run.status === "completed" ? (
+                <CheckCircle className="h-3 w-3 text-success" />
+              ) : (
+                <XCircle className="h-3 w-3 text-destructive" />
+              )}
+              <span className="font-medium">{run.run_type.replace(/_/g, " ")}</span>
+              <span className="text-muted-foreground flex items-center gap-1">
+                <Clock className="h-2.5 w-2.5" />
+                {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale: fr })}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
+      {/* Plan Marketing (données réelles du run IA) */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Weekly Plan */}
         <Card className="card-executive">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Calendar className="h-5 w-5 text-primary" />
-              Plan Marketing Hebdomadaire
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-3">
+                <Calendar className="h-5 w-5 text-primary" />
+                Plan Marketing Hebdomadaire
+              </CardTitle>
+              {latestPlan && (
+                <Badge variant="subtle" className="text-xs">
+                  CMO Agent
+                </Badge>
+              )}
+            </div>
             <CardDescription>
               {latestPlan 
-                ? `Dernière mise à jour: ${new Date(latestPlan.created_at).toLocaleDateString("fr-FR")}`
-                : "Aucun plan généré"
+                ? `Généré ${formatDistanceToNow(new Date(latestPlan.created_at), { addSuffix: true, locale: fr })}`
+                : "Aucun plan généré — cliquez sur 'Plan Semaine'"
               }
             </CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="h-48 bg-muted/50 rounded-lg animate-pulse" />
+              <div className="space-y-2">
+                {[1,2,3,4].map(i => <Skeleton key={i} className="h-4 w-full" />)}
+              </div>
             ) : latestPlan?.executive_summary ? (
-              <div className="prose prose-sm max-w-none">
-                <div className="whitespace-pre-wrap text-sm">
-                  {latestPlan.executive_summary}
-                </div>
+              <div className="prose prose-sm max-w-none dark:prose-invert text-xs max-h-80 overflow-y-auto">
+                <ReactMarkdown>{latestPlan.executive_summary}</ReactMarkdown>
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                <Megaphone className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Aucun plan marketing généré.</p>
-                <Button 
-                  variant="outline" 
-                  className="mt-4"
+                <Megaphone className="h-10 w-10 mx-auto mb-4 opacity-40" />
+                <p className="text-sm mb-3">Aucun plan marketing généré.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleGeneratePlan}
                   disabled={generatingPlan}
                 >
-                  Générer le Plan
+                  <Brain className="h-4 w-4 mr-2" />
+                  Générer avec l'IA
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Campaigns - État vide */}
-        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        {/* Analyse Concurrentielle */}
+        <Card className="card-executive">
           <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Target className="h-5 w-5 text-primary" />
-              Campagnes Actives
-            </CardTitle>
-            <CardDescription className="flex items-center gap-2">
-              Aucune campagne connectée
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-3">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Analyse Concurrentielle
+              </CardTitle>
+              {latestCompetitive && (
+                <Badge variant="subtle" className="text-xs">CSO Agent</Badge>
+              )}
+            </div>
+            <CardDescription>
+              {latestCompetitive
+                ? `Générée ${formatDistanceToNow(new Date(latestCompetitive.created_at), { addSuffix: true, locale: fr })}`
+                : "Aucune analyse — lancez 'Analyse Concurrentielle'"
+              }
             </CardDescription>
           </CardHeader>
-          <CardContent className="py-8 text-center">
-            <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground mb-3">
-              Connectez un outil de campagne pour suivre vos performances.
-            </p>
-            <Badge variant="outline" className="text-[10px] gap-1">
-              <Link2 className="h-2.5 w-2.5" />
-              Sources : Meta Ads, Google Ads
-            </Badge>
+          <CardContent>
+            {isLoading ? (
+              <div className="space-y-2">
+                {[1,2,3,4].map(i => <Skeleton key={i} className="h-4 w-full" />)}
+              </div>
+            ) : latestCompetitive?.executive_summary ? (
+              <div className="prose prose-sm max-w-none dark:prose-invert text-xs max-h-80 overflow-y-auto">
+                <ReactMarkdown>{latestCompetitive.executive_summary}</ReactMarkdown>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Brain className="h-10 w-10 mx-auto mb-4 opacity-40" />
+                <p className="text-sm mb-3">Analyse non disponible.</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerateCompetitive}
+                  disabled={executeRun.isPending}
+                >
+                  Lancer l'analyse
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
