@@ -48,6 +48,7 @@ const mainLinks = [
 const secondaryLinks = [
   { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
   { href: "/hq/equipe-executive", label: "Équipe & Agents", icon: Users },
+  { href: "/hq/agents-monitoring", label: "Monitoring Agents IA", icon: Bot },
   { href: "/hq/growth", label: "Growth OS", icon: Rocket },
   { href: "/hq/reunions", label: "Réunions", icon: Calendar },
   { href: "/hq/historique", label: "Historique Runs", icon: History },
@@ -62,7 +63,7 @@ const secondaryLinks = [
   { href: "/hq/audit", label: "Audit Log", icon: FileText },
   { href: "/hq/entreprise", label: "Profil Entreprise", icon: Building2 },
   { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
-  { href: "/hq/rh", label: "Ressources & Agents", icon: Bot },
+  { href: "/hq/rh", label: "Ressources & Agents", icon: Users },
   { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
   { href: "/hq/data", label: "Data & Analytics", icon: BarChart3 },
 ];
