@@ -3,29 +3,36 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Calendar, 
-  Clock, 
-  Play, 
-  CheckCircle, 
-  XCircle, 
-  Timer,
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Brain,
+  Clock,
+  Play,
+  CheckCircle,
+  XCircle,
   Loader2,
   RefreshCw,
-  CalendarClock
+  CalendarClock,
+  Zap,
+  AlertCircle,
+  Bot,
 } from "lucide-react";
-import { useSchedulerJobs, useExecuteScheduledJob, formatCronExpression } from "@/hooks/useScheduler";
+import { useAISchedulerStatus, useAISchedulerExecute, useAIAutopilot } from "@/hooks/useAIScheduler";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useState } from "react";
 
 interface SchedulerPanelProps {
   className?: string;
 }
 
 export function SchedulerPanel({ className }: SchedulerPanelProps) {
-  const { data, isLoading, refetch, isRefetching } = useSchedulerJobs();
-  const executeJob = useExecuteScheduledJob();
+  const { data, isLoading, refetch, isRefetching } = useAISchedulerStatus();
+  const executeJob = useAISchedulerExecute();
+  const [autopilot, setAutopilot] = useState(false);
+  const { lastDecision, isDeciding, nextCheckIn } = useAIAutopilot(autopilot);
 
   if (isLoading) {
     return (
@@ -46,6 +53,7 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
   }
 
   const jobs = data?.jobs || [];
+  const dueJobs = jobs.filter(j => j.isDueNow);
 
   return (
     <Card className={cn("card-executive", className)}>
@@ -53,12 +61,20 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/10">
-              <CalendarClock className="h-5 w-5 text-primary" />
+              <Brain className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg">Planificateur Automatique</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                Scheduler IA Autonome
+                {isDeciding && (
+                  <Badge variant="outline" className="text-xs animate-pulse border-primary/50 text-primary">
+                    <Bot className="h-3 w-3 mr-1" />
+                    Décision IA...
+                  </Badge>
+                )}
+              </CardTitle>
               <CardDescription>
-                Jobs CRON pour exécution automatique des runs IA
+                Piloté par Lovable AI — remplace pg_cron
               </CardDescription>
             </div>
           </div>
@@ -71,12 +87,64 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
             <RefreshCw className={cn("h-4 w-4", isRefetching && "animate-spin")} />
           </Button>
         </div>
+
+        {/* Autopilot Toggle */}
+        <div className={cn(
+          "flex items-center justify-between p-3 rounded-lg border mt-2 transition-colors",
+          autopilot ? "bg-primary/5 border-primary/30" : "bg-muted/20 border-border"
+        )}>
+          <div className="flex items-center gap-2">
+            <Zap className={cn("h-4 w-4", autopilot ? "text-primary" : "text-muted-foreground")} />
+            <Label htmlFor="autopilot-switch" className="cursor-pointer font-medium text-sm">
+              Autopilot IA
+            </Label>
+            {autopilot && (
+              <span className="text-xs text-muted-foreground">
+                • Prochain check dans {nextCheckIn} min
+              </span>
+            )}
+          </div>
+          <Switch
+            id="autopilot-switch"
+            checked={autopilot}
+            onCheckedChange={setAutopilot}
+          />
+        </div>
+
+        {/* Alerte jobs en attente */}
+        {dueJobs.length > 0 && !autopilot && (
+          <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20 text-xs text-destructive mt-1">
+            <AlertCircle className="h-3 w-3 shrink-0" />
+            <span>{dueJobs.length} job(s) devraient tourner maintenant — activez l'Autopilot IA</span>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="space-y-4">
+        {/* Dernière décision IA */}
+        {lastDecision && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border space-y-1">
+            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+              <Bot className="h-3 w-3" /> Dernière décision IA
+            </p>
+            <p className="text-xs">{lastDecision.ai_decision.reasoning}</p>
+            {lastDecision.executed.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {lastDecision.executed.map(e => (
+                  <Badge key={e.job} variant={e.success ? "subtle" : "destructive"} className="text-xs">
+                    {e.success ? <CheckCircle className="h-2.5 w-2.5 mr-1" /> : <XCircle className="h-2.5 w-2.5 mr-1" />}
+                    {e.job}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Liste des jobs */}
         {jobs.length === 0 ? (
           <p className="text-sm text-muted-foreground text-center py-4">
-            Aucun job planifié configuré
+            Aucun job configuré
           </p>
         ) : (
           <div className="space-y-3">
@@ -84,30 +152,35 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
               <div
                 key={job.key}
                 className={cn(
-                  "p-4 rounded-lg border transition-colors",
-                  job.enabled 
-                    ? "bg-card hover:bg-muted/30" 
+                  "p-3 rounded-lg border transition-colors",
+                  job.isDueNow
+                    ? "bg-primary/5 border-primary/30"
+                    : job.enabled
+                    ? "bg-card hover:bg-muted/30"
                     : "bg-muted/20 opacity-60"
                 )}
               >
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-medium text-sm truncate">{job.name}</h4>
-                      <Badge 
-                        variant={job.enabled ? "subtle" : "secondary"}
+                      <Badge
+                        variant={job.priority === "high" ? "destructive" : job.priority === "medium" ? "subtle" : "secondary"}
                         className="text-xs"
                       >
-                        {job.enabled ? "Actif" : "Désactivé"}
+                        {job.priority}
                       </Badge>
+                      {job.isDueNow && (
+                        <Badge variant="outline" className="text-xs border-primary/50 text-primary animate-pulse">
+                          Due maintenant
+                        </Badge>
+                      )}
                     </div>
-                    <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
-                      {job.description}
-                    </p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground mb-1.5 line-clamp-1">{job.description}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        <span>{formatCronExpression(job.cronExpression)}</span>
+                        <span>{job.cronExpression}</span>
                       </div>
                       {job.lastRun && (
                         <div className="flex items-center gap-1">
@@ -138,7 +211,7 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
                     ) : (
                       <>
                         <Play className="h-4 w-4 mr-1" />
-                        Exécuter
+                        Run
                       </>
                     )}
                   </Button>
@@ -152,12 +225,12 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
 
         <div className="text-xs text-muted-foreground space-y-1">
           <p className="flex items-center gap-1">
-            <Timer className="h-3 w-3" />
-            Fuseau horaire: Europe/Paris
+            <Brain className="h-3 w-3" />
+            L'IA analyse l'heure, le contexte et l'historique pour décider automatiquement.
           </p>
-          <p>
-            Les jobs s'exécutent automatiquement selon leur planification. 
-            Utilisez "Exécuter" pour un lancement manuel.
+          <p className="flex items-center gap-1">
+            <CalendarClock className="h-3 w-3" />
+            Fuseau horaire: Europe/Paris · Polling toutes les 5 min en Autopilot
           </p>
         </div>
       </CardContent>
