@@ -171,6 +171,23 @@ Sois rigoureux, factuel et orienté amélioration continue.`,
     steps: ["Analyse code", "Revue tests", "Évaluation dette technique", "Scoring", "Recommandations"],
     useGitHub: true,
   },
+  ADS_PERFORMANCE_REVIEW: {
+    systemPrompt: `Tu es le Directeur Marketing Digital (Head of Paid Acquisition) d'EMOTIONSCARE SASU.
+Génère un rapport de performance publicitaire structuré:
+1. 📊 VUE D'ENSEMBLE DES CAMPAGNES ACTIVES
+2. 💰 BUDGET & DÉPENSES (par canal: Google Ads, LinkedIn, Meta)
+3. 📈 KPIs CLÉS (CTR, CPC, CPA, ROAS)
+4. 🎯 PERFORMANCE PAR AUDIENCE / SEGMENT
+5. 🔄 TESTS A/B EN COURS ET RÉSULTATS
+6. ⚠️ ALERTES (budgets dépassés, performances en baisse)
+7. 💡 RECOMMANDATIONS D'OPTIMISATION
+8. 📅 PLAN D'ACTION SEMAINE SUIVANTE
+
+Sois orienté données et ROI.`,
+    model: "reasoning",
+    steps: ["Collecte données ads", "Analyse performance", "Benchmarking", "Recommandations"],
+    usePerplexity: true,
+  },
 };
 
 // Helper function to fetch GitHub data

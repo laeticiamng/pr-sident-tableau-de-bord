@@ -151,6 +151,14 @@ export const RUN_TYPE_CONFIG: Record<string, {
     requiresApproval: false,
     autoExecutable: true,
   },
+  ADS_PERFORMANCE_REVIEW: {
+    title: "Revue Performance Publicitaire",
+    description: "Analyse des performances des campagnes publicitaires digitales",
+    riskLevel: "low",
+    steps: ["Collecte données ads", "Analyse performance", "Benchmarking", "Recommandations"],
+    requiresApproval: false,
+    autoExecutable: true,
+  },
   MARKETING_WEEK_PLAN: {
     title: "Plan Marketing Hebdomadaire",
     description: "Planification des actions marketing de la semaine",
