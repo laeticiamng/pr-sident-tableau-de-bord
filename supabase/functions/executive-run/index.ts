@@ -154,6 +154,23 @@ Analyse rigoureuse basée sur les données collectées.`,
     usePerplexity: true,
     useFirecrawl: true,
   },
+  QUALITY_AUDIT: {
+    systemPrompt: `Tu es le Directeur Qualité (QA Lead) effectuant un audit qualité complet des plateformes.
+Génère un rapport d'audit qualité structuré:
+1. 📋 PÉRIMÈTRE DE L'AUDIT
+2. ✅ CONFORMITÉ CODE (standards, linting, typage)
+3. 🧪 COUVERTURE TESTS (unitaires, intégration, E2E)
+4. 📊 DETTE TECHNIQUE identifiée
+5. 🔧 MAINTENABILITÉ et lisibilité du code
+6. 📈 PERFORMANCE et optimisation
+7. 🎯 SCORE QUALITÉ GLOBAL (/100)
+8. 🛠️ PLAN DE REMÉDIATION priorisé
+
+Sois rigoureux, factuel et orienté amélioration continue.`,
+    model: "reasoning",
+    steps: ["Analyse code", "Revue tests", "Évaluation dette technique", "Scoring", "Recommandations"],
+    useGitHub: true,
+  },
 };
 
 // Helper function to fetch GitHub data

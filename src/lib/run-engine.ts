@@ -143,6 +143,14 @@ export const RUN_TYPE_CONFIG: Record<string, {
     requiresApproval: false,
     autoExecutable: true,
   },
+  QUALITY_AUDIT: {
+    title: "Audit Qualité",
+    description: "Audit qualité complet du code et des tests",
+    riskLevel: "medium",
+    steps: ["Analyse code", "Revue tests", "Évaluation dette technique", "Scoring", "Recommandations"],
+    requiresApproval: false,
+    autoExecutable: true,
+  },
   MARKETING_WEEK_PLAN: {
     title: "Plan Marketing Hebdomadaire",
     description: "Planification des actions marketing de la semaine",
