@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Database } from "lucide-react";
+import { Bot, Database, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,25 @@ export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProp
       return data;
     },
   });
+
+  const { data: runs } = useQuery({
+    queryKey: ["hq", "runs", "recent", 200],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_recent_runs", { limit_count: 200 });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Count runs per agent
+  const runCountByAgent = (runs || []).reduce<Record<string, { total: number; success: number }>>((acc, run) => {
+    const agentId = run.director_agent_id;
+    if (!agentId) return acc;
+    if (!acc[agentId]) acc[agentId] = { total: 0, success: 0 };
+    acc[agentId].total++;
+    if (run.status === "completed") acc[agentId].success++;
+    return acc;
+  }, {});
 
   if (isLoading) {
     return (
@@ -55,6 +74,13 @@ export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProp
 
   const enabledAgents = agents.filter(a => a.is_enabled).length;
 
+  // Sort agents by run count descending
+  const sortedAgents = [...agents].sort((a, b) => {
+    const aCount = runCountByAgent[a.id]?.total || 0;
+    const bCount = runCountByAgent[b.id]?.total || 0;
+    return bCount - aCount;
+  });
+
   return (
     <Card className={cn("card-executive", className)}>
       <CardHeader>
@@ -65,7 +91,7 @@ export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProp
               Performance des Agents IA
             </CardTitle>
             <CardDescription>
-              Agents configurés et leur statut
+              Agents classés par nombre de runs exécutés
             </CardDescription>
           </div>
           <div className="flex gap-2">
@@ -76,33 +102,58 @@ export function AgentPerformanceWidget({ className }: AgentPerformanceWidgetProp
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {agents.map((agent) => (
-            <div key={agent.id} className="p-3 rounded-lg border hover:bg-muted/30 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "h-2 w-2 rounded-full",
-                    agent.is_enabled ? "bg-success animate-pulse" : "bg-muted-foreground"
-                  )} />
-                  <div>
-                    <h4 className="font-medium text-sm">{agent.name}</h4>
-                    <p className="text-xs text-muted-foreground">{agent.role_title_fr}</p>
+          {sortedAgents.map((agent) => {
+            const stats = runCountByAgent[agent.id];
+            const totalRuns = stats?.total || 0;
+            const successRuns = stats?.success || 0;
+            const successRate = totalRuns > 0 ? Math.round((successRuns / totalRuns) * 100) : 0;
+
+            return (
+              <div key={agent.id} className="p-3 rounded-lg border hover:bg-muted/30 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "h-2 w-2 rounded-full",
+                      agent.is_enabled ? "bg-success animate-pulse" : "bg-muted-foreground"
+                    )} />
+                    <div>
+                      <h4 className="font-medium text-sm">{agent.name}</h4>
+                      <p className="text-xs text-muted-foreground">{agent.role_title_fr}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {totalRuns > 0 ? (
+                      <>
+                        <Badge variant="default" className="text-xs font-mono">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          {totalRuns} run{totalRuns > 1 ? "s" : ""}
+                        </Badge>
+                        <Badge variant={successRate >= 80 ? "success" : successRate >= 50 ? "gold" : "destructive"} className="text-xs">
+                          {successRate}%
+                        </Badge>
+                      </>
+                    ) : (
+                      <Badge variant="subtle" className="text-xs">0 runs</Badge>
+                    )}
+                    <Badge variant={agent.is_enabled ? "success" : "subtle"} className="text-xs">
+                      {agent.is_enabled ? "Actif" : "Off"}
+                    </Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={agent.is_enabled ? "success" : "subtle"} className="text-xs">
-                    {agent.is_enabled ? "Actif" : "Désactivé"}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs font-mono">
-                    {agent.model_preference}
-                  </Badge>
-                </div>
+                {totalRuns > 0 && (
+                  <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={cn(
+                        "h-full rounded-full transition-all",
+                        successRate >= 80 ? "bg-success" : successRate >= 50 ? "bg-gold" : "bg-destructive"
+                      )}
+                      style={{ width: `${successRate}%` }}
+                    />
+                  </div>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Catégorie : {agent.role_category} • Aucune métrique d'exécution disponible
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>

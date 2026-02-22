@@ -7,8 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Users, Bot, Power, RefreshCw, Play, Sparkles, Zap, Crown, Briefcase } from "lucide-react";
-import { useAgents } from "@/hooks/useHQData";
+import { Users, Bot, Power, RefreshCw, Play, Sparkles, Zap, Crown, Briefcase, TrendingUp } from "lucide-react";
+import { useAgents, useRecentRuns } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
 import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
@@ -45,11 +45,22 @@ const departmentColors: Record<string, string> = {
 
 export default function EquipeExecutivePage() {
   const { data: agents, isLoading: agentsLoading, refetch } = useAgents();
+  const { data: runs } = useRecentRuns(200);
   const { enqueue } = useRunQueue();
   const [selectedAgent, setSelectedAgent] = useState<AgentProfile | null>(null);
 
   // Get stats from agent-profiles.ts (source of truth)
   const agentStats = getAgentStats();
+
+  // Count runs per role_key (match agent profiles to runs via director_agent_id -> agents -> role_key)
+  const runCountByRoleKey = (runs || []).reduce<Record<string, number>>((acc, run) => {
+    if (!run.director_agent_id) return acc;
+    const agent = agents?.find(a => a.id === run.director_agent_id);
+    if (agent) {
+      acc[agent.role_key] = (acc[agent.role_key] || 0) + 1;
+    }
+    return acc;
+  }, {});
 
   // Get direction agents (CGO/QCO)
   const directionAgents = getDirectionAgents();
@@ -141,6 +152,12 @@ export default function EquipeExecutivePage() {
                     <h3 className="font-semibold">{profile.nameFr}</h3>
                     <p className="text-xs text-muted-foreground mt-1">{profile.specialty}</p>
                     <div className="flex items-center gap-2 mt-3 flex-wrap">
+                      {runCountByRoleKey[profile.roleKey] > 0 && (
+                        <Badge variant="default" className="text-[10px] font-mono">
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          {runCountByRoleKey[profile.roleKey]} runs
+                        </Badge>
+                      )}
                       {profile.capabilities.slice(0, 2).map(cap => (
                         <Badge key={cap.id} variant="subtle" className="text-[10px]">
                           {cap.name}
@@ -217,6 +234,12 @@ export default function EquipeExecutivePage() {
                           {profile.specialty}
                         </p>
                         <div className="flex items-center gap-2 mt-3 flex-wrap">
+                          {runCountByRoleKey[profile.roleKey] > 0 && (
+                            <Badge variant="default" className="text-[10px] font-mono">
+                              <TrendingUp className="h-3 w-3 mr-1" />
+                              {runCountByRoleKey[profile.roleKey]} runs
+                            </Badge>
+                          )}
                           {profile.capabilities.slice(0, 2).map(cap => (
                             <Badge key={cap.id} variant="subtle" className="text-[10px]">
                               {cap.name}
