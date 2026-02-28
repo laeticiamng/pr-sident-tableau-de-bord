@@ -264,23 +264,37 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
 
         // Anti-double run: vérifier si un run du même type est déjà en cours
         const { data: recentRunning } = await supabaseAdmin.rpc("get_hq_recent_runs", { limit_count: 20 });
-        const isAlreadyRunning = recentRunning?.some((r: any) => {
+        const runningRun = recentRunning?.find((r: any) => {
           if (r.run_type !== job.runType) return false;
           if (r.status !== "running") return false;
-          const startedAt = new Date(r.started_at || r.created_at);
-          return Date.now() - startedAt.getTime() < 10 * 60 * 1000; // 10 minutes
+          return true;
         });
 
-        if (isAlreadyRunning) {
-          console.log(`[AI Scheduler] Skipping ${job.key} — already running`);
-          await supabaseAdmin.rpc("insert_hq_log", {
-            p_level: "warn",
-            p_source: "autopilot",
-            p_message: "autopilot.skip_duplicate",
-            p_metadata: { job_key: job.key, run_type: job.runType, reason: "already_running" },
-          }).catch(() => {});
-          executionResults.push({ job: job.key, success: false, error: "Already running (anti-double)" });
-          continue;
+        if (runningRun) {
+          const startedAt = new Date(runningRun.started_at || runningRun.created_at);
+          const runningMinutes = (Date.now() - startedAt.getTime()) / (60 * 1000);
+
+          if (runningMinutes < 15) {
+            // Run still within timeout — skip
+            console.log(`[AI Scheduler] Skipping ${job.key} — already running for ${Math.round(runningMinutes)}min`);
+            await supabaseAdmin.rpc("insert_hq_log", {
+              p_level: "warn",
+              p_source: "autopilot",
+              p_message: "autopilot.skip_duplicate",
+              p_metadata: { job_key: job.key, run_type: job.runType, reason: "already_running", running_minutes: Math.round(runningMinutes) },
+            }).catch(() => {});
+            executionResults.push({ job: job.key, success: false, error: "Already running (anti-double)" });
+            continue;
+          } else {
+            // Run stuck > 15 min — log and proceed with new run
+            console.log(`[AI Scheduler] Run ${job.key} stuck for ${Math.round(runningMinutes)}min — allowing new run`);
+            await supabaseAdmin.rpc("insert_hq_log", {
+              p_level: "warn",
+              p_source: "autopilot",
+              p_message: "autopilot.stuck_run_override",
+              p_metadata: { job_key: job.key, run_type: job.runType, stuck_run_id: runningRun.id, running_minutes: Math.round(runningMinutes) },
+            }).catch(() => {});
+          }
         }
 
         try {
@@ -316,6 +330,8 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
           success: true,
           ai_decision: decision,
           executed: executionResults,
+          runs_launched: executionResults.filter(r => r.success).length,
+          runs_skipped: executionResults.filter(r => !r.success).length,
           checked_at: new Date().toISOString(),
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
