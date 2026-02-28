@@ -242,11 +242,46 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
 
       console.log(`[AI Scheduler] Decision: ${JSON.stringify(decision)}`);
 
+      // Log the AI decision
+      await supabaseAdmin.rpc("insert_hq_log", {
+        p_level: "info",
+        p_source: "autopilot",
+        p_message: "autopilot.decision",
+        p_metadata: {
+          jobs_to_run: decision.jobs_to_run,
+          reasoning: decision.reasoning,
+          next_check_in_minutes: decision.next_check_in_minutes,
+          paris_hour: parisHour,
+          paris_day: parisDay,
+        },
+      }).catch((e: any) => console.error("[AI Scheduler] Log error:", e.message));
+
       // Exécuter les jobs décidés par l'IA
       const executionResults = [];
       for (const jobKey of (decision.jobs_to_run || [])) {
         const job = SCHEDULED_JOBS.find(j => j.key === jobKey);
         if (!job?.enabled) continue;
+
+        // Anti-double run: vérifier si un run du même type est déjà en cours
+        const { data: recentRunning } = await supabaseAdmin.rpc("get_hq_recent_runs", { limit_count: 20 });
+        const isAlreadyRunning = recentRunning?.some((r: any) => {
+          if (r.run_type !== job.runType) return false;
+          if (r.status !== "running") return false;
+          const startedAt = new Date(r.started_at || r.created_at);
+          return Date.now() - startedAt.getTime() < 10 * 60 * 1000; // 10 minutes
+        });
+
+        if (isAlreadyRunning) {
+          console.log(`[AI Scheduler] Skipping ${job.key} — already running`);
+          await supabaseAdmin.rpc("insert_hq_log", {
+            p_level: "warn",
+            p_source: "autopilot",
+            p_message: "autopilot.skip_duplicate",
+            p_metadata: { job_key: job.key, run_type: job.runType, reason: "already_running" },
+          }).catch(() => {});
+          executionResults.push({ job: job.key, success: false, error: "Already running (anti-double)" });
+          continue;
+        }
 
         try {
           const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/executive-run`, {
