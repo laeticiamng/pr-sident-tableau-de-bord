@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
 import { logger } from "@/lib/logger";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface PlatformHealthResult {
   key: string;
@@ -38,6 +39,8 @@ export interface PlatformMonitorResponse {
 
 // Hook pour récupérer le statut temps réel des plateformes
 export function usePlatformMonitor(platformKey?: string) {
+  const { user } = useAuth();
+
   return useQuery({
     queryKey: ["platform-monitor", platformKey || "all"],
     queryFn: async (): Promise<PlatformMonitorResponse> => {
@@ -56,6 +59,7 @@ export function usePlatformMonitor(platformKey?: string) {
 
       return data as PlatformMonitorResponse;
     },
+    enabled: !!user,
     staleTime: 1000 * 30,
     refetchInterval: 1000 * 60,
     retry: 2,
