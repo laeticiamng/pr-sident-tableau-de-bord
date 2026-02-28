@@ -625,11 +625,30 @@ Deno.serve(async (req) => {
 
     const template = RUN_TEMPLATES[run_type];
     if (!template) {
+      // Log unknown run type attempt
+      await supabaseAdmin.rpc("insert_hq_log", {
+        p_level: "warn",
+        p_source: "executive-run",
+        p_message: `Unknown run type attempted: ${run_type}`,
+        p_metadata: { run_type, platform_key, user_id: userId },
+      }).catch(() => {});
+      
       return new Response(
         JSON.stringify({ error: `Unknown run type: ${run_type}` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const model = MODEL_CONFIG[template.model];
+    const startTime = Date.now();
+
+    // Log run start
+    await supabaseAdmin.rpc("insert_hq_log", {
+      p_level: "info",
+      p_source: "executive-run",
+      p_message: `run.started`,
+      p_metadata: { run_type, platform_key, model, user_id: userId },
+    }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
 
     // Build rich context from multiple sources
     let additionalContext = "";
@@ -680,7 +699,7 @@ Deno.serve(async (req) => {
       additionalContext += `\n\nContexte supplémentaire:\n${JSON.stringify(context_data, null, 2)}`;
     }
 
-    const model = MODEL_CONFIG[template.model];
+    // model already defined above
 
     const userPrompt = `📅 Date: ${new Date().toLocaleDateString("fr-FR", { 
       weekday: "long", 
@@ -760,7 +779,16 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
       completed_at: new Date().toISOString(),
     };
 
-    console.log(`[Executive Run] Completed with sources: ${runResult.data_sources.join(", ")}`);
+    const durationMs = Date.now() - startTime;
+    console.log(`[Executive Run] Completed in ${durationMs}ms with sources: ${runResult.data_sources.join(", ")}`);
+
+    // Log run completion
+    await supabaseAdmin.rpc("insert_hq_log", {
+      p_level: "info",
+      p_source: "executive-run",
+      p_message: `run.completed`,
+      p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id },
+    }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
 
     return new Response(
       JSON.stringify(runResult),
@@ -769,6 +797,22 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
 
   } catch (error) {
     console.error("[Executive Run] Unexpected error:", error);
+
+    // Try to log the error (best-effort, supabaseAdmin may not be available)
+    try {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+        const adminClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+        await adminClient.rpc("insert_hq_log", {
+          p_level: "error",
+          p_source: "executive-run",
+          p_message: `run.failed`,
+          p_metadata: { error_message: error instanceof Error ? error.message : String(error) },
+        });
+      }
+    } catch (_) { /* best-effort */ }
+
     return new Response(
       JSON.stringify({ error: "An unexpected error occurred. Please try again later." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
