@@ -181,6 +181,22 @@ export type Database = {
           resource_type: string
         }[]
       }
+      get_hq_logs: {
+        Args: {
+          level_filter?: string
+          limit_count?: number
+          source_filter?: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          level: string
+          message: string
+          metadata: Json
+          run_id: string
+          source: string
+        }[]
+      }
       get_hq_org_roles: {
         Args: never
         Returns: {
@@ -260,6 +276,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      insert_hq_log: {
+        Args: {
+          p_level?: string
+          p_message?: string
+          p_metadata?: Json
+          p_run_id?: string
+          p_source?: string
+        }
+        Returns: string
       }
       insert_hq_run: {
         Args: {
