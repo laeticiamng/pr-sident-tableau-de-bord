@@ -1,149 +1,125 @@
 
 
-# Plan d'implementation : 8 Tickets Production-Ready
+# Plan d'execution : 8 Tickets Production-Ready
 
-## Etat des lieux
+## Etat des lieux reel (apres audit)
 
-Apres audit complet du code et du scan de securite :
-- **Securite** : 7 findings, tous "info" avec "ignore: true". Zero vulnerabilite critique/high. Le badge "2 Errors" correspond aux choix architecturaux documentes (contact form gatekeeper, analytics INSERT public).
-- **Registry** : Le registre `run-types-registry.ts` declare 29 run types. L'edge function `executive-run` en declare 27. 4 types du registre n'existent pas dans le backend (`DEPLOY_TO_PRODUCTION`, `RLS_POLICY_UPDATE`, `MASS_EMAIL_CAMPAIGN`, `PRICING_CHANGE`) — ceux-ci provoqueraient une erreur 400 si declenches.
-- **Monitoring** : Dashboard fonctionnel avec banniere d'alerte 24h, filtre echecs, bouton relancer, badge sidebar.
-- **KPIs** : BriefingRoom affiche MRR, agents actifs, uptime, dernier run — mais sans protection si Stripe est down.
-- **Autopilot** : Polling 5min fonctionnel, mais pas de debounce ni AbortController, pas de journal des decisions persistent.
-- **Logging** : Table `hq.structured_logs` + RPCs existent, mais aucune edge function n'insere de logs.
-
----
-
-## Sprint 1 : Securite et Synchronisation (Tickets 1 + 2)
-
-### Ticket 1 — Securite : Documenter et fermer le badge
-
-Le scan de securite confirme 0 vulnerabilite. Les "2 Errors" sont des choix architecturaux.
-
-**Actions** :
-- Mettre a jour la page Trust avec la date du dernier scan dynamique et un lien vers le rapport
-- Ajouter des commentaires JSDoc dans `AICostWidget.tsx` et `AgentMonitoringDashboard.tsx` documentant les choix de securite
-- Executer `security--manage_security_finding` pour confirmer les findings comme "ignores" si pas deja fait
-
-### Ticket 2 — Synchroniser les 29 run types client / backend
-
-4 run types du registre frontend n'existent pas dans l'edge function backend : `DEPLOY_TO_PRODUCTION`, `RLS_POLICY_UPDATE`, `MASS_EMAIL_CAMPAIGN`, `PRICING_CHANGE`.
-
-**Actions** :
-- Ajouter les 4 templates manquants dans `supabase/functions/executive-run/index.ts` avec system prompts, model config et steps
-- Ajouter `DEPLOY_TO_PRODUCTION` et `RLS_POLICY_UPDATE` comme runs dangereux (model "reasoning", confirmation requise)
-- Verifier que les 29 cles du registre correspondent exactement aux cles de `RUN_TEMPLATES`
-
-**Fichiers** : `supabase/functions/executive-run/index.ts`
+- **Badge "2 Errors"** : Provient du scanner `supabase_lov` avec 2 findings `level: "error"` non marques comme ignores :
+  1. `role_permissions_public_exposure` — Faux positif. La policy `Deny anon access to role_permissions USING(false)` existe deja.
+  2. `contact_messages_public_exposure` — Faux positif. La policy `Deny anon select on contact_messages USING(false)` existe deja.
+  - **Solution** : Marquer ces 2 findings comme `ignore: true` via `security--manage_security_finding`. Badge vert immediat.
+- **29 run types** : Synchronises entre registry et edge function (confirme).
+- **Monitoring, KPIs, Autopilot** : En place et fonctionnels.
+- **Logging** : Table `hq.structured_logs` et RPCs existent. L'edge function `executive-run` ne les utilise pas encore.
+- **ErrorBoundary** : Deja en place dans `App.tsx` (wrap global du Router).
 
 ---
 
-## Sprint 2 : Monitoring et Logging (Tickets 3 + 4)
+## Ticket 1 — Fermer le badge "Security: 2 Errors" (P0, 1 action)
 
-### Ticket 3 — Dashboard Failed Runs renforce
+Les 2 "errors" sont des faux positifs du scanner automatique. Les policies RLS existent deja.
 
-Le dashboard a deja banniere + filtre + bouton relancer. Renforcements :
+**Action** : Executer `security--manage_security_finding` pour marquer les 2 findings comme `ignore: true` avec justification technique.
+
+**Resultat** : Badge Security passe au vert.
+
+---
+
+## Ticket 2 — Test edge function des 29 run types (P0)
+
+Creer un fichier de test Deno `supabase/functions/executive-run/index_test.ts` qui :
+- Verifie que chaque cle du registre frontend (`run-types-registry.ts`) a un template correspondant dans `RUN_TEMPLATES`
+- Teste un appel reel sur 1-2 run types (validation 200, structure reponse)
+- Verifie qu'un run type invalide retourne 400
+
+**Fichiers** : `supabase/functions/executive-run/index_test.ts`
+
+---
+
+## Ticket 3 — Logging structure dans l'edge function (P1)
+
+L'edge function `executive-run` ne log rien dans `hq.structured_logs`.
 
 **Actions** :
-- Afficher le `executive_summary` complet (pas seulement 150 chars) dans l'encart d'erreur expandee des runs echoues
-- Ajouter un etat vide explicite "Aucun echec — tout fonctionne" avec icone CheckCircle quand le filtre echecs est actif et qu'il n'y a rien
-- Afficher le `platform_key` dans le message d'erreur si disponible
-
-**Fichiers** : `src/components/hq/AgentMonitoringDashboard.tsx`
-
-### Ticket 4 — Logging production-grade dans l'edge function
-
-La table et les RPCs existent. Il faut maintenant que l'edge function insere des logs.
-
-**Actions** :
-- Modifier `executive-run/index.ts` pour inserer un log `insert_hq_log` au debut (INFO, "run.started"), a la fin (INFO, "run.completed") et en cas d'erreur (ERROR, "run.failed")
-- Inclure dans metadata : `run_type`, `platform_key`, `model_used`, `duration_ms`
-- Creer un composant `StructuredLogsViewer.tsx` avec filtrage par niveau et source, affiche sur la page monitoring
-- Ajouter une migration SQL pour purge automatique des logs de plus de 30 jours (trigger ou cron)
+- Ajouter un appel `insert_hq_log` via `supabaseAdmin.rpc()` a 3 moments :
+  - Debut : `INFO`, `run.started`, metadata `{run_type, platform_key, model}`
+  - Fin : `INFO`, `run.completed`, metadata + `duration_ms`
+  - Erreur : `ERROR`, `run.failed`, metadata + `error_message`
+- Creer `StructuredLogsViewer.tsx` : composant avec filtrage niveau/source, affiche sur la page monitoring
+- Migration SQL : index sur `(level, created_at DESC)` + cron de purge 30 jours
 
 **Fichiers** : `supabase/functions/executive-run/index.ts`, nouveau `src/components/hq/diagnostics/StructuredLogsViewer.tsx`, `src/pages/hq/AgentsMonitoringPage.tsx`, migration SQL
 
 ---
 
-## Sprint 3 : Fiabilite financiere et executive (Tickets 5 + 6)
-
-### Ticket 5 — Cout IA fiabilise
-
-`AICostWidget.tsx` utilise deja le registre. Renforcements :
+## Ticket 4 — Hardening UI global (P1)
 
 **Actions** :
-- Ajouter guards `|| 0` sur toutes les operations de calcul pour eviter NaN
-- Ajouter un tooltip sur chaque barre du graphique montrant nombre de runs et cout moyen
-- Ajouter le total mensuel en gros chiffre visible en haut du widget
-- Verifier que les 29 run types sont couverts via `getRunCost()` (deja le cas avec fallback)
+- Ajouter des `ErrorBoundary` locaux sur les composants critiques (MonitoringDashboard, BriefingRoom KPIs) avec fallback "Impossible de charger ce module"
+- Ajouter un toast automatique dans `useExecuteRun` quand l'edge function retourne une erreur non-200
+- Verifier les null guards dans AICostWidget (deja `|| 0` mais ajouter sur division)
+
+**Fichiers** : `src/components/hq/AgentMonitoringDashboard.tsx`, `src/pages/hq/BriefingRoom.tsx`, `src/hooks/useHQData.ts`, `src/components/hq/AICostWidget.tsx`
+
+---
+
+## Ticket 5 — Autopilot anti-double run (P1)
+
+**Actions** :
+- Dans `ai-scheduler/index.ts`, avant de lancer un run : verifier via RPC si un run du meme `run_type` a `status = 'running'` dans les 10 dernieres minutes
+- Ajouter un journal des decisions IA dans `SchedulerPanel.tsx` qui affiche les 5 dernieres decisions avec le reasoning (requete `get_hq_logs` avec `source = 'autopilot'`)
+
+**Fichiers** : `supabase/functions/ai-scheduler/index.ts`, `src/components/hq/SchedulerPanel.tsx`
+
+---
+
+## Ticket 6 — Monitoring temps reel (P1)
+
+**Actions** :
+- Activer Supabase Realtime sur `hq.runs` (`ALTER PUBLICATION supabase_realtime ADD TABLE hq.runs`)
+- Souscrire aux changements dans `AgentMonitoringDashboard` pour mettre a jour le statut sans refresh manuel
+- Afficher un indicateur visuel de transition `idle -> running -> done`
+
+**Fichiers** : Migration SQL (realtime), `src/components/hq/AgentMonitoringDashboard.tsx`
+
+---
+
+## Ticket 7 — Audit cout IA fiabilise (P1)
+
+**Actions** :
+- Ajouter `Math.max(denominator, 1)` dans toutes les divisions de AICostWidget
+- Ajouter un compteur "Total mensuel" en gros chiffre dans le header (deja fait, verifier NaN)
+- Ajouter tooltip detaille sur chaque barre : nombre de runs, cout moyen, run_types concernes
 
 **Fichiers** : `src/components/hq/AICostWidget.tsx`
 
-### Ticket 6 — KPIs executifs blindes
+---
 
-BriefingRoom affiche deja les 4 KPIs mais sans protection contre les erreurs.
+## Ticket 8 — Suite de tests E2E (P2)
 
 **Actions** :
-- Ajouter `isError` check sur `useStripeKPIs` — afficher "—" avec tooltip "Service indisponible" si erreur
-- Ajouter null guards sur tous les calculs (mrr, activeAgents, uptime, lastRun)
-- Ajouter un badge "Moyenne" a cote de l'uptime pour clarifier la methode de calcul
-- Envelopper le bloc KPIs dans un try-catch React (ErrorBoundary local)
+- Creer `src/test/components/AgentMonitoringDashboard.test.tsx` : render, affichage KPIs, filtre echecs
+- Creer `src/test/components/AICostWidget.test.tsx` : render, calcul cout, absence NaN
+- Creer `src/test/components/BriefingRoom.test.tsx` : render, KPIs, fallback Stripe error
 
-**Fichiers** : `src/pages/hq/BriefingRoom.tsx`
+**Fichiers** : 3 nouveaux fichiers de test
 
 ---
 
-## Sprint 4 : Stabilite et Hardening (Tickets 7 + 8)
+## Ordre d'execution
 
-### Ticket 7 — Autopilot IA stabilise
+| Etape | Tickets | Estimation |
+|-------|---------|------------|
+| 1 | Ticket 1 (badge security) | 0.2 msg |
+| 2 | Tickets 4+7 (hardening + couts) | 0.5 msg |
+| 3 | Ticket 3 (logging edge function + viewer) | 1 msg |
+| 4 | Tickets 5+6 (autopilot + realtime) | 1 msg |
+| 5 | Tickets 2+8 (tests) | 1 msg |
 
-Le polling 5 min fonctionne mais a des failles :
-
-**Actions** :
-- Ajouter un `AbortController` dans `useAIAutopilot` pour annuler les requetes si le composant se demonte
-- Ajouter deduplication : verifier si un run du meme type est deja en `status = 'running'` avant de lancer (cote edge function)
-- Ajouter un panneau "Journal des decisions IA" dans `SchedulerPanel.tsx` qui affiche les dernieres decisions avec reasoning (stockees dans `hq.structured_logs` via le ticket 4)
-- Fixer la closure de `isDeciding` dans le useCallback (ajouter un ref au lieu d'un state pour eviter race condition)
-
-**Fichiers** : `src/hooks/useAIScheduler.ts`, `supabase/functions/ai-scheduler/index.ts`, `src/components/hq/SchedulerPanel.tsx`
-
-### Ticket 8 — Hardening UI et erreurs globales
-
-ErrorBoundary existe deja dans `src/components/ErrorBoundary.tsx`. Renforcements :
-
-**Actions** :
-- Verifier que le ErrorBoundary global est bien applique dans `App.tsx` (wrap du Router)
-- Ajouter un toast automatique quand une edge function retourne une erreur (centraliser dans `useExecuteRun`)
-- Ajouter un fallback UI propre pour les composants individuels (monitoring, briefing) avec message "Impossible de charger ce module"
-- Verifier le responsive mobile sur les pages Cockpit, Monitoring, BriefingRoom
-
-**Fichiers** : `src/App.tsx`, `src/hooks/useHQData.ts`, `src/pages/hq/BriefingRoom.tsx`, `src/components/hq/AgentMonitoringDashboard.tsx`
-
----
-
-## Details techniques
-
-| Ticket | Priorite | Fichiers | Estimation |
-|--------|----------|----------|------------|
-| 1 | P0 | TrustPage.tsx | 0.5 msg |
-| 2 | P0 | executive-run/index.ts | 0.5 msg |
-| 3 | P1 | AgentMonitoringDashboard.tsx | 0.5 msg |
-| 4 | P1 | Edge function + composant + migration | 1 msg |
-| 5 | P1 | AICostWidget.tsx | 0.5 msg |
-| 6 | P1 | BriefingRoom.tsx | 0.5 msg |
-| 7 | P1 | Scheduler + edge function + panel | 1 msg |
-| 8 | P2 | App.tsx + hooks + composants | 0.5 msg |
+**Total estime : 3-4 messages.**
 
 ### Dependances
-- Ticket 4 avant Ticket 7 (les logs sont utilises par le journal des decisions)
-- Tickets 1+2 sont independants et peuvent etre faits en parallele
-
-### Ordre d'execution
-1. Tickets 1+2 (securite + sync run types)
-2. Tickets 3+5 (failed runs + couts IA)
-3. Ticket 4 (logging production)
-4. Tickets 6+8 (KPIs blindes + hardening UI)
-5. Ticket 7 (autopilot stabilise)
-
-**Total estime : 5 messages.**
+- Ticket 3 avant Ticket 5 (les logs sont utilises par le journal des decisions)
+- Ticket 1 est independant et peut etre fait immediatement
+- Tickets 4 et 7 sont independants
 
