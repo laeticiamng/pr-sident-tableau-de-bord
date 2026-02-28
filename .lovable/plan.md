@@ -1,54 +1,65 @@
 
-# Fix: Edge Function executive-run 500 Error (`.catch()` incompatibility)
 
-## Problem
+# Persistance des Runs dans la base de donnees
 
-Launching any run from the monitoring dashboard returns **HTTP 500** with:
-```
-TypeError: supabaseAdmin.rpc(...).catch is not a function
-```
+## Objectif
+Chaque run complete par l'edge function `executive-run` sera sauvegarde dans la table `hq.runs` via l'appel RPC `insert_hq_run`. Le compteur "Runs totaux" du dashboard se mettra a jour automatiquement.
 
-The Supabase JS v2 `.rpc()` method returns a `PostgrestFilterBuilder` (a thenable, not a full Promise). Calling `.catch()` directly on it fails at runtime. There are **15 occurrences** of this pattern in `executive-run/index.ts`.
+## Analyse technique
 
-## Root Cause
+Le RPC `insert_hq_run` existe deja et insere dans `hq.runs` avec un log audit automatique. Il verifie `is_owner()` via `auth.uid()`, donc il faut utiliser le client authentifie (`supabaseAuth` avec le JWT utilisateur), pas le client admin (service role).
 
-Pattern like:
+## Modifications
+
+### Fichier: `supabase/functions/executive-run/index.ts`
+
+**1. Apres le run reussi (ligne ~802-809)** -- Ajouter l'appel `insert_hq_run` via `supabaseAuth` :
+
 ```typescript
-await supabaseAdmin.rpc("insert_hq_log", { ... }).catch(() => {});
+// Persist run in hq.runs table (uses user's JWT for RLS)
+const { data: persistedRunId, error: persistErr } = await supabaseAuth.rpc("insert_hq_run", {
+  p_run_type: run_type,
+  p_platform_key: platform_key || null,
+  p_owner_requested: true,
+  p_status: "completed",
+  p_executive_summary: executiveSummary.substring(0, 10000),
+  p_detailed_appendix: {
+    model_used: model,
+    data_sources: runResult.data_sources,
+    duration_ms: durationMs,
+    cost_estimate: costEstimate,
+    steps: template.steps,
+  },
+});
+if (persistErr) {
+  console.error("[Executive Run] Run persist error:", persistErr.message);
+} else {
+  runResult.run_id = persistedRunId;
+}
 ```
-`PostgrestFilterBuilder` supports `.then()` but NOT `.catch()`.
 
-## Fix
+**2. Dans le bloc catch (ligne ~820-832)** -- Ajouter la persistance du run echoue (best-effort via admin car le user context peut ne plus etre disponible) :
 
-Replace all `.catch()` chains on `rpc()` calls with proper error handling using one of two patterns:
-
-**Pattern A (best-effort logging):**
 ```typescript
-try {
-  await supabaseAdmin.rpc("insert_hq_log", { ... });
-} catch (_) { /* best-effort */ }
+// Also try to persist failed run
+const { error: failPersistErr } = await adminClient.rpc("insert_hq_run", {
+  p_run_type: run_type || "UNKNOWN",
+  p_platform_key: platform_key || null,
+  p_status: "failed",
+  p_executive_summary: error instanceof Error ? error.message : String(error),
+});
 ```
 
-**Pattern B (with error logging):**
-```typescript
-const { error: logErr } = await supabaseAdmin.rpc("insert_hq_log", { ... });
-if (logErr) console.error("[Executive Run] Log insert error:", logErr.message);
-```
-
-## Files to Modify
-
-- `supabase/functions/executive-run/index.ts` -- Replace all 15 `.catch()` occurrences on `rpc()` calls with try/catch or Supabase error destructuring
+Note: Le bloc catch n'a pas acces aux variables `run_type`/`platform_key` (elles sont dans le try). On gardera la persistance des echecs en best-effort uniquement via les structured_logs deja en place -- pas de changement dans le catch.
 
 ## Impact
 
-- All 6 run launch buttons will work again
-- Logging (run.started, run.completed, run.failed) will function correctly
-- No other files need changes -- the fix is isolated to the edge function
+- Le compteur "Runs totaux" sur `/hq/agents-monitoring` se met a jour automatiquement (le hook `useRecentRuns` interroge deja `hq.runs`)
+- L'historique affiche le resume, le statut, le cout et la duree de chaque run
+- Le `run_id` retourne au frontend correspond a l'ID reel en base (plus un UUID genere cote client)
+- Zero changement cote frontend -- tout est deja cable
 
-## Verification
+## Fichiers modifies
 
-After fix, re-launch "Revue Plateformes" from monitoring dashboard and confirm:
-1. Run completes (200 OK)
-2. Appears in history with status "Termine"
-3. Structured logs show run.started + run.completed entries
-4. Cost updates in KPI widget
+- `supabase/functions/executive-run/index.ts` -- ajout de l'appel `insert_hq_run` apres completion reussie
+
