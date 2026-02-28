@@ -27,6 +27,7 @@ import {
 import { useRecentRuns } from "@/hooks/useHQData";
 import { useExecuteRun } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -77,6 +78,24 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   useEffect(() => {
     const t = setInterval(() => refetch(), 30000);
     return () => clearInterval(t);
+  }, [refetch]);
+
+  // Realtime subscription sur hq.runs
+  useEffect(() => {
+    const channel = supabase
+      .channel("hq-runs-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "hq", table: "runs" },
+        () => {
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [refetch]);
 
   // Stats globales

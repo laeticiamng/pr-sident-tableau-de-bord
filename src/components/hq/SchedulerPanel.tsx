@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Brain,
   Clock,
@@ -17,12 +18,15 @@ import {
   Zap,
   AlertCircle,
   Bot,
+  FileText,
 } from "lucide-react";
 import { useAISchedulerStatus, useAISchedulerExecute, useAIAutopilot } from "@/hooks/useAIScheduler";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SchedulerPanelProps {
   className?: string;
@@ -223,6 +227,9 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
 
         <Separator />
 
+        {/* Journal des décisions IA */}
+        <AutopilotDecisionLog />
+
         <div className="text-xs text-muted-foreground space-y-1">
           <p className="flex items-center gap-1">
             <Brain className="h-3 w-3" />
@@ -235,5 +242,57 @@ export function SchedulerPanel({ className }: SchedulerPanelProps) {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+/** Journal des 5 dernières décisions Autopilot depuis les logs structurés */
+function AutopilotDecisionLog() {
+  const { data: logs, isLoading } = useQuery({
+    queryKey: ["hq", "autopilot_decisions"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_hq_logs", {
+        limit_count: 5,
+        source_filter: "autopilot",
+      });
+      if (error) return [];
+      return (data as Array<{ id: string; level: string; message: string; metadata: any; created_at: string }>) || [];
+    },
+    refetchInterval: 60000,
+  });
+
+  if (isLoading || !logs?.length) return null;
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+        <FileText className="h-3 w-3" />
+        Journal des décisions IA
+      </p>
+      <ScrollArea className="max-h-[160px]">
+        <div className="space-y-1.5">
+          {logs.map(log => (
+            <div key={log.id} className="p-2 rounded bg-muted/20 border border-border/50 text-xs">
+              <div className="flex items-center justify-between mb-0.5">
+                <Badge variant="outline" className="text-[9px]">{log.message}</Badge>
+                <span className="text-[10px] text-muted-foreground">
+                  {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: fr })}
+                </span>
+              </div>
+              {log.metadata?.reasoning && (
+                <p className="text-muted-foreground line-clamp-2">{log.metadata.reasoning}</p>
+              )}
+              {log.metadata?.jobs_to_run?.length > 0 && (
+                <div className="flex gap-1 mt-1">
+                  {log.metadata.jobs_to_run.map((j: string) => (
+                    <Badge key={j} variant="subtle" className="text-[9px]">{j}</Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+      <Separator />
+    </div>
   );
 }
