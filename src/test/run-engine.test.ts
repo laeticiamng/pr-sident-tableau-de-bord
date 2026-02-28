@@ -7,6 +7,7 @@ import {
   getRiskLevelColor,
   getRiskLevelBadgeVariant,
 } from "@/lib/run-engine";
+import { RUN_TYPES_REGISTRY, ALL_RUN_TYPES } from "@/lib/run-types-registry";
 
 describe("Run Engine", () => {
   describe("RUN_TYPE_CONFIG", () => {
@@ -127,6 +128,26 @@ describe("Run Engine", () => {
       expect(getRiskLevelBadgeVariant("medium")).toBe("gold");
       expect(getRiskLevelBadgeVariant("high")).toBe("destructive");
       expect(getRiskLevelBadgeVariant("critical")).toBe("destructive");
+    });
+  });
+
+  describe("Registry ↔ Config sync", () => {
+    it("every key in RUN_TYPES_REGISTRY must exist in RUN_TYPE_CONFIG", () => {
+      ALL_RUN_TYPES.forEach((key) => {
+        expect(RUN_TYPE_CONFIG[key]).toBeDefined();
+        expect(RUN_TYPE_CONFIG[key].title).toBeTruthy();
+      });
+    });
+
+    it("every key in RUN_TYPE_CONFIG must exist in RUN_TYPES_REGISTRY", () => {
+      Object.keys(RUN_TYPE_CONFIG).forEach((key) => {
+        expect(RUN_TYPES_REGISTRY[key as keyof typeof RUN_TYPES_REGISTRY]).toBeDefined();
+      });
+    });
+
+    it("should have exactly 29 run types", () => {
+      expect(ALL_RUN_TYPES.length).toBe(29);
+      expect(Object.keys(RUN_TYPE_CONFIG).length).toBe(29);
     });
   });
 });

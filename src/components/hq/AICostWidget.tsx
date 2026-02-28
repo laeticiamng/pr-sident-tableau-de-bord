@@ -28,7 +28,7 @@ interface AICostWidgetProps {
 }
 
 export function AICostWidget({ className, compact = false }: AICostWidgetProps) {
-  const { data: runs } = useRecentRuns(100);
+  const { data: runs } = useRecentRuns(500);
   
   // Calculer les coûts estimés
   const today = new Date();

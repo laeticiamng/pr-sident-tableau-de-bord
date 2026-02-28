@@ -100,7 +100,7 @@ export function CommandPalette({ open: controlledOpen, onOpenChange }: CommandPa
   }, [navigate, setOpen]);
 
   const handleRun = useCallback((runType: string) => {
-    executeRun.mutate({ run_type: runType });
+    executeRun.mutate({ run_type: runType as import("@/lib/run-types-registry").RunType });
     setOpen(false);
   }, [executeRun, setOpen]);
 

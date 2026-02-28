@@ -642,12 +642,27 @@ Deno.serve(async (req) => {
     const model = MODEL_CONFIG[template.model];
     const startTime = Date.now();
 
+    // Cost estimate map (mirrors run-types-registry.ts)
+    const COST_ESTIMATES: Record<string, number> = {
+      DAILY_EXECUTIVE_BRIEF: 0.10, CEO_STANDUP_MEETING: 0.05, PLATFORM_STATUS_REVIEW: 0.02,
+      SECURITY_AUDIT_RLS: 0.18, RELEASE_GATE_CHECK: 0.12, DEPLOY_TO_PRODUCTION: 0.15,
+      RLS_POLICY_UPDATE: 0.20, COMPETITIVE_ANALYSIS: 0.25, QUALITY_AUDIT: 0.15,
+      ADS_PERFORMANCE_REVIEW: 0.10, GROWTH_STRATEGY_REVIEW: 0.22, OKR_QUARTERLY_REVIEW: 0.08,
+      COMPLIANCE_RGPD_CHECK: 0.16, SEO_AUDIT: 0.20, CONTENT_CALENDAR_PLAN: 0.06,
+      REVENUE_FORECAST: 0.14, LEAD_SCORING_UPDATE: 0.07, FINANCIAL_REPORT: 0.12,
+      RGPD_AUDIT: 0.16, VULNERABILITY_SCAN: 0.18, ROADMAP_UPDATE: 0.08,
+      CODE_REVIEW: 0.12, DEPLOYMENT_CHECK: 0.06, DATA_INSIGHTS_REPORT: 0.14,
+      AGENT_PERFORMANCE_REVIEW: 0.08, TECH_WATCH_REPORT: 0.10, MARKETING_WEEK_PLAN: 0.04,
+      MASS_EMAIL_CAMPAIGN: 0.15, PRICING_CHANGE: 0.20,
+    };
+    const costEstimate = COST_ESTIMATES[run_type] ?? 0.05;
+
     // Log run start
     await supabaseAdmin.rpc("insert_hq_log", {
       p_level: "info",
       p_source: "executive-run",
       p_message: `run.started`,
-      p_metadata: { run_type, platform_key, model, user_id: userId },
+      p_metadata: { run_type, platform_key, model, user_id: userId, cost_estimate: costEstimate },
     }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
 
     // Build rich context from multiple sources
@@ -787,7 +802,7 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
       p_level: "info",
       p_source: "executive-run",
       p_message: `run.completed`,
-      p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id },
+      p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id, cost_estimate: costEstimate },
     }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
 
     return new Response(
@@ -808,7 +823,7 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
           p_level: "error",
           p_source: "executive-run",
           p_message: `run.failed`,
-          p_metadata: { error_message: error instanceof Error ? error.message : String(error) },
+          p_metadata: { error_message: error instanceof Error ? error.message : String(error), error_stack: error instanceof Error ? error.stack?.split("\n").slice(0, 5).join("\n") : undefined },
         });
       }
     } catch (_) { /* best-effort */ }

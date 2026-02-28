@@ -144,7 +144,7 @@ export function useAutopilot() {
       setDailyRunCount(prev => prev + 1);
       
       const result = await executeRun.mutateAsync({
-        run_type: runType,
+        run_type: runType as import("@/lib/run-types-registry").RunType,
         platform_key: platformKey,
       });
       
