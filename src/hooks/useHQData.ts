@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
+import type { RunType } from "@/lib/run-types-registry";
 
 // Types for HQ data
 export interface Platform {
@@ -243,7 +244,7 @@ export function useExecuteRun() {
       platform_key,
       context_data,
     }: {
-      run_type: string;
+      run_type: RunType;
       platform_key?: string;
       context_data?: Record<string, unknown>;
     }): Promise<ExecutiveRunResult> => {

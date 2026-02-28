@@ -56,7 +56,7 @@ export default function ReunionsPage() {
   const handleStartMeeting = async (meetingType: string) => {
     setRunningMeeting(meetingType);
     try {
-      await executeRun.mutateAsync({ run_type: meetingType });
+      await executeRun.mutateAsync({ run_type: meetingType as import("@/lib/run-types-registry").RunType });
     } finally {
       setRunningMeeting(null);
     }

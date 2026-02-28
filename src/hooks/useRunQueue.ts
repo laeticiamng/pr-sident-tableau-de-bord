@@ -125,7 +125,7 @@ export function useRunQueue(options: UseRunQueueOptions = {}) {
 
       // Execute the actual run
       const result = await executeRun.mutateAsync({
-        run_type: run.runType,
+        run_type: run.runType as import("@/lib/run-types-registry").RunType,
         platform_key: run.platformKey,
         context_data: run.contextData,
       });

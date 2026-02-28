@@ -33,7 +33,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
 
-import { getRunCost, getRunAgent, getRunModel } from "@/lib/run-types-registry";
+import { getRunCost, getRunAgent, getRunModel, type RunType } from "@/lib/run-types-registry";
 
 // Palette pour le statut
 const STATUS_CONFIG = {
@@ -45,7 +45,7 @@ const STATUS_CONFIG = {
 } as const;
 
 // Disponible dans la file d'attente
-const AVAILABLE_RUNS = [
+const AVAILABLE_RUNS: { type: RunType; label: string }[] = [
   { type: "DAILY_EXECUTIVE_BRIEF", label: "Brief Exécutif" },
   { type: "SECURITY_AUDIT_RLS", label: "Audit Sécurité" },
   { type: "MARKETING_WEEK_PLAN", label: "Plan Marketing" },
@@ -80,20 +80,24 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
     return () => clearInterval(t);
   }, [refetch]);
 
-  // Realtime subscription sur hq.runs
+  // Realtime subscription sur hq.runs avec debounce 2s
   useEffect(() => {
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    
     const channel = supabase
       .channel("hq-runs-realtime")
       .on(
         "postgres_changes",
         { event: "*", schema: "hq", table: "runs" },
         () => {
-          refetch();
+          if (debounceTimer) clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => refetch(), 2000);
         }
       )
       .subscribe();
 
     return () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(channel);
     };
   }, [refetch]);
@@ -446,7 +450,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                                 disabled={executeRun.isPending}
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  executeRun.mutate({ run_type: run.run_type, platform_key: run.platform_key || undefined });
+                                  executeRun.mutate({ run_type: run.run_type as RunType, platform_key: run.platform_key || undefined });
                                 }}
                               >
                                 <RefreshCw className="h-3 w-3" />
