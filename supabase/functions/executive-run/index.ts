@@ -808,6 +808,27 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
     });
     if (completeLogErr) console.error("[Executive Run] Log insert error:", completeLogErr.message);
 
+    // Persist run in hq.runs table (uses user's JWT for RLS / is_owner check)
+    const { data: persistedRunId, error: persistErr } = await supabaseAuth.rpc("insert_hq_run", {
+      p_run_type: run_type,
+      p_platform_key: platform_key || null,
+      p_owner_requested: true,
+      p_status: "completed",
+      p_executive_summary: executiveSummary.substring(0, 10000),
+      p_detailed_appendix: {
+        model_used: model,
+        data_sources: runResult.data_sources,
+        duration_ms: durationMs,
+        cost_estimate: costEstimate,
+        steps: template.steps,
+      },
+    });
+    if (persistErr) {
+      console.error("[Executive Run] Run persist error:", persistErr.message);
+    } else {
+      runResult.run_id = persistedRunId;
+    }
+
     return new Response(
       JSON.stringify(runResult),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
