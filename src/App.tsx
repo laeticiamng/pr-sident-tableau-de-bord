@@ -27,6 +27,7 @@ const PlateformesPage = lazy(() => import("@/pages/PlateformesPage"));
 const StatusPage = lazy(() => import("@/pages/StatusPage"));
 const VisionPage = lazy(() => import("@/pages/VisionPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const TrustPage = lazy(() => import("@/pages/TrustPage"));
 
 // Legal Pages - lazy loaded (rarely visited)
 const MentionsLegalesPage = lazy(() => import("@/pages/legal/MentionsLegalesPage"));
@@ -98,6 +99,7 @@ const App = () => (
                   <Route path="/status" element={<StatusPage />} />
                   <Route path="/vision" element={<VisionPage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/trust" element={<TrustPage />} />
                   <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
                   <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
                   <Route path="/legal/cgv" element={<CGVPage />} />
