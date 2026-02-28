@@ -299,6 +299,7 @@ export type Database = {
         Returns: string
       }
       is_owner: { Args: never; Returns: boolean }
+      purge_old_hq_logs: { Args: { retention_days?: number }; Returns: number }
       update_hq_system_config: {
         Args: { p_key: string; p_value: Json }
         Returns: boolean

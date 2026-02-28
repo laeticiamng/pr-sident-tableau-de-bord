@@ -80,9 +80,10 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
     return () => clearInterval(t);
   }, [refetch]);
 
-  // Realtime subscription sur hq.runs avec debounce 2s
+  // Realtime subscription sur hq.runs avec debounce 2s + isMounted guard
   useEffect(() => {
     let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let isMounted = true;
     
     const channel = supabase
       .channel("hq-runs-realtime")
@@ -91,12 +92,15 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
         { event: "*", schema: "hq", table: "runs" },
         () => {
           if (debounceTimer) clearTimeout(debounceTimer);
-          debounceTimer = setTimeout(() => refetch(), 2000);
+          debounceTimer = setTimeout(() => {
+            if (isMounted) refetch();
+          }, 2000);
         }
       )
       .subscribe();
 
     return () => {
+      isMounted = false;
       if (debounceTimer) clearTimeout(debounceTimer);
       supabase.removeChannel(channel);
     };

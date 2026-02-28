@@ -44,8 +44,14 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
     ?.filter(r => new Date(r.created_at) >= startOfMonth)
     .reduce((sum, r) => sum + getRunCost(r.run_type), 0) || 0;
   
-  const dailyPercent = (dailyCost / Math.max(DAILY_BUDGET, 1)) * 100;
-  const monthlyPercent = (monthlyCost / Math.max(MONTHLY_BUDGET, 1)) * 100;
+  const dailyPercent = (() => {
+    const v = (dailyCost / Math.max(DAILY_BUDGET, 1)) * 100;
+    return isFinite(v) ? v : 0;
+  })();
+  const monthlyPercent = (() => {
+    const v = (monthlyCost / Math.max(MONTHLY_BUDGET, 1)) * 100;
+    return isFinite(v) ? v : 0;
+  })();
   
   const isNearDailyLimit = dailyPercent >= 80;
   const isOverDailyLimit = dailyPercent >= 100;
@@ -196,14 +202,18 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
           <div className="flex items-center gap-2 text-sm">
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
             <span className="text-muted-foreground">Projection fin de mois :</span>
-            <span className={cn(
-              "font-mono font-medium",
-              ((monthlyCost || 0) / Math.max(today.getDate(), 1)) * 30 > MONTHLY_BUDGET 
-                ? "text-destructive" 
-                : "text-success"
-            )}>
-              ~{(((monthlyCost || 0) / Math.max(today.getDate(), 1)) * 30).toFixed(0)}€
-            </span>
+            {(() => {
+              const projection = ((monthlyCost || 0) / Math.max(today.getDate(), 1)) * 30;
+              const safeProjection = isFinite(projection) ? projection : 0;
+              return (
+                <span className={cn(
+                  "font-mono font-medium",
+                  safeProjection > MONTHLY_BUDGET ? "text-destructive" : "text-success"
+                )}>
+                  ~{safeProjection.toFixed(0)}€
+                </span>
+              );
+            })()}
           </div>
         </div>
 

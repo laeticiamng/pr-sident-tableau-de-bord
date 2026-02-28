@@ -11,6 +11,7 @@ import { RunTemplateDialog } from "@/components/hq/RunTemplateDialog";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function HQLayout() {
   const { user } = useAuth();
@@ -65,7 +66,9 @@ export function HQLayout() {
           {/* File d'attente des runs (uniquement si des runs sont en cours) */}
           <RunQueueWidget className="mb-4 lg:mb-6" compact />
 
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </main>
 
