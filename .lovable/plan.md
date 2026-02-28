@@ -1,125 +1,128 @@
 
 
-# Plan d'execution : 8 Tickets Production-Ready
+# Plan d'execution : 8 Tickets Durcissement Production-Ready
 
-## Etat des lieux reel (apres audit)
+## Etat reel verifie par audit du code
 
-- **Badge "2 Errors"** : Provient du scanner `supabase_lov` avec 2 findings `level: "error"` non marques comme ignores :
-  1. `role_permissions_public_exposure` — Faux positif. La policy `Deny anon access to role_permissions USING(false)` existe deja.
-  2. `contact_messages_public_exposure` — Faux positif. La policy `Deny anon select on contact_messages USING(false)` existe deja.
-  - **Solution** : Marquer ces 2 findings comme `ignore: true` via `security--manage_security_finding`. Badge vert immediat.
-- **29 run types** : Synchronises entre registry et edge function (confirme).
-- **Monitoring, KPIs, Autopilot** : En place et fonctionnels.
-- **Logging** : Table `hq.structured_logs` et RPCs existent. L'edge function `executive-run` ne les utilise pas encore.
-- **ErrorBoundary** : Deja en place dans `App.tsx` (wrap global du Router).
+Apres lecture exhaustive des fichiers :
+- **29/29 run types** : Le registre (`run-types-registry.ts`) et l'edge function (`executive-run/index.ts`) sont synchronises. Les 4 types ajoutes recemment (`DEPLOY_TO_PRODUCTION`, `RLS_POLICY_UPDATE`, `MASS_EMAIL_CAMPAIGN`, `PRICING_CHANGE`) sont presents des deux cotes.
+- **Logging** : `insert_hq_log` est appele a 3 moments dans l'edge function : `run.started`, `run.completed`, `run.failed`. Le `StructuredLogsViewer.tsx` est en place avec filtrage niveau/source et refresh 30s.
+- **Autopilot** : `AbortController` + `isDecidingRef` implementes. Anti-double run present dans `ai-scheduler` (check `status = 'running'` < 10 min). Journal des decisions IA affiche dans `SchedulerPanel.tsx`.
+- **ErrorBoundary** : Global dans `App.tsx` (wrap du Router). Toasts d'erreur dans `useExecuteRun`.
+- **BriefingRoom** : Null guards, `stripeError` check, badge "Moyenne" sur uptime — tous implementes.
+- **AICostWidget** : Guards `Math.max(denominator, 1)` en place. Total mensuel affiche. Tooltips detailles.
+- **Realtime** : Subscription `postgres_changes` sur `hq.runs` dans `AgentMonitoringDashboard`.
 
----
+### Ce qui reste a faire (ecarts identifies)
 
-## Ticket 1 — Fermer le badge "Security: 2 Errors" (P0, 1 action)
-
-Les 2 "errors" sont des faux positifs du scanner automatique. Les policies RLS existent deja.
-
-**Action** : Executer `security--manage_security_finding` pour marquer les 2 findings comme `ignore: true` avec justification technique.
-
-**Resultat** : Badge Security passe au vert.
-
----
-
-## Ticket 2 — Test edge function des 29 run types (P0)
-
-Creer un fichier de test Deno `supabase/functions/executive-run/index_test.ts` qui :
-- Verifie que chaque cle du registre frontend (`run-types-registry.ts`) a un template correspondant dans `RUN_TEMPLATES`
-- Teste un appel reel sur 1-2 run types (validation 200, structure reponse)
-- Verifie qu'un run type invalide retourne 400
-
-**Fichiers** : `supabase/functions/executive-run/index_test.ts`
+1. **Test 29 run types** : Le test existant (`index_test.ts`) ne couvre que 7 types sur 29 dans sa liste. Il ne verifie pas la correspondance registry/backend.
+2. **Typage strict RunType** : `useExecuteRun` accepte `run_type: string` (pas `RunType`). Le composant `AgentMonitoringDashboard` aussi.
+3. **Logging edge** : Deja en place (3 logs). Mais pas de metadata `cost_estimate` dans les logs.
+4. **Autopilot verrou DB** : Le check anti-double est fait via `get_hq_recent_runs` (lecture), pas via verrou transactionnel. C'est suffisant pour le cas d'usage actuel (polling 5 min) mais pourrait etre renforce.
+5. **Monitoring realtime** : Pas de cleanup debounce sur les events realtime. Chaque `INSERT/UPDATE` sur `hq.runs` declenche un `refetch()` immediat.
+6. **AICostWidget** : Le recalcul mensuel est base sur les 100 derniers runs (`useRecentRuns(100)`), pas sur tous les runs du mois. Si > 100 runs/mois, le total sera incorrect.
+7. **Tests E2E** : Aucun test composant pour `AgentMonitoringDashboard`, `AICostWidget`, `BriefingRoom`.
+8. **Documentation technique** : Pas de document d'architecture unifie pour le run system.
 
 ---
 
-## Ticket 3 — Logging structure dans l'edge function (P1)
+## Ticket 1 -- Test complet 29/29 Run Types (P0)
 
-L'edge function `executive-run` ne log rien dans `hq.structured_logs`.
+Mettre a jour `supabase/functions/executive-run/index_test.ts` pour :
+- Lister les 29 run types complets (pas seulement 7)
+- Verifier que chaque type retourne 400 "Unknown run type" quand envoye SANS auth valide (confirme qu'il est reconnu par le backend avant le check auth)
+- Verifier qu'un type invalide retourne bien 400
+- Verifier la coherence des modeles dans `MODEL_CONFIG`
 
-**Actions** :
-- Ajouter un appel `insert_hq_log` via `supabaseAdmin.rpc()` a 3 moments :
-  - Debut : `INFO`, `run.started`, metadata `{run_type, platform_key, model}`
-  - Fin : `INFO`, `run.completed`, metadata + `duration_ms`
-  - Erreur : `ERROR`, `run.failed`, metadata + `error_message`
-- Creer `StructuredLogsViewer.tsx` : composant avec filtrage niveau/source, affiche sur la page monitoring
-- Migration SQL : index sur `(level, created_at DESC)` + cron de purge 30 jours
-
-**Fichiers** : `supabase/functions/executive-run/index.ts`, nouveau `src/components/hq/diagnostics/StructuredLogsViewer.tsx`, `src/pages/hq/AgentsMonitoringPage.tsx`, migration SQL
+**Fichier** : `supabase/functions/executive-run/index_test.ts`
 
 ---
 
-## Ticket 4 — Hardening UI global (P1)
+## Ticket 2 -- Typage strict RunType cote client (P0)
 
-**Actions** :
-- Ajouter des `ErrorBoundary` locaux sur les composants critiques (MonitoringDashboard, BriefingRoom KPIs) avec fallback "Impossible de charger ce module"
-- Ajouter un toast automatique dans `useExecuteRun` quand l'edge function retourne une erreur non-200
-- Verifier les null guards dans AICostWidget (deja `|| 0` mais ajouter sur division)
+Renforcer le typage pour empecher les strings libres :
+- Modifier `useExecuteRun` dans `useHQData.ts` : changer `run_type: string` en `run_type: RunType` (import depuis `run-types-registry`)
+- Modifier `AgentMonitoringDashboard.tsx` : typer le `AVAILABLE_RUNS` avec `RunType`
+- Ajouter un test unitaire dans `src/test/run-engine.test.ts` qui verifie que toutes les cles du `RUN_TYPES_REGISTRY` sont presentes dans `RUN_TYPE_CONFIG`
 
-**Fichiers** : `src/components/hq/AgentMonitoringDashboard.tsx`, `src/pages/hq/BriefingRoom.tsx`, `src/hooks/useHQData.ts`, `src/components/hq/AICostWidget.tsx`
-
----
-
-## Ticket 5 — Autopilot anti-double run (P1)
-
-**Actions** :
-- Dans `ai-scheduler/index.ts`, avant de lancer un run : verifier via RPC si un run du meme `run_type` a `status = 'running'` dans les 10 dernieres minutes
-- Ajouter un journal des decisions IA dans `SchedulerPanel.tsx` qui affiche les 5 dernieres decisions avec le reasoning (requete `get_hq_logs` avec `source = 'autopilot'`)
-
-**Fichiers** : `supabase/functions/ai-scheduler/index.ts`, `src/components/hq/SchedulerPanel.tsx`
+**Fichiers** : `src/hooks/useHQData.ts`, `src/components/hq/AgentMonitoringDashboard.tsx`, `src/test/run-engine.test.ts`
 
 ---
 
-## Ticket 6 — Monitoring temps reel (P1)
+## Ticket 3 -- Logging enrichi avec cost_estimate (P1)
 
-**Actions** :
-- Activer Supabase Realtime sur `hq.runs` (`ALTER PUBLICATION supabase_realtime ADD TABLE hq.runs`)
-- Souscrire aux changements dans `AgentMonitoringDashboard` pour mettre a jour le statut sans refresh manuel
-- Afficher un indicateur visuel de transition `idle -> running -> done`
+Ajouter `cost_estimate` dans les metadata des logs `run.started` et `run.completed` dans l'edge function.
+- Importer la map de couts depuis le registre (repliquer les valeurs dans l'edge function puisque le registre frontend n'est pas accessible)
+- Ajouter `cost_estimate` dans le log metadata
 
-**Fichiers** : Migration SQL (realtime), `src/components/hq/AgentMonitoringDashboard.tsx`
-
----
-
-## Ticket 7 — Audit cout IA fiabilise (P1)
-
-**Actions** :
-- Ajouter `Math.max(denominator, 1)` dans toutes les divisions de AICostWidget
-- Ajouter un compteur "Total mensuel" en gros chiffre dans le header (deja fait, verifier NaN)
-- Ajouter tooltip detaille sur chaque barre : nombre de runs, cout moyen, run_types concernes
-
-**Fichiers** : `src/components/hq/AICostWidget.tsx`
+**Fichier** : `supabase/functions/executive-run/index.ts`
 
 ---
 
-## Ticket 8 — Suite de tests E2E (P2)
+## Ticket 4 -- Autopilot : renforcement anti-course (P1)
 
-**Actions** :
-- Creer `src/test/components/AgentMonitoringDashboard.test.tsx` : render, affichage KPIs, filtre echecs
-- Creer `src/test/components/AICostWidget.test.tsx` : render, calcul cout, absence NaN
-- Creer `src/test/components/BriefingRoom.test.tsx` : render, KPIs, fallback Stripe error
+Le mecanisme actuel (lecture `get_hq_recent_runs` + check status running < 10 min) est fonctionnel mais peut etre renforce :
+- Ajouter un log `autopilot.skip_duplicate` quand un run est ignore (deja present dans le code, confirme)
+- Ajouter un timeout plus strict : si un run est `running` depuis > 15 min, le considerer comme bloque et autoriser un nouveau run
+- Ajouter un compteur de runs lances par cycle dans la reponse `ai_decide`
+
+**Fichier** : `supabase/functions/ai-scheduler/index.ts`
+
+---
+
+## Ticket 5 -- Monitoring realtime debounce (P1)
+
+Eviter les refetch multiples rapides quand plusieurs events arrivent en rafale :
+- Ajouter un debounce de 2 secondes sur le callback realtime dans `AgentMonitoringDashboard.tsx`
+- Cleanup propre du channel au unmount (deja fait, confirme)
+
+**Fichier** : `src/components/hq/AgentMonitoringDashboard.tsx`
+
+---
+
+## Ticket 6 -- AICostWidget : requete sans limite 100 (P1)
+
+Le widget utilise `useRecentRuns(100)` ce qui plafonne les calculs. Remplacer par une requete dediee qui recupere tous les runs du mois en cours :
+- Creer un hook `useMonthlyRuns()` qui appelle `get_hq_recent_runs` avec un `limit_count` de 500 (ou creer une RPC dediee `get_hq_monthly_runs`)
+- Utiliser ce hook dans `AICostWidget` au lieu de `useRecentRuns(100)`
+
+**Fichier** : `src/components/hq/AICostWidget.tsx`, `src/hooks/useHQData.ts`
+
+---
+
+## Ticket 7 -- Tests composants HQ (P2)
+
+Creer 3 fichiers de test :
+- `src/test/components/AgentMonitoringDashboard.test.tsx` : render, KPIs, filtre echecs, etat vide
+- `src/test/components/AICostWidget.test.tsx` : render, calcul cout, absence NaN, mode compact
+- `src/test/components/BriefingRoom.test.tsx` : render, KPIs avec/sans Stripe, null guards
 
 **Fichiers** : 3 nouveaux fichiers de test
 
 ---
 
+## Ticket 8 -- Documentation architecture Run System (P2)
+
+Creer un document `docs/RUN_SYSTEM_ARCHITECTURE.md` avec :
+- Diagramme du flux registry - edge function - DB
+- Liste des 29 run types avec agent, modele, cout
+- Politique de securite (JWT + RBAC + RLS)
+- Mecanisme autopilot (polling, anti-double, journal decisions)
+- Schema de logging structure
+
+**Fichier** : `docs/RUN_SYSTEM_ARCHITECTURE.md`
+
+---
+
 ## Ordre d'execution
 
-| Etape | Tickets | Estimation |
-|-------|---------|------------|
-| 1 | Ticket 1 (badge security) | 0.2 msg |
-| 2 | Tickets 4+7 (hardening + couts) | 0.5 msg |
-| 3 | Ticket 3 (logging edge function + viewer) | 1 msg |
-| 4 | Tickets 5+6 (autopilot + realtime) | 1 msg |
-| 5 | Tickets 2+8 (tests) | 1 msg |
+| Etape | Tickets | Description |
+|-------|---------|-------------|
+| 1 | 2 + 3 | Typage strict + logging enrichi |
+| 2 | 5 + 6 | Debounce realtime + fix limite 100 |
+| 3 | 4 | Renforcement autopilot |
+| 4 | 1 + 7 | Tests edge function + composants |
+| 5 | 8 | Documentation |
 
 **Total estime : 3-4 messages.**
-
-### Dependances
-- Ticket 3 avant Ticket 5 (les logs sont utilises par le journal des decisions)
-- Ticket 1 est independant et peut etre fait immediatement
-- Tickets 4 et 7 sont independants
 
