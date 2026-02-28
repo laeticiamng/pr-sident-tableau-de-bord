@@ -13,15 +13,23 @@ import {
   CheckCircle,
   AlertTriangle,
   XCircle,
+  DollarSign,
+  Bot,
+  Wifi,
+  Clock,
 } from "lucide-react";
 import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
+import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { Link } from "react-router-dom";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function BriefingRoom() {
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
-  const { refetch: refetchRuns } = useRecentRuns(5);
+  const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
+  const { data: stripeData } = useStripeKPIs();
   const executeRun = useExecuteRun();
   const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "done">("idle");
@@ -34,6 +42,25 @@ export default function BriefingRoom() {
   const redCount = platforms?.filter(p => p.status === "red").length || 0;
   const totalPlatforms = platforms?.length || 7;
   const pendingCount = pendingApprovals?.length || 0;
+
+  // KPIs exécutifs
+  const mrr = stripeData?.kpis?.mrr || 0;
+  const mrrChange = stripeData?.kpis?.mrrChange || 0;
+
+  const activeAgents24h = (() => {
+    const now = Date.now();
+    const agentTypes = new Set(
+      runs?.filter(r => now - new Date(r.created_at).getTime() < 24 * 3600 * 1000)
+        .map(r => r.run_type) || []
+    );
+    return agentTypes.size;
+  })();
+
+  const globalUptime = platforms?.length
+    ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / platforms.length) * 10) / 10
+    : 0;
+
+  const lastRun = runs?.[0] || null;
 
   const handleCallDG = async () => {
     setCallState("calling");
@@ -142,6 +169,86 @@ export default function BriefingRoom() {
           }}
         />
       )}
+
+      {/* KPIs Exécutifs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <Card className="card-executive">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-success/10">
+              <DollarSign className="h-5 w-5 text-success" />
+            </div>
+            <div>
+              <p className="text-xl font-bold">{mrr > 0 ? formatCurrency(mrr) : "—"}</p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                MRR
+                {mrrChange !== 0 && (
+                  <span className={mrrChange > 0 ? "text-success" : "text-destructive"}>
+                    {mrrChange > 0 ? "+" : ""}{mrrChange.toFixed(1)}%
+                  </span>
+                )}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="card-executive">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Bot className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-xl font-bold">{activeAgents24h}</p>
+              <p className="text-xs text-muted-foreground">Agents actifs 24h</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="card-executive">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-accent/10">
+              <Wifi className="h-5 w-5 text-accent" />
+            </div>
+            <div>
+              <p className="text-xl font-bold">{globalUptime > 0 ? `${globalUptime}%` : "—"}</p>
+              <p className="text-xs text-muted-foreground">Uptime global</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="card-executive">
+          <CardContent className="p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-warning/10">
+              <Clock className="h-5 w-5 text-warning" />
+            </div>
+            <div>
+              {lastRun ? (
+                <>
+                  <p className="text-xl font-bold flex items-center gap-1.5">
+                    {lastRun.status === "completed" ? (
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    ) : lastRun.status === "failed" ? (
+                      <XCircle className="h-4 w-4 text-destructive" />
+                    ) : (
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    )}
+                    <span className="text-sm font-medium truncate max-w-[80px]">
+                      {lastRun.run_type.replace(/_/g, " ").slice(0, 12)}
+                    </span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(lastRun.created_at), { addSuffix: true, locale: fr })}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-xl font-bold">—</p>
+                  <p className="text-xs text-muted-foreground">Dernier run</p>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Parcours guidé — 3 actions claires */}
       <div>
