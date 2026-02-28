@@ -626,12 +626,13 @@ Deno.serve(async (req) => {
     const template = RUN_TEMPLATES[run_type];
     if (!template) {
       // Log unknown run type attempt
-      await supabaseAdmin.rpc("insert_hq_log", {
+      const { error: unknownLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
         p_level: "warn",
         p_source: "executive-run",
         p_message: `Unknown run type attempted: ${run_type}`,
         p_metadata: { run_type, platform_key, user_id: userId },
-      }).catch(() => {});
+      });
+      if (unknownLogErr) console.error("[Executive Run] Log insert error:", unknownLogErr.message);
       
       return new Response(
         JSON.stringify({ error: `Unknown run type: ${run_type}` }),
@@ -658,12 +659,13 @@ Deno.serve(async (req) => {
     const costEstimate = COST_ESTIMATES[run_type] ?? 0.05;
 
     // Log run start
-    await supabaseAdmin.rpc("insert_hq_log", {
+    const { error: startLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
       p_level: "info",
       p_source: "executive-run",
       p_message: `run.started`,
       p_metadata: { run_type, platform_key, model, user_id: userId, cost_estimate: costEstimate },
-    }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
+    });
+    if (startLogErr) console.error("[Executive Run] Log insert error:", startLogErr.message);
 
     // Build rich context from multiple sources
     let additionalContext = "";
@@ -798,12 +800,13 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
     console.log(`[Executive Run] Completed in ${durationMs}ms with sources: ${runResult.data_sources.join(", ")}`);
 
     // Log run completion
-    await supabaseAdmin.rpc("insert_hq_log", {
+    const { error: completeLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
       p_level: "info",
       p_source: "executive-run",
       p_message: `run.completed`,
       p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id, cost_estimate: costEstimate },
-    }).catch((e: any) => console.error("[Executive Run] Log insert error:", e.message));
+    });
+    if (completeLogErr) console.error("[Executive Run] Log insert error:", completeLogErr.message);
 
     return new Response(
       JSON.stringify(runResult),
