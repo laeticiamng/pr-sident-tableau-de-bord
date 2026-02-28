@@ -6,22 +6,7 @@ import { useRecentRuns } from "@/hooks/useHQData";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
-// Estimation des coûts par type de run (en euros)
-const RUN_COST_ESTIMATES: Record<string, number> = {
-  DAILY_EXECUTIVE_BRIEF: 0.10,
-  CEO_STANDUP_MEETING: 0.05,
-  PLATFORM_STATUS_REVIEW: 0.02,
-  SECURITY_AUDIT_RLS: 0.18,
-  MARKETING_WEEK_PLAN: 0.04,
-  RELEASE_GATE_CHECK: 0.12,
-  COMPETITIVE_ANALYSIS: 0.25,
-  SEO_AUDIT: 0.20,
-  QUALITY_AUDIT: 0.15,
-  REVENUE_FORECAST: 0.14,
-  COMPLIANCE_RGPD: 0.16,
-  ADS_PERFORMANCE_REVIEW: 0.10,
-  GROWTH_STRATEGY: 0.22,
-};
+import { getRunCost } from "@/lib/run-types-registry";
 
 // Limites de budget
 const DAILY_BUDGET = 15; // €
@@ -53,11 +38,11 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
   
   const dailyCost = runs
     ?.filter(r => new Date(r.created_at) >= today)
-    .reduce((sum, r) => sum + (RUN_COST_ESTIMATES[r.run_type] || 0.05), 0) || 0;
+    .reduce((sum, r) => sum + getRunCost(r.run_type), 0) || 0;
     
   const monthlyCost = runs
     ?.filter(r => new Date(r.created_at) >= startOfMonth)
-    .reduce((sum, r) => sum + (RUN_COST_ESTIMATES[r.run_type] || 0.05), 0) || 0;
+    .reduce((sum, r) => sum + getRunCost(r.run_type), 0) || 0;
   
   const dailyPercent = (dailyCost / DAILY_BUDGET) * 100;
   const monthlyPercent = (monthlyCost / MONTHLY_BUDGET) * 100;
@@ -78,7 +63,7 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
       const key = r.platform_key || "global";
       const existing = costMap.get(key) || { cost: 0, count: 0 };
       costMap.set(key, {
-        cost: existing.cost + (RUN_COST_ESTIMATES[r.run_type] || 0.05),
+        cost: existing.cost + getRunCost(r.run_type),
         count: existing.count + 1,
       });
     }

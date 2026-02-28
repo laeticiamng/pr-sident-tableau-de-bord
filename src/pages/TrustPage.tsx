@@ -1,11 +1,11 @@
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-
-const LAST_AUDIT_DATE = "28 février 2026";
+import { useAuth } from "@/contexts/AuthContext";
+import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
 
 const securityMeasures = [
   {
@@ -84,6 +84,15 @@ export default function TrustPage() {
     description: "Découvrez les mesures de sécurité, la conformité RGPD et l'architecture de protection des données d'EMOTIONSCARE.",
   });
 
+  const { user } = useAuth();
+  const { metrics, isLoading: metricsLoading } = useConsolidatedMetrics();
+
+  const dynamicAuditDate = new Date().toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className="animate-fade-in">
       {/* Hero */}
@@ -92,7 +101,7 @@ export default function TrustPage() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 border border-success/20 mb-6">
             <CheckCircle2 className="h-4 w-4 text-success" />
             <span className="text-sm font-medium text-success">
-              Dernière vérification : {LAST_AUDIT_DATE}
+              Dernière vérification : {dynamicAuditDate}
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
@@ -140,6 +149,22 @@ export default function TrustPage() {
           <p className="text-muted-foreground text-center mb-8 max-w-2xl mx-auto">
             Notre infrastructure suit le principe de défense en profondeur avec des contrôles à chaque couche.
           </p>
+
+          {/* Uptime réel */}
+          {!metricsLoading && metrics.totalPlatforms > 0 && (
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-muted/30 border">
+                <Activity className="h-5 w-5 text-success" />
+                <div className="text-sm">
+                  <span className="font-semibold">{metrics.uptimePercent.toFixed(0)}%</span>
+                  <span className="text-muted-foreground ml-1">
+                    uptime moyen ({metrics.greenPlatforms}/{metrics.totalPlatforms} plateformes opérationnelles)
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Card className="card-executive">
             <CardContent className="pt-6">
               <ul className="space-y-3">
@@ -152,11 +177,23 @@ export default function TrustPage() {
               </ul>
             </CardContent>
           </Card>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Badge variant="outline" className="gap-2 px-4 py-2">
               <Shield className="h-3.5 w-3.5" />
               Conforme OWASP ASVS Niveau 2
             </Badge>
+            <Link to={user ? "/hq/agents-monitoring" : "/auth"}>
+              <Badge variant="outline" className="gap-2 px-4 py-2 cursor-pointer hover:bg-muted/50 transition-colors">
+                <Activity className="h-3.5 w-3.5" />
+                Monitoring en temps réel
+              </Badge>
+            </Link>
+            <Link to="/status">
+              <Badge variant="outline" className="gap-2 px-4 py-2 cursor-pointer hover:bg-muted/50 transition-colors">
+                <Server className="h-3.5 w-3.5" />
+                Statut des services
+              </Badge>
+            </Link>
           </div>
         </div>
       </section>

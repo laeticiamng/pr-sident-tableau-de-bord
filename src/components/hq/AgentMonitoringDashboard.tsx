@@ -32,38 +32,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
 
-// Coût estimé par run type (en €)
-const RUN_COSTS: Record<string, number> = {
-  DAILY_EXECUTIVE_BRIEF: 0.12,
-  CEO_STANDUP_MEETING: 0.05,
-  PLATFORM_STATUS_REVIEW: 0.08,
-  SECURITY_AUDIT_RLS: 0.15,
-  MARKETING_WEEK_PLAN: 0.10,
-  RELEASE_GATE_CHECK: 0.12,
-  COMPETITIVE_ANALYSIS: 0.18,
-};
-
-// Modèle utilisé par run type
-const RUN_MODELS: Record<string, string> = {
-  DAILY_EXECUTIVE_BRIEF: "gemini-2.5-pro",
-  CEO_STANDUP_MEETING: "gemini-3-flash",
-  PLATFORM_STATUS_REVIEW: "gemini-2.5-flash",
-  SECURITY_AUDIT_RLS: "gemini-2.5-pro",
-  MARKETING_WEEK_PLAN: "gemini-3-flash",
-  RELEASE_GATE_CHECK: "gemini-2.5-pro",
-  COMPETITIVE_ANALYSIS: "gemini-2.5-pro",
-};
-
-// Agent responsable par type de run
-const RUN_AGENTS: Record<string, { name: string; role: string; emoji: string }> = {
-  DAILY_EXECUTIVE_BRIEF: { name: "CEO Agent", role: "Directeur Général", emoji: "👔" },
-  CEO_STANDUP_MEETING: { name: "CEO Agent", role: "Directeur Général", emoji: "👔" },
-  PLATFORM_STATUS_REVIEW: { name: "CTO Agent", role: "Directeur Technique", emoji: "⚙️" },
-  SECURITY_AUDIT_RLS: { name: "CISO Agent", role: "Directeur Sécurité", emoji: "🔒" },
-  MARKETING_WEEK_PLAN: { name: "CMO Agent", role: "Directeur Marketing", emoji: "📣" },
-  RELEASE_GATE_CHECK: { name: "CTO Agent", role: "Directeur Technique", emoji: "⚙️" },
-  COMPETITIVE_ANALYSIS: { name: "CSO Agent", role: "Directeur Stratégie", emoji: "🎯" },
-};
+import { getRunCost, getRunAgent, getRunModel } from "@/lib/run-types-registry";
 
 // Palette pour le statut
 const STATUS_CONFIG = {
@@ -115,7 +84,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   const completedRuns = runs?.filter(r => r.status === "completed").length || 0;
   const failedRuns = runs?.filter(r => r.status === "failed").length || 0;
   const successRate = totalRuns > 0 ? Math.round((completedRuns / totalRuns) * 100) : 0;
-  const totalCostEst = runs?.reduce((acc, r) => acc + (RUN_COSTS[r.run_type] || 0.05), 0) || 0;
+  const totalCostEst = runs?.reduce((acc, r) => acc + getRunCost(r.run_type), 0) || 0;
 
   // Runs échoués dans les 24h
   const failedRuns24h = runs?.filter(r => {
@@ -264,13 +233,13 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             ) : (
               <div className="flex flex-wrap gap-2">
                 {activeAgentKeys.map(rt => {
-                  const agent = RUN_AGENTS[rt];
+                  const agent = getRunAgent(rt);
                   const count = last24h.filter(r => r.run_type === rt).length;
                   return (
                     <div key={rt} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/30 border">
-                      <span className="text-base">{agent?.emoji || "🤖"}</span>
+                      <span className="text-base">{agent.emoji}</span>
                       <div>
-                        <p className="text-xs font-semibold">{agent?.name || rt}</p>
+                        <p className="text-xs font-semibold">{agent.name}</p>
                         <p className="text-[10px] text-muted-foreground">{count} run(s)</p>
                       </div>
                     </div>
@@ -295,7 +264,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {AVAILABLE_RUNS.map(run => {
-                const agent = RUN_AGENTS[run.type];
+                const agent = getRunAgent(run.type);
                 const isRunning = executeRun.isPending && (executeRun.variables as any)?.run_type === run.type;
                 return (
                   <Button
@@ -365,9 +334,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                 {displayedRuns?.map(run => {
                   const status = STATUS_CONFIG[run.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
                   const StatusIcon = status.icon;
-                  const agent = RUN_AGENTS[run.run_type];
-                  const cost = RUN_COSTS[run.run_type] || 0.05;
-                  const model = RUN_MODELS[run.run_type] || "gemini-flash";
+                  const agent = getRunAgent(run.run_type);
+                  const cost = getRunCost(run.run_type);
+                  const model = getRunModel(run.run_type);
                   const isExpanded = expandedRun === run.id;
 
                   return (
@@ -389,9 +358,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                                 <span className="text-sm font-semibold truncate">
-                                  {agent?.emoji} {agent?.name || "Agent IA"}
-                                </span>
-                                <Badge variant="outline" className="text-[10px] shrink-0">
+                            {agent.emoji} {agent.name}
+                                 </span>
+                                 <Badge variant="outline" className="text-[10px] shrink-0">
                                   {run.run_type.replace(/_/g, " ")}
                                 </Badge>
                                 {run.platform_key && (
