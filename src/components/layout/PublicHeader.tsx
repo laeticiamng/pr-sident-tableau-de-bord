@@ -10,6 +10,7 @@ const navLinks = [
   { href: "/plateformes", label: "Plateformes" },
   { href: "/status", label: "Statut" },
   { href: "/vision", label: "Vision" },
+  { href: "/trust", label: "Sécurité" },
   { href: "/contact", label: "Contact" },
 ];
 

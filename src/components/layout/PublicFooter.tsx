@@ -60,6 +60,11 @@ export function PublicFooter() {
                   Contact
                 </Link>
               </li>
+              <li>
+                <Link to="/trust" className="hover:text-primary transition-colors">
+                  Sécurité
+                </Link>
+              </li>
             </ul>
           </div>
 
