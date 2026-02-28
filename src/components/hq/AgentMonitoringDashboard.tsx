@@ -320,12 +320,19 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             </div>
           ) : displayedRuns?.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              <Bot className="h-10 w-10 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">{showFailedOnly ? "Aucun run échoué" : "Aucun run exécuté pour le moment"}</p>
-              {showFailedOnly && (
-                <Button variant="link" size="sm" className="mt-2 text-xs" onClick={() => setShowFailedOnly(false)}>
-                  Voir tous les runs
-                </Button>
+              {showFailedOnly ? (
+                <>
+                  <CheckCircle className="h-8 w-8 mx-auto mb-3 text-success opacity-60" />
+                  <p className="text-sm font-medium text-success">Aucun échec — tout fonctionne ✓</p>
+                  <Button variant="link" size="sm" className="mt-2 text-xs" onClick={() => setShowFailedOnly(false)}>
+                    Voir tous les runs
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Bot className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                  <p className="text-sm">Aucun run exécuté pour le moment</p>
+                </>
               )}
             </div>
           ) : (
@@ -408,14 +415,15 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                         <div className="px-4 pb-4 ml-10">
                           <Separator className="mb-3" />
                           {run.status === "failed" && (
-                            <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center justify-between">
-                              <p className="text-xs text-destructive">
-                                {run.executive_summary?.replace(/[#*`]/g, "").slice(0, 150) || "Erreur inconnue lors de l'exécution"}
+                            <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 space-y-2">
+                              <p className="text-xs text-destructive font-medium">
+                                {run.platform_key && <span className="mr-1">[{run.platform_key}]</span>}
+                                {run.executive_summary?.replace(/[#*`]/g, "") || "Erreur inconnue lors de l'exécution"}
                               </p>
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="shrink-0 ml-3 text-xs gap-1 border-destructive/30 text-destructive hover:bg-destructive/10"
+                                className="text-xs gap-1 border-destructive/30 text-destructive hover:bg-destructive/10"
                                 disabled={executeRun.isPending}
                                 onClick={(e) => {
                                   e.stopPropagation();
