@@ -33,7 +33,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePendingApprovals } from "@/hooks/useHQData";
+import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
 
 // Items principaux — toujours visibles
 const mainLinks = [
@@ -48,7 +48,7 @@ const mainLinks = [
 const secondaryLinks = [
   { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
   { href: "/hq/equipe-executive", label: "Équipe & Agents", icon: Users },
-  { href: "/hq/agents-monitoring", label: "Monitoring Agents IA", icon: Bot },
+  { href: "/hq/agents-monitoring", label: "Monitoring Agents IA", icon: Bot, showFailedBadge: true },
   { href: "/hq/growth", label: "Growth OS", icon: Rocket },
   { href: "/hq/reunions", label: "Réunions", icon: Calendar },
   { href: "/hq/historique", label: "Historique Runs", icon: History },
@@ -77,9 +77,14 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const location = useLocation();
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
+  const { data: recentRuns } = useRecentRuns(50);
   const [showMore, setShowMore] = useState(false);
 
   const pendingCount = pendingApprovals?.length || 0;
+  const failedRunsCount = recentRuns?.filter(r => {
+    const d = new Date(r.created_at);
+    return r.status === "failed" && Date.now() - d.getTime() < 24 * 3600 * 1000;
+  }).length || 0;
 
   // Ouvre automatiquement la section secondaire si on est sur une de ces pages
   const isOnSecondaryPage = secondaryLinks.some(link => location.pathname === link.href);
@@ -193,6 +198,14 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                       >
                         <link.icon className="h-4 w-4 flex-shrink-0" />
                         <span className="truncate">{link.label}</span>
+                        {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
+                          <Badge
+                            variant="destructive"
+                            className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                          >
+                            {failedRunsCount}
+                          </Badge>
+                        )}
                       </Link>
                     </li>
                   );

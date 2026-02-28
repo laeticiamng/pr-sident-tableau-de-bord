@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { Zap, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
 import { useRecentRuns } from "@/hooks/useHQData";
 import { cn } from "@/lib/utils";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 // Estimation des coûts par type de run (en euros)
 const RUN_COST_ESTIMATES: Record<string, number> = {
@@ -14,11 +15,27 @@ const RUN_COST_ESTIMATES: Record<string, number> = {
   MARKETING_WEEK_PLAN: 0.04,
   RELEASE_GATE_CHECK: 0.12,
   COMPETITIVE_ANALYSIS: 0.25,
+  SEO_AUDIT: 0.20,
+  QUALITY_AUDIT: 0.15,
+  REVENUE_FORECAST: 0.14,
+  COMPLIANCE_RGPD: 0.16,
+  ADS_PERFORMANCE_REVIEW: 0.10,
+  GROWTH_STRATEGY: 0.22,
 };
 
 // Limites de budget
 const DAILY_BUDGET = 15; // €
 const MONTHLY_BUDGET = 350; // €
+
+const PLATFORM_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--accent))",
+  "hsl(var(--warning))",
+  "hsl(var(--success))",
+  "hsl(var(--destructive))",
+  "hsl(var(--muted-foreground))",
+  "hsl(var(--secondary-foreground))",
+];
 
 interface AICostWidgetProps {
   className?: string;
@@ -51,6 +68,25 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
   
   const runsToday = runs?.filter(r => new Date(r.created_at) >= today).length || 0;
   const runsThisMonth = runs?.filter(r => new Date(r.created_at) >= startOfMonth).length || 0;
+
+  // Coût par plateforme
+  const platformCosts = (() => {
+    const monthlyRuns = runs?.filter(r => new Date(r.created_at) >= startOfMonth) || [];
+    const costMap = new Map<string, { cost: number; count: number }>();
+    
+    for (const r of monthlyRuns) {
+      const key = r.platform_key || "global";
+      const existing = costMap.get(key) || { cost: 0, count: 0 };
+      costMap.set(key, {
+        cost: existing.cost + (RUN_COST_ESTIMATES[r.run_type] || 0.05),
+        count: existing.count + 1,
+      });
+    }
+    
+    return Array.from(costMap.entries())
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.cost - a.cost);
+  })();
 
   if (compact) {
     return (
@@ -128,6 +164,39 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
             {runsThisMonth} runs ce mois ({(monthlyPercent).toFixed(0)}% du budget)
           </p>
         </div>
+
+        {/* Coût par plateforme */}
+        {platformCosts.length > 0 && (
+          <div className="space-y-2 pt-2 border-t border-border/50">
+            <p className="text-sm font-medium flex items-center gap-1.5">
+              Coût par plateforme
+            </p>
+            <div className="h-[120px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={platformCosts.slice(0, 5)} layout="vertical" margin={{ left: 0, right: 8, top: 0, bottom: 0 }}>
+                  <XAxis type="number" hide />
+                  <YAxis 
+                    type="category" 
+                    dataKey="name" 
+                    width={70} 
+                    tick={{ fontSize: 11 }} 
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip 
+                    formatter={(value: number) => [`${value.toFixed(2)}€`, "Coût"]}
+                    contentStyle={{ fontSize: 12, borderRadius: 8 }}
+                  />
+                  <Bar dataKey="cost" radius={[0, 4, 4, 0]} maxBarSize={16}>
+                    {platformCosts.slice(0, 5).map((_, i) => (
+                      <Cell key={i} fill={PLATFORM_COLORS[i % PLATFORM_COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
 
         {/* Projection */}
         <div className="pt-2 border-t border-border/50">

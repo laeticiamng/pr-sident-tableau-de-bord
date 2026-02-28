@@ -90,11 +90,12 @@ interface AgentMonitoringDashboardProps {
 }
 
 export function AgentMonitoringDashboard({ className, compact = false }: AgentMonitoringDashboardProps) {
-  const { data: runs, isLoading, refetch, isFetching } = useRecentRuns(20);
+  const { data: runs, isLoading, refetch, isFetching } = useRecentRuns(50);
   const executeRun = useExecuteRun();
   const { enqueue, queue } = useRunQueue();
   const [expandedRun, setExpandedRun] = useState<string | null>(null);
   const [liveIndicator, setLiveIndicator] = useState(true);
+  const [showFailedOnly, setShowFailedOnly] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Clignotement du point "live"
@@ -116,6 +117,12 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   const successRate = totalRuns > 0 ? Math.round((completedRuns / totalRuns) * 100) : 0;
   const totalCostEst = runs?.reduce((acc, r) => acc + (RUN_COSTS[r.run_type] || 0.05), 0) || 0;
 
+  // Runs échoués dans les 24h
+  const failedRuns24h = runs?.filter(r => {
+    const d = new Date(r.created_at);
+    return r.status === "failed" && Date.now() - d.getTime() < 24 * 3600 * 1000;
+  }) || [];
+
   // Agents actifs (runs dans les 24h)
   const last24h = runs?.filter(r => {
     const d = new Date(r.created_at);
@@ -123,8 +130,36 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   }) || [];
   const activeAgentKeys = [...new Set(last24h.map(r => r.run_type))];
 
+  // Runs filtrés pour l'historique
+  const displayedRuns = showFailedOnly ? runs?.filter(r => r.status === "failed") : runs;
+
   return (
     <div className={cn("space-y-6", className)}>
+      {/* Bannière d'alerte runs échoués 24h */}
+      {failedRuns24h.length > 0 && (
+        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <XCircle className="h-5 w-5 text-destructive shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-destructive">
+                {failedRuns24h.length} run{failedRuns24h.length > 1 ? "s" : ""} échoué{failedRuns24h.length > 1 ? "s" : ""} dans les 24h
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {failedRuns24h.map(r => r.run_type.replace(/_/g, " ")).join(", ")}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
+            onClick={() => setShowFailedOnly(!showFailedOnly)}
+          >
+            {showFailedOnly ? "Voir tout" : "Voir échecs"}
+          </Button>
+        </div>
+      )}
+
       {/* En-tête */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -291,9 +326,22 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
-              Historique des Runs
+              {showFailedOnly ? "Runs Échoués" : "Historique des Runs"}
             </CardTitle>
-            <Badge variant="outline" className="text-xs">{totalRuns} runs</Badge>
+            <div className="flex items-center gap-2">
+              {failedRuns > 0 && (
+                <Button
+                  variant={showFailedOnly ? "destructive" : "outline"}
+                  size="sm"
+                  className="text-xs gap-1 h-7"
+                  onClick={() => setShowFailedOnly(!showFailedOnly)}
+                >
+                  <XCircle className="h-3 w-3" />
+                  {failedRuns} échec{failedRuns > 1 ? "s" : ""}
+                </Button>
+              )}
+              <Badge variant="outline" className="text-xs">{totalRuns} runs</Badge>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -301,15 +349,20 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             <div className="p-4 space-y-3">
               {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full" />)}
             </div>
-          ) : runs?.length === 0 ? (
+          ) : displayedRuns?.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <Bot className="h-10 w-10 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">Aucun run exécuté pour le moment</p>
+              <p className="text-sm">{showFailedOnly ? "Aucun run échoué" : "Aucun run exécuté pour le moment"}</p>
+              {showFailedOnly && (
+                <Button variant="link" size="sm" className="mt-2 text-xs" onClick={() => setShowFailedOnly(false)}>
+                  Voir tous les runs
+                </Button>
+              )}
             </div>
           ) : (
             <ScrollArea className="h-[400px]">
               <div className="divide-y divide-border">
-                {runs?.map(run => {
+                {displayedRuns?.map(run => {
                   const status = STATUS_CONFIG[run.status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending;
                   const StatusIcon = status.icon;
                   const agent = RUN_AGENTS[run.run_type];
@@ -382,12 +435,34 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                       </button>
 
                       {/* Output expandé */}
-                      {isExpanded && run.executive_summary && (
+                      {isExpanded && (
                         <div className="px-4 pb-4 ml-10">
                           <Separator className="mb-3" />
-                          <div className="prose prose-sm max-w-none dark:prose-invert text-xs">
-                            <ReactMarkdown>{run.executive_summary}</ReactMarkdown>
-                          </div>
+                          {run.status === "failed" && (
+                            <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center justify-between">
+                              <p className="text-xs text-destructive">
+                                {run.executive_summary?.replace(/[#*`]/g, "").slice(0, 150) || "Erreur inconnue lors de l'exécution"}
+                              </p>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="shrink-0 ml-3 text-xs gap-1 border-destructive/30 text-destructive hover:bg-destructive/10"
+                                disabled={executeRun.isPending}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  executeRun.mutate({ run_type: run.run_type, platform_key: run.platform_key || undefined });
+                                }}
+                              >
+                                <RefreshCw className="h-3 w-3" />
+                                Relancer
+                              </Button>
+                            </div>
+                          )}
+                          {run.executive_summary && run.status !== "failed" && (
+                            <div className="prose prose-sm max-w-none dark:prose-invert text-xs">
+                              <ReactMarkdown>{run.executive_summary}</ReactMarkdown>
+                            </div>
+                          )}
                           {run.detailed_appendix && (
                             <div className="mt-3 p-2 rounded bg-muted/30 text-xs font-mono">
                               <p className="text-muted-foreground mb-1">Données techniques :</p>
