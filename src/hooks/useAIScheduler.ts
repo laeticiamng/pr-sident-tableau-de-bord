@@ -94,18 +94,29 @@ export function useAIAutopilot(autopilotEnabled: boolean) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const isDecidingRef = useRef(false);
   const [lastDecision, setLastDecision] = useState<AIDecideResponse | null>(null);
   const [isDeciding, setIsDeciding] = useState(false);
   const [nextCheckIn, setNextCheckIn] = useState<number>(5); // minutes
 
   const runAIDecision = useCallback(async () => {
-    if (isDeciding) return;
+    // Use ref to avoid race condition with stale closure
+    if (isDecidingRef.current) return;
+    isDecidingRef.current = true;
     setIsDeciding(true);
+
+    // Abort any in-flight request
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
 
     try {
       const { data, error } = await supabase.functions.invoke<AIDecideResponse>("ai-scheduler", {
         body: { action: "ai_decide" },
       });
+
+      // Check if aborted
+      if (abortRef.current?.signal.aborted) return;
 
       if (error) throw new Error(error.message);
 
@@ -126,6 +137,7 @@ export function useAIAutopilot(autopilotEnabled: boolean) {
         setNextCheckIn(nextMin);
       }
     } catch (e: any) {
+      if (abortRef.current?.signal.aborted) return;
       const msg = (e as Error).message;
       if (msg.includes("429")) {
         toast({ title: "Limite IA atteinte", description: "L'autopilot va réessayer plus tard", variant: "destructive" });
@@ -134,9 +146,10 @@ export function useAIAutopilot(autopilotEnabled: boolean) {
       }
       // Silent fail pour les autres erreurs en autopilote
     } finally {
+      isDecidingRef.current = false;
       setIsDeciding(false);
     }
-  }, [isDeciding, toast, queryClient]);
+  }, [toast, queryClient]);
 
   useEffect(() => {
     if (!autopilotEnabled) {
@@ -144,6 +157,7 @@ export function useAIAutopilot(autopilotEnabled: boolean) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      abortRef.current?.abort();
       return;
     }
 
@@ -160,8 +174,9 @@ export function useAIAutopilot(autopilotEnabled: boolean) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      abortRef.current?.abort();
     };
-  }, [autopilotEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [autopilotEnabled, runAIDecision]);
 
   return { lastDecision, isDeciding, nextCheckIn };
 }

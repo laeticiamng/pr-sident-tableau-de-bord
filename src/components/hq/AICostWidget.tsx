@@ -99,12 +99,15 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
             <Zap className="h-4 w-4 text-accent" />
             Consommation IA
           </span>
-          {isNearMonthlyLimit && (
-            <Badge variant="destructive" className="gap-1">
-              <AlertTriangle className="h-3 w-3" />
-              Attention
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold font-mono">{(monthlyCost || 0).toFixed(2)}€</span>
+            {isNearMonthlyLimit && (
+              <Badge variant="destructive" className="gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                Attention
+              </Badge>
+            )}
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -169,7 +172,12 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
                     axisLine={false}
                   />
                   <Tooltip 
-                    formatter={(value: number) => [`${value.toFixed(2)}€`, "Coût"]}
+                    formatter={(value: number, _name: string, props: any) => {
+                      const entry = props?.payload;
+                      const count = entry?.count || 0;
+                      const avg = count > 0 ? ((value || 0) / count).toFixed(3) : "—";
+                      return [`${(value || 0).toFixed(2)}€ (${count} runs, moy: ${avg}€)`, "Coût"];
+                    }}
                     contentStyle={{ fontSize: 12, borderRadius: 8 }}
                   />
                   <Bar dataKey="cost" radius={[0, 4, 4, 0]} maxBarSize={16}>

@@ -29,7 +29,7 @@ export default function BriefingRoom() {
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
-  const { data: stripeData } = useStripeKPIs();
+  const { data: stripeData, isError: stripeError } = useStripeKPIs();
   const executeRun = useExecuteRun();
   const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "done">("idle");
@@ -43,9 +43,9 @@ export default function BriefingRoom() {
   const totalPlatforms = platforms?.length || 7;
   const pendingCount = pendingApprovals?.length || 0;
 
-  // KPIs exécutifs
-  const mrr = stripeData?.kpis?.mrr || 0;
-  const mrrChange = stripeData?.kpis?.mrrChange || 0;
+  // KPIs exécutifs — null guards + error handling
+  const mrr = stripeError ? null : (stripeData?.kpis?.mrr ?? 0);
+  const mrrChange = stripeError ? null : (stripeData?.kpis?.mrrChange ?? 0);
 
   const activeAgents24h = (() => {
     const now = Date.now();
@@ -57,8 +57,8 @@ export default function BriefingRoom() {
   })();
 
   const globalUptime = platforms?.length
-    ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / platforms.length) * 10) / 10
-    : 0;
+    ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
+    : null;
 
   const lastRun = runs?.[0] || null;
 
@@ -178,10 +178,11 @@ export default function BriefingRoom() {
               <DollarSign className="h-5 w-5 text-success" />
             </div>
             <div>
-              <p className="text-xl font-bold">{mrr > 0 ? formatCurrency(mrr) : "—"}</p>
+              <p className="text-xl font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 MRR
-                {mrrChange !== 0 && (
+                {stripeError && <span className="text-destructive" title="Service indisponible">⚠</span>}
+                {mrrChange != null && mrrChange !== 0 && (
                   <span className={mrrChange > 0 ? "text-success" : "text-destructive"}>
                     {mrrChange > 0 ? "+" : ""}{mrrChange.toFixed(1)}%
                   </span>
@@ -209,8 +210,11 @@ export default function BriefingRoom() {
               <Wifi className="h-5 w-5 text-accent" />
             </div>
             <div>
-              <p className="text-xl font-bold">{globalUptime > 0 ? `${globalUptime}%` : "—"}</p>
-              <p className="text-xs text-muted-foreground">Uptime global</p>
+              <p className="text-xl font-bold">{globalUptime != null && globalUptime > 0 ? `${globalUptime}%` : "—"}</p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                Uptime global
+                <Badge variant="outline" className="text-[9px] px-1 py-0">Moyenne</Badge>
+              </p>
             </div>
           </CardContent>
         </Card>
