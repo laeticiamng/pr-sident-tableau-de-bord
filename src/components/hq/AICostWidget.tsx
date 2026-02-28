@@ -44,8 +44,8 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
     ?.filter(r => new Date(r.created_at) >= startOfMonth)
     .reduce((sum, r) => sum + getRunCost(r.run_type), 0) || 0;
   
-  const dailyPercent = (dailyCost / DAILY_BUDGET) * 100;
-  const monthlyPercent = (monthlyCost / MONTHLY_BUDGET) * 100;
+  const dailyPercent = (dailyCost / Math.max(DAILY_BUDGET, 1)) * 100;
+  const monthlyPercent = (monthlyCost / Math.max(MONTHLY_BUDGET, 1)) * 100;
   
   const isNearDailyLimit = dailyPercent >= 80;
   const isOverDailyLimit = dailyPercent >= 100;
@@ -198,11 +198,11 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
             <span className="text-muted-foreground">Projection fin de mois :</span>
             <span className={cn(
               "font-mono font-medium",
-              (monthlyCost / Math.max(today.getDate(), 1)) * 30 > MONTHLY_BUDGET 
+              ((monthlyCost || 0) / Math.max(today.getDate(), 1)) * 30 > MONTHLY_BUDGET 
                 ? "text-destructive" 
                 : "text-success"
             )}>
-              ~{((monthlyCost / Math.max(today.getDate(), 1)) * 30).toFixed(0)}€
+              ~{(((monthlyCost || 0) / Math.max(today.getDate(), 1)) * 30).toFixed(0)}€
             </span>
           </div>
         </div>
