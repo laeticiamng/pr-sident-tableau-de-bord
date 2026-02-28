@@ -270,9 +270,23 @@ export function useExecuteRun() {
       queryClient.invalidateQueries({ queryKey: ["hq", "runs"] });
     },
     onError: (error: Error) => {
+      // Map edge error codes to user-friendly messages
+      const msg = error.message;
+      let userMessage = msg;
+      if (msg.includes("401") || msg.includes("Authorization")) {
+        userMessage = "Session expirée. Veuillez vous reconnecter.";
+      } else if (msg.includes("403") || msg.includes("Permissions")) {
+        userMessage = "Permissions insuffisantes pour cette action.";
+      } else if (msg.includes("429") || msg.includes("Limite")) {
+        userMessage = "Limite de requêtes atteinte. Réessayez dans un instant.";
+      } else if (msg.includes("503") || msg.includes("unavailable")) {
+        userMessage = "Service temporairement indisponible. Réessayez plus tard.";
+      } else if (msg.includes("500")) {
+        userMessage = "Erreur serveur. L'équipe a été notifiée.";
+      }
       toast({
         title: "Erreur d'exécution",
-        description: error.message,
+        description: userMessage,
         variant: "destructive",
       });
     },

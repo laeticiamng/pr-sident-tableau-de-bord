@@ -189,22 +189,39 @@ export const ALL_RUN_TYPES = Object.keys(RUN_TYPES_REGISTRY) as RunType[];
 /** Default fallback cost for unknown run types */
 export const DEFAULT_RUN_COST = 0.05;
 
+/** Type guard: checks if a string is a valid RunType */
+export function isValidRunType(s: string): s is RunType {
+  return s in RUN_TYPES_REGISTRY;
+}
+
 /** Get cost estimate for a run type, with fallback */
 export function getRunCost(runType: string): number {
+  if (!isValidRunType(runType)) {
+    console.warn(`[run-types-registry] Unknown run type for cost: "${runType}"`);
+  }
   return (RUN_TYPES_REGISTRY as Record<string, { costEstimate: number }>)[runType]?.costEstimate ?? DEFAULT_RUN_COST;
 }
 
 /** Get agent info for a run type */
 export function getRunAgent(runType: string) {
+  if (!isValidRunType(runType)) {
+    console.warn(`[run-types-registry] Unknown run type for agent: "${runType}"`);
+  }
   return (RUN_TYPES_REGISTRY as Record<string, { agent: { name: string; role: string; emoji: string } }>)[runType]?.agent ?? { name: "Agent IA", role: "Agent", emoji: "🤖" };
 }
 
 /** Get model for a run type */
 export function getRunModel(runType: string): string {
+  if (!isValidRunType(runType)) {
+    console.warn(`[run-types-registry] Unknown run type for model: "${runType}"`);
+  }
   return (RUN_TYPES_REGISTRY as Record<string, { model: string }>)[runType]?.model ?? "gemini-flash";
 }
 
 /** Get label for a run type */
 export function getRunLabel(runType: string): string {
+  if (!isValidRunType(runType)) {
+    console.warn(`[run-types-registry] Unknown run type for label: "${runType}"`);
+  }
   return (RUN_TYPES_REGISTRY as Record<string, { label: string }>)[runType]?.label ?? runType.replace(/_/g, " ");
 }

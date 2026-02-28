@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useSystemConfig, useUpdateConfig, useExecuteRun } from "./useHQData";
 import { canAutoExecute, shouldRequireApproval, RUN_TYPE_CONFIG } from "@/lib/run-engine";
 import { useToast } from "./use-toast";
+import { isValidRunType, type RunType } from "@/lib/run-types-registry";
 
 export interface AutopilotConfig {
   enabled: boolean;
@@ -129,10 +130,17 @@ export function useAutopilot() {
 
   // Execute a run (with autopilot logic)
   const autoExecuteRun = useCallback(async (runType: string, platformKey?: string) => {
+    if (!isValidRunType(runType)) {
+      return {
+        executed: false,
+        requiresApproval: false,
+        reason: `Type de run invalide : "${runType}"`,
+      };
+    }
+
     const check = canAutoRun(runType);
     
     if (!check.allowed) {
-      // Return info that approval is needed
       return {
         executed: false,
         requiresApproval: true,
@@ -144,7 +152,7 @@ export function useAutopilot() {
       setDailyRunCount(prev => prev + 1);
       
       const result = await executeRun.mutateAsync({
-        run_type: runType as import("@/lib/run-types-registry").RunType,
+        run_type: runType,
         platform_key: platformKey,
       });
       
