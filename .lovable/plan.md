@@ -1,65 +1,125 @@
 
 
-# Persistance des Runs dans la base de donnees
+# Audit GEO & SEO Complet — EMOTIONSCARE HQ
 
-## Objectif
-Chaque run complete par l'edge function `executive-run` sera sauvegarde dans la table `hq.runs` via l'appel RPC `insert_hq_run`. Le compteur "Runs totaux" du dashboard se mettra a jour automatiquement.
+## Etat actuel
 
-## Analyse technique
+### Ce qui fonctionne bien
+- Schema Organization statique dans `index.html` avec SIREN, TVA, fondatrice, adresse -- visible par tous les crawlers sans JS
+- Schemas dynamiques GEO injectes via `usePageMeta` sur 4 pages : `/` (Organization+FAQ), `/plateformes` (ItemList+SoftwareApplication x7), `/vision` (AboutPage), `/trust` (WebPage securite)
+- `robots.txt` bien configure : bloque `/hq/`, `/dashboard/`, `/auth` pour tous les bots
+- `sitemap.xml` reference les 6 pages publiques, 7 plateformes externes, 4 pages legales
 
-Le RPC `insert_hq_run` existe deja et insere dans `hq.runs` avec un log audit automatique. Il verifie `is_owner()` via `auth.uid()`, donc il faut utiliser le client authentifie (`supabaseAuth` avec le JWT utilisateur), pas le client admin (service role).
+### Problemes identifies
 
-## Modifications
+#### 1. CRITIQUE : Schemas dynamiques invisibles pour les crawlers IA
+Les schemas FAQPage, ItemList, SoftwareApplication, AboutPage et WebPage sont injectes via React (`usePageMeta`). Les crawlers IA (GPTBot, ClaudeBot, PerplexityBot) ne executent PAS le JavaScript -- ils ne voient que le HTML brut de `index.html`. Seul le schema Organization statique est visible.
 
-### Fichier: `supabase/functions/executive-run/index.ts`
+**Impact** : 80% des schemas GEO sont invisibles pour les moteurs generatifs.
 
-**1. Apres le run reussi (ligne ~802-809)** -- Ajouter l'appel `insert_hq_run` via `supabaseAuth` :
+#### 2. IMPORTANT : Meta OG/Twitter incomplets
+- `og:url` manquant dans `index.html`
+- `og:locale` manquant (devrait etre `fr_FR`)
+- `og:site_name` manquant
+- `twitter:title` et `twitter:description` manquants
+- Les images OG pointent vers `lovable.dev` au lieu d'une image brandee EMOTIONSCARE
 
-```typescript
-// Persist run in hq.runs table (uses user's JWT for RLS)
-const { data: persistedRunId, error: persistErr } = await supabaseAuth.rpc("insert_hq_run", {
-  p_run_type: run_type,
-  p_platform_key: platform_key || null,
-  p_owner_requested: true,
-  p_status: "completed",
-  p_executive_summary: executiveSummary.substring(0, 10000),
-  p_detailed_appendix: {
-    model_used: model,
-    data_sources: runResult.data_sources,
-    duration_ms: durationMs,
-    cost_estimate: costEstimate,
-    steps: template.steps,
-  },
-});
-if (persistErr) {
-  console.error("[Executive Run] Run persist error:", persistErr.message);
-} else {
-  runResult.run_id = persistedRunId;
-}
+#### 3. IMPORTANT : Sitemap contient des URLs externes
+Le sitemap reference 7 URLs de domaines externes (`emotionscare.com`, `medmng.com`, etc.). Un sitemap ne devrait lister que les URLs du meme domaine. Google ignore ces entrees et ca peut nuire a la credibilite du sitemap.
+
+#### 4. MOYEN : Pages sans `usePageMeta`
+Les 4 pages legales (`MentionsLegalesPage`, `ConfidentialitePage`, `CGVPage`, `RGPDRegistryPage`) n'utilisent pas `usePageMeta` -- pas de title dynamique, pas de meta description, pas de `noindex`.
+
+#### 5. MOYEN : Crawlers IA non geres dans robots.txt
+Aucune directive pour `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Applebot-Extended`. Ils devraient etre autorises sur les pages publiques et bloques sur `/hq/`.
+
+#### 6. MINEUR : Pas de `<link rel="canonical">` statique dans `index.html`
+Le hook `usePageMeta` injecte un canonical dynamiquement mais il est invisible pour les crawlers sans JS.
+
+---
+
+## Plan de correction
+
+### Fichier 1 : `index.html` -- Schemas statiques + meta enrichis
+
+**Ajouts dans `<head>` :**
+- Meta OG complets : `og:url`, `og:locale`, `og:site_name`
+- Meta Twitter complets : `twitter:title`, `twitter:description`
+- `<link rel="canonical">`
+- Injecter en statique les schemas les plus importants pour le GEO :
+  - `FAQPage` (5 questions/reponses)
+  - `ItemList` des 7 plateformes
+  - `WebSite` avec `SearchAction` potentiel
+
+Cela garantit que **tous les crawlers** (JS ou non) voient les donnees structurees critiques.
+
+### Fichier 2 : `public/sitemap.xml` -- Nettoyage
+
+- Retirer les 7 URLs de domaines externes (invalides dans un sitemap mono-domaine)
+- Ajouter un commentaire expliquant que les plateformes sont referencees via les schemas JSON-LD
+
+### Fichier 3 : `public/robots.txt` -- Directives IA
+
+Ajouter des directives specifiques :
+```text
+User-agent: GPTBot
+Allow: /
+Disallow: /hq/
+Disallow: /auth
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /hq/
+Disallow: /auth
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /hq/
+Disallow: /auth
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /hq/
+Disallow: /auth
 ```
 
-**2. Dans le bloc catch (ligne ~820-832)** -- Ajouter la persistance du run echoue (best-effort via admin car le user context peut ne plus etre disponible) :
+### Fichier 4 : Pages legales -- Ajout `usePageMeta`
 
-```typescript
-// Also try to persist failed run
-const { error: failPersistErr } = await adminClient.rpc("insert_hq_run", {
-  p_run_type: run_type || "UNKNOWN",
-  p_platform_key: platform_key || null,
-  p_status: "failed",
-  p_executive_summary: error instanceof Error ? error.message : String(error),
-});
-```
+Ajouter `usePageMeta` avec `noindex: true` aux 4 pages legales pour :
+- Eviter l'indexation de contenu boilerplate juridique
+- Definir des titles/descriptions propres
 
-Note: Le bloc catch n'a pas acces aux variables `run_type`/`platform_key` (elles sont dans le try). On gardera la persistance des echecs en best-effort uniquement via les structured_logs deja en place -- pas de changement dans le catch.
+Pages concernees :
+- `MentionsLegalesPage.tsx`
+- `ConfidentialitePage.tsx`
+- `CGVPage.tsx`
+- `RGPDRegistryPage.tsx`
 
-## Impact
+### Fichier 5 : `src/lib/geo-schemas.ts` -- Schema WebSite
 
-- Le compteur "Runs totaux" sur `/hq/agents-monitoring` se met a jour automatiquement (le hook `useRecentRuns` interroge deja `hq.runs`)
-- L'historique affiche le resume, le statut, le cout et la duree de chaque run
-- Le `run_id` retourne au frontend correspond a l'ID reel en base (plus un UUID genere cote client)
-- Zero changement cote frontend -- tout est deja cable
+Ajouter un schema `WebSite` avec le nom du site et l'URL, a injecter en statique dans `index.html`.
+
+---
+
+## Resume des corrections
+
+| Probleme | Severite | Fichier(s) | Action |
+|---|---|---|---|
+| Schemas invisibles sans JS | Critique | `index.html` | Dupliquer FAQ + ItemList en statique |
+| Meta OG/Twitter incomplets | Important | `index.html` | Ajouter og:url, og:locale, twitter:title |
+| URLs externes dans sitemap | Important | `sitemap.xml` | Retirer les 7 URLs externes |
+| Pages legales sans meta | Moyen | 4 pages legales | Ajouter usePageMeta + noindex |
+| Crawlers IA non geres | Moyen | `robots.txt` | Ajouter GPTBot, ClaudeBot, etc. |
+| Pas de canonical statique | Mineur | `index.html` | Ajouter link rel=canonical |
 
 ## Fichiers modifies
 
-- `supabase/functions/executive-run/index.ts` -- ajout de l'appel `insert_hq_run` apres completion reussie
+- `index.html` -- schemas statiques + meta OG/Twitter + canonical
+- `public/sitemap.xml` -- retrait URLs externes
+- `public/robots.txt` -- directives crawlers IA
+- `src/pages/legal/MentionsLegalesPage.tsx` -- usePageMeta + noindex
+- `src/pages/legal/ConfidentialitePage.tsx` -- usePageMeta + noindex
+- `src/pages/legal/CGVPage.tsx` -- usePageMeta + noindex
+- `src/pages/legal/RGPDRegistryPage.tsx` -- usePageMeta + noindex
+- `src/lib/geo-schemas.ts` -- ajout schema WebSite
 
