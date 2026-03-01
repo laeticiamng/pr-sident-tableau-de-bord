@@ -308,6 +308,80 @@ export function buildFAQSchema() {
 }
 
 // ============================================
+// AboutPage Schema (for /vision)
+// ============================================
+export function buildVisionPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: "Vision & Valeurs — EMOTIONSCARE",
+    url: "https://president-cockpit-hq.lovable.app/vision",
+    description:
+      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 7 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+    mainEntity: {
+      "@type": "Organization",
+      "@id": "https://president-cockpit-hq.lovable.app/#organization",
+      name: "EMOTIONSCARE SASU",
+      foundingDate: "2025-05-07",
+      founder: {
+        "@type": "Person",
+        name: COMPANY_PROFILE.president,
+        jobTitle: "Présidente",
+        url: COMPANY_PROFILE.linkedinPresident,
+      },
+      slogan:
+        "Créer des logiciels qui transforment la complexité en simplicité, et qui permettent à chacun de se concentrer sur ce qui compte vraiment.",
+      knowsAbout: [
+        "SaaS",
+        "Intelligence artificielle appliquée",
+        "Santé mentale des soignants",
+        "EdTech médicale",
+        "Relocalisation internationale",
+        "Automatisation business par IA",
+        "Urgences hospitalières",
+        "Compétition musicale",
+      ],
+      ethicsPolicy: "https://president-cockpit-hq.lovable.app/legal/rgpd",
+      numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
+    },
+  };
+}
+
+// ============================================
+// Trust / Security WebPage Schema (for /trust)
+// ============================================
+export function buildTrustPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Confiance & Sécurité — EMOTIONSCARE",
+    url: "https://president-cockpit-hq.lovable.app/trust",
+    description:
+      "Mesures de sécurité, conformité RGPD et architecture de protection des données d'EMOTIONSCARE SASU. Chiffrement AES-256, RLS deny-by-default, audit immuable et conformité OWASP ASVS Niveau 2.",
+    about: {
+      "@type": "Organization",
+      "@id": "https://president-cockpit-hq.lovable.app/#organization",
+      name: "EMOTIONSCARE SASU",
+    },
+    specialty: "Cybersécurité et protection des données",
+    significantLink: [
+      "https://president-cockpit-hq.lovable.app/legal/rgpd",
+      "https://president-cockpit-hq.lovable.app/legal/confidentialite",
+      "https://president-cockpit-hq.lovable.app/status",
+    ],
+    lastReviewed: new Date().toISOString().split("T")[0],
+    mentions: [
+      { "@type": "Thing", name: "RGPD", description: "Règlement Général sur la Protection des Données" },
+      { "@type": "Thing", name: "OWASP ASVS", description: "Application Security Verification Standard" },
+      { "@type": "Thing", name: "Row-Level Security (RLS)", description: "Contrôle d'accès granulaire au niveau des lignes de base de données" },
+      { "@type": "Thing", name: "AES-256", description: "Standard de chiffrement avancé 256 bits" },
+      { "@type": "Thing", name: "TLS 1.3", description: "Protocole de chiffrement des communications" },
+      { "@type": "Thing", name: "SOC 2 Type II", description: "Certification de sécurité des infrastructures cloud" },
+    ],
+  };
+}
+
+// ============================================
 // All schemas for a given page
 // ============================================
 export function getHomePageSchemas() {
@@ -319,4 +393,12 @@ export function getPlateformesPageSchemas() {
     buildPlatformItemListSchema(),
     ...MANAGED_PLATFORMS.map((p) => buildSoftwareApplicationSchema(p.key)).filter(Boolean),
   ];
+}
+
+export function getVisionPageSchemas() {
+  return [buildVisionPageSchema()];
+}
+
+export function getTrustPageSchemas() {
+  return [buildTrustPageSchema()];
 }

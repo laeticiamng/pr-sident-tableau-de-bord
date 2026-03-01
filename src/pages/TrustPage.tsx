@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -5,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/contexts/AuthContext";
+import { getTrustPageSchemas } from "@/lib/geo-schemas";
 import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
 
 const securityMeasures = [
@@ -79,9 +81,11 @@ const architecturePoints = [
 ];
 
 export default function TrustPage() {
+  const geoSchemas = useMemo(() => getTrustPageSchemas(), []);
   usePageMeta({
     title: "Confiance & Sécurité — EMOTIONSCARE",
     description: "Découvrez les mesures de sécurité, la conformité RGPD et l'architecture de protection des données d'EMOTIONSCARE.",
+    jsonLd: geoSchemas,
   });
 
   const { user } = useAuth();

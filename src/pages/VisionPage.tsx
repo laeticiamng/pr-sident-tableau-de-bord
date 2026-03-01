@@ -1,13 +1,17 @@
+import { useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers } from "lucide-react";
 import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { getVisionPageSchemas } from "@/lib/geo-schemas";
 
 export default function VisionPage() {
+  const geoSchemas = useMemo(() => getVisionPageSchemas(), []);
   usePageMeta({
     title: "Notre Vision",
     description: "Découvrez la vision et les valeurs d'EMOTIONSCARE : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.",
+    jsonLd: geoSchemas,
   });
   return (
     <div className="flex flex-col">
