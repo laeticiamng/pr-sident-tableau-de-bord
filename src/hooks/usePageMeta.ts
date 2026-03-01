@@ -13,6 +13,8 @@ interface PageMetaOptions {
   noindex?: boolean;
   /** Override canonical path (defaults to current pathname) */
   canonicalPath?: string;
+  /** JSON-LD structured data schemas for GEO (Generative Engine Optimization) */
+  jsonLd?: Record<string, unknown>[];
 }
 
 /**
@@ -20,7 +22,7 @@ interface PageMetaOptions {
  * Sets document title, meta description, canonical link, and robots directive.
  * Restores defaults on unmount.
  */
-export function usePageMeta({ title, description, noindex, canonicalPath }: PageMetaOptions) {
+export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd }: PageMetaOptions) {
   useEffect(() => {
     // Title
     document.title = `${title} — ${SITE_NAME}`;
@@ -54,6 +56,19 @@ export function usePageMeta({ title, description, noindex, canonicalPath }: Page
       robotsMeta.remove();
     }
 
+    // JSON-LD structured data (GEO optimization)
+    const jsonLdScripts: HTMLScriptElement[] = [];
+    if (jsonLd?.length) {
+      for (const schema of jsonLd) {
+        const script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.textContent = JSON.stringify(schema);
+        script.dataset.geo = "true";
+        document.head.appendChild(script);
+        jsonLdScripts.push(script);
+      }
+    }
+
     // Cleanup: restore defaults
     return () => {
       document.title = DEFAULT_TITLE;
@@ -66,6 +81,10 @@ export function usePageMeta({ title, description, noindex, canonicalPath }: Page
       if (noindex && robotsMeta) {
         robotsMeta.remove();
       }
+      // Remove injected JSON-LD scripts
+      for (const script of jsonLdScripts) {
+        script.remove();
+      }
     };
-  }, [title, description, noindex, canonicalPath]);
+  }, [title, description, noindex, canonicalPath, jsonLd]);
 }
