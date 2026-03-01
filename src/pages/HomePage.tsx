@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { getHomePageSchemas } from "@/lib/geo-schemas";
 
 // Feature cards data
 const FEATURES = [
@@ -80,10 +82,13 @@ function ScrollReveal({
 
 export default function HomePage() {
 
+  const geoSchemas = useMemo(() => getHomePageSchemas(), []);
+
   usePageMeta({
     title: "Siège Social Numérique",
     description: "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.",
     canonicalPath: "/",
+    jsonLd: geoSchemas,
   });
 
   return (

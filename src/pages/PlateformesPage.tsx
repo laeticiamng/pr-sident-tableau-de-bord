@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS, PLATFORM_GRADIENTS, PLATFORM_BORDERS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { getPlateformesPageSchemas } from "@/lib/geo-schemas";
 
 const statusLabels = {
   production: { label: "Production", icon: CheckCircle, color: "text-success", bg: "bg-success" },
@@ -38,9 +39,12 @@ export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "production" | "prototype">("all");
 
+  const geoSchemas = useMemo(() => getPlateformesPageSchemas(), []);
+
   usePageMeta({
     title: "Nos Plateformes",
     description: "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, UrgenceOS et Track Triumph.",
+    jsonLd: geoSchemas,
   });
 
   // Use static data from constants (public page, no auth required)
