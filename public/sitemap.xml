@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Pages principales -->
   <url>
     <loc>https://president-cockpit-hq.lovable.app/</loc>
@@ -39,51 +38,13 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Plateformes SaaS (URLs de production) -->
-  <url>
-    <loc>https://emotionscare.com</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://medmng.com</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.agent-growth-automator.com</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://world-alignment.lovable.app</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://pixel-perfect-clone-6574.lovable.app</loc>
-    <lastmod>2026-01-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://flow-pulse-assist.lovable.app</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://track-triumph-tavern.lovable.app</loc>
-    <lastmod>2026-02-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
+  <!--
+    Note : Les 7 plateformes SaaS externes (emotionscare.com, medmng.com, etc.)
+    sont référencées via les schémas JSON-LD (ItemList + SoftwareApplication)
+    dans index.html, et non dans ce sitemap (mono-domaine uniquement).
+  -->
 
-  <!-- Pages légales -->
+  <!-- Pages légales (noindex via meta robots, mais listées pour complétude) -->
   <url>
     <loc>https://president-cockpit-hq.lovable.app/legal/mentions</loc>
     <lastmod>2026-02-11</lastmod>
