@@ -318,6 +318,38 @@ export function buildVisionPageSchema() {
     url: "https://president-cockpit-hq.lovable.app/vision",
     description:
       "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 7 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+    datePublished: "2025-05-07",
+    dateModified: "2026-03-01",
+    inLanguage: "fr-FR",
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://president-cockpit-hq.lovable.app",
+      name: "EMOTIONSCARE",
+    },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: "https://president-cockpit-hq.lovable.app/" },
+        { "@type": "ListItem", position: 2, name: "Vision & Valeurs", item: "https://president-cockpit-hq.lovable.app/vision" },
+      ],
+    },
+    hasPart: [
+      {
+        "@type": "WebPageElement",
+        name: "Nos Valeurs",
+        description: "Excellence, innovation, empathie et croissance — les 4 piliers qui guident chaque décision.",
+      },
+      {
+        "@type": "WebPageElement",
+        name: "Notre Mission",
+        description: "Créer des logiciels qui transforment la complexité en simplicité pour les soignants, étudiants et entrepreneurs.",
+      },
+      {
+        "@type": "WebPageElement",
+        name: "Notre Histoire",
+        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 7 plateformes SaaS avec une équipe augmentée par l'IA.",
+      },
+    ],
     mainEntity: {
       "@type": "Organization",
       "@id": "https://president-cockpit-hq.lovable.app/#organization",
@@ -358,7 +390,27 @@ export function buildTrustPageSchema() {
     url: "https://president-cockpit-hq.lovable.app/trust",
     description:
       "Mesures de sécurité, conformité RGPD et architecture de protection des données d'EMOTIONSCARE SASU. Chiffrement AES-256, RLS deny-by-default, audit immuable et conformité OWASP ASVS Niveau 2.",
+    dateModified: "2026-03-01",
+    inLanguage: "fr-FR",
+    keywords: "sécurité données, RGPD, chiffrement AES-256, RLS, conformité OWASP, protection données santé, cybersécurité SaaS",
+    isPartOf: {
+      "@type": "WebSite",
+      url: "https://president-cockpit-hq.lovable.app",
+      name: "EMOTIONSCARE",
+    },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Accueil", item: "https://president-cockpit-hq.lovable.app/" },
+        { "@type": "ListItem", position: 2, name: "Confiance & Sécurité", item: "https://president-cockpit-hq.lovable.app/trust" },
+      ],
+    },
     about: {
+      "@type": "Organization",
+      "@id": "https://president-cockpit-hq.lovable.app/#organization",
+      name: "EMOTIONSCARE SASU",
+    },
+    reviewedBy: {
       "@type": "Organization",
       "@id": "https://president-cockpit-hq.lovable.app/#organization",
       name: "EMOTIONSCARE SASU",
