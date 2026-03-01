@@ -16,6 +16,37 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Crawlers IA — autoriser pages publiques, bloquer HQ privé
+User-agent: GPTBot
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
 User-agent: *
 Allow: /
 Disallow: /hq/

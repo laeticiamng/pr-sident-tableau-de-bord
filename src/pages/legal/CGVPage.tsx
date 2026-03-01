@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function CGVPage() {
+  usePageMeta({
+    title: "Conditions Générales de Vente",
+    description: `CGV d'${COMPANY_PROFILE.legalName}, éditeur de logiciels applicatifs. Conditions de fourniture de services SaaS.`,
+    noindex: true,
+  });
+
   return (
     <div className="flex flex-col">
       {/* Hero */}

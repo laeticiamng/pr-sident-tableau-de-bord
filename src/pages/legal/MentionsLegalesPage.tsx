@@ -1,7 +1,14 @@
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function MentionsLegalesPage() {
+  usePageMeta({
+    title: "Mentions Légales",
+    description: `Mentions légales d'${COMPANY_PROFILE.legalName}, éditeur de logiciels applicatifs. SIREN ${COMPANY_PROFILE.siren}, siège à Amiens.`,
+    noindex: true,
+  });
+
   return (
     <div className="flex flex-col">
       {/* Hero */}

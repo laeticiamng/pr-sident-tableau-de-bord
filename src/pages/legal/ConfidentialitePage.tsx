@@ -1,7 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 export default function ConfidentialitePage() {
+  usePageMeta({
+    title: "Politique de Confidentialité",
+    description: `Politique de confidentialité et protection des données personnelles d'${COMPANY_PROFILE.legalName}. Conformité RGPD.`,
+    noindex: true,
+  });
+
   return (
     <div className="flex flex-col">
       {/* Hero */}

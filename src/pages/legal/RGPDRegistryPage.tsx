@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { Shield, Database, Clock, Lock, Download, UserCheck, AlertTriangle } from "lucide-react";
-
+import { usePageMeta } from "@/hooks/usePageMeta";
 const dataProcessingActivities = [
   {
     name: "Authentification utilisateurs",
@@ -84,6 +84,12 @@ const subProcessors = [
 ];
 
 export default function RGPDRegistryPage() {
+  usePageMeta({
+    title: "Registre des Traitements RGPD",
+    description: `Registre des activités de traitement (Article 30 RGPD) d'${COMPANY_PROFILE.legalName}. Transparence sur la collecte et le traitement des données.`,
+    noindex: true,
+  });
+
   return (
     <div className="flex flex-col">
       {/* Hero */}
