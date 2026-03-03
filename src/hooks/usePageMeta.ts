@@ -18,6 +18,8 @@ interface PageMetaOptions {
   jsonLd?: Record<string, unknown>[];
   /** Override OG image URL */
   ogImage?: string;
+  /** Alt text for OG/Twitter image */
+  ogImageAlt?: string;
 }
 
 function setMetaTag(property: string, content: string, isOg = true) {
@@ -37,13 +39,14 @@ function setMetaTag(property: string, content: string, isOg = true) {
  * and Open Graph / Twitter Card tags per page.
  * Restores defaults on unmount.
  */
-export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd, ogImage }: PageMetaOptions) {
+export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd, ogImage, ogImageAlt }: PageMetaOptions) {
   useEffect(() => {
     const fullTitle = `${title} — ${SITE_NAME}`;
     const desc = description || DEFAULT_DESCRIPTION;
     const path = canonicalPath ?? window.location.pathname;
     const canonicalUrl = `${SITE_URL}${path}`;
     const image = ogImage || DEFAULT_OG_IMAGE;
+    const imageAlt = ogImageAlt || "EMOTIONSCARE — Éditeur français de 7 plateformes SaaS innovantes";
 
     // Title
     document.title = fullTitle;
@@ -68,6 +71,13 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
     setMetaTag("og:description", desc);
     setMetaTag("og:url", canonicalUrl);
     setMetaTag("og:image", image);
+    setMetaTag("og:image:alt", imageAlt);
+
+    // Twitter tags
+    setMetaTag("twitter:title", fullTitle, false);
+    setMetaTag("twitter:description", desc, false);
+    setMetaTag("twitter:image", image, false);
+    setMetaTag("twitter:image:alt", imageAlt, false);
 
     // Twitter tags
     setMetaTag("twitter:title", fullTitle, false);
@@ -117,13 +127,15 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
       setMetaTag("og:description", DEFAULT_DESCRIPTION);
       setMetaTag("og:url", SITE_URL);
       setMetaTag("og:image", DEFAULT_OG_IMAGE);
+      setMetaTag("og:image:alt", "EMOTIONSCARE — Éditeur français de 7 plateformes SaaS innovantes");
       setMetaTag("twitter:title", DEFAULT_TITLE, false);
       setMetaTag("twitter:description", DEFAULT_DESCRIPTION, false);
       setMetaTag("twitter:image", DEFAULT_OG_IMAGE, false);
+      setMetaTag("twitter:image:alt", "EMOTIONSCARE — Éditeur français de 7 plateformes SaaS innovantes", false);
       // Remove injected JSON-LD scripts
       for (const script of jsonLdScripts) {
         script.remove();
       }
     };
-  }, [title, description, noindex, canonicalPath, jsonLd, ogImage]);
+  }, [title, description, noindex, canonicalPath, jsonLd, ogImage, ogImageAlt]);
 }
