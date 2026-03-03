@@ -42,8 +42,9 @@ export default function PlateformesPage() {
   const geoSchemas = useMemo(() => getPlateformesPageSchemas(), []);
 
   usePageMeta({
-    title: "Nos Plateformes",
-    description: "Découvrez les 7 plateformes SaaS d'EMOTIONSCARE : EmotionsCare, Med MNG, System Compass, Growth Copilot, NEARVITY, UrgenceOS et Track Triumph.",
+    title: "7 Plateformes SaaS",
+    description: "Santé, éducation, relocalisation, automatisation IA. 7 logiciels conçus en France pour transformer des secteurs entiers.",
+    ogImageAlt: "Les 7 plateformes SaaS d'EMOTIONSCARE — santé, éducation, IA",
     jsonLd: geoSchemas,
   });
 

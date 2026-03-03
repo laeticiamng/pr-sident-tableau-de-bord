@@ -22,7 +22,8 @@ export default function ContactPage() {
 
   usePageMeta({
     title: "Contact",
-    description: "Contactez EMOTIONSCARE à Amiens. Questions, projets, partenariats — nous répondons sous 24-48h. SIREN 944 505 445.",
+    description: "Une question, un projet, un partenariat ? Contactez EMOTIONSCARE à Amiens. Réponse sous 24–48h.",
+    ogImageAlt: "Contactez EMOTIONSCARE — éditeur SaaS français",
   });
 
   const { 

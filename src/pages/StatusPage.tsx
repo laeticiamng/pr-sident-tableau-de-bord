@@ -42,8 +42,9 @@ export default function StatusPage() {
   const [derniereVerification, setDerniereVerification] = useState(new Date());
 
   usePageMeta({
-    title: "Statut des plateformes",
-    description: "Statut en temps réel des 7 plateformes SaaS d'EMOTIONSCARE. Vérifiez la disponibilité de chaque service.",
+    title: "Statut des Services",
+    description: "Disponibilité en temps réel des 7 plateformes SaaS EMOTIONSCARE. Uptime, incidents et maintenance.",
+    ogImageAlt: "Statut des services EMOTIONSCARE — disponibilité temps réel",
   });
 
   const plateformesProduction = MANAGED_PLATFORMS.filter(
