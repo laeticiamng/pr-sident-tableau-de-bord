@@ -89,6 +89,7 @@ export default function HomePage() {
     description: "Éditeur de logiciels applicatifs français. 7 plateformes SaaS innovantes pilotées depuis notre siège numérique à Amiens.",
     canonicalPath: "/",
     jsonLd: geoSchemas,
+    ogImageAlt: "EMOTIONSCARE — Siège social numérique, éditeur de 7 plateformes SaaS françaises",
   });
 
   return (
