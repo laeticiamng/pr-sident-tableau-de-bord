@@ -5,6 +5,7 @@ const DEFAULT_TITLE = "EMOTIONSCARE — Siège Social Numérique";
 const DEFAULT_DESCRIPTION =
   "Éditeur de logiciels applicatifs français. 7 plateformes innovantes pilotées depuis notre siège numérique.";
 const SITE_URL = "https://president-cockpit-hq.lovable.app";
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
 interface PageMetaOptions {
   title: string;
@@ -15,17 +16,37 @@ interface PageMetaOptions {
   canonicalPath?: string;
   /** JSON-LD structured data schemas for GEO (Generative Engine Optimization) */
   jsonLd?: Record<string, unknown>[];
+  /** Override OG image URL */
+  ogImage?: string;
+}
+
+function setMetaTag(property: string, content: string, isOg = true) {
+  const attr = isOg ? "property" : "name";
+  let el = document.querySelector(`meta[${attr}="${property}"]`) as HTMLMetaElement | null;
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, property);
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
 }
 
 /**
  * Centralized hook for page-level SEO meta tags.
- * Sets document title, meta description, canonical link, and robots directive.
+ * Sets document title, meta description, canonical link, robots directive,
+ * and Open Graph / Twitter Card tags per page.
  * Restores defaults on unmount.
  */
-export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd }: PageMetaOptions) {
+export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd, ogImage }: PageMetaOptions) {
   useEffect(() => {
+    const fullTitle = `${title} — ${SITE_NAME}`;
+    const desc = description || DEFAULT_DESCRIPTION;
+    const path = canonicalPath ?? window.location.pathname;
+    const canonicalUrl = `${SITE_URL}${path}`;
+    const image = ogImage || DEFAULT_OG_IMAGE;
+
     // Title
-    document.title = `${title} — ${SITE_NAME}`;
+    document.title = fullTitle;
 
     // Meta description
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -35,13 +56,23 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
 
     // Canonical link
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-    const path = canonicalPath ?? window.location.pathname;
     if (!canonicalLink) {
       canonicalLink = document.createElement("link");
       canonicalLink.setAttribute("rel", "canonical");
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.setAttribute("href", `${SITE_URL}${path}`);
+    canonicalLink.setAttribute("href", canonicalUrl);
+
+    // OG tags
+    setMetaTag("og:title", fullTitle);
+    setMetaTag("og:description", desc);
+    setMetaTag("og:url", canonicalUrl);
+    setMetaTag("og:image", image);
+
+    // Twitter tags
+    setMetaTag("twitter:title", fullTitle, false);
+    setMetaTag("twitter:description", desc, false);
+    setMetaTag("twitter:image", image, false);
 
     // Robots noindex
     let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
@@ -81,10 +112,18 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
       if (noindex && robotsMeta) {
         robotsMeta.remove();
       }
+      // Restore default OG tags
+      setMetaTag("og:title", DEFAULT_TITLE);
+      setMetaTag("og:description", DEFAULT_DESCRIPTION);
+      setMetaTag("og:url", SITE_URL);
+      setMetaTag("og:image", DEFAULT_OG_IMAGE);
+      setMetaTag("twitter:title", DEFAULT_TITLE, false);
+      setMetaTag("twitter:description", DEFAULT_DESCRIPTION, false);
+      setMetaTag("twitter:image", DEFAULT_OG_IMAGE, false);
       // Remove injected JSON-LD scripts
       for (const script of jsonLdScripts) {
         script.remove();
       }
     };
-  }, [title, description, noindex, canonicalPath, jsonLd]);
+  }, [title, description, noindex, canonicalPath, jsonLd, ogImage]);
 }
