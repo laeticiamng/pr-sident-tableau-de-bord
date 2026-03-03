@@ -83,8 +83,9 @@ const architecturePoints = [
 export default function TrustPage() {
   const geoSchemas = useMemo(() => getTrustPageSchemas(), []);
   usePageMeta({
-    title: "Confiance & Sécurité — EMOTIONSCARE",
-    description: "Découvrez les mesures de sécurité, la conformité RGPD et l'architecture de protection des données d'EMOTIONSCARE.",
+    title: "Confiance & Sécurité",
+    description: "Chiffrement AES-256, RLS deny-by-default, conformité RGPD et audit immuable. Votre sécurité, notre architecture.",
+    ogImageAlt: "Sécurité et conformité RGPD — EMOTIONSCARE",
     jsonLd: geoSchemas,
   });
 

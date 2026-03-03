@@ -9,8 +9,9 @@ import { getVisionPageSchemas } from "@/lib/geo-schemas";
 export default function VisionPage() {
   const geoSchemas = useMemo(() => getVisionPageSchemas(), []);
   usePageMeta({
-    title: "Notre Vision",
-    description: "Découvrez la vision et les valeurs d'EMOTIONSCARE : excellence, innovation, empathie et croissance. Une mission claire : créer des logiciels qui simplifient la vie.",
+    title: "Vision & Valeurs",
+    description: "Excellence, innovation, empathie, croissance. Une mission : créer des logiciels qui transforment la complexité en simplicité.",
+    ogImageAlt: "Vision et valeurs d'EMOTIONSCARE — excellence, innovation, empathie",
     jsonLd: geoSchemas,
   });
   return (
