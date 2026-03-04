@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 
 export interface RealtimeNotification {
   id: string;
-  type: "approval_required" | "approval_resolved" | "alert" | "run_completed" | "system";
+  type: "approval_required" | "approval_resolved" | "alert" | "run_completed" | "system" | "contact_message";
   title: string;
   message: string;
   urgency: "low" | "medium" | "high" | "critical";
@@ -111,6 +111,20 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
           data: payload.payload,
         });
       })
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "contact_messages" },
+        (payload) => {
+          const record = payload.new as { name?: string; subject?: string; email?: string; message?: string };
+          addNotification({
+            type: "contact_message",
+            title: "📩 Nouveau message de contact",
+            message: `${record.name || "Visiteur"} — ${record.subject || "Sans objet"}`,
+            urgency: "medium",
+            data: record as Record<string, unknown>,
+          });
+        }
+      )
       .subscribe((status) => {
         setIsConnected(status === "SUBSCRIBED");
         logger.debug("[Realtime] Channel status:", status);
