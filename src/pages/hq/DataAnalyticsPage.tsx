@@ -24,6 +24,7 @@ import { FeatureAdoptionChart } from "@/components/hq/data/FeatureAdoptionChart"
 import { UserSegmentation } from "@/components/hq/data/UserSegmentation";
 import { cn } from "@/lib/utils";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 interface MetricCardProps {
   title: string;
@@ -250,6 +251,16 @@ export default function DataAnalyticsPage() {
           </CardContent>
         </Card>
       </div>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Stripe API", type: "api", refreshRate: "Temps réel", reliability: "verified", description: "MRR, abonnés, churn" },
+          { name: "Données simulées", type: "mock", reliability: "simulated", description: "Cohortes, funnel, LTV/CAC, ROI" },
+        ]}
+        calculations={[
+          { metric: "LTV/CAC", formula: "ARPU / Churn Rate ÷ CAC", assumptions: ["Moyennes sectorielles"], limitations: ["Cohortes et funnel simulés"] },
+        ]}
+      />
     </div>
   );
 }

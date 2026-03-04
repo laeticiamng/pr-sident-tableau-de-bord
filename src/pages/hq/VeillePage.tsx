@@ -19,6 +19,7 @@ import {
 import { useExecuteRun } from "@/hooks/useHQData";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 const competitorSources = [
   { name: "Product Hunt", url: "https://www.producthunt.com", category: "Lancement produits" },
@@ -315,6 +316,16 @@ export default function VeillePage() {
           </div>
         </CardContent>
       </Card>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Agent CSO IA", type: "computed", reliability: "estimated", description: "Analyses concurrentielles" },
+          { name: "Données curées", type: "manual", reliability: "estimated", description: "Tendances marché, concurrents" },
+        ]}
+        calculations={[
+          { metric: "Niveau de menace", assumptions: ["Estimations qualitatives"], limitations: ["Analyse non automatisée en temps réel"] },
+        ]}
+      />
     </div>
   );
 }

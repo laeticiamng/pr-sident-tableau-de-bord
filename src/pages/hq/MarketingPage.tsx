@@ -16,6 +16,7 @@ import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
 import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerformance";
@@ -221,6 +222,16 @@ export default function MarketingPage() {
 
       {/* Content Calendar - Interactive Component */}
       <ContentCalendar />
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Agent CMO IA", type: "computed", reliability: "estimated", description: "Rapports marketing générés par IA" },
+          { name: "Données mock", type: "mock", reliability: "simulated", description: "Canaux, campagnes, trafic" },
+        ]}
+        calculations={[
+          { metric: "ROI par canal", assumptions: ["Données simulées"], limitations: ["Connexion Google Analytics requise pour données réelles"] },
+        ]}
+      />
     </div>
   );
 }

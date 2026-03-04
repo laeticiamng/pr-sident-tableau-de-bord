@@ -20,6 +20,7 @@ import {
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { TicketTrendChart } from "@/components/hq/support/TicketTrendChart";
 import { EscalationQueue } from "@/components/hq/support/EscalationQueue";
 import { TicketDistributionChart } from "@/components/hq/support/TicketDistributionChart";
@@ -166,6 +167,17 @@ export default function SupportPage() {
           </Badge>
         </CardContent>
       </Card>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Agent CTO IA", type: "computed", reliability: "verified", description: "Rapports santé plateformes" },
+          { name: "Monitoring interne", type: "api", reliability: "verified", description: "Uptime et statuts" },
+          { name: "Données mock", type: "mock", reliability: "simulated", description: "Tickets, SLA, escalations" },
+        ]}
+        calculations={[
+          { metric: "Tickets & SLA", assumptions: ["Données simulées"], limitations: ["Zendesk/Freshdesk non connecté"] },
+        ]}
+      />
     </div>
   );
 }

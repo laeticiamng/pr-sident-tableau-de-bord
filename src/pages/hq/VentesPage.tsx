@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
 import { TopClients } from "@/components/hq/sales/TopClients";
 import { WinLossWidget } from "@/components/hq/sales/WinLossWidget";
@@ -184,6 +185,16 @@ export default function VentesPage() {
 
       {/* Top Clients */}
       <TopClients />
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Stripe API", type: "api", refreshRate: "Temps réel", reliability: "verified", description: "MRR, clients, abonnements" },
+          { name: "Agent CSO IA", type: "computed", reliability: "estimated", description: "Rapports marché et analyses" },
+        ]}
+        calculations={[
+          { metric: "Pipeline de ventes", assumptions: ["Projections basées sur données historiques"], limitations: ["Deal velocity estimée"] },
+        ]}
+      />
     </div>
   );
 }

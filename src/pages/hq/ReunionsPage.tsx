@@ -19,6 +19,7 @@ import { MeetingNotes } from "@/components/hq/meetings/MeetingNotes";
 import { ParticipationIndicator } from "@/components/hq/meetings/ParticipationIndicator";
 import { ActionItems } from "@/components/hq/meetings/ActionItems";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 const meetingTypes = [
   { 
@@ -183,6 +184,16 @@ export default function ReunionsPage() {
           )}
         </CardContent>
       </Card>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Base de données HQ", type: "database", reliability: "verified", description: "Historique des réunions (runs)" },
+          { name: "Agents directeurs IA", type: "computed", reliability: "estimated", description: "Comptes-rendus générés" },
+        ]}
+        calculations={[
+          { metric: "Agenda & Actions", assumptions: ["Données de démonstration"], limitations: ["Google Calendar non connecté"] },
+        ]}
+      />
     </div>
   );
 }

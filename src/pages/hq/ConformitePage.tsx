@@ -21,6 +21,7 @@ import { AIPDChecklist } from "@/components/hq/conformite/AIPDChecklist";
 import { DocumentInventory } from "@/components/hq/conformite/DocumentInventory";
 import { ComplianceAlerts } from "@/components/hq/conformite/ComplianceAlerts";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 // RGPD Rights - Les 8 droits fondamentaux
 const RGPD_RIGHTS = [
@@ -224,6 +225,16 @@ export default function ConformitePage() {
           Demander un audit
         </Button>
       </div>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Registre interne", type: "manual", reliability: "verified", description: "Droits RGPD, documents" },
+          { name: "Auto-évaluation", type: "manual", reliability: "estimated", description: "Score conformité, AIPD" },
+        ]}
+        calculations={[
+          { metric: "Score conformité", formula: "Droits conformes / Total droits × 100", limitations: ["Basé sur auto-évaluation", "Audit externe recommandé"] },
+        ]}
+      />
     </div>
   );
 }
