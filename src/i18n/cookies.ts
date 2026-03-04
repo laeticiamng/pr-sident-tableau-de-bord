@@ -10,6 +10,7 @@ export const cookieTranslations = {
     rejectAll: "Refuser tout",
     save: "Enregistrer mes choix",
     settings: "Personnaliser",
+    cookiePolicyLink: "Politique de cookies",
     privacyLink: "Politique de confidentialité",
   },
   en: {
@@ -23,6 +24,7 @@ export const cookieTranslations = {
     rejectAll: "Reject all",
     save: "Save preferences",
     settings: "Customize",
+    cookiePolicyLink: "Cookie Policy",
     privacyLink: "Privacy Policy",
   },
   de: {
@@ -36,6 +38,7 @@ export const cookieTranslations = {
     rejectAll: "Alle ablehnen",
     save: "Auswahl speichern",
     settings: "Anpassen",
+    cookiePolicyLink: "Cookie-Richtlinie",
     privacyLink: "Datenschutzrichtlinie",
   },
 } as const;

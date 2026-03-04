@@ -91,11 +91,18 @@ export function CookieConsentBanner() {
             </Button>
           </div>
 
-          {/* Privacy link */}
-          <div className="mt-3 text-center">
+          {/* Links */}
+          <div className="mt-3 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+            <Link
+              to="/legal/cookies"
+              className="hover:text-foreground underline underline-offset-2 transition-colors"
+            >
+              {t.cookiePolicyLink}
+            </Link>
+            <span>·</span>
             <Link
               to="/legal/confidentialite"
-              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 transition-colors"
+              className="hover:text-foreground underline underline-offset-2 transition-colors"
             >
               {t.privacyLink}
             </Link>
