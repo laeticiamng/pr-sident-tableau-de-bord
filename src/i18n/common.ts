@@ -10,7 +10,7 @@ export const commonTranslations = {
       login: "Connexion",
     },
     footer: {
-      description: "Siège social numérique pilotant 7 plateformes innovantes. Éditeur de logiciels applicatifs basé à Amiens.",
+      description: "Siège social numérique pilotant 8 plateformes innovantes. Éditeur de logiciels applicatifs basé à Amiens.",
       navigation: "Navigation",
       legal: "Légal",
       legalNotice: "Mentions légales",
@@ -34,7 +34,7 @@ export const commonTranslations = {
       login: "Login",
     },
     footer: {
-      description: "Digital headquarters managing 7 innovative platforms. Software publisher based in Amiens, France.",
+      description: "Digital headquarters managing 8 innovative platforms. Software publisher based in Amiens, France.",
       navigation: "Navigation",
       legal: "Legal",
       legalNotice: "Legal Notice",
@@ -58,7 +58,7 @@ export const commonTranslations = {
       login: "Anmelden",
     },
     footer: {
-      description: "Digitaler Hauptsitz zur Steuerung von 7 innovativen Plattformen. Softwareherausgeber mit Sitz in Amiens, Frankreich.",
+      description: "Digitaler Hauptsitz zur Steuerung von 8 innovativen Plattformen. Softwareherausgeber mit Sitz in Amiens, Frankreich.",
       navigation: "Navigation",
       legal: "Rechtliches",
       legalNotice: "Impressum",

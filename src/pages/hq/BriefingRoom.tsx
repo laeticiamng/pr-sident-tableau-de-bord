@@ -40,7 +40,7 @@ export default function BriefingRoom() {
   const greenCount = platforms?.filter(p => p.status === "green").length || 0;
   const amberCount = platforms?.filter(p => p.status === "amber").length || 0;
   const redCount = platforms?.filter(p => p.status === "red").length || 0;
-  const totalPlatforms = platforms?.length || 7;
+  const totalPlatforms = platforms?.length || 8;
   const pendingCount = pendingApprovals?.length || 0;
 
   // KPIs exécutifs — null guards + error handling

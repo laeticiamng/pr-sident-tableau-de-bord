@@ -107,7 +107,7 @@ export default function PlateformesPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
-                { value: "7", label: t.stats.platforms },
+                { value: `${allPlatforms.length}`, label: t.stats.platforms },
                 { value: formatNumber(totals.commits), label: t.stats.evolutions },
                 { value: formatNumber(totals.tests), label: t.stats.tests },
                 { value: `${totals.tables}`, label: t.stats.structures },
@@ -343,7 +343,7 @@ export default function PlateformesPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-12">
               {[
-                { value: "7", label: t.stats.platforms, icon: Layers },
+                { value: `${allPlatforms.length}`, label: t.stats.platforms, icon: Layers },
                 { value: formatNumber(totals.commits), label: t.stats.evolutions, icon: GitCommit },
                 { value: formatNumber(totals.tests), label: t.stats.tests, icon: TestTube2 },
                 { value: `${totals.tables}`, label: t.stats.structures, icon: Database },

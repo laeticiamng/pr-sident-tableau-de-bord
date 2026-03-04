@@ -5,7 +5,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
-      description: "7 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences et la performance",
+      description: "8 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences, la performance et la gouvernance IA",
       cta: "Découvrir les plateformes",
     },
     features: {
@@ -40,13 +40,13 @@ export const homeTranslations = {
     },
     cta: {
       title: "Explorez l'écosystème",
-      subtitle: "Découvrez nos 7 plateformes innovantes et comment elles transforment leurs secteurs.",
+      subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
     showcase: {
       badge: "Écosystème Premium",
-      heading1: "Sept plateformes.",
+      heading1: "Huit plateformes.",
       heading2: "Une vision.",
       subtitle: "Chaque plateforme répond à un besoin spécifique, toutes sont pilotées depuis notre siège numérique avec les mêmes standards d'excellence.",
       production: "Production",
@@ -71,7 +71,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "SaaS Software Publisher — Health, Education, International",
-      description: "7 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies and performance",
+      description: "8 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies, performance and AI governance",
       cta: "Discover the platforms",
     },
     features: {
@@ -106,13 +106,13 @@ export const homeTranslations = {
     },
     cta: {
       title: "Explore the ecosystem",
-      subtitle: "Discover our 7 innovative platforms and how they transform their sectors.",
+      subtitle: "Discover our 8 innovative platforms and how they transform their sectors.",
       button: "View platforms in detail",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
     showcase: {
       badge: "Premium Ecosystem",
-      heading1: "Seven platforms.",
+      heading1: "Eight platforms.",
       heading2: "One vision.",
       subtitle: "Each platform addresses a specific need, all are managed from our digital headquarters with the same standards of excellence.",
       production: "Production",
@@ -137,7 +137,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
-      description: "7 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle und Leistung",
+      description: "8 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle, Leistung und KI-Governance",
       cta: "Plattformen entdecken",
     },
     features: {
@@ -172,13 +172,13 @@ export const homeTranslations = {
     },
     cta: {
       title: "Das Ökosystem erkunden",
-      subtitle: "Entdecken Sie unsere 7 innovativen Plattformen und wie sie ihre Branchen verändern.",
+      subtitle: "Entdecken Sie unsere 8 innovativen Plattformen und wie sie ihre Branchen verändern.",
       button: "Plattformen im Detail ansehen",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
     showcase: {
       badge: "Premium-Ökosystem",
-      heading1: "Sieben Plattformen.",
+      heading1: "Acht Plattformen.",
       heading2: "Eine Vision.",
       subtitle: "Jede Plattform erfüllt einen spezifischen Bedarf, alle werden von unserem digitalen Hauptsitz mit denselben Exzellenzstandards gesteuert.",
       production: "Produktion",
