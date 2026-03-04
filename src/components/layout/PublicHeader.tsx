@@ -3,32 +3,32 @@ import { Button } from "@/components/ui/button";
 import { Building2, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { commonTranslations } from "@/i18n/common";
 
 const navLinks = [
-  { href: "/", label: "Accueil" },
-  { href: "/plateformes", label: "Plateformes" },
-  { href: "/status", label: "Statut" },
-  { href: "/vision", label: "Vision" },
-  { href: "/trust", label: "Sécurité" },
-  { href: "/contact", label: "Contact" },
+  { href: "/", key: "home" as const },
+  { href: "/plateformes", key: "platforms" as const },
+  { href: "/status", key: "status" as const },
+  { href: "/vision", key: "vision" as const },
+  { href: "/trust", key: "security" as const },
+  { href: "/contact", key: "contact" as const },
 ];
 
 export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const t = useTranslation(commonTranslations);
 
-  // Handle scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
@@ -43,18 +43,16 @@ export function PublicHeader() {
       )}
     >
       <div className="container flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
           <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform group-hover:scale-105">
             <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="flex flex-col">
             <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-            <span className="text-[10px] sm:text-xs text-muted-foreground">Éditeur de logiciels</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground">{t.footer.softwareEditor}</span>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6 lg:gap-8">
           {navLinks.map((link) => (
             <Link
@@ -67,7 +65,7 @@ export function PublicHeader() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {link.label}
+              {t.nav[link.key]}
               {location.pathname === link.href && (
                 <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-accent rounded-full" />
               )}
@@ -75,13 +73,13 @@ export function PublicHeader() {
           ))}
         </nav>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <LanguageSwitcher />
           <ThemeToggle variant="minimal" className="h-8 w-8 sm:h-9 sm:w-9" />
           
           <Link to="/auth" className="hidden sm:block">
             <Button variant="executive-outline" size="sm" className="text-xs sm:text-sm">
-              Connexion
+              {t.nav.login}
             </Button>
           </Link>
           
@@ -90,16 +88,11 @@ export function PublicHeader() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           >
-            {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <div 
         className={cn(
           "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
@@ -119,13 +112,13 @@ export function PublicHeader() {
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary"
               )}
             >
-              {link.label}
+              {t.nav[link.key]}
             </Link>
           ))}
           <div className="pt-2 border-t mt-2">
             <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="executive" size="sm" className="w-full">
-                Connexion
+                {t.nav.login}
               </Button>
             </Link>
           </div>
