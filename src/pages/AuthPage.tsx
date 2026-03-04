@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema } from "@/lib/validation";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_DURATION_MS = 60_000; // 1 minute
@@ -231,7 +232,7 @@ export default function AuthPage() {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-3 xl:gap-6 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
-              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">8</div>
+              <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">{MANAGED_PLATFORMS.length}</div>
               <div className="text-xs xl:text-sm text-white/60">Plateformes</div>
             </div>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
