@@ -83,7 +83,7 @@ export default function FinancePage() {
       {/* En-tête exécutif — Standard HEC/Polytechnique */}
       <ExecutiveHeader
         title="Finance & ROI"
-        subtitle="Vue financière consolidée des 7 plateformes"
+        subtitle={`Vue financière consolidée des ${MANAGED_PLATFORMS.length} plateformes`}
         context="Indicateurs SaaS standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
         source={{
           source: "stripe",
@@ -259,7 +259,7 @@ export default function FinancePage() {
               Plateformes & Infrastructure
             </CardTitle>
             <CardDescription>
-              Statut des 7 plateformes gérées
+              Statut des {MANAGED_PLATFORMS.length} plateformes gérées
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -12,6 +12,7 @@ import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { HQChatSidebar } from "@/components/hq/HQChatSidebar";
 
 export function HQLayout() {
   const { user } = useAuth();
@@ -77,6 +78,9 @@ export function HQLayout() {
         open={templateDialogOpen}
         onOpenChange={setTemplateDialogOpen}
       />
+
+      {/* Chat IA Présidentiel */}
+      <HQChatSidebar />
     </div>
   );
 }
