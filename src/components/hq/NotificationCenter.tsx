@@ -19,6 +19,7 @@ import {
   Info,
   Sparkles,
   Circle,
+  Mail,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
@@ -49,6 +50,8 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
         return <AlertTriangle className="h-4 w-4 text-destructive" />;
       case "run_completed":
         return <Sparkles className="h-4 w-4 text-accent" />;
+      case "contact_message":
+        return <Mail className="h-4 w-4 text-primary" />;
       case "system":
         return <Info className="h-4 w-4 text-primary" />;
       default:
