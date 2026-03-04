@@ -3,17 +3,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Phone, PhoneCall, Loader2, CheckCircle, XCircle, AlertTriangle,
-  DollarSign, Wifi, ChevronRight, Sparkles,
+  DollarSign, Wifi, ChevronRight, Sparkles, Bot, Clock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { usePlatforms, usePendingApprovals, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
+import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { useMorningDigest } from "@/hooks/useMorningDigest";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
 import ReactMarkdown from "react-markdown";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 /**
  * MobileBriefing — Vue mobile ultra-simplifiée.
@@ -81,32 +82,16 @@ export function MobileBriefing() {
         <RunResultPanel runResult={runResult} onClose={() => setRunResult(null)} />
       )}
 
-      {/* Card 1: KPI Strip */}
-      <Card className="card-executive">
-        <CardContent className="p-4">
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div>
-              <DollarSign className="h-4 w-4 mx-auto text-success mb-1" />
-              <p className="text-lg font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p>
-              <p className="text-[10px] text-muted-foreground">MRR</p>
-            </div>
-            <div>
-              <Wifi className="h-4 w-4 mx-auto text-accent mb-1" />
-              <p className="text-lg font-bold">{uptime != null && uptime > 0 ? `${uptime}%` : "—"}</p>
-              <p className="text-[10px] text-muted-foreground">Uptime</p>
-            </div>
-            <div>
-              <div className="flex justify-center gap-1 mb-1">
-                {greenCount > 0 && <span className="text-success text-xs font-bold">{greenCount}✓</span>}
-                {amberCount > 0 && <span className="text-warning text-xs font-bold">{amberCount}⚠</span>}
-                {redCount > 0 && <span className="text-destructive text-xs font-bold">{redCount}✕</span>}
-              </div>
-              <p className="text-lg font-bold">{total}</p>
-              <p className="text-[10px] text-muted-foreground">Plateformes</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Card 1: KPI Strip — Swipeable */}
+      <KPICarousel
+        mrr={mrr}
+        uptime={uptime}
+        greenCount={greenCount}
+        amberCount={amberCount}
+        redCount={redCount}
+        total={total}
+        pendingCount={pendingCount}
+      />
 
       {/* Card 2: Morning Digest (compact) */}
       {digest?.executive_summary ? (
@@ -178,6 +163,111 @@ export function MobileBriefing() {
             </CardContent>
           </Card>
         </Link>
+      </div>
+    </div>
+  );
+}
+
+// ── Swipeable KPI Carousel ───────────────────────────────────────────
+
+interface KPICarouselProps {
+  mrr: number | null;
+  uptime: number | null;
+  greenCount: number;
+  amberCount: number;
+  redCount: number;
+  total: number;
+  pendingCount: number;
+}
+
+function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pendingCount }: KPICarouselProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    containScroll: "trimSnaps",
+    dragFree: true,
+  });
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setActiveIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    emblaApi.on("select", onSelect);
+    onSelect();
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi, onSelect]);
+
+  const kpis = [
+    {
+      icon: <DollarSign className="h-5 w-5 text-success" />,
+      value: mrr != null && mrr > 0 ? formatCurrency(mrr) : "—",
+      label: "MRR",
+      sublabel: "Revenus mensuels",
+      bg: "bg-success/5 border-success/20",
+    },
+    {
+      icon: <Wifi className="h-5 w-5 text-accent" />,
+      value: uptime != null && uptime > 0 ? `${uptime}%` : "—",
+      label: "Uptime",
+      sublabel: "Disponibilité moyenne",
+      bg: "bg-accent/5 border-accent/20",
+    },
+    {
+      icon: <div className="flex gap-1">
+        {greenCount > 0 && <CheckCircle className="h-4 w-4 text-success" />}
+        {amberCount > 0 && <AlertTriangle className="h-4 w-4 text-warning" />}
+        {redCount > 0 && <XCircle className="h-4 w-4 text-destructive" />}
+      </div>,
+      value: `${greenCount}/${total}`,
+      label: "Plateformes",
+      sublabel: `${greenCount} opérationnelles`,
+      bg: greenCount === total ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20",
+    },
+    {
+      icon: pendingCount > 0
+        ? <Badge variant="destructive" className="text-xs px-2">{pendingCount}</Badge>
+        : <CheckCircle className="h-5 w-5 text-success" />,
+      value: pendingCount > 0 ? `${pendingCount}` : "0",
+      label: "Décisions",
+      sublabel: pendingCount > 0 ? "en attente" : "tout à jour",
+      bg: pendingCount > 0 ? "bg-warning/5 border-warning/20" : "bg-muted/30 border-border",
+    },
+  ];
+
+  return (
+    <div className="space-y-2">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex gap-3">
+          {kpis.map((kpi, i) => (
+            <div key={i} className="flex-[0_0_70%] min-w-0">
+              <Card className={`card-executive border ${kpi.bg}`}>
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="flex-shrink-0">{kpi.icon}</div>
+                  <div>
+                    <p className="text-xl font-bold leading-tight">{kpi.value}</p>
+                    <p className="text-xs font-medium">{kpi.label}</p>
+                    <p className="text-[10px] text-muted-foreground">{kpi.sublabel}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Dots indicator */}
+      <div className="flex justify-center gap-1.5">
+        {kpis.map((_, i) => (
+          <button
+            key={i}
+            className={`h-1.5 rounded-full transition-all ${
+              i === activeIndex ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"
+            }`}
+            onClick={() => emblaApi?.scrollTo(i)}
+          />
+        ))}
       </div>
     </div>
   );
