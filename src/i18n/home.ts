@@ -1,0 +1,140 @@
+export const homeTranslations = {
+  fr: {
+    hero: {
+      badge: "Siège Social Numérique",
+      madeIn: "🇫🇷 Made in France",
+      title: "EMOTIONSCARE",
+      subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
+      description: "7 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences et la performance",
+      cta: "Découvrir les plateformes",
+    },
+    features: {
+      label: "Fonctionnalités",
+      title: "Fonctionnalités du",
+      titleAccent: "Siège Numérique",
+      subtitle: "Un tableau de bord exécutif complet pour piloter l'ensemble de l'écosystème EMOTIONSCARE",
+      items: [
+        {
+          title: "Intelligence IA",
+          description: "Rapports stratégiques générés automatiquement chaque jour. Briefings de direction, audits de sécurité, veille concurrentielle — tout est synthétisé pour vous.",
+        },
+        {
+          title: "Supervision en temps réel",
+          description: "Visualisez l'état de santé de toutes vos plateformes en un coup d'œil. Disponibilité, mises à jour et alertes centralisés.",
+        },
+        {
+          title: "Validation des actions",
+          description: "Chaque action critique passe par une validation présidentielle. Déploiements, modifications sensibles : rien ne se fait sans votre accord.",
+        },
+        {
+          title: "Veille stratégique",
+          description: "Recherche automatisée sur les tendances de votre marché. Analyse concurrentielle et opportunités identifiées en temps réel.",
+        },
+      ],
+    },
+    stats: {
+      platforms: "Plateformes",
+      evolutions: "Évolutions",
+      madeInFrance: "Made in France",
+      monitoring: "Monitoring",
+    },
+    cta: {
+      title: "Explorez l'écosystème",
+      subtitle: "Découvrez nos 7 plateformes innovantes et comment elles transforment leurs secteurs.",
+      button: "Voir les plateformes en détail",
+      footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
+    },
+  },
+  en: {
+    hero: {
+      badge: "Digital Headquarters",
+      madeIn: "🇫🇷 Made in France",
+      title: "EMOTIONSCARE",
+      subtitle: "SaaS Software Publisher — Health, Education, International",
+      description: "7 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies and performance",
+      cta: "Discover the platforms",
+    },
+    features: {
+      label: "Features",
+      title: "Features of the",
+      titleAccent: "Digital HQ",
+      subtitle: "A complete executive dashboard to manage the entire EMOTIONSCARE ecosystem",
+      items: [
+        {
+          title: "AI Intelligence",
+          description: "Strategic reports generated automatically every day. Executive briefings, security audits, competitive intelligence — everything synthesized for you.",
+        },
+        {
+          title: "Real-time Monitoring",
+          description: "View the health status of all your platforms at a glance. Availability, updates and alerts centralized.",
+        },
+        {
+          title: "Action Validation",
+          description: "Every critical action goes through presidential validation. Deployments, sensitive changes: nothing happens without your approval.",
+        },
+        {
+          title: "Strategic Watch",
+          description: "Automated research on market trends. Competitive analysis and opportunities identified in real time.",
+        },
+      ],
+    },
+    stats: {
+      platforms: "Platforms",
+      evolutions: "Evolutions",
+      madeInFrance: "Made in France",
+      monitoring: "Monitoring",
+    },
+    cta: {
+      title: "Explore the ecosystem",
+      subtitle: "Discover our 7 innovative platforms and how they transform their sectors.",
+      button: "View platforms in detail",
+      footer: "Used by healthcare professionals, students and entrepreneurs",
+    },
+  },
+  de: {
+    hero: {
+      badge: "Digitaler Hauptsitz",
+      madeIn: "🇫🇷 Made in France",
+      title: "EMOTIONSCARE",
+      subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
+      description: "7 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle und Leistung",
+      cta: "Plattformen entdecken",
+    },
+    features: {
+      label: "Funktionen",
+      title: "Funktionen des",
+      titleAccent: "Digitalen Hauptsitzes",
+      subtitle: "Ein vollständiges Executive-Dashboard zur Steuerung des gesamten EMOTIONSCARE-Ökosystems",
+      items: [
+        {
+          title: "KI-Intelligenz",
+          description: "Strategische Berichte werden täglich automatisch erstellt. Führungsbriefings, Sicherheitsaudits, Wettbewerbsinformationen — alles für Sie zusammengefasst.",
+        },
+        {
+          title: "Echtzeit-Überwachung",
+          description: "Sehen Sie den Zustand aller Ihrer Plattformen auf einen Blick. Verfügbarkeit, Updates und Warnungen zentralisiert.",
+        },
+        {
+          title: "Aktionsvalidierung",
+          description: "Jede kritische Aktion durchläuft eine präsidiale Validierung. Deployments, sensible Änderungen: nichts geschieht ohne Ihre Zustimmung.",
+        },
+        {
+          title: "Strategische Überwachung",
+          description: "Automatisierte Recherche zu Markttrends. Wettbewerbsanalyse und Chancen in Echtzeit identifiziert.",
+        },
+      ],
+    },
+    stats: {
+      platforms: "Plattformen",
+      evolutions: "Entwicklungen",
+      madeInFrance: "Made in France",
+      monitoring: "Monitoring",
+    },
+    cta: {
+      title: "Das Ökosystem erkunden",
+      subtitle: "Entdecken Sie unsere 7 innovativen Plattformen und wie sie ihre Branchen verändern.",
+      button: "Plattformen im Detail ansehen",
+      footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
+    },
+  },
+} as const;
