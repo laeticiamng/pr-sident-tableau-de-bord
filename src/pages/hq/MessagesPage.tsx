@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,8 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronUp,
+  CheckCheck,
+  Circle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow, format } from "date-fns";
@@ -41,6 +43,7 @@ interface ContactMessage {
   subject: string;
   message: string;
   created_at: string;
+  read_at: string | null;
 }
 
 export default function MessagesPage() {
@@ -53,10 +56,40 @@ export default function MessagesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("contact_messages")
-        .select("id, name, email, phone, subject, message, created_at")
+        .select("id, name, email, phone, subject, message, created_at, read_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as ContactMessage[];
+    },
+  });
+
+  const markReadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ read_at: new Date().toISOString() })
+        .eq("id", id)
+        .is("read_at", null);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["contact-messages-unread-count"] });
+    },
+  });
+
+  const markAllReadMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("contact_messages")
+        .update({ read_at: new Date().toISOString() })
+        .is("read_at", null);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["contact-messages-unread-count"] });
+      toast.success("Tous les messages marqués comme lus");
     },
   });
 
@@ -67,11 +100,20 @@ export default function MessagesPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
+      queryClient.invalidateQueries({ queryKey: ["contact-messages-unread-count"] });
       toast.success("Message supprimé");
       setExpandedId(null);
     },
     onError: () => toast.error("Erreur lors de la suppression"),
   });
+
+  const handleExpand = useCallback((msg: ContactMessage) => {
+    const isExpanded = expandedId === msg.id;
+    setExpandedId(isExpanded ? null : msg.id);
+    if (!isExpanded && !msg.read_at) {
+      markReadMutation.mutate(msg.id);
+    }
+  }, [expandedId, markReadMutation]);
 
   const filtered = messages?.filter((m) => {
     if (!search) return true;
@@ -84,6 +126,8 @@ export default function MessagesPage() {
     );
   });
 
+  const unreadCount = messages?.filter((m) => !m.read_at).length ?? 0;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -94,13 +138,30 @@ export default function MessagesPage() {
             Messages de contact
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {messages?.length ?? 0} message{(messages?.length ?? 0) > 1 ? "s" : ""} reçu{(messages?.length ?? 0) > 1 ? "s" : ""}
+            {messages?.length ?? 0} message{(messages?.length ?? 0) > 1 ? "s" : ""}
+            {unreadCount > 0 && (
+              <span className="text-primary font-medium"> · {unreadCount} non lu{unreadCount > 1 ? "s" : ""}</span>
+            )}
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
-          <RefreshCw className="h-4 w-4" />
-          Actualiser
-        </Button>
+        <div className="flex gap-2">
+          {unreadCount > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => markAllReadMutation.mutate()}
+              disabled={markAllReadMutation.isPending}
+              className="gap-2"
+            >
+              <CheckCheck className="h-4 w-4" />
+              Tout marquer lu
+            </Button>
+          )}
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+            <RefreshCw className="h-4 w-4" />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Search */}
@@ -133,22 +194,30 @@ export default function MessagesPage() {
         <div className="space-y-3">
           {filtered.map((msg) => {
             const isExpanded = expandedId === msg.id;
+            const isUnread = !msg.read_at;
             return (
               <Card
                 key={msg.id}
                 className={cn(
                   "transition-all cursor-pointer hover:border-primary/30",
-                  isExpanded && "border-primary/40 shadow-md"
+                  isExpanded && "border-primary/40 shadow-md",
+                  isUnread && "border-l-4 border-l-primary"
                 )}
               >
                 <CardHeader
                   className="py-4 px-5 cursor-pointer"
-                  onClick={() => setExpandedId(isExpanded ? null : msg.id)}
+                  onClick={() => handleExpand(msg)}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-base font-semibold truncate">
+                        {isUnread && (
+                          <Circle className="h-2.5 w-2.5 fill-primary text-primary shrink-0" />
+                        )}
+                        <CardTitle className={cn(
+                          "text-base truncate",
+                          isUnread ? "font-bold" : "font-semibold"
+                        )}>
                           {msg.subject}
                         </CardTitle>
                       </div>
@@ -206,11 +275,7 @@ export default function MessagesPage() {
                     </div>
 
                     <div className="flex justify-end gap-2 pt-2 border-t border-border/50">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
+                      <Button variant="outline" size="sm" asChild>
                         <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject)}`}>
                           <Mail className="h-4 w-4 mr-2" />
                           Répondre

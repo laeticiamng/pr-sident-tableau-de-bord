@@ -82,12 +82,13 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: recentRuns } = useRecentRuns(50);
-  const { data: messagesCount } = useQuery({
-    queryKey: ["contact-messages-count"],
+  const { data: unreadMessagesCount } = useQuery({
+    queryKey: ["contact-messages-unread-count"],
     queryFn: async () => {
       const { count, error } = await supabase
         .from("contact_messages")
-        .select("id", { count: "exact", head: true });
+        .select("id", { count: "exact", head: true })
+        .is("read_at", null);
       if (error) return 0;
       return count ?? 0;
     },
@@ -175,12 +176,12 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                         {pendingCount}
                       </Badge>
                     )}
-                    {"showMessagesBadge" in link && link.showMessagesBadge && (messagesCount ?? 0) > 0 && (
+                    {"showMessagesBadge" in link && link.showMessagesBadge && (unreadMessagesCount ?? 0) > 0 && (
                       <Badge
-                        variant="secondary"
+                        variant="destructive"
                         className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
                       >
-                        {messagesCount}
+                        {unreadMessagesCount}
                       </Badge>
                     )}
                     {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
