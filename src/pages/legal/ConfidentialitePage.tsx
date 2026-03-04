@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { usePageMeta } from "@/hooks/usePageMeta";
@@ -52,7 +53,11 @@ export default function ConfidentialitePage() {
             <p>{c.rightsExercise}</p>
 
             <h2>{c.cookies}</h2>
-            <p>{c.cookiesText}</p>
+            <p>{c.cookiesText}{" "}
+              <Link to="/legal/cookies" className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors">
+                {c.cookiesLinkText}
+              </Link>.
+            </p>
 
             <h2>{c.dpo}</h2>
             <p>{c.dpoText} {COMPANY_PROFILE.president}.</p>
