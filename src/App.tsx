@@ -34,6 +34,7 @@ const MentionsLegalesPage = lazy(() => import("@/pages/legal/MentionsLegalesPage
 const ConfidentialitePage = lazy(() => import("@/pages/legal/ConfidentialitePage"));
 const CGVPage = lazy(() => import("@/pages/legal/CGVPage"));
 const RGPDRegistryPage = lazy(() => import("@/pages/legal/RGPDRegistryPage"));
+const CookiesPage = lazy(() => import("@/pages/legal/CookiesPage"));
 
 // HQ Pages - Cockpit (lazy loaded)
 const BriefingRoom = lazy(() => import("@/pages/hq/BriefingRoom"));
@@ -104,6 +105,7 @@ const App = () => (
                   <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
                   <Route path="/legal/cgv" element={<CGVPage />} />
                   <Route path="/legal/rgpd" element={<RGPDRegistryPage />} />
+                  <Route path="/legal/cookies" element={<CookiesPage />} />
                 </Route>
 
                 {/* Auth */}
