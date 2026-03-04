@@ -4,6 +4,15 @@ import { useToast } from "@/hooks/use-toast";
 import { RealtimeChannel } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
 
+// Trigger push check after critical realtime events
+async function triggerPushCheck() {
+  try {
+    await supabase.functions.invoke("check-push-triggers");
+  } catch (e) {
+    logger.debug("[Push] Trigger check skipped:", e);
+  }
+}
+
 export interface RealtimeNotification {
   id: string;
   type: "approval_required" | "approval_resolved" | "alert" | "run_completed" | "system" | "contact_message";
@@ -101,6 +110,8 @@ export function useRealtimeNotifications(options: UseRealtimeNotificationsOption
           urgency: payload.payload?.urgency || "high",
           data: payload.payload,
         });
+        // Trigger push for critical alerts
+        triggerPushCheck();
       })
       .on("broadcast", { event: "system" }, (payload) => {
         addNotification({

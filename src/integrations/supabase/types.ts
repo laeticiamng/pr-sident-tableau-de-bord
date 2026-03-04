@@ -160,6 +160,15 @@ export type Database = {
         Returns: boolean
       }
       delete_hq_journal_entry: { Args: { p_id: string }; Returns: boolean }
+      get_active_push_subscriptions: {
+        Args: never
+        Returns: {
+          auth_key: string
+          endpoint: string
+          id: string
+          p256dh: string
+        }[]
+      }
       get_all_hq_platforms: {
         Args: never
         Returns: {
@@ -371,6 +380,20 @@ export type Database = {
       }
       is_owner: { Args: never; Returns: boolean }
       purge_old_hq_logs: { Args: { retention_days?: number }; Returns: number }
+      remove_push_subscription: {
+        Args: { p_endpoint: string }
+        Returns: boolean
+      }
+      save_push_subscription: {
+        Args: {
+          p_auth_key: string
+          p_device_label?: string
+          p_endpoint: string
+          p_p256dh: string
+          p_user_agent?: string
+        }
+        Returns: string
+      }
       update_hq_journal_entry: {
         Args: {
           p_content?: string
