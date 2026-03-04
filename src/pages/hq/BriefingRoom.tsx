@@ -263,7 +263,7 @@ export default function BriefingRoom() {
       </div>
 
       {/* Morning Digest automatique */}
-      {morningDigest?.executive_summary && (
+      {morningDigest?.executive_summary ? (
         <Card className="card-executive border-primary/20 bg-primary/[0.02]">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -280,6 +280,38 @@ export default function BriefingRoom() {
             <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-foreground/90 leading-relaxed">
               <ReactMarkdown>{morningDigest.executive_summary}</ReactMarkdown>
             </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+          <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+            <div className="p-3 rounded-full bg-muted/50">
+              <Sparkles className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-muted-foreground">Aucun brief généré aujourd'hui</h3>
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                Le brief automatique est programmé chaque matin à 8h. Vous pouvez en demander un maintenant.
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={handleBrief}
+              disabled={executeRun.isPending}
+            >
+              {executeRun.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Génération en cours…
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Générer le brief maintenant
+                </>
+              )}
+            </Button>
           </CardContent>
         </Card>
       )}
