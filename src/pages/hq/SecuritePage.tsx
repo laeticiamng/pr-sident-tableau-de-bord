@@ -18,6 +18,8 @@ import { SecretsRegistry } from "@/components/hq/security/SecretsRegistry";
 import { RLSAuditTable } from "@/components/hq/security/RLSAuditTable";
 import { IncidentCounter } from "@/components/hq/security/IncidentCounter";
 import { VulnerabilityScanner } from "@/components/hq/security/VulnerabilityScanner";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 export default function SecuritePage() {
   const { toast } = useToast();
@@ -61,26 +63,25 @@ export default function SecuritePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Centre de Sécurité</h1>
-          <p className="text-muted-foreground text-lg">
-            Supervision de la sécurité de l'ensemble des plateformes.
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          onClick={handleSecurityAudit}
-          disabled={executeRun.isPending}
-        >
-          {executeRun.isPending ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Shield className="h-4 w-4 mr-2" />
-          )}
-          Lancer un Audit
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Centre de Sécurité"
+        subtitle={`Supervision de la sécurité des ${MANAGED_PLATFORMS.length} plateformes`}
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <Button 
+            variant="outline" 
+            onClick={handleSecurityAudit}
+            disabled={executeRun.isPending}
+          >
+            {executeRun.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Shield className="h-4 w-4 mr-2" />
+            )}
+            Lancer un Audit
+          </Button>
+        }
+      />
 
       {/* Panic Button & Autopilot */}
       <div className="grid gap-6 md:grid-cols-2">

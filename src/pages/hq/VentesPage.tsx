@@ -16,6 +16,7 @@ import {
   Euro,
 } from "lucide-react";
 import { SalesPipelineChart } from "@/components/hq/charts/SalesPipelineChart";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { ConversionFunnelChart } from "@/components/hq/charts/ConversionFunnelChart";
 import { TopClients } from "@/components/hq/sales/TopClients";
 import { WinLossWidget } from "@/components/hq/sales/WinLossWidget";
@@ -37,13 +38,11 @@ export default function VentesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Ventes & Commercial</h1>
-          <p className="text-muted-foreground text-lg">
-            Données Stripe en temps réel + rapports générés par l'agent CSO IA.
-          </p>
-        </div>
+      <ExecutiveHeader
+        title="Ventes & Commercial"
+        subtitle="Données Stripe en temps réel + rapports générés par l'agent CSO IA"
+        source={{ source: "stripe", lastUpdated: new Date(), confidence: "high" }}
+        actions={
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
@@ -62,7 +61,8 @@ export default function VentesPage() {
             Analyse Marché
           </Button>
         </div>
-      </div>
+        }
+      />
 
       {/* KPIs réels Stripe */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

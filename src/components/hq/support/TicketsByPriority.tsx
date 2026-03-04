@@ -1,3 +1,4 @@
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Database, Link2 } from "lucide-react";
@@ -49,7 +50,7 @@ export function TicketsByPriority({ loading }: TicketsByPriorityProps) {
       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardHeader className="pb-2">
           <CardTitle>Tickets par Plateforme</CardTitle>
-          <CardDescription>Distribution sur les 7 plateformes</CardDescription>
+          <CardDescription>Distribution sur les {MANAGED_PLATFORMS.length} plateformes</CardDescription>
         </CardHeader>
         <CardContent className="py-8 text-center">
           <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />

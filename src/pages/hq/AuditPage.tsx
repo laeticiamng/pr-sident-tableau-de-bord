@@ -9,6 +9,7 @@ import { useAuditLogs } from "@/hooks/useHQData";
 import { AuditExportButton } from "@/components/hq/audit/AuditExportButton";
 import { AuditStats } from "@/components/hq/audit/AuditStats";
 import { DateRangeFilter } from "@/components/hq/audit/DateRangeFilter";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 export default function AuditPage() {
   const { data: auditLogs, isLoading, refetch } = useAuditLogs(100);
@@ -52,22 +53,21 @@ export default function AuditPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Journal d'Audit</h1>
-          <p className="text-muted-foreground text-lg">
-            Historique complet de toutes les actions (append-only).
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <DateRangeFilter onRangeChange={setDateRange} />
-          <AuditExportButton logs={auditLogs || []} />
-          <Button variant="outline" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
-          </Button>
-        </div>
-      </div>
+      <ExecutiveHeader
+        title="Journal d'Audit"
+        subtitle="Historique complet de toutes les actions (append-only)"
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <div className="flex items-center gap-3">
+            <DateRangeFilter onRangeChange={setDateRange} />
+            <AuditExportButton logs={auditLogs || []} />
+            <Button variant="outline" onClick={() => refetch()}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualiser
+            </Button>
+          </div>
+        }
+      />
 
       {/* Stats - Using dedicated component */}
       <AuditStats

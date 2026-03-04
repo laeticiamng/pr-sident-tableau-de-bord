@@ -1,3 +1,4 @@
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import { SLAMonitor } from "@/components/hq/support/SLAMonitor";
 import { TicketsByPriority } from "@/components/hq/support/TicketsByPriority";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { TicketTrendChart } from "@/components/hq/support/TicketTrendChart";
 import { EscalationQueue } from "@/components/hq/support/EscalationQueue";
 import { TicketDistributionChart } from "@/components/hq/support/TicketDistributionChart";
@@ -42,32 +44,32 @@ export default function SupportPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Support Console</h1>
-          <p className="text-muted-foreground text-lg">
-            Monitoring plateformes + rapports générés par les agents IA.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
-            Actualiser
-          </Button>
-          <Button
-            variant="executive"
-            onClick={handleGenerateReport}
-            disabled={executeRun.isPending}
-          >
-            {executeRun.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Brain className="h-4 w-4 mr-2" />
-            )}
-            Rapport Plateformes
-          </Button>
-        </div>
-      </div>
+      <ExecutiveHeader
+        title="Support Console"
+        subtitle={`Monitoring des ${MANAGED_PLATFORMS.length} plateformes`}
+        context="Rapports générés par les agents IA. Tickets, SLA et escalations."
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+              Actualiser
+            </Button>
+            <Button
+              variant="executive"
+              onClick={handleGenerateReport}
+              disabled={executeRun.isPending}
+            >
+              {executeRun.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Brain className="h-4 w-4 mr-2" />
+              )}
+              Rapport Plateformes
+            </Button>
+          </div>
+        }
+      />
 
       {/* Rapport IA Plateformes (données réelles) */}
       <Card className="card-executive">
@@ -90,7 +92,7 @@ export default function SupportPage() {
             )}
           </div>
           <CardDescription>
-            Statut des 7 plateformes et incidents en cours
+            Statut des {MANAGED_PLATFORMS.length} plateformes et incidents en cours
           </CardDescription>
         </CardHeader>
         <CardContent>

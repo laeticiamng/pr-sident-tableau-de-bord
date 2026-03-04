@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -130,39 +131,31 @@ export default function MessagesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Mail className="h-6 w-6 text-primary" />
-            Messages de contact
-          </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            {messages?.length ?? 0} message{(messages?.length ?? 0) > 1 ? "s" : ""}
+      <ExecutiveHeader
+        title="Messages de contact"
+        subtitle={`${messages?.length ?? 0} message${(messages?.length ?? 0) > 1 ? "s" : ""}${unreadCount > 0 ? ` · ${unreadCount} non lu${unreadCount > 1 ? "s" : ""}` : ""}`}
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <div className="flex gap-2">
             {unreadCount > 0 && (
-              <span className="text-primary font-medium"> · {unreadCount} non lu{unreadCount > 1 ? "s" : ""}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => markAllReadMutation.mutate()}
+                disabled={markAllReadMutation.isPending}
+                className="gap-2"
+              >
+                <CheckCheck className="h-4 w-4" />
+                Tout marquer lu
+              </Button>
             )}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {unreadCount > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => markAllReadMutation.mutate()}
-              disabled={markAllReadMutation.isPending}
-              className="gap-2"
-            >
-              <CheckCheck className="h-4 w-4" />
-              Tout marquer lu
+            <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Actualiser
             </Button>
-          )}
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Actualiser
-          </Button>
-        </div>
-      </div>
+          </div>
+        }
+      />
 
       {/* Search */}
       <div className="relative max-w-md">

@@ -21,6 +21,7 @@ import { PullRequestsWidget } from "@/components/hq/engineering/PullRequestsWidg
 import { DeploymentStatus } from "@/components/hq/engineering/DeploymentStatus";
 import { OpenPRsWidget } from "@/components/hq/engineering/OpenPRsWidget";
 import { CodeCoverageWidget } from "@/components/hq/engineering/CodeCoverageWidget";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
@@ -61,26 +62,25 @@ export default function EngineeringPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Engineering Command</h1>
-          <p className="text-muted-foreground text-lg">
-            Delivery, releases et santé technique.
-          </p>
-        </div>
-        <Button 
-          variant="outline"
-          onClick={() => githubSync.sync(undefined)}
-          disabled={githubSync.isLoading}
-        >
-          {githubSync.isLoading ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4 mr-2" />
-          )}
-          Sync GitHub
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Engineering Command"
+        subtitle="Delivery, releases et santé technique"
+        source={{ source: "github", lastUpdated: githubData?.syncedAt ? new Date(githubData.syncedAt) : null, confidence: "high" }}
+        actions={
+          <Button 
+            variant="outline"
+            onClick={() => githubSync.sync(undefined)}
+            disabled={githubSync.isLoading}
+          >
+            {githubSync.isLoading ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            Sync GitHub
+          </Button>
+        }
+      />
 
       {/* Delivery KPIs */}
       <div className="grid gap-4 md:grid-cols-4">

@@ -15,6 +15,7 @@ import {
 import { useExecuteRun, useRecentRuns } from "@/hooks/useHQData";
 import { useState } from "react";
 import { ContentCalendar } from "@/components/hq/marketing/ContentCalendar";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { ChannelROIChart } from "@/components/hq/marketing/ChannelROIChart";
 import { CompetitiveRadar } from "@/components/hq/marketing/CompetitiveRadar";
 import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerformance";
@@ -52,13 +53,12 @@ export default function MarketingPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Marketing Command</h1>
-          <p className="text-muted-foreground text-lg">
-            Pilotage marketing centralisé — données générées par l'agent CMO IA.
-          </p>
-        </div>
+      <ExecutiveHeader
+        title="Marketing Command"
+        subtitle="Pilotage marketing centralisé"
+        context="Données générées par l'agent CMO IA. Analyse concurrentielle et plans marketing hebdomadaires."
+        source={{ source: "mock", lastUpdated: new Date(), confidence: "medium" }}
+        actions={
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
@@ -89,7 +89,8 @@ export default function MarketingPage() {
             Analyse Concurrentielle
           </Button>
         </div>
-      </div>
+        }
+      />
 
       {/* Historique des runs marketing */}
       {marketingRuns && marketingRuns.length > 0 && (

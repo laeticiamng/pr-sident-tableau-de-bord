@@ -12,6 +12,7 @@ import { useAgents, useRecentRuns } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
 import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const departmentIcons: Record<string, typeof Users> = {
   direction: Crown,
@@ -67,21 +68,17 @@ export default function EquipeExecutivePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-headline-1">Workforce IA — Growth Copilot</h1>
-            <Badge variant="gold" className="text-xs">Vue lecture</Badge>
-          </div>
-          <p className="text-muted-foreground text-lg">
-            {agentStats.total} employés IA de la plateforme Growth Copilot : 2 Direction (CGO/QCO) + {agentStats.departmentAgents} agents dans {agentStats.totalDepartments} départements.
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Workforce IA — Growth Copilot"
+        subtitle={`${agentStats.total} employés IA : 2 Direction + ${agentStats.departmentAgents} agents dans ${agentStats.totalDepartments} départements`}
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <Button variant="outline" onClick={() => refetch()}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        }
+      />
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">

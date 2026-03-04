@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useExecuteRun } from "@/hooks/useHQData";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const competitorSources = [
   { name: "Product Hunt", url: "https://www.producthunt.com", category: "Lancement produits" },
@@ -134,25 +135,25 @@ export default function VeillePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Veille Stratégique</h1>
-          <p className="text-muted-foreground text-lg">
-            Intelligence concurrentielle et tendances marché pour {totalPlatforms} plateformes.
-          </p>
-        </div>
-        <Button
-          onClick={handleCompetitiveAnalysis}
-          disabled={executeRun.isPending}
-        >
-          {executeRun.isPending ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Brain className="h-4 w-4 mr-2" />
-          )}
-          Analyse IA Concurrentielle
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Veille Stratégique"
+        subtitle={`Intelligence concurrentielle pour ${totalPlatforms} plateformes`}
+        context="Tendances marché, concurrents identifiés et analyse IA."
+        source={{ source: "mock", lastUpdated: new Date(), confidence: "medium" }}
+        actions={
+          <Button
+            onClick={handleCompetitiveAnalysis}
+            disabled={executeRun.isPending}
+          >
+            {executeRun.isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Brain className="h-4 w-4 mr-2" />
+            )}
+            Analyse IA Concurrentielle
+          </Button>
+        }
+      />
 
       {/* KPI Summary */}
       <div className="grid gap-4 md:grid-cols-4">

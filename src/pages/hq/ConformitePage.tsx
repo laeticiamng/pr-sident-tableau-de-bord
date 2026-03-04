@@ -20,6 +20,7 @@ import { RGPDExportButton } from "@/components/hq/compliance/RGPDExportButton";
 import { AIPDChecklist } from "@/components/hq/conformite/AIPDChecklist";
 import { DocumentInventory } from "@/components/hq/conformite/DocumentInventory";
 import { ComplianceAlerts } from "@/components/hq/conformite/ComplianceAlerts";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 // RGPD Rights - Les 8 droits fondamentaux
 const RGPD_RIGHTS = [
@@ -49,12 +50,12 @@ export default function ConformitePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-headline-1 mb-2">Conformité & RGPD</h1>
-        <p className="text-muted-foreground text-lg">
-          Gestion de la conformité réglementaire et protection des données personnelles.
-        </p>
-      </div>
+      <ExecutiveHeader
+        title="Conformité & RGPD"
+        subtitle="Protection des données personnelles"
+        context="Gestion de la conformité réglementaire RGPD et AI Act."
+        source={{ source: "mock", lastUpdated: new Date(), confidence: "medium" }}
+      />
 
       {/* Score de conformité global */}
       <Card className="card-executive bg-gradient-to-br from-primary/5 to-transparent">

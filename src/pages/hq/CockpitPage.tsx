@@ -9,6 +9,7 @@ import { PanicSwitch } from "@/components/hq/cockpit/PanicSwitch";
 import { KeyMetricsGrid } from "@/components/hq/cockpit/KeyMetricsGrid";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 
 export default function CockpitPage() {
   const { isEssential } = useEssentialMode();
@@ -39,7 +40,7 @@ export default function CockpitPage() {
       <ExecutiveHeader
         title="Cockpit Dirigeant"
         subtitle="Centre de commandement opérationnel"
-        context="Agrégation en temps réel des KPIs des 7 plateformes. Décisions éclairées par données sourcées et recommandations IA."
+        context={`Agrégation en temps réel des KPIs des ${MANAGED_PLATFORMS.length} plateformes. Décisions éclairées par données sourcées et recommandations IA.`}
         source={{
           source: "realtime",
           lastUpdated: new Date(),
