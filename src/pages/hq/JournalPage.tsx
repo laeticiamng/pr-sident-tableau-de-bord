@@ -15,6 +15,7 @@ import {
   useJournalEntries, useCreateJournalEntry, useUpdateJournalEntry,
   useDeleteJournalEntry, type JournalEntry,
 } from "@/hooks/useJournal";
+import { JournalPDFExport } from "@/components/hq/journal/JournalPDFExport";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { usePlatforms } from "@/hooks/useHQData";
 import { formatDistanceToNow, format } from "date-fns";
@@ -246,7 +247,12 @@ export default function JournalPage() {
         title="Journal Présidentiel"
         subtitle={`${totalCount} entrée${totalCount > 1 ? "s" : ""} · ${pinnedCount} épinglée${pinnedCount > 1 ? "s" : ""}`}
         source={{ source: "supabase", confidence: "high" }}
-        actions={<NewEntryDialog />}
+        actions={
+          <div className="flex gap-2">
+            <JournalPDFExport entries={filtered} />
+            <NewEntryDialog />
+          </div>
+        }
       />
 
       {/* KPI Strip for reference */}
