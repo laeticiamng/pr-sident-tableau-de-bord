@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { JournalEntry } from "@/hooks/useJournal";
-import { format } from "date-fns";
+import { format, startOfMonth, startOfQuarter, startOfYear } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -12,17 +13,38 @@ const TYPE_LABELS: Record<string, string> = {
   reflection: "Réflexion",
 };
 
+type PeriodFilter = "all" | "month" | "quarter" | "year";
+
+const PERIOD_LABELS: Record<PeriodFilter, string> = {
+  all: "Tout",
+  month: "Ce mois",
+  quarter: "Ce trimestre",
+  year: "Cette année",
+};
+
+function filterByPeriod(entries: JournalEntry[], period: PeriodFilter): JournalEntry[] {
+  if (period === "all") return entries;
+  const now = new Date();
+  const cutoff =
+    period === "month" ? startOfMonth(now) :
+    period === "quarter" ? startOfQuarter(now) :
+    startOfYear(now);
+  return entries.filter(e => new Date(e.created_at) >= cutoff);
+}
+
 export function JournalPDFExport({ entries }: { entries: JournalEntry[] }) {
   const [isExporting, setIsExporting] = useState(false);
+  const [period, setPeriod] = useState<PeriodFilter>("all");
+
+  const filtered = filterByPeriod(entries, period);
 
   const handleExport = async () => {
     setIsExporting(true);
     try {
-      const html = buildPDFHtml(entries);
+      const html = buildPDFHtml(filtered, period);
       const blob = new Blob([html], { type: "text/html" });
       const url = URL.createObjectURL(blob);
 
-      // Open in new window for print → PDF
       const printWindow = window.open(url, "_blank");
       if (printWindow) {
         printWindow.onload = () => {
@@ -38,16 +60,30 @@ export function JournalPDFExport({ entries }: { entries: JournalEntry[] }) {
   };
 
   return (
-    <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={handleExport} disabled={isExporting || entries.length === 0}>
-      {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
-      Export PDF
-    </Button>
+    <div className="flex items-center gap-2">
+      <Select value={period} onValueChange={(v) => setPeriod(v as PeriodFilter)}>
+        <SelectTrigger className="h-8 w-[130px] text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tout</SelectItem>
+          <SelectItem value="month">Ce mois</SelectItem>
+          <SelectItem value="quarter">Ce trimestre</SelectItem>
+          <SelectItem value="year">Cette année</SelectItem>
+        </SelectContent>
+      </Select>
+      <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={handleExport} disabled={isExporting || filtered.length === 0}>
+        {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
+        Export PDF ({filtered.length})
+      </Button>
+    </div>
   );
 }
 
-function buildPDFHtml(entries: JournalEntry[]): string {
+function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
   const now = new Date();
   const dateStr = format(now, "d MMMM yyyy", { locale: fr });
+  const periodLabel = PERIOD_LABELS[period];
 
   const decisions = entries.filter(e => e.entry_type === "decision");
   const milestones = entries.filter(e => e.entry_type === "milestone");
@@ -111,6 +147,7 @@ function buildPDFHtml(entries: JournalEntry[]): string {
     <div style="text-align:right;">
       <p style="font-size:12px;color:#64748b;">Document généré le</p>
       <p style="font-size:14px;font-weight:600;">${dateStr}</p>
+      <p style="font-size:11px;color:#0284c7;margin-top:2px;font-weight:600;">Période : ${periodLabel}</p>
       <p style="font-size:10px;color:#94a3b8;margin-top:4px;">CONFIDENTIEL</p>
     </div>
   </div>
