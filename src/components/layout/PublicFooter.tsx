@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
-import { Building2 } from "lucide-react";
+import { Building2, Cookie } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { commonTranslations } from "@/i18n/common";
+import { useCookieConsent } from "@/hooks/useCookieConsent";
 
 export function PublicFooter() {
   const currentYear = new Date().getFullYear();
   const t = useTranslation(commonTranslations);
+  const { reopenBanner } = useCookieConsent();
 
   return (
     <footer className="border-t bg-secondary/30">
@@ -50,6 +52,15 @@ export function PublicFooter() {
               <li><Link to="/legal/confidentialite" className="hover:text-primary transition-colors">{t.footer.privacy}</Link></li>
               <li><Link to="/legal/cgv" className="hover:text-primary transition-colors">{t.footer.terms}</Link></li>
               <li><Link to="/legal/rgpd" className="hover:text-primary transition-colors">{t.footer.rgpdRegistry}</Link></li>
+              <li>
+                <button
+                  onClick={reopenBanner}
+                  className="inline-flex items-center gap-1 hover:text-primary transition-colors"
+                >
+                  <Cookie className="h-3 w-3" />
+                  {t.footer.cookieSettings}
+                </button>
+              </li>
             </ul>
           </div>
         </div>
