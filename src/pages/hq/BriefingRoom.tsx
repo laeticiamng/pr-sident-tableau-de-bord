@@ -20,8 +20,10 @@ import {
 } from "lucide-react";
 import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
+import { useMorningDigest } from "@/hooks/useMorningDigest";
 import { Link } from "react-router-dom";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
+import ReactMarkdown from "react-markdown";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -30,6 +32,7 @@ export default function BriefingRoom() {
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
   const { data: stripeData, isError: stripeError } = useStripeKPIs();
+  const { data: morningDigest } = useMorningDigest();
   const executeRun = useExecuteRun();
   const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "done">("idle");
@@ -253,6 +256,28 @@ export default function BriefingRoom() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Morning Digest automatique */}
+      {morningDigest?.executive_summary && (
+        <Card className="card-executive border-primary/20 bg-primary/[0.02]">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Brief du jour</h3>
+                <p className="text-xs text-muted-foreground">
+                  {morningDigest.owner_requested ? "Demandé manuellement" : "Généré automatiquement"} — {formatDistanceToNow(new Date(morningDigest.completed_at || morningDigest.created_at), { addSuffix: true, locale: fr })}
+                </p>
+              </div>
+            </div>
+            <div className="prose prose-sm dark:prose-invert max-w-none text-sm text-foreground/90 leading-relaxed">
+              <ReactMarkdown>{morningDigest.executive_summary}</ReactMarkdown>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Parcours guidé — 3 actions claires */}
       <div>
