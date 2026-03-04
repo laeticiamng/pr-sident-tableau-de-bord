@@ -3,10 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Phone, PhoneCall, Loader2, CheckCircle, XCircle, AlertTriangle,
-  DollarSign, Wifi, ChevronRight, Sparkles, Bot, Clock,
+  DollarSign, Wifi, ChevronRight, Sparkles, Bot, Clock, BookOpen,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
+import { useJournalEntries, type JournalEntry } from "@/hooks/useJournal";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { useMorningDigest } from "@/hooks/useMorningDigest";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
@@ -134,7 +135,10 @@ export function MobileBriefing() {
         </Card>
       )}
 
-      {/* Card 3: Quick Actions (2 max) */}
+      {/* Card 3: Recent Decisions (compact) */}
+      <CompactDecisions />
+
+      {/* Card 4: Quick Actions (2 max) */}
       <div className="grid grid-cols-2 gap-3">
         <Link to="/hq/plateformes" className="block">
           <Card className="card-executive h-full">
@@ -165,6 +169,76 @@ export function MobileBriefing() {
         </Link>
       </div>
     </div>
+  );
+}
+
+// ── Compact Decisions Widget (Mobile) ────────────────────────────────
+
+function CompactDecisions() {
+  const { data: entries, isLoading } = useJournalEntries();
+  const recent = (entries || []).slice(0, 2);
+
+  const typeLabels: Record<string, string> = {
+    decision: "Décision",
+    note: "Note",
+    milestone: "Jalon",
+    reflection: "Réflexion",
+  };
+
+  const typeColors: Record<string, string> = {
+    decision: "bg-accent/10 text-accent",
+    note: "bg-muted text-muted-foreground",
+    milestone: "bg-success/10 text-success",
+    reflection: "bg-primary/10 text-primary",
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="card-executive">
+        <CardContent className="p-3">
+          <div className="h-10 rounded bg-muted/50 animate-pulse" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (recent.length === 0) {
+    return (
+      <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+        <CardContent className="p-3 text-center">
+          <p className="text-[10px] text-muted-foreground">Aucune décision récente</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="card-executive">
+      <CardContent className="p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5">
+            <BookOpen className="h-3.5 w-3.5 text-accent" />
+            <span className="text-xs font-semibold">Décisions récentes</span>
+          </div>
+          <Link to="/hq/journal" className="text-[10px] text-accent hover:underline flex items-center gap-0.5">
+            Voir <ChevronRight className="h-2.5 w-2.5" />
+          </Link>
+        </div>
+        <div className="space-y-1.5">
+          {recent.map((entry) => (
+            <div key={entry.id} className="flex items-center gap-2 p-2 rounded-md border bg-card">
+              <Badge variant="outline" className={`text-[8px] px-1 py-0 shrink-0 ${typeColors[entry.entry_type] || ""}`}>
+                {typeLabels[entry.entry_type] || entry.entry_type}
+              </Badge>
+              <p className="text-[11px] font-medium truncate flex-1">{entry.title}</p>
+              <span className="text-[9px] text-muted-foreground shrink-0">
+                {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+              </span>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
