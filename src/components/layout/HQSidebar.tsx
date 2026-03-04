@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -42,7 +44,7 @@ const mainLinks = [
   { href: "/hq/plateformes", label: "Mes Plateformes", icon: Layers },
   { href: "/hq/approbations", label: "Approbations", icon: CheckSquare, showBadge: true },
   { href: "/hq/cockpit", label: "Cockpit", icon: Gauge },
-  { href: "/hq/messages", label: "Messages", icon: Mail },
+  { href: "/hq/messages", label: "Messages", icon: Mail, showMessagesBadge: true },
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
 ];
 
@@ -80,6 +82,17 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: recentRuns } = useRecentRuns(50);
+  const { data: messagesCount } = useQuery({
+    queryKey: ["contact-messages-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("contact_messages")
+        .select("id", { count: "exact", head: true });
+      if (error) return 0;
+      return count ?? 0;
+    },
+    refetchInterval: 30_000,
+  });
   const [showMore, setShowMore] = useState(false);
 
   const pendingCount = pendingApprovals?.length || 0;
@@ -162,7 +175,15 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                         {pendingCount}
                       </Badge>
                     )}
-                    {isActive && !link.showBadge && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                    {"showMessagesBadge" in link && link.showMessagesBadge && (messagesCount ?? 0) > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                      >
+                        {messagesCount}
+                      </Badge>
+                    )}
+                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
                   </Link>
                 </li>
               );
