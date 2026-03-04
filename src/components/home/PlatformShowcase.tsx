@@ -16,6 +16,8 @@ import {
   Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { homeTranslations } from "@/i18n/home";
 
 const platformIcons = PLATFORM_ICONS;
 const platformGradients = PLATFORM_GRADIENTS;
@@ -26,6 +28,8 @@ const platformBgAccents = PLATFORM_BG_ACCENTS;
 export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
   (props, ref) => {
     const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
+    const t = useTranslation(homeTranslations);
+    const s = t.showcase;
 
     return (
       <section ref={ref} className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background relative overflow-hidden" {...props}>
@@ -35,20 +39,19 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
         <div className="hidden sm:block absolute bottom-0 left-0 w-48 sm:w-80 lg:w-[400px] h-48 sm:h-80 lg:h-[400px] bg-primary/5 rounded-full blur-[60px] lg:blur-[100px]" />
         
         <div className="container relative px-4 sm:px-6 lg:px-8">
-          {/* Section Header — Apple Style */}
+          {/* Section Header */}
           <div className="max-w-4xl mx-auto text-center mb-12 sm:mb-16 md:mb-20">
             <Badge variant="gold" className="mb-3 sm:mb-4 md:mb-6">
               <Sparkles className="w-3 h-3 mr-1.5" />
-              Écosystème Premium
+              {s.badge}
             </Badge>
             <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight mb-3 sm:mb-4 md:mb-6 px-1 sm:px-2">
-            Sept plateformes.
+              {s.heading1}
               <br />
-              <span className="text-gradient">Une vision.</span>
+              <span className="text-gradient">{s.heading2}</span>
             </h2>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-2 sm:px-4">
-              Chaque plateforme répond à un besoin spécifique, toutes sont pilotées 
-              depuis notre siège numérique avec les mêmes standards d'excellence.
+              {s.subtitle}
             </p>
           </div>
 
@@ -64,25 +67,22 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                 "hover:shadow-2xl",
                 platformBorders["emotionscare"]
               )}>
-                {/* Gradient Overlay */}
                 <div className={cn(
                   "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-700",
                   platformGradients[MANAGED_PLATFORMS[0].key],
                   hoveredPlatform === MANAGED_PLATFORMS[0].key && "opacity-100"
                 )} />
                 
-                {/* Floating Icon - Hidden on mobile */}
                 <div className="hidden md:block absolute -top-8 -right-8 md:top-8 md:right-8 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
                   <Heart className="w-48 h-48 md:w-64 md:h-64" />
                 </div>
 
                 <div className="relative grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
-                  {/* Left — Content */}
                   <div>
                     <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-3 sm:mb-4 md:mb-6">
                       <div className={cn("w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full animate-pulse", platformBgAccents["emotionscare"])} />
                       <span className={cn("text-[9px] sm:text-[10px] md:text-xs font-semibold uppercase tracking-wider", platformAccents["emotionscare"])}>
-                        Production • 37 Modules
+                        {s.production} • 37 {s.modules}
                       </span>
                     </div>
                     
@@ -101,7 +101,6 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                       {MANAGED_PLATFORMS[0].description}
                     </p>
 
-                    {/* Features Pills */}
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-4 sm:mb-5 md:mb-6 lg:mb-8">
                       {MANAGED_PLATFORMS[0].features.slice(0, 3).map((feature) => (
                         <span 
@@ -118,30 +117,28 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                       )}
                     </div>
 
-                    {/* Actions */}
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
                       <Button asChild size="sm" className="bg-platform-health hover:bg-platform-health/90 text-white text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2.5 sm:px-3 md:px-4">
                         <a href={MANAGED_PLATFORMS[0].liveUrl} target="_blank" rel="noopener noreferrer">
-                          Visiter le site
+                          {s.visitSite}
                           <ArrowRight className="ml-1 sm:ml-1.5 md:ml-2 h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />
                         </a>
                       </Button>
                       <Link to="/plateformes">
                         <Button variant="ghost" size="sm" className="text-platform-health hover:text-platform-health/80 hover:bg-transparent text-[10px] sm:text-xs md:text-sm h-7 sm:h-8 md:h-9 px-2 sm:px-3">
-                          Détails
+                          {s.details}
                           <ChevronRight className="ml-0.5 sm:ml-1 h-2.5 w-2.5 sm:h-3 sm:w-3 md:h-4 md:w-4" />
                         </Button>
                       </Link>
                     </div>
                   </div>
 
-                  {/* Right — Stats Grid - Real GitHub Stats */}
                   <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
                     {[
-                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: "Évolutions", suffix: "" },
-                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: "Structures", suffix: "" },
-                      { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: "Tests", suffix: "" },
-                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: "Versions", suffix: "" },
+                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: s.evolutions, suffix: "" },
+                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.tables, label: s.structures, suffix: "" },
+                      { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: s.tests, suffix: "" },
+                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: s.versions, suffix: "" },
                     ].map((stat) => (
                       <div 
                         key={stat.label}
@@ -183,7 +180,6 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     )}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    {/* Gradient Overlay */}
                     <div className={cn(
                       "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500",
                       platformGradients[platform.key],
@@ -191,7 +187,6 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     )} />
 
                     <div className="relative">
-                      {/* Icon & Status */}
                       <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4 lg:mb-6">
                         <div className={cn(
                           "w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-md sm:rounded-lg md:rounded-xl flex items-center justify-center bg-secondary/50 transition-all duration-300",
@@ -206,12 +201,11 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                             platform.status === "production" ? "bg-status-green" : "bg-status-amber"
                           )} />
                           <span className="text-[7px] sm:text-[8px] md:text-[10px] uppercase tracking-wider text-muted-foreground">
-                            {platform.status === "production" ? "Prod" : "Proto"}
+                            {platform.status === "production" ? s.prod : s.proto}
                           </span>
                         </div>
                       </div>
 
-                      {/* Title & Description */}
                       <h3 className={cn(
                         "text-sm sm:text-base md:text-lg lg:text-xl font-semibold mb-1 sm:mb-1.5 md:mb-2 transition-colors duration-300 truncate",
                         platformAccents[platform.key]
@@ -223,14 +217,12 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                         {platform.shortDescription}
                       </p>
 
-                      {/* Stats Row - Real GitHub Stats */}
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
-                        <span>{platform.stats.modules} modules</span>
+                        <span>{platform.stats.modules} {s.modulesLabel}</span>
                         <span className="hidden md:inline">•</span>
-                        <span className="hidden md:inline">{platform.stats.tables} structures</span>
+                        <span className="hidden md:inline">{platform.stats.tables} {s.structuresLabel}</span>
                       </div>
 
-                      {/* Action Buttons */}
                       <div className="flex items-center gap-1.5 sm:gap-2">
                         <a 
                           href={platform.liveUrl}
@@ -242,7 +234,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                             "hover:underline"
                           )}
                         >
-                          Visiter
+                          {s.visit}
                           <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
                         </a>
                       </div>
@@ -257,7 +249,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
           <div className="mt-6 sm:mt-8 md:mt-12 lg:mt-16 text-center">
             <Link to="/plateformes">
               <Button variant="outline" size="default" className="group text-xs sm:text-sm md:text-base h-8 sm:h-9 md:h-10">
-                Voir toutes les plateformes
+                {s.viewAll}
                 <ArrowRight className="ml-1.5 sm:ml-2 h-3 w-3 sm:h-4 sm:w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
