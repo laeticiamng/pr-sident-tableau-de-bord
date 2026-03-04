@@ -136,8 +136,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_hq_chat_message: {
+        Args: { p_content: string; p_conversation_id: string; p_role: string }
+        Returns: string
+      }
       approve_hq_action: {
         Args: { p_action_id: string; p_decision: string; p_reason?: string }
+        Returns: boolean
+      }
+      create_hq_conversation: { Args: { p_title?: string }; Returns: string }
+      delete_hq_conversation: {
+        Args: { p_conversation_id: string }
         Returns: boolean
       }
       get_all_hq_platforms: {
@@ -182,6 +191,25 @@ export type Database = {
           ip_address: unknown
           resource_id: string
           resource_type: string
+        }[]
+      }
+      get_hq_chat_messages: {
+        Args: { p_conversation_id: string }
+        Returns: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+        }[]
+      }
+      get_hq_conversations: {
+        Args: { limit_count?: number }
+        Returns: {
+          created_at: string
+          id: string
+          last_message: string
+          title: string
+          updated_at: string
         }[]
       }
       get_hq_logs: {
