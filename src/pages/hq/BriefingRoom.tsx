@@ -19,6 +19,7 @@ import {
   Bot,
   Wifi,
   Clock,
+  BookOpen,
 } from "lucide-react";
 import { usePlatforms, usePendingApprovals, useRecentRuns, useExecuteRun, type ExecutiveRunResult } from "@/hooks/useHQData";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
@@ -27,6 +28,7 @@ import { Link } from "react-router-dom";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
 import ReactMarkdown from "react-markdown";
 import { RecentDecisionsWidget } from "@/components/hq/briefing/RecentDecisionsWidget";
+import { useJournalEntries } from "@/hooks/useJournal";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -37,6 +39,7 @@ export default function BriefingRoom() {
   const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
   const { data: stripeData, isError: stripeError } = useStripeKPIs();
   const { data: morningDigest } = useMorningDigest();
+  const { data: journalEntries } = useJournalEntries();
   const executeRun = useExecuteRun();
   const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "done">("idle");
@@ -68,6 +71,10 @@ export default function BriefingRoom() {
     : null;
 
   const lastRun = runs?.[0] || null;
+
+  const decisionsWithoutImpact = (journalEntries || []).filter(
+    e => e.entry_type === "decision" && !e.impact_measured?.summary
+  ).length;
 
   const handleCallDG = async () => {
     setCallState("calling");
@@ -180,7 +187,7 @@ export default function BriefingRoom() {
       )}
 
       {/* KPIs Exécutifs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Card className="card-executive">
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-success/10">
@@ -261,6 +268,20 @@ export default function BriefingRoom() {
             </div>
           </CardContent>
         </Card>
+
+        <Link to="/hq/journal">
+          <Card className={`card-executive h-full transition-colors ${decisionsWithoutImpact > 0 ? "border-warning/30" : ""}`}>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className={`p-2 rounded-lg ${decisionsWithoutImpact > 0 ? "bg-warning/10" : "bg-success/10"}`}>
+                <BookOpen className={`h-5 w-5 ${decisionsWithoutImpact > 0 ? "text-warning" : "text-success"}`} />
+              </div>
+              <div>
+                <p className="text-xl font-bold">{decisionsWithoutImpact}</p>
+                <p className="text-xs text-muted-foreground">Sans impact mesuré</p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Morning Digest automatique */}
