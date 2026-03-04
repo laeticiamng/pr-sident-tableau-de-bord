@@ -116,7 +116,7 @@ export function MobileBriefing() {
               <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-sm font-semibold">Brief du jour</span>
               <span className="text-[10px] text-muted-foreground ml-auto">
-                {formatDistanceToNow(new Date(digest.completed_at || digest.created_at), { addSuffix: true, locale: fr })}
+                {formatDistanceToNow(new Date(digest.created_at), { addSuffix: true, locale: fr })}
               </span>
             </div>
             <div className="prose prose-sm dark:prose-invert max-w-none text-xs text-foreground/85 leading-relaxed line-clamp-6">

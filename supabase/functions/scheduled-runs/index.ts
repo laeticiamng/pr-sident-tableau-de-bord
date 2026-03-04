@@ -22,11 +22,11 @@ interface ScheduledJob {
 // Configuration des jobs planifiés
 const SCHEDULED_JOBS: ScheduledJob[] = [
   {
-    key: "daily_brief",
-    name: "Brief Exécutif Quotidien",
-    cronExpression: "0 7 * * 1-5", // 7h du lundi au vendredi
+    key: "morning_digest",
+    name: "Morning Digest IA",
+    cronExpression: "0 8 * * 1-5", // 8h du lundi au vendredi
     runType: "DAILY_EXECUTIVE_BRIEF",
-    description: "Synthèse quotidienne avec GitHub et veille marché",
+    description: "Brief IA matinal automatique stocké en base",
     enabled: true,
   },
   {
@@ -158,6 +158,8 @@ Deno.serve(async (req) => {
       const results = [];
       for (const job of jobsToRun) {
         try {
+          const startTime = Date.now();
+          
           // For scheduled runs, we call executive-run with service role key
           const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/executive-run`, {
             method: "POST",
@@ -176,6 +178,7 @@ Deno.serve(async (req) => {
           });
           
           const result = await execResponse.json();
+          const durationMs = Date.now() - startTime;
           
           // Log the run
           if (execResponse.ok) {
@@ -191,6 +194,19 @@ Deno.serve(async (req) => {
                 data_sources: result.data_sources,
               },
             });
+            
+            // If this is a morning digest, persist to dedicated table
+            if (job.key === "morning_digest" && result.executive_summary) {
+              await supabaseAdmin.rpc("upsert_hq_morning_digest", {
+                p_executive_summary: result.executive_summary,
+                p_sections: result.sections || result.detailed_appendix || {},
+                p_data_sources: result.data_sources || [],
+                p_model_used: result.model_used || "unknown",
+                p_generation_duration_ms: durationMs,
+                p_triggered_by: "scheduler",
+              });
+              console.log("[Scheduler] Morning digest persisted to hq.morning_digests");
+            }
           }
           
           results.push({ job: job.key, success: execResponse.ok, result });
@@ -313,7 +329,7 @@ Deno.serve(async (req) => {
         );
       }
 
-      console.log(`[Scheduler] Executing job: ${job.name} (${job.runType})`);
+      const startTime = Date.now();
 
       // Appeler l'Edge Function executive-run avec le token utilisateur
       const execResponse = await fetch(`${SUPABASE_URL}/functions/v1/executive-run`, {
@@ -342,6 +358,7 @@ Deno.serve(async (req) => {
       }
 
       const result = await execResponse.json();
+      const durationMs = Date.now() - startTime;
 
       // Enregistrer le run dans la DB
       const { data: runId } = await supabaseAdmin.rpc("insert_hq_run", {
@@ -356,6 +373,19 @@ Deno.serve(async (req) => {
           data_sources: result.data_sources,
         },
       });
+
+      // If this is a morning digest, persist to dedicated table
+      if (job.key === "morning_digest" && result.executive_summary) {
+        await supabaseAdmin.rpc("upsert_hq_morning_digest", {
+          p_executive_summary: result.executive_summary,
+          p_sections: result.sections || result.detailed_appendix || {},
+          p_data_sources: result.data_sources || [],
+          p_model_used: result.model_used || "unknown",
+          p_generation_duration_ms: durationMs,
+          p_triggered_by: "manual",
+        });
+        console.log("[Scheduler] Morning digest persisted manually");
+      }
 
       console.log(`[Scheduler] Run completed: ${runId}`);
 

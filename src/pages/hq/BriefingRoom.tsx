@@ -273,7 +273,7 @@ export default function BriefingRoom() {
               <div>
                 <h3 className="font-semibold">Brief du jour</h3>
                 <p className="text-xs text-muted-foreground">
-                  {morningDigest.owner_requested ? "Demandé manuellement" : "Généré automatiquement"} — {formatDistanceToNow(new Date(morningDigest.completed_at || morningDigest.created_at), { addSuffix: true, locale: fr })}
+                  {morningDigest.triggered_by === "manual" ? "Demandé manuellement" : "Généré automatiquement"} — {formatDistanceToNow(new Date(morningDigest.created_at), { addSuffix: true, locale: fr })}
                 </p>
               </div>
             </div>
