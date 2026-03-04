@@ -6,6 +6,7 @@ import { QuarterlyObjectives } from "@/components/hq/entreprise/QuarterlyObjecti
 import { StrategicGoals } from "@/components/hq/entreprise/StrategicGoals";
 import { PlatformCompletionRoadmap } from "@/components/hq/entreprise/PlatformCompletionRoadmap";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 export default function EntreprisePage() {
   return (
@@ -134,6 +135,16 @@ export default function EntreprisePage() {
 
       {/* Plateformes - Audit & Plan de complétion */}
       <PlatformCompletionRoadmap />
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "INSEE / Infogreffe", type: "api", reliability: "verified", description: "Données légales vérifiées" },
+          { name: "Données internes", type: "manual", reliability: "estimated", description: "KPIs, objectifs, roadmap" },
+        ]}
+        calculations={[
+          { metric: "Objectifs trimestriels", assumptions: ["Mis à jour manuellement par la direction"] },
+        ]}
+      />
     </div>
   );
 }

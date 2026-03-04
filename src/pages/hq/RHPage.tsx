@@ -24,6 +24,7 @@ import { TrainingCompletionWidget } from "@/components/hq/rh/TrainingCompletionW
 import { PerformanceReview } from "@/components/hq/rh/PerformanceReview";
 import { AgentMonitoringDashboard } from "@/components/hq/AgentMonitoringDashboard";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -302,6 +303,16 @@ export default function RHPage() {
 
       {/* Performance globale */}
       <TeamPerformanceMetrics />
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Base de données HQ", type: "database", reliability: "verified", description: "Agents configurés, statuts" },
+          { name: "Historique des runs", type: "database", reliability: "verified", description: "Performance par agent" },
+        ]}
+        calculations={[
+          { metric: "Taux de succès", formula: "Runs complétés / Total runs × 100", limitations: ["Onboarding et formations simulés"] },
+        ]}
+      />
     </div>
   );
 }

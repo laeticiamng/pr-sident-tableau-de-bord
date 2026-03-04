@@ -13,6 +13,7 @@ import { useRunQueue } from "@/hooks/useRunQueue";
 import { DEPARTMENTS, getAgentStats, getAgentsByDepartment, getDirectionAgents, AgentProfile, DepartmentKey } from "@/lib/agent-profiles";
 import { AgentPerformanceWidget } from "@/components/hq/equipe/AgentPerformanceWidget";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 const departmentIcons: Record<string, typeof Users> = {
   direction: Crown,
@@ -358,6 +359,13 @@ export default function EquipeExecutivePage() {
           )}
         </DialogContent>
       </Dialog>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Agent Profiles Registry", type: "manual", reliability: "verified", description: "39 agents IA, départements" },
+          { name: "Base de données HQ", type: "database", reliability: "verified", description: "Statuts agents, runs" },
+        ]}
+      />
     </div>
   );
 }

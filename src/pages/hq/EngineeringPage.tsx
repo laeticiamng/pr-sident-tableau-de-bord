@@ -22,6 +22,7 @@ import { DeploymentStatus } from "@/components/hq/engineering/DeploymentStatus";
 import { OpenPRsWidget } from "@/components/hq/engineering/OpenPRsWidget";
 import { CodeCoverageWidget } from "@/components/hq/engineering/CodeCoverageWidget";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 export default function EngineeringPage() {
   const executeRun = useExecuteRun();
@@ -296,6 +297,17 @@ export default function EngineeringPage() {
       {/* Release Checklist */}
       <ReleaseChecklist 
         onDeploy={() => executeRun.mutate({ run_type: "RELEASE_GATE_CHECK" })}
+      />
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "GitHub API", type: "api", refreshRate: "Sync manuelle", reliability: "verified", description: "Commits, PRs, issues" },
+          { name: "Agent CTO IA", type: "computed", reliability: "estimated", description: "Release gate checks" },
+          { name: "Données mock", type: "mock", reliability: "simulated", description: "Code coverage, deployment status" },
+        ]}
+        calculations={[
+          { metric: "Code coverage", assumptions: ["Données simulées"], limitations: ["CI/CD non connecté"] },
+        ]}
       />
     </div>
   );

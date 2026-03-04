@@ -14,6 +14,7 @@ import { RoadmapExportButton } from "@/components/hq/product/RoadmapExportButton
 import { ReleaseTimeline } from "@/components/hq/product/ReleaseTimeline";
 import { FeatureRequests } from "@/components/hq/product/FeatureRequests";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 
 export default function ProduitPage() {
   return (
@@ -85,6 +86,15 @@ export default function ProduitPage() {
           </Badge>
         </CardContent>
       </Card>
+
+      <MethodologyDisclosure
+        sources={[
+          { name: "Données mock", type: "mock", reliability: "simulated", description: "OKRs, roadmap, feature requests" },
+        ]}
+        calculations={[
+          { metric: "Roadmap", assumptions: ["Données de démonstration"], limitations: ["Connectez Jira, Linear ou GitHub Projects pour données réelles"] },
+        ]}
+      />
     </div>
   );
 }
