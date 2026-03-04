@@ -124,7 +124,30 @@ export function MobileBriefing() {
             </div>
           </CardContent>
         </Card>
-      ) : null}
+      ) : (
+        <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
+          <CardContent className="p-4 flex flex-col items-center text-center gap-3">
+            <Sparkles className="h-5 w-5 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">Aucun brief aujourd'hui</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 text-xs"
+              onClick={async () => {
+                const result = await executeRun.mutateAsync({ run_type: "DAILY_EXECUTIVE_BRIEF" });
+                setRunResult(result);
+              }}
+              disabled={executeRun.isPending}
+            >
+              {executeRun.isPending ? (
+                <><Loader2 className="h-3 w-3 animate-spin" /> Génération…</>
+              ) : (
+                <><Sparkles className="h-3 w-3" /> Générer le brief</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Card 3: Quick Actions (2 max) */}
       <div className="grid grid-cols-2 gap-3">
