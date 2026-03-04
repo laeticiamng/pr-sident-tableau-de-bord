@@ -254,6 +254,20 @@ export type Database = {
           source: string
         }[]
       }
+      get_hq_morning_digest: {
+        Args: { p_date?: string }
+        Returns: {
+          created_at: string
+          data_sources: string[]
+          digest_date: string
+          executive_summary: string
+          generation_duration_ms: number
+          id: string
+          model_used: string
+          sections: Json
+          triggered_by: string
+        }[]
+      }
       get_hq_org_roles: {
         Args: never
         Returns: {
@@ -371,6 +385,17 @@ export type Database = {
       update_hq_system_config: {
         Args: { p_key: string; p_value: Json }
         Returns: boolean
+      }
+      upsert_hq_morning_digest: {
+        Args: {
+          p_data_sources?: string[]
+          p_executive_summary: string
+          p_generation_duration_ms?: number
+          p_model_used?: string
+          p_sections?: Json
+          p_triggered_by?: string
+        }
+        Returns: string
       }
     }
     Enums: {

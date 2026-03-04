@@ -1,46 +1,64 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Run } from "@/hooks/useHQData";
+
+export interface MorningDigest {
+  id: string;
+  digest_date: string;
+  executive_summary: string;
+  sections: Record<string, unknown>;
+  data_sources: string[];
+  model_used: string | null;
+  generation_duration_ms: number | null;
+  triggered_by: string;
+  created_at: string;
+}
 
 /**
- * Fetches the latest automated DAILY_EXECUTIVE_BRIEF run from today.
- * Used by BriefingRoom to auto-display the morning digest without user action.
+ * Fetches the latest morning digest from the dedicated hq.morning_digests table.
+ * Falls back to the latest DAILY_EXECUTIVE_BRIEF run if no dedicated digest exists.
  */
 export function useMorningDigest() {
   return useQuery({
     queryKey: ["hq", "morning-digest"],
-    queryFn: async (): Promise<Run | null> => {
-      const { data, error } = await supabase.rpc("get_hq_recent_runs", { limit_count: 50 });
+    queryFn: async (): Promise<MorningDigest | null> => {
+      // Try the dedicated morning_digests table first
+      const { data, error } = await supabase.rpc("get_hq_morning_digest" as any, {
+        p_date: new Date().toISOString().split("T")[0],
+      });
 
-      if (error) throw new Error(error.message);
+      if (!error && data && Array.isArray(data) && data.length > 0) {
+        return data[0] as MorningDigest;
+      }
 
-      const today = new Date().toDateString();
+      // Fallback: get from runs table
+      const { data: runs, error: runsError } = await supabase.rpc("get_hq_recent_runs", {
+        limit_count: 20,
+      });
 
-      // Find the latest completed automated DAILY_EXECUTIVE_BRIEF from today
-      const digest = (data as Run[])?.find(
+      if (runsError || !runs) return null;
+
+      const digest = (runs as any[])?.find(
         (r) =>
           r.run_type === "DAILY_EXECUTIVE_BRIEF" &&
           r.status === "completed" &&
-          r.executive_summary &&
-          !r.owner_requested &&
-          new Date(r.completed_at || r.created_at).toDateString() === today
+          r.executive_summary
       );
 
-      // Fallback: if no automated brief today, show the latest one (any source)
-      if (!digest) {
-        return (
-          (data as Run[])?.find(
-            (r) =>
-              r.run_type === "DAILY_EXECUTIVE_BRIEF" &&
-              r.status === "completed" &&
-              r.executive_summary
-          ) || null
-        );
-      }
+      if (!digest) return null;
 
-      return digest;
+      return {
+        id: digest.id,
+        digest_date: new Date(digest.created_at).toISOString().split("T")[0],
+        executive_summary: digest.executive_summary,
+        sections: digest.detailed_appendix || {},
+        data_sources: digest.detailed_appendix?.data_sources || [],
+        model_used: digest.detailed_appendix?.model_used || null,
+        generation_duration_ms: null,
+        triggered_by: digest.owner_requested ? "manual" : "scheduler",
+        created_at: digest.created_at,
+      };
     },
-    staleTime: 1000 * 60 * 2, // 2 min
-    refetchInterval: 1000 * 60 * 5, // poll every 5 min for new digest
+    staleTime: 1000 * 60 * 2,
+    refetchInterval: 1000 * 60 * 5,
   });
 }
