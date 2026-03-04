@@ -6,6 +6,7 @@ export interface CookieConsent {
 }
 
 const STORAGE_KEY = "ec_cookie_consent";
+const REOPEN_EVENT = "ec_cookie_reopen";
 
 function readConsent(): CookieConsent | null {
   try {
@@ -22,6 +23,13 @@ function readConsent(): CookieConsent | null {
 export function useCookieConsent() {
   const [consent, setConsentState] = useState<CookieConsent | null>(() => readConsent());
   const [showBanner, setShowBanner] = useState(() => readConsent() === null);
+
+  // Listen for reopen events from other component instances
+  useEffect(() => {
+    const handler = () => setShowBanner(true);
+    window.addEventListener(REOPEN_EVENT, handler);
+    return () => window.removeEventListener(REOPEN_EVENT, handler);
+  }, []);
 
   const saveConsent = useCallback((c: CookieConsent) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(c));
@@ -42,7 +50,7 @@ export function useCookieConsent() {
   }, [saveConsent]);
 
   const reopenBanner = useCallback(() => {
-    setShowBanner(true);
+    window.dispatchEvent(new Event(REOPEN_EVENT));
   }, []);
 
   return { consent, showBanner, acceptAll, rejectAll, saveCustom, reopenBanner };
