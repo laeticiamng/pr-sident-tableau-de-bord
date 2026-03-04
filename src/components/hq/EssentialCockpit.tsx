@@ -1,3 +1,4 @@
+import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -58,7 +59,7 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
         <div>
           <h2 className="text-2xl font-bold">Bonjour, Présidente</h2>
           <p className="text-muted-foreground">
-            Voici l'essentiel de vos 7 plateformes
+            Voici l'essentiel de vos {MANAGED_PLATFORMS.length} plateformes
           </p>
         </div>
         <Badge 

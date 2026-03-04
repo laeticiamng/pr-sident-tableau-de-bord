@@ -23,6 +23,7 @@ import { LTVSegmentChart } from "@/components/hq/data/LTVSegmentChart";
 import { FeatureAdoptionChart } from "@/components/hq/data/FeatureAdoptionChart";
 import { UserSegmentation } from "@/components/hq/data/UserSegmentation";
 import { cn } from "@/lib/utils";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 interface MetricCardProps {
   title: string;
@@ -103,14 +104,11 @@ export default function DataAnalyticsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-headline-1 mb-2">Data & Analytics</h1>
-          <p className="text-muted-foreground text-lg">
-            Analyse des cohortes, LTV, ROI et métriques business.
-          </p>
-        </div>
-      </div>
+      <ExecutiveHeader
+        title="Data & Analytics"
+        subtitle="Analyse des cohortes, LTV, ROI et métriques business"
+        source={{ source: "stripe", lastUpdated: new Date(), confidence: "high" }}
+      />
 
       {/* KPIs principaux depuis Stripe */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

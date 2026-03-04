@@ -9,6 +9,7 @@ import { CheckCircle, XCircle, AlertTriangle, Loader2, Clock } from "lucide-reac
 import { usePendingApprovals, useApproveAction } from "@/hooks/useHQData";
 import { ApprovalHistory } from "@/components/hq/approbations/ApprovalHistory";
 import { ApprovalStats } from "@/components/hq/approbations/ApprovalStats";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const riskColors = {
   low: "bg-status-green text-white",
@@ -52,12 +53,11 @@ export default function ApprobationsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-headline-1 mb-2">Approbations</h1>
-        <p className="text-muted-foreground text-lg">
-          Décisions en attente de votre validation.
-        </p>
-      </div>
+      <ExecutiveHeader
+        title="Approbations"
+        subtitle="Décisions en attente de votre validation"
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+      />
 
       {/* Stats Grid */}
       <ApprovalStats 

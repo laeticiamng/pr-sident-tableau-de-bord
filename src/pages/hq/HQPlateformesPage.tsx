@@ -24,6 +24,7 @@ import { usePlatforms, useExecuteRun } from "@/hooks/useHQData";
 import { MultiPlatformUptimeChart } from "@/components/hq/platforms/MultiPlatformUptimeChart";
 import { PlatformAnalysisDialog } from "@/components/hq/platforms/PlatformAnalysisDialog";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 // Helper to get real stats from constants
 const getPlatformStats = (key: string) => {
@@ -94,18 +95,17 @@ export default function HQPlateformesPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Cockpit Plateformes</h1>
-          <p className="text-muted-foreground text-lg">
-            Supervision des {MANAGED_PLATFORMS.length} plateformes gérées.
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => refetch()}>
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Cockpit Plateformes"
+        subtitle={`Supervision des ${MANAGED_PLATFORMS.length} plateformes gérées`}
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <Button variant="outline" onClick={() => refetch()}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        }
+      />
 
       {/* Summary Stats */}
       <div className="grid gap-4 md:grid-cols-4">

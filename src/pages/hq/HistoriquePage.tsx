@@ -20,6 +20,7 @@ import {
 import { useRecentRuns } from "@/hooks/useHQData";
 import { RunDetailsPanel } from "@/components/hq/history/RunDetailsPanel";
 import { RunExportButton } from "@/components/hq/history/RunExportButton";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const runTypeLabels: Record<string, string> = {
   DAILY_EXECUTIVE_BRIEF: "Brief Exécutif",
@@ -62,21 +63,20 @@ export default function HistoriquePage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Historique des Runs</h1>
-          <p className="text-muted-foreground text-lg">
-            Consultez l'historique complet des exécutions des agents.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <RunExportButton runs={runs || []} />
-          <Button variant="outline" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
-          </Button>
-        </div>
-      </div>
+      <ExecutiveHeader
+        title="Historique des Runs"
+        subtitle="Consultez l'historique complet des exécutions des agents"
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <div className="flex items-center gap-3">
+            <RunExportButton runs={runs || []} />
+            <Button variant="outline" onClick={() => refetch()}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualiser
+            </Button>
+          </div>
+        }
+      />
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">

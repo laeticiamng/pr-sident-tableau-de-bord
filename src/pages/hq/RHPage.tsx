@@ -23,6 +23,7 @@ import { OnboardingTracker } from "@/components/hq/rh/OnboardingTracker";
 import { TrainingCompletionWidget } from "@/components/hq/rh/TrainingCompletionWidget";
 import { PerformanceReview } from "@/components/hq/rh/PerformanceReview";
 import { AgentMonitoringDashboard } from "@/components/hq/AgentMonitoringDashboard";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -61,18 +62,18 @@ export default function RHPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Ressources & Agents IA</h1>
-          <p className="text-muted-foreground text-lg">
-            {totalAgents} agents configurés — performance en temps réel depuis les runs exécutés.
-          </p>
-        </div>
-        <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
-          Actualiser
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Ressources & Agents IA"
+        subtitle={`${totalAgents} agents configurés`}
+        context="Performance en temps réel depuis les runs exécutés."
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
+            Actualiser
+          </Button>
+        }
+      />
 
       {/* KPIs réels */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

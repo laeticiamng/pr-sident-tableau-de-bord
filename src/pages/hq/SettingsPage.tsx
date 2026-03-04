@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useApiStatus } from "@/hooks/useApiStatus";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const API_CONFIG = [
   {
@@ -71,33 +72,26 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-primary/10">
-            <Settings className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">Paramètres</h1>
-            <p className="text-muted-foreground">
-              Configuration des intégrations et API
-            </p>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => refetch()}
-          disabled={isFetching}
-        >
-          {isFetching ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          ) : (
-            <RefreshCw className="h-4 w-4 mr-2" />
-          )}
-          Actualiser
-        </Button>
-      </div>
+      <ExecutiveHeader
+        title="Paramètres"
+        subtitle="Configuration des intégrations et API"
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            {isFetching ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            Actualiser
+          </Button>
+        }
+      />
 
       {/* Status Summary */}
       <Card className="card-executive">

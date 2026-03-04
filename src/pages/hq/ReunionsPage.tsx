@@ -18,6 +18,7 @@ import { UpcomingMeetings } from "@/components/hq/meetings/UpcomingMeetings";
 import { MeetingNotes } from "@/components/hq/meetings/MeetingNotes";
 import { ParticipationIndicator } from "@/components/hq/meetings/ParticipationIndicator";
 import { ActionItems } from "@/components/hq/meetings/ActionItems";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 const meetingTypes = [
   { 
@@ -64,12 +65,12 @@ export default function ReunionsPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div>
-        <h1 className="text-headline-1 mb-2">Réunions</h1>
-        <p className="text-muted-foreground text-lg">
-          Gérez et consultez les comptes-rendus des réunions exécutives.
-        </p>
-      </div>
+      <ExecutiveHeader
+        title="Réunions"
+        subtitle="Comptes-rendus des réunions exécutives"
+        context="Gérez et consultez les réunions avec les agents IA directeurs."
+        source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
+      />
 
       {/* Quick Start Meeting */}
       <div className="grid gap-4 md:grid-cols-3">

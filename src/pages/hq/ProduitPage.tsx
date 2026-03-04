@@ -13,25 +13,25 @@ import { OKRProgress } from "@/components/hq/product/OKRProgress";
 import { RoadmapExportButton } from "@/components/hq/product/RoadmapExportButton";
 import { ReleaseTimeline } from "@/components/hq/product/ReleaseTimeline";
 import { FeatureRequests } from "@/components/hq/product/FeatureRequests";
+import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
 export default function ProduitPage() {
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-headline-1 mb-2">Produit & Roadmap</h1>
-          <p className="text-muted-foreground text-lg">
-            Gouvernance produit et suivi des objectifs.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <RoadmapExportButton />
-          <Button variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
-          </Button>
-        </div>
-      </div>
+      <ExecutiveHeader
+        title="Produit & Roadmap"
+        subtitle="Gouvernance produit et suivi des objectifs"
+        source={{ source: "mock", lastUpdated: new Date(), confidence: "medium" }}
+        actions={
+          <div className="flex items-center gap-3">
+            <RoadmapExportButton />
+            <Button variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualiser
+            </Button>
+          </div>
+        }
+      />
 
       {/* Platform Roadmaps - État vide */}
       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
