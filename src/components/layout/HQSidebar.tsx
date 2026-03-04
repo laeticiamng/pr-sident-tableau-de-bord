@@ -23,6 +23,7 @@ import {
   TrendingUp,
   Briefcase,
   DollarSign,
+  Mail,
   Package,
   HeadphonesIcon,
   Eye,
@@ -41,6 +42,7 @@ const mainLinks = [
   { href: "/hq/plateformes", label: "Mes Plateformes", icon: Layers },
   { href: "/hq/approbations", label: "Approbations", icon: CheckSquare, showBadge: true },
   { href: "/hq/cockpit", label: "Cockpit", icon: Gauge },
+  { href: "/hq/messages", label: "Messages", icon: Mail },
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
 ];
 
