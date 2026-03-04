@@ -1,5 +1,5 @@
-// Constantes pour les 7 plateformes managées (immuable)
-// Données synchronisées depuis GitHub - 8 Février 2026
+// Constantes pour les 8 plateformes managées (immuable)
+// Données synchronisées depuis GitHub - 4 Mars 2026
 export const MANAGED_PLATFORMS = [
   {
     key: "emotionscare",
@@ -98,6 +98,20 @@ export const MANAGED_PLATFORMS = [
     features: ["Soumissions hebdomadaires", "Votes communautaires", "Classements par catégorie", "Hall of Fame", "Feedback IA"],
     status: "production",
     lastCommit: "2026-02-05",
+  },
+  {
+    key: "trust-seal-chain",
+    name: "Gouvernance Agents IA",
+    shortDescription: "Certification et traçabilité des agents IA",
+    description: "Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance, audit automatisé des décisions algorithmiques, scoring éthique et conformité AI Act européen. Chaque agent est certifié, chaque décision est traçable.",
+    tagline: "La confiance IA, certifiée et traçable",
+    github: "https://github.com/laeticiamng/trust-seal-chain",
+    liveUrl: "https://trust-seal-chain.lovable.app",
+    color: "bg-platform-governance",
+    stats: { modules: 8, tables: 20, edgeFunctions: 12, branches: 3, commits: 450, tests: 85 },
+    features: ["Trust Seal certification", "Audit trail IA", "Scoring éthique", "Conformité AI Act", "Registre agents"],
+    status: "prototype",
+    lastCommit: "2026-03-01",
   },
 ] as const;
 

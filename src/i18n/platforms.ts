@@ -4,7 +4,7 @@ export const platformsTranslations = {
       badge: "Écosystème Complet",
       title: "Nos",
       titleAccent: "Plateformes",
-      subtitle: "Sept solutions innovantes, une vision unifiée. Chaque plateforme excelle dans son domaine.",
+      subtitle: "Huit solutions innovantes, une vision unifiée. Chaque plateforme excelle dans son domaine.",
     },
     stats: {
       platforms: "Plateformes",
@@ -37,7 +37,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Gouvernance Unifiée",
       title1: "Un siège.",
-      title2: "Sept excellences.",
+      title2: "Huit excellences.",
       subtitle: "Toutes nos plateformes partagent la même infrastructure backend, les mêmes standards de sécurité et la même rigueur d'exécution.",
       cta: "Nous contacter",
     },
@@ -47,7 +47,7 @@ export const platformsTranslations = {
       badge: "Complete Ecosystem",
       title: "Our",
       titleAccent: "Platforms",
-      subtitle: "Seven innovative solutions, one unified vision. Each platform excels in its domain.",
+      subtitle: "Eight innovative solutions, one unified vision. Each platform excels in its domain.",
     },
     stats: {
       platforms: "Platforms",
@@ -80,7 +80,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Unified Governance",
       title1: "One headquarters.",
-      title2: "Seven excellences.",
+      title2: "Eight excellences.",
       subtitle: "All our platforms share the same backend infrastructure, the same security standards and the same execution rigor.",
       cta: "Contact us",
     },
@@ -90,7 +90,7 @@ export const platformsTranslations = {
       badge: "Vollständiges Ökosystem",
       title: "Unsere",
       titleAccent: "Plattformen",
-      subtitle: "Sieben innovative Lösungen, eine einheitliche Vision. Jede Plattform glänzt in ihrem Bereich.",
+      subtitle: "Acht innovative Lösungen, eine einheitliche Vision. Jede Plattform glänzt in ihrem Bereich.",
     },
     stats: {
       platforms: "Plattformen",
@@ -123,7 +123,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Einheitliche Governance",
       title1: "Ein Hauptsitz.",
-      title2: "Sieben Spitzenleistungen.",
+      title2: "Acht Spitzenleistungen.",
       subtitle: "Alle unsere Plattformen teilen die gleiche Backend-Infrastruktur, die gleichen Sicherheitsstandards und die gleiche Ausführungsstrenge.",
       cta: "Kontaktieren Sie uns",
     },

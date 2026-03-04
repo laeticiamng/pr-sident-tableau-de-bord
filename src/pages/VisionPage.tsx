@@ -74,7 +74,7 @@ export default function VisionPage() {
         <div className="container">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: 7, suffix: "", label: t.stats.platforms, icon: Layers },
+              { value: MANAGED_PLATFORMS.length, suffix: "", label: t.stats.platforms, icon: Layers },
               { value: 39, suffix: "", label: t.stats.aiAgents, icon: Rocket },
               { value: 100, suffix: "%", label: t.stats.madeInFrance, icon: Shield },
               { value: 24, suffix: "/7", label: t.stats.monitoring, icon: Award },

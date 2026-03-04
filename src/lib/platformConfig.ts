@@ -8,6 +8,7 @@ import {
   Music,
   HeartPulse,
   Trophy,
+  ShieldCheck,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -20,6 +21,7 @@ export const PLATFORM_ICONS: Record<string, LucideIcon> = {
   "med-mng": Music,
   "swift-care-hub": HeartPulse,
   "track-triumph-tavern": Trophy,
+  "trust-seal-chain": ShieldCheck,
 };
 
 // Couleurs d'accentuation texte (semantic tokens Tailwind)
@@ -31,6 +33,7 @@ export const PLATFORM_ACCENTS: Record<string, string> = {
   "med-mng": "text-platform-medical",
   "swift-care-hub": "text-platform-emergency",
   "track-triumph-tavern": "text-platform-triumph",
+  "trust-seal-chain": "text-platform-governance",
 };
 
 // Couleurs d'accentuation fond
@@ -42,6 +45,7 @@ export const PLATFORM_BG_ACCENTS: Record<string, string> = {
   "med-mng": "bg-platform-medical",
   "swift-care-hub": "bg-platform-emergency",
   "track-triumph-tavern": "bg-platform-triumph",
+  "trust-seal-chain": "bg-platform-governance",
 };
 
 // Dégradés pour les cartes (hover)
@@ -53,6 +57,7 @@ export const PLATFORM_GRADIENTS: Record<string, string> = {
   "med-mng": "from-platform-medical/20 via-platform-medical/5 to-transparent",
   "swift-care-hub": "from-platform-emergency/20 via-platform-emergency/5 to-transparent",
   "track-triumph-tavern": "from-platform-triumph/20 via-platform-triumph/5 to-transparent",
+  "trust-seal-chain": "from-platform-governance/20 via-platform-governance/5 to-transparent",
 };
 
 // Bordures hover
@@ -64,6 +69,7 @@ export const PLATFORM_BORDERS: Record<string, string> = {
   "med-mng": "hover:border-platform-medical/40",
   "swift-care-hub": "hover:border-platform-emergency/40",
   "track-triumph-tavern": "hover:border-platform-triumph/40",
+  "trust-seal-chain": "hover:border-platform-governance/40",
 };
 
 // Bordures hover pour les cartes groupe
@@ -75,6 +81,7 @@ export const PLATFORM_GROUP_BORDERS: Record<string, string> = {
   "med-mng": "group-hover:border-platform-medical/30",
   "swift-care-hub": "group-hover:border-platform-emergency/30",
   "track-triumph-tavern": "group-hover:border-platform-triumph/30",
+  "trust-seal-chain": "group-hover:border-platform-governance/30",
 };
 
 // Labels de statut

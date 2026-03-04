@@ -78,6 +78,7 @@ export default {
           medical: "hsl(var(--platform-medical))",
           emergency: "hsl(var(--platform-emergency))",
           triumph: "hsl(var(--platform-triumph))",
+          governance: "hsl(var(--platform-governance))",
         },
       },
       borderRadius: {
