@@ -11,6 +11,7 @@ import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
 import { PageLoader } from "@/components/ui/skeleton-loader";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 
 // Layouts - loaded immediately (needed for structure)
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -90,6 +91,7 @@ const App = () => (
             <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <ScrollToTop />
               <AnalyticsProvider />
+              <CookieConsentBanner />
               <Suspense fallback={<PageLoader />}>
               <Routes>
                 {/* Public Routes */}

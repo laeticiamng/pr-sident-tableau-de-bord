@@ -2,6 +2,7 @@ import { useEffect, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { Json } from "@/integrations/supabase/types";
+import { hasAnalyticsConsent } from "@/hooks/useCookieConsent";
 
 // Generate a simple anonymous session ID (persisted in sessionStorage)
 function getSessionId(): string {
@@ -33,6 +34,8 @@ export function useAnalytics() {
   const lastTrackedPath = useRef<string>("");
 
   const trackEvent = useCallback(async ({ eventType, eventName, eventData, pagePath }: TrackEventParams) => {
+    // Gate analytics behind GDPR consent
+    if (!hasAnalyticsConsent()) return;
     try {
       await supabase.from("analytics_events").insert([{
         event_type: eventType,
