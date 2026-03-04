@@ -26,6 +26,7 @@ import { useMorningDigest } from "@/hooks/useMorningDigest";
 import { Link } from "react-router-dom";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
 import ReactMarkdown from "react-markdown";
+import { RecentDecisionsWidget } from "@/components/hq/briefing/RecentDecisionsWidget";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -315,6 +316,9 @@ export default function BriefingRoom() {
           </CardContent>
         </Card>
       )}
+
+      {/* Décisions récentes du Journal */}
+      <RecentDecisionsWidget />
 
       {/* Parcours guidé — 3 actions claires */}
       <div>
