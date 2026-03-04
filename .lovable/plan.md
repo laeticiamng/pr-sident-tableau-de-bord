@@ -1,81 +1,46 @@
 
 
-## Plan : Internationalisation FR/EN/DE des pages publiques
+## Plan : Ajouter la 8e plateforme "Gouvernance Agents IA"
 
-### Approche technique
+### Contexte
+L'écosystème référence actuellement 7 plateformes. Il faut ajouter une 8e plateforme avec la clé `trust-seal-chain`, l'URL `https://trust-seal-chain.lovable.app`, et des données réalistes basées sur le nom "Gouvernance Agents IA".
 
-Système i18n léger sans dépendance externe : un `LanguageContext` React + dictionnaires de traduction par page + sélecteur de langue dans le header public.
+### Fichiers à modifier
 
-### Architecture
+**1. `src/lib/constants.ts`** — Ajouter l'entrée dans `MANAGED_PLATFORMS`
+- Clé : `trust-seal-chain`
+- Nom : Gouvernance Agents IA
+- Description : Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance, audit automatisé des décisions algorithmiques, scoring éthique et conformité AI Act européen.
+- Tagline : "La confiance IA, certifiée et traçable"
+- Stats réalistes (modules: 8, tables: 20, edgeFunctions: 12, branches: 3, commits: 450, tests: 85)
+- Features : Trust Seal certification, Audit trail IA, Scoring éthique, Conformité AI Act, Registre agents
+- Statut : prototype
+- Mettre à jour le commentaire "7 → 8 plateformes"
 
-```text
-src/
-├── contexts/LanguageContext.tsx      ← Context + hook useLanguage()
-├── i18n/
-│   ├── types.ts                     ← Type Language = 'fr' | 'en' | 'de'
-│   ├── common.ts                    ← Header, footer, boutons communs
-│   ├── home.ts                      ← Textes HomePage
-│   ├── platforms.ts                 ← Textes PlateformesPage
-│   ├── vision.ts                    ← Textes VisionPage
-│   ├── contact.ts                   ← Textes ContactPage
-│   ├── trust.ts                     ← Textes TrustPage
-│   ├── status.ts                    ← Textes StatusPage
-│   └── legal.ts                     ← Textes CGV, Mentions, Confidentialité
-├── components/LanguageSwitcher.tsx   ← Dropdown FR/EN/DE avec drapeaux
-```
+**2. `src/lib/platformConfig.ts`** — Ajouter la clé `trust-seal-chain` dans les 5 registres
+- Icône : `ShieldCheck` (lucide-react)
+- Couleur : nouvelle variable `platform-governance` (bleu-violet pour la confiance/gouvernance)
 
-### Fichiers modifiés
+**3. `tailwind.config.ts`** — Ajouter `governance: "hsl(var(--platform-governance))"` dans `platform`
 
-| Fichier | Modification |
-|---------|-------------|
-| `PublicHeader.tsx` | Ajouter `<LanguageSwitcher />` à côté du ThemeToggle |
-| `PublicFooter.tsx` | Traduire labels navigation + légal |
-| `PublicLayout.tsx` | Wrapper avec `<LanguageProvider>` |
-| `HomePage.tsx` | Remplacer textes hardcodés par `t.hero.title`, etc. |
-| `PlateformesPage.tsx` | Idem |
-| `VisionPage.tsx` | Idem |
-| `ContactPage.tsx` | Idem |
-| `TrustPage.tsx` | Idem |
-| `StatusPage.tsx` | Idem |
-| 3 pages légales | Idem |
+**4. `src/index.css`** — Ajouter la variable CSS `--platform-governance` (teinte bleu-violet ~250)
 
-### Fonctionnement
+**5. Traductions i18n** — Mettre à jour les mentions "7 → 8" dans :
+- `src/i18n/common.ts` : footer description
+- `src/i18n/home.ts` : "Sept → Huit plateformes" / "Seven → Eight platforms"
+- `src/i18n/platforms.ts` : subtitle, governance section ("Sept → Huit excellences")
+- `src/i18n/vision.ts` : "7 platforms · 1 mission" → "8 platforms · 1 mission"
 
-1. **LanguageContext** stocke la langue dans `localStorage` (clé `preferred-lang`, défaut `fr`)
-2. **`useTranslation(page)`** retourne l'objet de traductions pour la page courante
-3. **LanguageSwitcher** : dropdown compact avec 🇫🇷 🇬🇧 🇩🇪, placé dans le header public uniquement
-4. Les pages HQ restent 100% en français (non impactées)
+**6. `src/pages/PlateformesPage.tsx`** — Changer les valeurs hardcodées `"7"` en calcul dynamique (`allPlatforms.length`)
 
-### Volume estimé
+**7. `src/pages/VisionPage.tsx`** — Changer la valeur hardcodée `7` en `MANAGED_PLATFORMS.length`
 
-- ~10 nouveaux fichiers (contexte + 8 dictionnaires + switcher)
-- ~10 fichiers modifiés (pages + layout + header + footer)
-- ~2000 lignes de traductions (FR déjà existant, EN + DE à créer)
+**8. Pages HQ** — Mettre à jour `totalPlatforms` fallback de `7` à `8` dans :
+- `src/pages/hq/BriefingRoom.tsx`
+- `src/components/hq/cockpit/KeyMetricsGrid.tsx`
 
-### Détail technique
+**9. Documentation** — Mettre à jour `docs/PLATFORM_AUDIT_AND_PLAN.md` avec la 8e plateforme
 
-Chaque dictionnaire suit la structure :
-```typescript
-// src/i18n/home.ts
-export const homeTranslations = {
-  fr: {
-    hero: { badge: "Siège Social Numérique", title: "EMOTIONSCARE", ... },
-    features: { sectionTitle: "Fonctionnalités du Siège Numérique", ... },
-  },
-  en: {
-    hero: { badge: "Digital Headquarters", title: "EMOTIONSCARE", ... },
-    features: { sectionTitle: "Digital HQ Features", ... },
-  },
-  de: {
-    hero: { badge: "Digitaler Hauptsitz", title: "EMOTIONSCARE", ... },
-    features: { sectionTitle: "Funktionen des digitalen Hauptsitzes", ... },
-  },
-} as const;
-```
-
-Le hook :
-```typescript
-const { t } = useTranslation('home');
-// t.hero.title → string selon la langue active
-```
+### Résultat
+La plateforme apparaîtra automatiquement sur `/plateformes`, dans le cockpit HQ, le briefing room et toutes les vues qui itèrent sur `MANAGED_PLATFORMS`.
 
