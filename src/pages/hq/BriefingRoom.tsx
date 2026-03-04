@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileBriefing } from "@/components/hq/MobileBriefing";
 import {
   Phone,
   PhoneCall,
@@ -28,6 +30,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
 export default function BriefingRoom() {
+  const isMobile = useIsMobile();
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
@@ -120,6 +123,8 @@ export default function BriefingRoom() {
         );
     }
   };
+
+  if (isMobile) return <MobileBriefing />;
 
   return (
     <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
