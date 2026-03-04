@@ -18,6 +18,8 @@ import {
 import { JournalPDFExport } from "@/components/hq/journal/JournalPDFExport";
 import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { usePlatforms } from "@/hooks/useHQData";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -82,8 +84,10 @@ function NewEntryDialog({ onCreated }: { onCreated?: () => void }) {
 
 function ImpactDialog({ entry }: { entry: JournalEntry }) {
   const update = useUpdateJournalEntry();
+  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [summary, setSummary] = useState(entry.impact_measured?.summary || "");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleSave = async () => {
     await update.mutateAsync({
@@ -91,6 +95,47 @@ function ImpactDialog({ entry }: { entry: JournalEntry }) {
       impact_measured: { summary: summary.trim(), date: new Date().toISOString() },
     });
     setOpen(false);
+  };
+
+  const handleAIAnalysis = async () => {
+    setIsAnalyzing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("journal-impact", {
+        body: {
+          entry_id: entry.id,
+          entry_title: entry.title,
+          entry_content: entry.content,
+          entry_type: entry.entry_type,
+          entry_date: entry.created_at,
+          entry_tags: entry.tags,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) {
+        toast({
+          title: "Erreur IA",
+          description: data.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setSummary(data.analysis || "");
+      // Also refresh data since edge function saved it
+      toast({
+        title: "✅ Analyse IA terminée",
+        description: "L'impact a été analysé en comparant les KPIs avant/après votre décision.",
+      });
+    } catch (e: any) {
+      toast({
+        title: "Erreur",
+        description: e?.message || "Impossible d'analyser l'impact",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -101,16 +146,35 @@ function ImpactDialog({ entry }: { entry: JournalEntry }) {
           {entry.impact_measured ? "Modifier l'impact" : "Mesurer l'impact"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Impact mesuré — {entry.title}</DialogTitle>
+          <DialogTitle>Impact — {entry.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-2">
+          {/* AI Analysis button */}
+          <Button
+            variant="secondary"
+            className="w-full gap-2"
+            onClick={handleAIAnalysis}
+            disabled={isAnalyzing}
+          >
+            {isAnalyzing ? (
+              <><Loader2 className="h-4 w-4 animate-spin" /> Analyse IA en cours… (KPIs avant/après)</>
+            ) : (
+              <><Brain className="h-4 w-4" /> Analyser l'impact par IA</>
+            )}
+          </Button>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t" /></div>
+            <div className="relative flex justify-center text-xs"><span className="bg-background px-2 text-muted-foreground">ou saisir manuellement</span></div>
+          </div>
+
           <Textarea
             placeholder="Quel a été l'impact réel de cette décision ? Ex: MRR +12%, churn réduit de 3%..."
             value={summary}
             onChange={e => setSummary(e.target.value)}
-            rows={4}
+            rows={6}
           />
           <Button onClick={handleSave} disabled={!summary.trim() || update.isPending} className="w-full">
             Enregistrer l'impact
