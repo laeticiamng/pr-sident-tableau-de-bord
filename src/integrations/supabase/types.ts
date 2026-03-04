@@ -145,10 +145,21 @@ export type Database = {
         Returns: boolean
       }
       create_hq_conversation: { Args: { p_title?: string }; Returns: string }
+      create_hq_journal_entry: {
+        Args: {
+          p_content?: string
+          p_entry_type?: string
+          p_linked_kpis?: Json
+          p_tags?: string[]
+          p_title: string
+        }
+        Returns: string
+      }
       delete_hq_conversation: {
         Args: { p_conversation_id: string }
         Returns: boolean
       }
+      delete_hq_journal_entry: { Args: { p_id: string }; Returns: boolean }
       get_all_hq_platforms: {
         Args: never
         Returns: {
@@ -208,6 +219,21 @@ export type Database = {
           created_at: string
           id: string
           last_message: string
+          title: string
+          updated_at: string
+        }[]
+      }
+      get_hq_journal_entries: {
+        Args: { limit_count?: number }
+        Returns: {
+          content: string
+          created_at: string
+          entry_type: string
+          id: string
+          impact_measured: Json
+          is_pinned: boolean
+          linked_kpis: Json
+          tags: string[]
           title: string
           updated_at: string
         }[]
@@ -331,6 +357,17 @@ export type Database = {
       }
       is_owner: { Args: never; Returns: boolean }
       purge_old_hq_logs: { Args: { retention_days?: number }; Returns: number }
+      update_hq_journal_entry: {
+        Args: {
+          p_content?: string
+          p_id: string
+          p_impact_measured?: Json
+          p_is_pinned?: boolean
+          p_tags?: string[]
+          p_title?: string
+        }
+        Returns: boolean
+      }
       update_hq_system_config: {
         Args: { p_key: string; p_value: Json }
         Returns: boolean

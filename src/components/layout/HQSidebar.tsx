@@ -34,6 +34,7 @@ import {
   Bot,
   Scale,
   BarChart3,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
@@ -43,6 +44,7 @@ const mainLinks = [
   { href: "/hq", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/hq/plateformes", label: "Mes Plateformes", icon: Layers },
   { href: "/hq/approbations", label: "Approbations", icon: CheckSquare, showBadge: true },
+  { href: "/hq/journal", label: "Journal", icon: BookOpen },
   { href: "/hq/cockpit", label: "Cockpit", icon: Gauge },
   { href: "/hq/messages", label: "Messages", icon: Mail, showMessagesBadge: true },
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
