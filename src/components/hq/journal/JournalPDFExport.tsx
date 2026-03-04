@@ -91,6 +91,9 @@ function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
   const withImpact = entries.filter(e => e.impact_measured?.summary);
   const withoutImpact = decisions.filter(e => !e.impact_measured?.summary);
 
+  // Monthly chart data
+  const monthlyData = buildMonthlyChart(entries);
+
   const entryRows = entries.map(entry => {
     const typeLabel = TYPE_LABELS[entry.entry_type] || entry.entry_type;
     const dateFormatted = format(new Date(entry.created_at), "d MMM yyyy", { locale: fr });
@@ -172,6 +175,31 @@ function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
     </div>
   </div>
 
+  <!-- Monthly Chart -->
+  ${monthlyData.length > 1 ? `
+  <div style="margin-bottom:24px;padding:16px;border:1px solid #e2e8f0;border-radius:8px;background:#fafafa;">
+    <h3 style="font-size:13px;font-weight:600;margin-bottom:12px;color:#0f172a;">Évolution des décisions par mois</h3>
+    <svg viewBox="0 0 ${monthlyData.length * 60} 140" style="width:100%;height:120px;" xmlns="http://www.w3.org/2000/svg">
+      ${monthlyData.map((d, i) => {
+        const maxVal = Math.max(...monthlyData.map(m => m.total), 1);
+        const barH = (d.decisions / maxVal) * 90;
+        const totalH = (d.total / maxVal) * 90;
+        const x = i * 60 + 10;
+        return `
+          <rect x="${x}" y="${100 - totalH}" width="20" height="${totalH}" rx="3" fill="#e2e8f0" />
+          <rect x="${x}" y="${100 - barH}" width="20" height="${barH}" rx="3" fill="#6366f1" />
+          <text x="${x + 10}" y="115" text-anchor="middle" style="font-size:9px;fill:#64748b;">${d.label}</text>
+          <text x="${x + 10}" y="${98 - totalH}" text-anchor="middle" style="font-size:9px;fill:#0f172a;font-weight:600;">${d.total}</text>
+        `;
+      }).join("")}
+    </svg>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:#64748b;">
+      <span><span style="display:inline-block;width:10px;height:10px;background:#6366f1;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Décisions</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:#e2e8f0;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Total entrées</span>
+    </div>
+  </div>
+  ` : ""}
+
   <!-- Entries table -->
   <table style="width:100%;border-collapse:collapse;font-size:12px;">
     <thead>
@@ -193,6 +221,23 @@ function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
   </div>
 </body>
 </html>`;
+}
+
+function buildMonthlyChart(entries: JournalEntry[]): { label: string; total: number; decisions: number }[] {
+  const map = new Map<string, { total: number; decisions: number }>();
+  for (const e of entries) {
+    const key = format(new Date(e.created_at), "yyyy-MM");
+    const existing = map.get(key) || { total: 0, decisions: 0 };
+    existing.total++;
+    if (e.entry_type === "decision") existing.decisions++;
+    map.set(key, existing);
+  }
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, val]) => ({
+      label: format(new Date(key + "-01"), "MMM yy", { locale: fr }),
+      ...val,
+    }));
 }
 
 function typeColor(type: string): string {
