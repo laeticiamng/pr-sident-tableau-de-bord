@@ -1,42 +1,81 @@
 
 
-## Analyse des 8 tickets vs. état actuel du projet
+## Plan : Internationalisation FR/EN/DE des pages publiques
 
-### Tickets DÉJÀ TERMINÉS
+### Approche technique
 
-| Ticket | Statut | Preuve |
-|--------|--------|--------|
-| **T3 — Hardening OG absolu + preload** | ✅ DONE | `index.html` contient déjà : URL absolue `og:image`, `og:image:width=1200`, `og:image:height=630`, `og:image:type=image/png`, `og:image:alt`, et `<link rel="preload" as="image" href="/og-image.png" />` |
-| **T4 — OG premium par page** | ✅ DONE | Les 6 pages publiques utilisent déjà `usePageMeta` avec title + description uniques : `/` (HomePage), `/plateformes`, `/vision`, `/trust`, `/status`, `/contact`. Le hook gère le cleanup au démontage. |
-| **T5 — JSON-LD validation stricte** | ✅ DONE | 7 blocs `application/ld+json` statiques confirmés dans `index.html` : Organization, WebSite, FAQPage, ItemList, AboutPage, WebPage (trust), BreadcrumbList. |
-| **T8 — RLS immutabilité analytics_events** | ✅ DONE | Migration `20260303170814` appliquée : `CREATE POLICY "Deny all updates on analytics_events" ... USING (false)`. Confirmé par le dernier scan de sécurité. |
+Système i18n léger sans dépendance externe : un `LanguageContext` React + dictionnaires de traduction par page + sélecteur de langue dans le header public.
 
-### Tickets RESTANTS à implémenter
+### Architecture
 
-| Ticket | Priorité | Action requise |
-|--------|----------|----------------|
-| **T1 — Publish + validation OG** | P0 | Action manuelle : cliquer Publish, puis tester sur opengraph.xyz pour `/`, `/plateformes`, `/vision`. Aucun code à modifier. |
-| **T2 — OG image pixel-perfect** | P0 | En attente de l'image Canva. L'utilisateur doit la glisser dans le chat pour remplacement de `public/og-image.png`. |
-| **T6 — Rich Results Test FAQPage** | P1 | Action manuelle post-publish : soumettre l'URL sur [Google Rich Results Test](https://search.google.com/test/rich-results). Le JSON-LD FAQPage est déjà en place et syntaxiquement valide. |
-| **T7 — Google Search Console** | P2 | Nécessite une balise `<meta name="google-site-verification" content="...">` dans `index.html`. L'utilisateur doit fournir le code de vérification GSC. Ensuite : soumettre sitemap, inspecter URLs. |
-
-### Plan d'implémentation (2 tickets codables)
-
-**T2 — OG image** : Aucun code a modifier. Dès que l'image est fournie, remplacement direct de `public/og-image.png`.
-
-**T7 — GSC verification** : Ajout d'une seule ligne dans `index.html` (dans `<head>`) :
-```html
-<meta name="google-site-verification" content="CODE_FOURNI_PAR_UTILISATEUR" />
+```text
+src/
+├── contexts/LanguageContext.tsx      ← Context + hook useLanguage()
+├── i18n/
+│   ├── types.ts                     ← Type Language = 'fr' | 'en' | 'de'
+│   ├── common.ts                    ← Header, footer, boutons communs
+│   ├── home.ts                      ← Textes HomePage
+│   ├── platforms.ts                 ← Textes PlateformesPage
+│   ├── vision.ts                    ← Textes VisionPage
+│   ├── contact.ts                   ← Textes ContactPage
+│   ├── trust.ts                     ← Textes TrustPage
+│   ├── status.ts                    ← Textes StatusPage
+│   └── legal.ts                     ← Textes CGV, Mentions, Confidentialité
+├── components/LanguageSwitcher.tsx   ← Dropdown FR/EN/DE avec drapeaux
 ```
 
-### Actions requises de l'utilisateur
+### Fichiers modifiés
 
-1. **Fournir l'image OG Canva** (T2) — glisser dans le chat
-2. **Publier le site** (T1) — bouton Publish en haut à droite
-3. **Fournir le code GSC** (T7) — depuis Google Search Console > Paramètres > Vérification
-4. **Tester manuellement** (T1, T6) — opengraph.xyz + Rich Results Test post-publish
+| Fichier | Modification |
+|---------|-------------|
+| `PublicHeader.tsx` | Ajouter `<LanguageSwitcher />` à côté du ThemeToggle |
+| `PublicFooter.tsx` | Traduire labels navigation + légal |
+| `PublicLayout.tsx` | Wrapper avec `<LanguageProvider>` |
+| `HomePage.tsx` | Remplacer textes hardcodés par `t.hero.title`, etc. |
+| `PlateformesPage.tsx` | Idem |
+| `VisionPage.tsx` | Idem |
+| `ContactPage.tsx` | Idem |
+| `TrustPage.tsx` | Idem |
+| `StatusPage.tsx` | Idem |
+| 3 pages légales | Idem |
 
-### Résumé
+### Fonctionnement
 
-4 tickets sur 8 sont déjà complétés. Les 4 restants sont principalement des actions manuelles (publish, tests externes) avec au maximum 2 lignes de code à ajouter (T7). Aucun sprint de développement n'est nécessaire — il s'agit d'un sprint de validation et release.
+1. **LanguageContext** stocke la langue dans `localStorage` (clé `preferred-lang`, défaut `fr`)
+2. **`useTranslation(page)`** retourne l'objet de traductions pour la page courante
+3. **LanguageSwitcher** : dropdown compact avec 🇫🇷 🇬🇧 🇩🇪, placé dans le header public uniquement
+4. Les pages HQ restent 100% en français (non impactées)
+
+### Volume estimé
+
+- ~10 nouveaux fichiers (contexte + 8 dictionnaires + switcher)
+- ~10 fichiers modifiés (pages + layout + header + footer)
+- ~2000 lignes de traductions (FR déjà existant, EN + DE à créer)
+
+### Détail technique
+
+Chaque dictionnaire suit la structure :
+```typescript
+// src/i18n/home.ts
+export const homeTranslations = {
+  fr: {
+    hero: { badge: "Siège Social Numérique", title: "EMOTIONSCARE", ... },
+    features: { sectionTitle: "Fonctionnalités du Siège Numérique", ... },
+  },
+  en: {
+    hero: { badge: "Digital Headquarters", title: "EMOTIONSCARE", ... },
+    features: { sectionTitle: "Digital HQ Features", ... },
+  },
+  de: {
+    hero: { badge: "Digitaler Hauptsitz", title: "EMOTIONSCARE", ... },
+    features: { sectionTitle: "Funktionen des digitalen Hauptsitzes", ... },
+  },
+} as const;
+```
+
+Le hook :
+```typescript
+const { t } = useTranslation('home');
+// t.hero.title → string selon la langue active
+```
 
