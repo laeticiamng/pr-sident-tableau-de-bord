@@ -32,13 +32,14 @@ export const platformsTranslations = {
       versions: "Versions",
       integrations: "Intégrations",
       lastUpdate: "Dernière MAJ",
+      modulesLabel: "Modules",
     },
     governance: {
       badge: "Gouvernance Unifiée",
       title1: "Un siège.",
       title2: "Sept excellences.",
       subtitle: "Toutes nos plateformes partagent la même infrastructure backend, les mêmes standards de sécurité et la même rigueur d'exécution.",
-      cta: "Accéder au tableau de bord",
+      cta: "Nous contacter",
     },
   },
   en: {
@@ -74,13 +75,14 @@ export const platformsTranslations = {
       versions: "Versions",
       integrations: "Integrations",
       lastUpdate: "Last update",
+      modulesLabel: "Modules",
     },
     governance: {
       badge: "Unified Governance",
       title1: "One headquarters.",
       title2: "Seven excellences.",
       subtitle: "All our platforms share the same backend infrastructure, the same security standards and the same execution rigor.",
-      cta: "Access the dashboard",
+      cta: "Contact us",
     },
   },
   de: {
@@ -116,13 +118,14 @@ export const platformsTranslations = {
       versions: "Versionen",
       integrations: "Integrationen",
       lastUpdate: "Letztes Update",
+      modulesLabel: "Module",
     },
     governance: {
       badge: "Einheitliche Governance",
       title1: "Ein Hauptsitz.",
       title2: "Sieben Spitzenleistungen.",
       subtitle: "Alle unsere Plattformen teilen die gleiche Backend-Infrastruktur, die gleichen Sicherheitsstandards und die gleiche Ausführungsstrenge.",
-      cta: "Zum Dashboard",
+      cta: "Kontaktieren Sie uns",
     },
   },
 } as const;
