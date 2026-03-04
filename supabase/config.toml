@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.check-push-triggers]
 verify_jwt = false
+
+[functions.journal-impact]
+verify_jwt = false
