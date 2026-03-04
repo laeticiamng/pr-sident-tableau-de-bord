@@ -19,6 +19,7 @@ import {
 import { useApiStatus } from "@/hooks/useApiStatus";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
+import { PushNotificationSettings } from "@/components/hq/PushNotificationSettings";
 
 const API_CONFIG = [
   {
@@ -190,6 +191,11 @@ export default function SettingsPage() {
           );
         })}
       </div>
+
+      <Separator />
+
+      {/* Push Notifications */}
+      <PushNotificationSettings />
 
       <Separator />
 
