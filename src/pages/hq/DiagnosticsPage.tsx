@@ -26,6 +26,7 @@ import { LiveActivityStream } from "@/components/hq/diagnostics/LiveActivityStre
 import { SystemAlerts } from "@/components/hq/diagnostics/SystemAlerts";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
+import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotificationHistory";
 
 interface HealthCheck {
   name: string;
@@ -441,6 +442,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Push Notification History */}
+      <PushNotificationHistory />
 
       {/* System Alerts - Enhanced */}
       <SystemAlerts />
