@@ -93,6 +93,7 @@ function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
 
   // Monthly chart data
   const monthlyData = buildMonthlyChart(entries);
+  const impactData = buildImpactChart(entries);
 
   const entryRows = entries.map(entry => {
     const typeLabel = TYPE_LABELS[entry.entry_type] || entry.entry_type;
@@ -200,6 +201,30 @@ function buildPDFHtml(entries: JournalEntry[], period: PeriodFilter): string {
   </div>
   ` : ""}
 
+  <!-- Impact Chart -->
+  ${impactData.length > 1 ? `
+  <div style="margin-bottom:24px;padding:16px;border:1px solid #e2e8f0;border-radius:8px;background:#fafafa;">
+    <h3 style="font-size:13px;font-weight:600;margin-bottom:12px;color:#0f172a;">Ratio impact mesuré vs en attente par mois</h3>
+    <svg viewBox="0 0 ${impactData.length * 60} 140" style="width:100%;height:120px;" xmlns="http://www.w3.org/2000/svg">
+      ${impactData.map((d, i) => {
+        const maxVal = Math.max(...impactData.map(m => m.measured + m.pending), 1);
+        const measuredH = (d.measured / maxVal) * 90;
+        const pendingH = (d.pending / maxVal) * 90;
+        const x = i * 60 + 10;
+        return `
+          <rect x="${x}" y="${100 - pendingH - measuredH}" width="20" height="${measuredH}" rx="3" fill="#16a34a" />
+          <rect x="${x}" y="${100 - pendingH}" width="20" height="${pendingH}" rx="3" fill="#d97706" />
+          <text x="${x + 10}" y="115" text-anchor="middle" style="font-size:9px;fill:#64748b;">${d.label}</text>
+          <text x="${x + 10}" y="${96 - pendingH - measuredH}" text-anchor="middle" style="font-size:9px;fill:#0f172a;font-weight:600;">${d.measured + d.pending}</text>
+        `;
+      }).join("")}
+    </svg>
+    <div style="display:flex;gap:16px;margin-top:8px;font-size:10px;color:#64748b;">
+      <span><span style="display:inline-block;width:10px;height:10px;background:#16a34a;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Impact mesuré</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:#d97706;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>En attente</span>
+    </div>
+  </div>
+  ` : ""}
   <!-- Entries table -->
   <table style="width:100%;border-collapse:collapse;font-size:12px;">
     <thead>
@@ -230,6 +255,27 @@ function buildMonthlyChart(entries: JournalEntry[]): { label: string; total: num
     const existing = map.get(key) || { total: 0, decisions: 0 };
     existing.total++;
     if (e.entry_type === "decision") existing.decisions++;
+    map.set(key, existing);
+  }
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, val]) => ({
+      label: format(new Date(key + "-01"), "MMM yy", { locale: fr }),
+      ...val,
+    }));
+}
+
+function buildImpactChart(entries: JournalEntry[]): { label: string; measured: number; pending: number }[] {
+  const map = new Map<string, { measured: number; pending: number }>();
+  for (const e of entries) {
+    if (e.entry_type !== "decision") continue;
+    const key = format(new Date(e.created_at), "yyyy-MM");
+    const existing = map.get(key) || { measured: 0, pending: 0 };
+    if (e.impact_measured?.summary) {
+      existing.measured++;
+    } else {
+      existing.pending++;
+    }
     map.set(key, existing);
   }
   return Array.from(map.entries())
