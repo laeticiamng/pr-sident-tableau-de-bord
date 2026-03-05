@@ -4,7 +4,9 @@ import { FileDown, Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { JournalEntry } from "@/hooks/useJournal";
 import { startOfMonth, startOfQuarter, startOfYear } from "date-fns";
-import { type PeriodFilter, buildPDFHtml } from "./journalPdfBuilders";
+import { type PeriodFilter, TYPE_LABELS, buildPDFHtml } from "./journalPdfBuilders";
+
+type TypeFilter = "all" | "decision" | "milestone" | "note";
 
 function filterByPeriod(entries: JournalEntry[], period: PeriodFilter): JournalEntry[] {
   if (period === "all") return entries;
@@ -16,11 +18,18 @@ function filterByPeriod(entries: JournalEntry[], period: PeriodFilter): JournalE
   return entries.filter(e => new Date(e.created_at) >= cutoff);
 }
 
+function filterByType(entries: JournalEntry[], type: TypeFilter): JournalEntry[] {
+  if (type === "all") return entries;
+  if (type === "note") return entries.filter(e => e.entry_type === "note" || e.entry_type === "reflection");
+  return entries.filter(e => e.entry_type === type);
+}
+
 export function JournalPDFExport({ entries }: { entries: JournalEntry[] }) {
   const [isExporting, setIsExporting] = useState(false);
   const [period, setPeriod] = useState<PeriodFilter>("all");
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
 
-  const filtered = filterByPeriod(entries, period);
+  const filtered = filterByType(filterByPeriod(entries, period), typeFilter);
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -54,6 +63,17 @@ export function JournalPDFExport({ entries }: { entries: JournalEntry[] }) {
           <SelectItem value="month">Ce mois</SelectItem>
           <SelectItem value="quarter">Ce trimestre</SelectItem>
           <SelectItem value="year">Cette année</SelectItem>
+        </SelectContent>
+      </Select>
+      <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as TypeFilter)}>
+        <SelectTrigger className="h-8 w-[130px] text-xs">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tous types</SelectItem>
+          <SelectItem value="decision">Décisions</SelectItem>
+          <SelectItem value="milestone">Jalons</SelectItem>
+          <SelectItem value="note">Notes</SelectItem>
         </SelectContent>
       </Select>
       <Button variant="outline" size="sm" className="gap-2 text-xs" onClick={handleExport} disabled={isExporting || filtered.length === 0}>
