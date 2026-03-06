@@ -248,6 +248,15 @@ export const homeTranslations = {
       contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
+    socialProof: {
+      title: "Sie vertrauen uns",
+      subtitle: "Fachleute, die unsere Plattformen täglich nutzen.",
+      items: [
+        { quote: "EmotionsCare hat unseren Ansatz zum Wohlbefinden der Pflegekräfte verändert.", author: "HR-Leitung", org: "Krankenhaus" },
+        { quote: "NEARVITY hat das medizinische Lernen für unsere Studierenden viel ansprechender gemacht.", author: "Pädagogische Direktorin", org: "Medizinische Fakultät" },
+        { quote: "System Compass hat uns Wochen bei unseren Umzugsprojekten gespart.", author: "Mobilitätsberater", org: "Internationale HR-Firma" },
+      ],
+    },
     showcase: {
       badge: "Premium-Ökosystem",
       heading1: "Acht Plattformen.",
