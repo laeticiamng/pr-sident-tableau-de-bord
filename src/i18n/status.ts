@@ -7,6 +7,7 @@ export const statusTranslations = {
       titleAccent: "Plateformes",
       allOperational: "Tous les systèmes sont opérationnels",
       someIssues: "Certains systèmes nécessitent attention",
+      publicFallback: "Statut basé sur les derniers déploiements",
       lastCheck: "Dernière vérification",
     },
     summary: {
