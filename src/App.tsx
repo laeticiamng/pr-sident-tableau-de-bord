@@ -162,7 +162,9 @@ const App = () => (
                 <Route path="/dashboard/veille" element={<Navigate to="/hq/veille" replace />} />
                 <Route path="/dashboard/actions" element={<Navigate to="/hq/approbations" replace />} />
 
-                <Route path="*" element={<NotFound />} />
+                <Route element={<PublicLayout />}>
+                  <Route path="*" element={<NotFound />} />
+                </Route>
               </Routes>
               </Suspense>
             </BrowserRouter>
