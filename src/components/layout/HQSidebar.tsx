@@ -115,7 +115,7 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   }).length || 0;
 
   // Ouvre automatiquement la section secondaire si on est sur une de ces pages
-  const isOnSecondaryPage = secondaryLinks.some(link => location.pathname === link.href);
+  const isOnSecondaryPage = allSecondaryLinks.some(link => location.pathname === link.href);
 
   const handleLinkClick = () => {
     if (onClose) {
