@@ -43,6 +43,7 @@ export const homeTranslations = {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
+      contactButton: "Demander une démonstration",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
     showcase: {
