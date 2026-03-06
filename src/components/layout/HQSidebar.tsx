@@ -50,29 +50,39 @@ const mainLinks = [
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
 ];
 
-// Items secondaires — repliables sous "Tous les services"
-const secondaryLinks = [
-  { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
-  { href: "/hq/equipe-executive", label: "Équipe & Agents", icon: Users },
-  { href: "/hq/agents-monitoring", label: "Monitoring Agents IA", icon: Bot, showFailedBadge: true },
-  { href: "/hq/growth", label: "Growth OS", icon: Rocket },
-  { href: "/hq/reunions", label: "Réunions", icon: Calendar },
-  { href: "/hq/historique", label: "Historique Runs", icon: History },
-  { href: "/hq/securite", label: "Sécurité", icon: Shield },
-  { href: "/hq/marketing", label: "Marketing", icon: TrendingUp },
-  { href: "/hq/ventes", label: "Ventes", icon: Briefcase },
-  { href: "/hq/finance", label: "Finance", icon: DollarSign },
-  { href: "/hq/produit", label: "Produit", icon: Package },
-  { href: "/hq/engineering", label: "Engineering", icon: Settings },
-  { href: "/hq/support", label: "Support", icon: HeadphonesIcon },
-  { href: "/hq/veille", label: "Veille Stratégique", icon: Eye },
-  { href: "/hq/audit", label: "Audit Log", icon: FileText },
-  { href: "/hq/entreprise", label: "Profil Entreprise", icon: Building2 },
-  { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
-  { href: "/hq/rh", label: "Ressources & Agents", icon: Users },
-  { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
-  { href: "/hq/data", label: "Data & Analytics", icon: BarChart3 },
+// Items secondaires — regroupés par catégorie
+const secondaryGroups = [
+  {
+    label: "Opérations",
+    items: [
+      { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
+      { href: "/hq/agents-monitoring", label: "Agents IA", icon: Bot, showFailedBadge: true },
+      { href: "/hq/historique", label: "Historique Runs", icon: History },
+      { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { href: "/hq/finance", label: "Finance", icon: DollarSign },
+      { href: "/hq/ventes", label: "Ventes", icon: Briefcase },
+      { href: "/hq/marketing", label: "Marketing", icon: TrendingUp },
+      { href: "/hq/growth", label: "Growth OS", icon: Rocket },
+    ],
+  },
+  {
+    label: "Gouvernance",
+    items: [
+      { href: "/hq/securite", label: "Sécurité", icon: Shield },
+      { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
+      { href: "/hq/audit", label: "Audit Log", icon: FileText },
+      { href: "/hq/entreprise", label: "Entreprise", icon: Building2 },
+    ],
+  },
 ];
+
+// Flatten for route matching
+const allSecondaryLinks = secondaryGroups.flatMap(g => g.items);
 
 interface HQSidebarProps {
   isOpen?: boolean;
