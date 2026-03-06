@@ -75,6 +75,7 @@ export const homeTranslations = {
       subtitle: "SaaS Software Publisher — Health, Education, International",
       description: "8 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies, performance and AI governance",
       cta: "Discover the platforms",
+      ctaContact: "Contact us",
     },
     features: {
       label: "Features",
