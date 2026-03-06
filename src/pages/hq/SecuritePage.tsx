@@ -44,7 +44,6 @@ export default function SecuritePage() {
   };
 
   const handlePanicButton = () => {
-    setPanicMode(true);
     updateConfig.mutate({
       key: "autopilot",
       value: { enabled: false, low_risk_auto_execute: false },
