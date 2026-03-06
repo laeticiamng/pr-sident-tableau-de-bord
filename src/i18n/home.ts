@@ -59,8 +59,17 @@ export const homeTranslations = {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
-      contactButton: "Demander une démonstration",
+      contactButton: "Demander une démo",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
+    },
+    socialProof: {
+      title: "Ils nous font confiance",
+      subtitle: "Des professionnels qui utilisent nos plateformes au quotidien.",
+      items: [
+        { quote: "EmotionsCare a transformé notre approche du bien-être des soignants.", author: "Responsable RH", org: "Centre Hospitalier" },
+        { quote: "NEARVITY a rendu l'apprentissage médical beaucoup plus engageant pour nos étudiants.", author: "Directrice pédagogique", org: "Faculté de Médecine" },
+        { quote: "System Compass nous a fait gagner des semaines dans nos projets de relocalisation.", author: "Consultant mobilité", org: "Cabinet RH International" },
+      ],
     },
     showcase: {
       badge: "Écosystème Premium",
