@@ -7,6 +7,7 @@ export const homeTranslations = {
       subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
       description: "8 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences, la performance et la gouvernance IA",
       cta: "Découvrir les plateformes",
+      ctaContact: "Nous contacter",
     },
     features: {
       label: "Fonctionnalités",
