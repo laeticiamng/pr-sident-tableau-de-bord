@@ -185,19 +185,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Wohlbefinden im Gesundheitswesen",
-          description: "Burnout-Prävention, emotionale Resilienz und persönliche Unterstützung für Gesundheitsfachkräfte. Mit und für medizinische Teams entwickelt.",
+          description: "Burnout-Prävention, emotionale Resilienz und persönliche Unterstützung für Gesundheitsfachkräfte.",
         },
         {
           title: "Innovatives medizinisches Lernen",
-          description: "Medizinische Bildung neu gedacht durch Musik und kognitive Methoden. Adaptive Lernpfade, die Auswendiglernen in ein spannendes Erlebnis verwandeln.",
+          description: "Medizinische Bildung neu gedacht durch Musik und kognitive Methoden. Adaptive und fesselnde Lernpfade.",
         },
         {
-          title: "Internationale Umzüge vereinfacht",
-          description: "Ein intelligentes Entscheidungssystem, das jeden Schritt eines Umzugsprojekts begleitet — von der Länderanalyse bis zur konkreten Ansiedlung.",
+          title: "Internationale Umzüge",
+          description: "Ein intelligentes Entscheidungssystem, das jeden Schritt eines internationalen Umzugsprojekts begleitet.",
         },
         {
           title: "KI-gestütztes Wachstum",
-          description: "Ein Team von 39 KI-Experten, die rund um die Uhr an Ihrer Wachstumsstrategie arbeiten: Akquise, Bindung, Wettbewerbsanalyse und kontinuierliche Optimierung.",
+          description: "Ein Team von KI-Experten, die rund um die Uhr an Ihrer Strategie arbeiten: Akquise, Bindung und Optimierung.",
+        },
+        {
+          title: "Soziale Vernetzung für Studierende",
+          description: "Ein intelligentes Radar, das Studierende nach Interessen, Nähe und Affinitäten verbindet.",
+        },
+        {
+          title: "Krankenhaus-Betriebssystem",
+          description: "KI-Triage, Panorama-Board und Echtzeit-Koordination für Notaufnahme-Teams.",
+        },
+        {
+          title: "Musik-Wettbewerb Community",
+          description: "Musik-Battle-Plattform mit KI-Feedback, dynamischen Rankings und Fortschritt für aufstrebende Künstler.",
+        },
+        {
+          title: "KI-Governance & Zertifizierung",
+          description: "Vollständiger Audit-Trail, AI Act-Konformität und Entscheidungsnachverfolgung für vertrauenswürdige KI.",
         },
       ],
     },
