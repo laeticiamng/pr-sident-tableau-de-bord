@@ -88,6 +88,7 @@ export const platformKeySchema = z.enum([
   "med-mng",
   "swift-care-hub",
   "track-triumph-tavern",
+  "trust-seal-chain",
 ], {
   errorMap: () => ({ message: "Plateforme invalide" }),
 });

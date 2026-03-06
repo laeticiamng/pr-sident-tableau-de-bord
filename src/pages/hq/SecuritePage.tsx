@@ -183,14 +183,14 @@ export default function SecuritePage() {
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
             <Shield className="h-8 w-8 mx-auto mb-3 text-primary" />
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">—</div>
             <div className="text-sm text-muted-foreground">Secrets Configurés</div>
           </CardContent>
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-success" />
-            <div className="text-2xl font-bold text-success">0</div>
+            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <div className="text-2xl font-bold text-muted-foreground">—</div>
             <div className="text-sm text-muted-foreground">Alertes</div>
           </CardContent>
         </Card>
