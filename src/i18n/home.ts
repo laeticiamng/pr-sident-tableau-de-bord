@@ -78,26 +78,26 @@ export const homeTranslations = {
       ctaContact: "Contact us",
     },
     features: {
-      label: "Features",
-      title: "Features of the",
-      titleAccent: "Digital HQ",
-      subtitle: "A complete executive dashboard to manage the entire EMOTIONSCARE ecosystem",
+      label: "Our Solutions",
+      title: "Platforms that",
+      titleAccent: "make a difference",
+      subtitle: "Each platform is built to solve a real problem in healthcare, education and international mobility",
       items: [
         {
-          title: "AI Intelligence",
-          description: "Strategic reports generated automatically every day. Executive briefings, security audits, competitive intelligence — everything synthesized for you.",
+          title: "Healthcare Worker Wellbeing",
+          description: "Burnout prevention, emotional resilience and personalized support for healthcare professionals. Built with and for medical teams.",
         },
         {
-          title: "Real-time Monitoring",
-          description: "View the health status of all your platforms at a glance. Availability, updates and alerts centralized.",
+          title: "Innovative Medical Learning",
+          description: "Medical education reimagined through music and cognitive methods. Adaptive pathways that turn memorization into an engaging experience.",
         },
         {
-          title: "Action Validation",
-          description: "Every critical action goes through presidential validation. Deployments, sensitive changes: nothing happens without your approval.",
+          title: "International Relocation Simplified",
+          description: "An intelligent decision system that guides every step of a relocation project — from country analysis to on-the-ground settlement.",
         },
         {
-          title: "Strategic Watch",
-          description: "Automated research on market trends. Competitive analysis and opportunities identified in real time.",
+          title: "AI-Powered Growth",
+          description: "A team of 39 AI experts working 24/7 on your growth strategy: acquisition, retention, competitive analysis and continuous optimization.",
         },
       ],
     },
