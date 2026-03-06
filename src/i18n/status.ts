@@ -7,6 +7,7 @@ export const statusTranslations = {
       titleAccent: "Plateformes",
       allOperational: "Tous les systèmes sont opérationnels",
       someIssues: "Certains systèmes nécessitent attention",
+      publicFallback: "Statut basé sur les derniers déploiements",
       lastCheck: "Dernière vérification",
     },
     summary: {
@@ -47,6 +48,7 @@ export const statusTranslations = {
       titleAccent: "Status",
       allOperational: "All systems are operational",
       someIssues: "Some systems need attention",
+      publicFallback: "Status based on latest deployments",
       lastCheck: "Last check",
     },
     summary: {
@@ -87,6 +89,7 @@ export const statusTranslations = {
       titleAccent: "Status",
       allOperational: "Alle Systeme sind betriebsbereit",
       someIssues: "Einige Systeme benötigen Aufmerksamkeit",
+      publicFallback: "Status basierend auf den letzten Deployments",
       lastCheck: "Letzte Überprüfung",
     },
     summary: {
