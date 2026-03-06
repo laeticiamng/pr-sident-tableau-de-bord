@@ -217,36 +217,45 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
             </button>
 
             {isExpanded && (
-              <ul className="space-y-1 mt-1 animate-fade-in">
-                {secondaryLinks.map((link) => {
-                  const isActive = location.pathname === link.href;
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        to={link.href}
-                        onClick={handleLinkClick}
-                        className={cn(
-                          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
-                          isActive
-                            ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                            : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                        )}
-                      >
-                        <link.icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">{link.label}</span>
-                        {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
-                          <Badge
-                            variant="destructive"
-                            className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                          >
-                            {failedRunsCount}
-                          </Badge>
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              <div className="mt-1 space-y-3 animate-fade-in">
+                {secondaryGroups.map((group) => (
+                  <div key={group.label}>
+                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+                      {group.label}
+                    </div>
+                    <ul className="space-y-0.5">
+                      {group.items.map((link) => {
+                        const isActive = location.pathname === link.href;
+                        return (
+                          <li key={link.href}>
+                            <Link
+                              to={link.href}
+                              onClick={handleLinkClick}
+                              className={cn(
+                                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                                isActive
+                                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                              )}
+                            >
+                              <link.icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{link.label}</span>
+                              {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
+                                <Badge
+                                  variant="destructive"
+                                  className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                                >
+                                  {failedRunsCount}
+                                </Badge>
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </nav>

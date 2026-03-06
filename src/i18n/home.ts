@@ -146,26 +146,26 @@ export const homeTranslations = {
       ctaContact: "Kontaktieren Sie uns",
     },
     features: {
-      label: "Funktionen",
-      title: "Funktionen des",
-      titleAccent: "Digitalen Hauptsitzes",
-      subtitle: "Ein vollständiges Executive-Dashboard zur Steuerung des gesamten EMOTIONSCARE-Ökosystems",
+      label: "Unsere Lösungen",
+      title: "Plattformen, die",
+      titleAccent: "den Unterschied machen",
+      subtitle: "Jede Plattform löst ein konkretes Problem im Gesundheitswesen, in der Bildung und in der internationalen Mobilität",
       items: [
         {
-          title: "KI-Intelligenz",
-          description: "Strategische Berichte werden täglich automatisch erstellt. Führungsbriefings, Sicherheitsaudits, Wettbewerbsinformationen — alles für Sie zusammengefasst.",
+          title: "Wohlbefinden im Gesundheitswesen",
+          description: "Burnout-Prävention, emotionale Resilienz und persönliche Unterstützung für Gesundheitsfachkräfte. Mit und für medizinische Teams entwickelt.",
         },
         {
-          title: "Echtzeit-Überwachung",
-          description: "Sehen Sie den Zustand aller Ihrer Plattformen auf einen Blick. Verfügbarkeit, Updates und Warnungen zentralisiert.",
+          title: "Innovatives medizinisches Lernen",
+          description: "Medizinische Bildung neu gedacht durch Musik und kognitive Methoden. Adaptive Lernpfade, die Auswendiglernen in ein spannendes Erlebnis verwandeln.",
         },
         {
-          title: "Aktionsvalidierung",
-          description: "Jede kritische Aktion durchläuft eine präsidiale Validierung. Deployments, sensible Änderungen: nichts geschieht ohne Ihre Zustimmung.",
+          title: "Internationale Umzüge vereinfacht",
+          description: "Ein intelligentes Entscheidungssystem, das jeden Schritt eines Umzugsprojekts begleitet — von der Länderanalyse bis zur konkreten Ansiedlung.",
         },
         {
-          title: "Strategische Überwachung",
-          description: "Automatisierte Recherche zu Markttrends. Wettbewerbsanalyse und Chancen in Echtzeit identifiziert.",
+          title: "KI-gestütztes Wachstum",
+          description: "Ein Team von 39 KI-Experten, die rund um die Uhr an Ihrer Wachstumsstrategie arbeiten: Akquise, Bindung, Wettbewerbsanalyse und kontinuierliche Optimierung.",
         },
       ],
     },

@@ -21,7 +21,7 @@ import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
 
-const FEATURE_ICONS = [Brain, Activity, CheckCircle, Search];
+const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap];
 const FEATURE_STYLES = [
   { color: "text-accent", bgColor: "bg-accent/10" },
   { color: "text-success", bgColor: "bg-success/10" },
