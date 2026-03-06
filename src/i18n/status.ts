@@ -48,6 +48,7 @@ export const statusTranslations = {
       titleAccent: "Status",
       allOperational: "All systems are operational",
       someIssues: "Some systems need attention",
+      publicFallback: "Status based on latest deployments",
       lastCheck: "Last check",
     },
     summary: {
