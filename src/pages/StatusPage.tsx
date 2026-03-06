@@ -4,12 +4,14 @@ import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS } from "@/lib/pla
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Activity, CheckCircle, AlertCircle, ExternalLink, Rocket, Clock, RefreshCw } from "lucide-react";
+import { Activity, CheckCircle, AlertCircle, ExternalLink, Rocket, Clock, RefreshCw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { statusTranslations } from "@/i18n/status";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePlatformMonitor, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
+import { useAuth } from "@/contexts/AuthContext";
 
 const iconesPlateforme = PLATFORM_ICONS;
 const couleursAccent = PLATFORM_ACCENTS;
@@ -18,17 +20,29 @@ export default function StatusPage() {
   const [derniereVerification, setDerniereVerification] = useState(new Date());
   const t = useTranslation(statusTranslations);
   const { language } = useLanguage();
+  const { user } = useAuth();
 
-  usePageMeta({
-    title: t.meta.title,
-    description: t.meta.description,
-    ogImageAlt: t.meta.title + " — EMOTIONSCARE",
-  });
+  // Use real monitoring data when authenticated, fallback to static for public
+  const { data: monitorData, isLoading: monitorLoading } = usePlatformMonitor();
+  const refreshMonitor = useRefreshPlatformMonitor();
+
+  const handleRefresh = () => {
+    setDerniereVerification(new Date());
+    if (user) {
+      refreshMonitor.mutate(undefined);
+    }
+  };
+
+  // Derive operational status from real monitoring data when available
+  const toutOperationnel = monitorData
+    ? monitorData.summary.overall_status === "green"
+    : null; // null = unknown (public visitor, not authenticated)
+  const incidentCount = monitorData
+    ? monitorData.summary.platforms_red
+    : null;
 
   const plateformesProduction = MANAGED_PLATFORMS.filter((p) => p.status === "production");
   const plateformesPrototype = MANAGED_PLATFORMS.filter((p) => p.status === "prototype");
-  const rafraichir = () => setDerniereVerification(new Date());
-  const toutOperationnel = true;
 
   const locale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
   const dateLocale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
@@ -103,8 +117,10 @@ export default function StatusPage() {
               {t.hero.title} <span className="text-accent">{t.hero.titleAccent}</span>
             </h1>
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-              <div className={cn("w-3 h-3 rounded-full animate-pulse", toutOperationnel ? "bg-status-green" : "bg-status-amber")} />
-              <span className="text-white font-medium">{toutOperationnel ? t.hero.allOperational : t.hero.someIssues}</span>
+              <div className={cn("w-3 h-3 rounded-full animate-pulse", toutOperationnel === true ? "bg-status-green" : toutOperationnel === false ? "bg-status-red" : "bg-status-amber")} />
+              <span className="text-white font-medium">
+                {monitorLoading ? "Vérification..." : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.allOperational}
+              </span>
             </div>
             <p className="mt-6 text-white/60 text-sm">
               {t.hero.lastCheck} : {derniereVerification.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
@@ -120,9 +136,12 @@ export default function StatusPage() {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-green" /><span className="text-sm font-medium">{plateformesProduction.length} {t.summary.inProduction}</span></div>
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-amber" /><span className="text-sm font-medium">{plateformesPrototype.length} {t.summary.prototypes}</span></div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-red" /><span className="text-sm font-medium">0 {t.summary.incidents}</span></div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-red" /><span className="text-sm font-medium">{incidentCount ?? 0} {t.summary.incidents}</span></div>
             </div>
-            <Button variant="outline" size="sm" onClick={rafraichir}><RefreshCw className="h-4 w-4 mr-2" />{t.summary.refresh}</Button>
+            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshMonitor.isPending}>
+              {refreshMonitor.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+              {t.summary.refresh}
+            </Button>
           </div>
         </div>
       </section>

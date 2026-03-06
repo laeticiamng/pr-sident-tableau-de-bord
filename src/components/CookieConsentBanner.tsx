@@ -16,19 +16,19 @@ export function CookieConsentBanner() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:p-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="mx-auto max-w-2xl rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
-        <div className="p-5 md:p-6">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] p-2 sm:p-4 md:p-6 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="mx-auto max-w-2xl rounded-xl sm:rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
+        <div className="p-3 sm:p-5 md:p-6">
           {/* Header */}
-          <div className="flex items-center gap-2.5 mb-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
-              <Cookie className="h-4.5 w-4.5 text-primary" />
+          <div className="flex items-center gap-2 sm:gap-2.5 mb-2 sm:mb-3">
+            <div className="flex h-7 w-7 sm:h-9 sm:w-9 items-center justify-center rounded-lg sm:rounded-xl bg-primary/10 shrink-0">
+              <Cookie className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-primary" />
             </div>
-            <h3 className="text-base font-semibold text-foreground">{t.title}</h3>
+            <h3 className="text-sm sm:text-base font-semibold text-foreground">{t.title}</h3>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-none">
             {t.description}
           </p>
 

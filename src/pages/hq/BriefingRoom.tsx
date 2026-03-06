@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBriefing } from "@/components/hq/MobileBriefing";
 import {
-  Phone,
-  PhoneCall,
+  BrainCircuit,
+  Zap,
   Loader2,
   Sparkles,
   Layers,
@@ -104,15 +104,15 @@ export default function BriefingRoom() {
       case "calling":
         return (
           <>
-            <PhoneCall className="h-5 w-5 animate-pulse" />
-            Connexion en cours...
+            <Zap className="h-5 w-5 animate-pulse" />
+            Lancement du brief...
           </>
         );
       case "connected":
         return (
           <>
             <Loader2 className="h-5 w-5 animate-spin" />
-            Le DG prépare votre brief...
+            Analyse en cours...
           </>
         );
       case "done":
@@ -125,8 +125,8 @@ export default function BriefingRoom() {
       default:
         return (
           <>
-            <Phone className="h-5 w-5" />
-            Appeler le DG
+            <BrainCircuit className="h-5 w-5" />
+            Lancer le brief exécutif
           </>
         );
     }
