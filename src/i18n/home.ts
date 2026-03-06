@@ -101,19 +101,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Healthcare Worker Wellbeing",
-          description: "Burnout prevention, emotional resilience and personalized support for healthcare professionals. Built with and for medical teams.",
+          description: "Burnout prevention, emotional resilience and personalized support for healthcare professionals.",
         },
         {
           title: "Innovative Medical Learning",
-          description: "Medical education reimagined through music and cognitive methods. Adaptive pathways that turn memorization into an engaging experience.",
+          description: "Medical education reimagined through music and cognitive methods. Adaptive and engaging pathways.",
         },
         {
-          title: "International Relocation Simplified",
-          description: "An intelligent decision system that guides every step of a relocation project — from country analysis to on-the-ground settlement.",
+          title: "International Relocation",
+          description: "An intelligent decision system that guides every step of an international relocation project.",
         },
         {
           title: "AI-Powered Growth",
-          description: "A team of 39 AI experts working 24/7 on your growth strategy: acquisition, retention, competitive analysis and continuous optimization.",
+          description: "A team of AI experts working 24/7 on your growth strategy: acquisition, retention and continuous optimization.",
+        },
+        {
+          title: "Student Social Connection",
+          description: "A smart radar connecting students by interests, proximity and affinities to break isolation.",
+        },
+        {
+          title: "Hospital Operating System",
+          description: "AI triage, panoramic board and real-time emergency coordination for hospital teams.",
+        },
+        {
+          title: "Music Competition Community",
+          description: "Music battle platform with AI feedback, dynamic rankings and progression for emerging artists.",
+        },
+        {
+          title: "AI Governance & Certification",
+          description: "Complete audit trail, AI Act compliance and decision traceability for trustworthy artificial intelligence.",
         },
       ],
     },
