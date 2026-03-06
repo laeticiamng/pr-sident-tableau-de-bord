@@ -154,6 +154,34 @@ export default function HomePage() {
 
       <PlatformShowcase />
 
+      {/* SOCIAL PROOF */}
+      <section className="py-20 md:py-28 bg-secondary/30">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <ScrollReveal className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-semibold mb-4">{t.socialProof.title}</h2>
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto">{t.socialProof.subtitle}</p>
+            </ScrollReveal>
+            <div className="grid gap-6 md:grid-cols-3">
+              {t.socialProof.items.map((item, index) => (
+                <ScrollReveal key={index} delay={index * 100}>
+                  <Card className="h-full border-border/60">
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <Quote className="h-6 w-6 text-accent/40" />
+                      <p className="text-foreground italic leading-relaxed">"{item.quote}"</p>
+                      <div className="mt-auto pt-4 border-t border-border/40">
+                        <p className="text-sm font-medium">{item.author}</p>
+                        <p className="text-xs text-muted-foreground">{item.org}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* STATS */}
       <section className="py-16 md:py-24 bg-hero-gradient text-white">
         <div className="container px-4 sm:px-6 lg:px-8">
