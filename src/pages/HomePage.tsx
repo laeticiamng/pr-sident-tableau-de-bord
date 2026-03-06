@@ -88,6 +88,11 @@ export default function HomePage() {
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full min-w-[200px] border-white/30 text-white hover:bg-white/10 hover:text-white">
+                  {t.hero.ctaContact}
+                </Button>
+              </Link>
             </div>
 
             <div className="hidden sm:block mt-20 animate-bounce">
@@ -168,13 +173,19 @@ export default function HomePage() {
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6">{t.cta.title}</h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">{t.cta.subtitle}</p>
-            <Link to="/plateformes">
-              <Button variant="executive" size="lg" className="group min-w-[240px]">
-                <span>{t.cta.button}</span>
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <p className="mt-8 text-sm text-muted-foreground/80 italic">{t.cta.footer}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/plateformes">
+                <Button variant="executive" size="lg" className="group min-w-[240px]">
+                  <span>{t.cta.button}</span>
+                  <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="outline" size="lg" className="min-w-[240px]">
+                  {t.cta.contactButton}
+                </Button>
+              </Link>
+            </div>
             <p className="mt-3 text-xs text-muted-foreground">EMOTIONSCARE SASU — SIREN 944 505 445 — Amiens, France</p>
           </ScrollReveal>
         </div>

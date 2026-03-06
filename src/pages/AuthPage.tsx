@@ -18,6 +18,10 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
   const attemptsRef = useRef(0);
   const lockoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
@@ -150,7 +154,16 @@ export default function AuthPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">Mot de passe</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-sm font-medium">Mot de passe</Label>
+                <button
+                  type="button"
+                  onClick={() => setShowForgot(true)}
+                  className="text-xs text-accent hover:text-accent/80 transition-colors"
+                >
+                  Mot de passe oublié ?
+                </button>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -193,6 +206,65 @@ export default function AuthPage() {
             </div>
             Connexion sécurisée et chiffrée
           </div>
+
+          {/* Forgot Password Dialog */}
+          {showForgot && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={() => !forgotLoading && setShowForgot(false)}>
+              <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                {forgotSent ? (
+                  <div className="text-center space-y-4">
+                    <div className="flex justify-center">
+                      <div className="p-3 rounded-full bg-success/10">
+                        <Mail className="h-6 w-6 text-success" />
+                      </div>
+                    </div>
+                    <h3 className="text-lg font-semibold">Email envoyé</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Si un compte existe avec cette adresse, vous recevrez un lien de réinitialisation.
+                    </p>
+                    <Button variant="outline" className="w-full" onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); }}>
+                      Fermer
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Réinitialiser le mot de passe</h3>
+                    <p className="text-sm text-muted-foreground">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="email"
+                        placeholder="votre@email.com"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        className="pl-10"
+                        disabled={forgotLoading}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" className="flex-1" onClick={() => setShowForgot(false)} disabled={forgotLoading}>
+                        Annuler
+                      </Button>
+                      <Button
+                        className="flex-1"
+                        disabled={!forgotEmail || forgotLoading}
+                        onClick={async () => {
+                          setForgotLoading(true);
+                          await supabase.auth.resetPasswordForEmail(forgotEmail, {
+                            redirectTo: `${window.location.origin}/reset-password`,
+                          });
+                          setForgotLoading(false);
+                          setForgotSent(true);
+                        }}
+                      >
+                        {forgotLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Envoyer"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

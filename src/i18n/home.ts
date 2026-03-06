@@ -7,6 +7,7 @@ export const homeTranslations = {
       subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
       description: "8 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences, la performance et la gouvernance IA",
       cta: "Découvrir les plateformes",
+      ctaContact: "Nous contacter",
     },
     features: {
       label: "Fonctionnalités",
@@ -42,6 +43,7 @@ export const homeTranslations = {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
+      contactButton: "Demander une démonstration",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
     showcase: {
@@ -73,6 +75,7 @@ export const homeTranslations = {
       subtitle: "SaaS Software Publisher — Health, Education, International",
       description: "8 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies, performance and AI governance",
       cta: "Discover the platforms",
+      ctaContact: "Contact us",
     },
     features: {
       label: "Features",
@@ -108,6 +111,7 @@ export const homeTranslations = {
       title: "Explore the ecosystem",
       subtitle: "Discover our 8 innovative platforms and how they transform their sectors.",
       button: "View platforms in detail",
+      contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
     showcase: {
@@ -139,6 +143,7 @@ export const homeTranslations = {
       subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
       description: "8 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle, Leistung und KI-Governance",
       cta: "Plattformen entdecken",
+      ctaContact: "Kontaktieren Sie uns",
     },
     features: {
       label: "Funktionen",
@@ -174,6 +179,7 @@ export const homeTranslations = {
       title: "Das Ökosystem erkunden",
       subtitle: "Entdecken Sie unsere 8 innovativen Plattformen und wie sie ihre Branchen verändern.",
       button: "Plattformen im Detail ansehen",
+      contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
     showcase: {

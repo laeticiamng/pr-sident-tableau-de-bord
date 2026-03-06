@@ -27,7 +27,8 @@ export default function SecuritePage() {
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const updateConfig = useUpdateConfig();
   const executeRun = useExecuteRun();
-  const [panicMode, setPanicMode] = useState(false);
+  // Derive panic mode from autopilot config instead of local state
+  const panicMode = autopilotConfig ? (autopilotConfig.enabled === false && autopilotConfig.low_risk_auto_execute === false) : false;
 
   const autopilotEnabled = (autopilotConfig?.enabled as boolean) ?? true;
 
@@ -43,7 +44,6 @@ export default function SecuritePage() {
   };
 
   const handlePanicButton = () => {
-    setPanicMode(true);
     updateConfig.mutate({
       key: "autopilot",
       value: { enabled: false, low_risk_auto_execute: false },
@@ -159,8 +159,8 @@ export default function SecuritePage() {
         </Card>
       </div>
 
-      {/* Incident Counter */}
-      <IncidentCounter daysSinceLastIncident={47} />
+      {/* Incident Counter — data not yet connected */}
+      <IncidentCounter daysSinceLastIncident={null} />
 
       {/* Security Status */}
       <div className="grid gap-4 md:grid-cols-4">
@@ -183,14 +183,14 @@ export default function SecuritePage() {
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
             <Shield className="h-8 w-8 mx-auto mb-3 text-primary" />
-            <div className="text-2xl font-bold">8</div>
+            <div className="text-2xl font-bold">—</div>
             <div className="text-sm text-muted-foreground">Secrets Configurés</div>
           </CardContent>
         </Card>
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-success" />
-            <div className="text-2xl font-bold text-success">0</div>
+            <AlertTriangle className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+            <div className="text-2xl font-bold text-muted-foreground">—</div>
             <div className="text-sm text-muted-foreground">Alertes</div>
           </CardContent>
         </Card>
