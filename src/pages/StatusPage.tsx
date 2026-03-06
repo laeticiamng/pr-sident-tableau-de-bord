@@ -119,7 +119,7 @@ export default function StatusPage() {
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
               <div className={cn("w-3 h-3 rounded-full animate-pulse", toutOperationnel === true ? "bg-status-green" : toutOperationnel === false ? "bg-status-red" : "bg-status-amber")} />
               <span className="text-white font-medium">
-                {monitorLoading ? "Vérification..." : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.allOperational}
+                {monitorLoading ? "Vérification..." : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.publicFallback}
               </span>
             </div>
             <p className="mt-6 text-white/60 text-sm">
