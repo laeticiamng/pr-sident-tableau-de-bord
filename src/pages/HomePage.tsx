@@ -10,7 +10,11 @@ import {
   GraduationCap,
   Globe,
   Zap,
-  Building2
+  Building2,
+  Users,
+  Siren,
+  Music,
+  ShieldCheck,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -21,12 +25,16 @@ import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
 
-const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap];
+const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap, Users, Siren, Music, ShieldCheck];
 const FEATURE_STYLES = [
   { color: "text-accent", bgColor: "bg-accent/10" },
   { color: "text-success", bgColor: "bg-success/10" },
   { color: "text-primary", bgColor: "bg-primary/10" },
   { color: "text-warning", bgColor: "bg-warning/10" },
+  { color: "text-info", bgColor: "bg-info/10" },
+  { color: "text-destructive", bgColor: "bg-destructive/10" },
+  { color: "text-accent", bgColor: "bg-accent/10" },
+  { color: "text-success", bgColor: "bg-success/10" },
 ];
 
 function ScrollReveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -116,21 +124,21 @@ export default function HomePage() {
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t.features.subtitle}</p>
             </ScrollReveal>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {t.features.items.map((feature, index) => {
                 const Icon = FEATURE_ICONS[index];
                 const style = FEATURE_STYLES[index];
                 return (
-                  <ScrollReveal key={index} delay={index * 100}>
+                  <ScrollReveal key={index} delay={index * 75}>
                     <Card className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 h-full">
-                      <CardContent className="p-8">
-                        <div className="flex items-start gap-5">
-                          <div className={`p-3 rounded-xl ${style.bgColor} transition-transform group-hover:scale-110`}>
-                            <Icon className={`h-6 w-6 ${style.color}`} />
+                      <CardContent className="p-5 sm:p-6">
+                        <div className="flex flex-col gap-3">
+                          <div className={`p-2.5 rounded-xl ${style.bgColor} w-fit transition-transform group-hover:scale-110`}>
+                            <Icon className={`h-5 w-5 ${style.color}`} />
                           </div>
                           <div>
-                            <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                            <h3 className="text-base font-semibold mb-1.5">{feature.title}</h3>
+                            <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                           </div>
                         </div>
                       </CardContent>

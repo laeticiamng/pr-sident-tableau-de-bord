@@ -17,19 +17,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Bien-être des soignants",
-          description: "Prévention du burnout, résilience émotionnelle et accompagnement personnalisé pour les professionnels de santé. Un outil conçu avec et pour les équipes médicales.",
+          description: "Prévention du burnout, résilience émotionnelle et accompagnement personnalisé pour les professionnels de santé.",
         },
         {
           title: "Apprentissage médical innovant",
-          description: "L'éducation médicale réinventée par la musique et les méthodes cognitives. Des parcours adaptés qui transforment la mémorisation en expérience engageante.",
+          description: "L'éducation médicale réinventée par la musique et les méthodes cognitives. Des parcours adaptés et engageants.",
         },
         {
-          title: "Relocalisation internationale simplifiée",
-          description: "Un système décisionnel intelligent qui accompagne chaque étape d'un projet de relocalisation — de l'analyse pays à l'installation concrète.",
+          title: "Relocalisation internationale",
+          description: "Un système décisionnel intelligent qui accompagne chaque étape d'un projet de relocalisation à l'international.",
         },
         {
           title: "Croissance automatisée par l'IA",
-          description: "Une équipe de 39 experts IA qui travaillent 24/7 sur votre stratégie de croissance : acquisition, rétention, analyse concurrentielle et optimisation continue.",
+          description: "Une équipe d'experts IA qui travaille 24/7 sur votre stratégie : acquisition, rétention et optimisation continue.",
+        },
+        {
+          title: "Connexion sociale étudiante",
+          description: "Un radar intelligent qui connecte les étudiants par centres d'intérêt, proximité et affinités pour briser l'isolement.",
+        },
+        {
+          title: "Système d'exploitation hospitalier",
+          description: "Triage IA, board panoramique et coordination des urgences en temps réel pour les équipes hospitalières.",
+        },
+        {
+          title: "Compétition musicale communautaire",
+          description: "Plateforme de battle musicale avec feedback IA, classements dynamiques et progression pour les artistes émergents.",
+        },
+        {
+          title: "Gouvernance & certification IA",
+          description: "Audit trail complet, conformité AI Act et traçabilité des décisions pour une intelligence artificielle de confiance.",
         },
       ],
     },
@@ -85,19 +101,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Healthcare Worker Wellbeing",
-          description: "Burnout prevention, emotional resilience and personalized support for healthcare professionals. Built with and for medical teams.",
+          description: "Burnout prevention, emotional resilience and personalized support for healthcare professionals.",
         },
         {
           title: "Innovative Medical Learning",
-          description: "Medical education reimagined through music and cognitive methods. Adaptive pathways that turn memorization into an engaging experience.",
+          description: "Medical education reimagined through music and cognitive methods. Adaptive and engaging pathways.",
         },
         {
-          title: "International Relocation Simplified",
-          description: "An intelligent decision system that guides every step of a relocation project — from country analysis to on-the-ground settlement.",
+          title: "International Relocation",
+          description: "An intelligent decision system that guides every step of an international relocation project.",
         },
         {
           title: "AI-Powered Growth",
-          description: "A team of 39 AI experts working 24/7 on your growth strategy: acquisition, retention, competitive analysis and continuous optimization.",
+          description: "A team of AI experts working 24/7 on your growth strategy: acquisition, retention and continuous optimization.",
+        },
+        {
+          title: "Student Social Connection",
+          description: "A smart radar connecting students by interests, proximity and affinities to break isolation.",
+        },
+        {
+          title: "Hospital Operating System",
+          description: "AI triage, panoramic board and real-time emergency coordination for hospital teams.",
+        },
+        {
+          title: "Music Competition Community",
+          description: "Music battle platform with AI feedback, dynamic rankings and progression for emerging artists.",
+        },
+        {
+          title: "AI Governance & Certification",
+          description: "Complete audit trail, AI Act compliance and decision traceability for trustworthy artificial intelligence.",
         },
       ],
     },
@@ -153,19 +185,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Wohlbefinden im Gesundheitswesen",
-          description: "Burnout-Prävention, emotionale Resilienz und persönliche Unterstützung für Gesundheitsfachkräfte. Mit und für medizinische Teams entwickelt.",
+          description: "Burnout-Prävention, emotionale Resilienz und persönliche Unterstützung für Gesundheitsfachkräfte.",
         },
         {
           title: "Innovatives medizinisches Lernen",
-          description: "Medizinische Bildung neu gedacht durch Musik und kognitive Methoden. Adaptive Lernpfade, die Auswendiglernen in ein spannendes Erlebnis verwandeln.",
+          description: "Medizinische Bildung neu gedacht durch Musik und kognitive Methoden. Adaptive und fesselnde Lernpfade.",
         },
         {
-          title: "Internationale Umzüge vereinfacht",
-          description: "Ein intelligentes Entscheidungssystem, das jeden Schritt eines Umzugsprojekts begleitet — von der Länderanalyse bis zur konkreten Ansiedlung.",
+          title: "Internationale Umzüge",
+          description: "Ein intelligentes Entscheidungssystem, das jeden Schritt eines internationalen Umzugsprojekts begleitet.",
         },
         {
           title: "KI-gestütztes Wachstum",
-          description: "Ein Team von 39 KI-Experten, die rund um die Uhr an Ihrer Wachstumsstrategie arbeiten: Akquise, Bindung, Wettbewerbsanalyse und kontinuierliche Optimierung.",
+          description: "Ein Team von KI-Experten, die rund um die Uhr an Ihrer Strategie arbeiten: Akquise, Bindung und Optimierung.",
+        },
+        {
+          title: "Soziale Vernetzung für Studierende",
+          description: "Ein intelligentes Radar, das Studierende nach Interessen, Nähe und Affinitäten verbindet.",
+        },
+        {
+          title: "Krankenhaus-Betriebssystem",
+          description: "KI-Triage, Panorama-Board und Echtzeit-Koordination für Notaufnahme-Teams.",
+        },
+        {
+          title: "Musik-Wettbewerb Community",
+          description: "Musik-Battle-Plattform mit KI-Feedback, dynamischen Rankings und Fortschritt für aufstrebende Künstler.",
+        },
+        {
+          title: "KI-Governance & Zertifizierung",
+          description: "Vollständiger Audit-Trail, AI Act-Konformität und Entscheidungsnachverfolgung für vertrauenswürdige KI.",
         },
       ],
     },
