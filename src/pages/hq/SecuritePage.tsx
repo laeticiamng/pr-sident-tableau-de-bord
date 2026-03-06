@@ -159,8 +159,8 @@ export default function SecuritePage() {
         </Card>
       </div>
 
-      {/* Incident Counter */}
-      <IncidentCounter daysSinceLastIncident={47} />
+      {/* Incident Counter — data not yet connected */}
+      <IncidentCounter daysSinceLastIncident={null} />
 
       {/* Security Status */}
       <div className="grid gap-4 md:grid-cols-4">
