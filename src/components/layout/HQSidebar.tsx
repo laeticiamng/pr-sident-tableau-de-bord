@@ -14,26 +14,19 @@ import {
   LogOut,
   ChevronRight,
   ChevronDown,
-  X,
   Gauge,
   Crosshair,
-  Users,
   Rocket,
-  Calendar,
   History,
   Shield,
   TrendingUp,
   Briefcase,
   DollarSign,
   Mail,
-  Package,
-  HeadphonesIcon,
-  Eye,
   FileText,
   Activity,
   Bot,
   Scale,
-  BarChart3,
   BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -50,29 +43,39 @@ const mainLinks = [
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
 ];
 
-// Items secondaires — repliables sous "Tous les services"
-const secondaryLinks = [
-  { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
-  { href: "/hq/equipe-executive", label: "Équipe & Agents", icon: Users },
-  { href: "/hq/agents-monitoring", label: "Monitoring Agents IA", icon: Bot, showFailedBadge: true },
-  { href: "/hq/growth", label: "Growth OS", icon: Rocket },
-  { href: "/hq/reunions", label: "Réunions", icon: Calendar },
-  { href: "/hq/historique", label: "Historique Runs", icon: History },
-  { href: "/hq/securite", label: "Sécurité", icon: Shield },
-  { href: "/hq/marketing", label: "Marketing", icon: TrendingUp },
-  { href: "/hq/ventes", label: "Ventes", icon: Briefcase },
-  { href: "/hq/finance", label: "Finance", icon: DollarSign },
-  { href: "/hq/produit", label: "Produit", icon: Package },
-  { href: "/hq/engineering", label: "Engineering", icon: Settings },
-  { href: "/hq/support", label: "Support", icon: HeadphonesIcon },
-  { href: "/hq/veille", label: "Veille Stratégique", icon: Eye },
-  { href: "/hq/audit", label: "Audit Log", icon: FileText },
-  { href: "/hq/entreprise", label: "Profil Entreprise", icon: Building2 },
-  { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
-  { href: "/hq/rh", label: "Ressources & Agents", icon: Users },
-  { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
-  { href: "/hq/data", label: "Data & Analytics", icon: BarChart3 },
+// Items secondaires — regroupés par catégorie
+const secondaryGroups = [
+  {
+    label: "Opérations",
+    items: [
+      { href: "/hq/cos", label: "COS — Pilotage", icon: Crosshair },
+      { href: "/hq/agents-monitoring", label: "Agents IA", icon: Bot, showFailedBadge: true },
+      { href: "/hq/historique", label: "Historique Runs", icon: History },
+      { href: "/hq/diagnostics", label: "Diagnostics", icon: Activity },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { href: "/hq/finance", label: "Finance", icon: DollarSign },
+      { href: "/hq/ventes", label: "Ventes", icon: Briefcase },
+      { href: "/hq/marketing", label: "Marketing", icon: TrendingUp },
+      { href: "/hq/growth", label: "Growth OS", icon: Rocket },
+    ],
+  },
+  {
+    label: "Gouvernance",
+    items: [
+      { href: "/hq/securite", label: "Sécurité", icon: Shield },
+      { href: "/hq/conformite", label: "Conformité RGPD", icon: Scale },
+      { href: "/hq/audit", label: "Audit Log", icon: FileText },
+      { href: "/hq/entreprise", label: "Entreprise", icon: Building2 },
+    ],
+  },
 ];
+
+// Flatten for route matching
+const allSecondaryLinks = secondaryGroups.flatMap(g => g.items);
 
 interface HQSidebarProps {
   isOpen?: boolean;
@@ -105,7 +108,7 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   }).length || 0;
 
   // Ouvre automatiquement la section secondaire si on est sur une de ces pages
-  const isOnSecondaryPage = secondaryLinks.some(link => location.pathname === link.href);
+  const isOnSecondaryPage = allSecondaryLinks.some(link => location.pathname === link.href);
 
   const handleLinkClick = () => {
     if (onClose) {
@@ -207,36 +210,45 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
             </button>
 
             {isExpanded && (
-              <ul className="space-y-1 mt-1 animate-fade-in">
-                {secondaryLinks.map((link) => {
-                  const isActive = location.pathname === link.href;
-                  return (
-                    <li key={link.href}>
-                      <Link
-                        to={link.href}
-                        onClick={handleLinkClick}
-                        className={cn(
-                          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
-                          isActive
-                            ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                            : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                        )}
-                      >
-                        <link.icon className="h-4 w-4 flex-shrink-0" />
-                        <span className="truncate">{link.label}</span>
-                        {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
-                          <Badge
-                            variant="destructive"
-                            className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                          >
-                            {failedRunsCount}
-                          </Badge>
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              <div className="mt-1 space-y-3 animate-fade-in">
+                {secondaryGroups.map((group) => (
+                  <div key={group.label}>
+                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+                      {group.label}
+                    </div>
+                    <ul className="space-y-0.5">
+                      {group.items.map((link) => {
+                        const isActive = location.pathname === link.href;
+                        return (
+                          <li key={link.href}>
+                            <Link
+                              to={link.href}
+                              onClick={handleLinkClick}
+                              className={cn(
+                                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
+                                isActive
+                                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                              )}
+                            >
+                              <link.icon className="h-4 w-4 flex-shrink-0" />
+                              <span className="truncate">{link.label}</span>
+                              {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
+                                <Badge
+                                  variant="destructive"
+                                  className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                                >
+                                  {failedRunsCount}
+                                </Badge>
+                              )}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </nav>
