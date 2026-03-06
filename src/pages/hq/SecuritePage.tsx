@@ -27,7 +27,8 @@ export default function SecuritePage() {
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const updateConfig = useUpdateConfig();
   const executeRun = useExecuteRun();
-  const [panicMode, setPanicMode] = useState(false);
+  // Derive panic mode from autopilot config instead of local state
+  const panicMode = autopilotConfig ? (autopilotConfig.enabled === false && autopilotConfig.low_risk_auto_execute === false) : false;
 
   const autopilotEnabled = (autopilotConfig?.enabled as boolean) ?? true;
 
