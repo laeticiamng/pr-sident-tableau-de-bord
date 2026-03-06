@@ -17,19 +17,35 @@ export const homeTranslations = {
       items: [
         {
           title: "Bien-être des soignants",
-          description: "Prévention du burnout, résilience émotionnelle et accompagnement personnalisé pour les professionnels de santé. Un outil conçu avec et pour les équipes médicales.",
+          description: "Prévention du burnout, résilience émotionnelle et accompagnement personnalisé pour les professionnels de santé.",
         },
         {
           title: "Apprentissage médical innovant",
-          description: "L'éducation médicale réinventée par la musique et les méthodes cognitives. Des parcours adaptés qui transforment la mémorisation en expérience engageante.",
+          description: "L'éducation médicale réinventée par la musique et les méthodes cognitives. Des parcours adaptés et engageants.",
         },
         {
-          title: "Relocalisation internationale simplifiée",
-          description: "Un système décisionnel intelligent qui accompagne chaque étape d'un projet de relocalisation — de l'analyse pays à l'installation concrète.",
+          title: "Relocalisation internationale",
+          description: "Un système décisionnel intelligent qui accompagne chaque étape d'un projet de relocalisation à l'international.",
         },
         {
           title: "Croissance automatisée par l'IA",
-          description: "Une équipe de 39 experts IA qui travaillent 24/7 sur votre stratégie de croissance : acquisition, rétention, analyse concurrentielle et optimisation continue.",
+          description: "Une équipe d'experts IA qui travaille 24/7 sur votre stratégie : acquisition, rétention et optimisation continue.",
+        },
+        {
+          title: "Connexion sociale étudiante",
+          description: "Un radar intelligent qui connecte les étudiants par centres d'intérêt, proximité et affinités pour briser l'isolement.",
+        },
+        {
+          title: "Système d'exploitation hospitalier",
+          description: "Triage IA, board panoramique et coordination des urgences en temps réel pour les équipes hospitalières.",
+        },
+        {
+          title: "Compétition musicale communautaire",
+          description: "Plateforme de battle musicale avec feedback IA, classements dynamiques et progression pour les artistes émergents.",
+        },
+        {
+          title: "Gouvernance & certification IA",
+          description: "Audit trail complet, conformité AI Act et traçabilité des décisions pour une intelligence artificielle de confiance.",
         },
       ],
     },
