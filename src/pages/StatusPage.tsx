@@ -41,6 +41,9 @@ export default function StatusPage() {
     ? monitorData.summary.platforms_red
     : null;
 
+  const plateformesProduction = MANAGED_PLATFORMS.filter((p) => p.status === "production");
+  const plateformesPrototype = MANAGED_PLATFORMS.filter((p) => p.status === "prototype");
+
   const locale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
   const dateLocale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
 
