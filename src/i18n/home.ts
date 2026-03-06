@@ -179,6 +179,7 @@ export const homeTranslations = {
       title: "Das Ökosystem erkunden",
       subtitle: "Entdecken Sie unsere 8 innovativen Plattformen und wie sie ihre Branchen verändern.",
       button: "Plattformen im Detail ansehen",
+      contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
     showcase: {

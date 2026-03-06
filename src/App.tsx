@@ -113,6 +113,7 @@ const App = () => (
 
                 {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                 {/* Protected HQ Routes */}
                 <Route element={<ProtectedRoute />}>
