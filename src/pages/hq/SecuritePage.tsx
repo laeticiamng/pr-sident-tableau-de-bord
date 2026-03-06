@@ -155,8 +155,10 @@ export default function SecuritePage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
-            <Shield className="h-8 w-8 mx-auto mb-3 text-success" />
-            <div className="text-2xl font-bold text-success">Sécurisé</div>
+            <Shield className={`h-8 w-8 mx-auto mb-3 ${panicMode ? "text-destructive" : autopilotEnabled ? "text-success" : "text-muted-foreground"}`} />
+            <div className={`text-2xl font-bold ${panicMode ? "text-destructive" : autopilotEnabled ? "text-success" : "text-muted-foreground"}`}>
+              {panicMode ? "Arrêt urgence" : autopilotEnabled ? "Opérationnel" : "Manuel"}
+            </div>
             <div className="text-sm text-muted-foreground">Statut Global</div>
           </CardContent>
         </Card>

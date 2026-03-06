@@ -28,7 +28,7 @@ export function CookieConsentBanner() {
           </div>
 
           {/* Description */}
-          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-none">
             {t.description}
           </p>
 
