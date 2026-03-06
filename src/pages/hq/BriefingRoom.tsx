@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBriefing } from "@/components/hq/MobileBriefing";
 import {
-  Phone,
-  PhoneCall,
+  BrainCircuit,
+  Zap,
   Loader2,
   Sparkles,
   Layers,
