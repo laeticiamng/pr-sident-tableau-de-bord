@@ -28,8 +28,8 @@ export const phoneSchema = z
   .string()
   .trim()
   .regex(
-    /^(?:\+33|0)[1-9](?:[0-9]{8})$/,
-    "Format de téléphone invalide (ex: +33612345678 ou 0612345678)"
+    /^\+?[1-9]\d{6,14}$/,
+    "Format de téléphone invalide (ex: +33612345678 ou +1234567890)"
   )
   .optional()
   .or(z.literal(""));

@@ -20,7 +20,7 @@ export const visionTranslations = {
     },
     stats: {
       platforms: "Plateformes",
-      aiAgents: "Agents IA",
+      aiAgents: "Processus automatisés",
       madeInFrance: "Made in France",
       monitoring: "Monitoring",
     },
@@ -73,7 +73,7 @@ export const visionTranslations = {
     },
     stats: {
       platforms: "Platforms",
-      aiAgents: "AI Agents",
+      aiAgents: "Automated processes",
       madeInFrance: "Made in France",
       monitoring: "Monitoring",
     },
@@ -126,7 +126,7 @@ export const visionTranslations = {
     },
     stats: {
       platforms: "Plattformen",
-      aiAgents: "KI-Agenten",
+      aiAgents: "Automatisierte Prozesse",
       madeInFrance: "Made in France",
       monitoring: "Monitoring",
     },

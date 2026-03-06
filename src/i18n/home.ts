@@ -1,13 +1,13 @@
 export const homeTranslations = {
   fr: {
     hero: {
-      badge: "Siège Social Numérique",
+      badge: "Éditeur de logiciels SaaS",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
-      description: "8 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences, la performance et la gouvernance IA",
+      subtitle: "Des logiciels qui transforment la santé et l'éducation",
+      description: "8 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
       cta: "Découvrir les plateformes",
-      ctaContact: "Nous contacter",
+      ctaContact: "Demander une démo",
     },
     features: {
       label: "Nos solutions",
@@ -59,8 +59,17 @@ export const homeTranslations = {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
-      contactButton: "Demander une démonstration",
+      contactButton: "Demander une démo",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
+    },
+    socialProof: {
+      title: "Ils nous font confiance",
+      subtitle: "Des professionnels qui utilisent nos plateformes au quotidien.",
+      items: [
+        { quote: "EmotionsCare a transformé notre approche du bien-être des soignants.", author: "Responsable RH", org: "Centre Hospitalier" },
+        { quote: "NEARVITY a rendu l'apprentissage médical beaucoup plus engageant pour nos étudiants.", author: "Directrice pédagogique", org: "Faculté de Médecine" },
+        { quote: "System Compass nous a fait gagner des semaines dans nos projets de relocalisation.", author: "Consultant mobilité", org: "Cabinet RH International" },
+      ],
     },
     showcase: {
       badge: "Écosystème Premium",
@@ -85,13 +94,13 @@ export const homeTranslations = {
   },
   en: {
     hero: {
-      badge: "Digital Headquarters",
+      badge: "SaaS Software Publisher",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "SaaS Software Publisher — Health, Education, International",
-      description: "8 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies, performance and AI governance",
+      subtitle: "Software that transforms healthcare and education",
+      description: "8 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
       cta: "Discover the platforms",
-      ctaContact: "Contact us",
+      ctaContact: "Request a demo",
     },
     features: {
       label: "Our Solutions",
@@ -146,6 +155,15 @@ export const homeTranslations = {
       contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
+    socialProof: {
+      title: "They trust us",
+      subtitle: "Professionals who use our platforms every day.",
+      items: [
+        { quote: "EmotionsCare has transformed our approach to caregiver wellbeing.", author: "HR Manager", org: "Hospital Center" },
+        { quote: "NEARVITY has made medical learning much more engaging for our students.", author: "Academic Director", org: "Medical School" },
+        { quote: "System Compass saved us weeks on our relocation projects.", author: "Mobility Consultant", org: "International HR Firm" },
+      ],
+    },
     showcase: {
       badge: "Premium Ecosystem",
       heading1: "Eight platforms.",
@@ -169,13 +187,13 @@ export const homeTranslations = {
   },
   de: {
     hero: {
-      badge: "Digitaler Hauptsitz",
+      badge: "SaaS-Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
-      description: "8 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle, Leistung und KI-Governance",
+      subtitle: "Software, die Gesundheit und Bildung transformiert",
+      description: "8 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
       cta: "Plattformen entdecken",
-      ctaContact: "Kontaktieren Sie uns",
+      ctaContact: "Demo anfordern",
     },
     features: {
       label: "Unsere Lösungen",
@@ -229,6 +247,15 @@ export const homeTranslations = {
       button: "Plattformen im Detail ansehen",
       contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
+    },
+    socialProof: {
+      title: "Sie vertrauen uns",
+      subtitle: "Fachleute, die unsere Plattformen täglich nutzen.",
+      items: [
+        { quote: "EmotionsCare hat unseren Ansatz zum Wohlbefinden der Pflegekräfte verändert.", author: "HR-Leitung", org: "Krankenhaus" },
+        { quote: "NEARVITY hat das medizinische Lernen für unsere Studierenden viel ansprechender gemacht.", author: "Pädagogische Direktorin", org: "Medizinische Fakultät" },
+        { quote: "System Compass hat uns Wochen bei unseren Umzugsprojekten gespart.", author: "Mobilitätsberater", org: "Internationale HR-Firma" },
+      ],
     },
     showcase: {
       badge: "Premium-Ökosystem",
