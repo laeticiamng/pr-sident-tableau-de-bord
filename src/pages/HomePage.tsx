@@ -97,7 +97,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link to="/contact" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full min-w-[200px] border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
+                <Button variant="outline" size="lg" className="w-full min-w-[200px] border-primary-foreground/40 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground dark:border-foreground/40 dark:text-foreground dark:hover:bg-foreground/10 dark:hover:text-foreground">
                   {t.hero.ctaContact}
                 </Button>
               </Link>
