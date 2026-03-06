@@ -20,6 +20,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 // Critical pages - loaded immediately
 import HomePage from "@/pages/HomePage";
 import AuthPage from "@/pages/AuthPage";
+import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import NotFound from "@/pages/NotFound";
 
 // Public Pages - lazy loaded
