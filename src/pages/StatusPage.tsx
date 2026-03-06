@@ -4,12 +4,14 @@ import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS } from "@/lib/pla
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Activity, CheckCircle, AlertCircle, ExternalLink, Rocket, Clock, RefreshCw } from "lucide-react";
+import { Activity, CheckCircle, AlertCircle, ExternalLink, Rocket, Clock, RefreshCw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { statusTranslations } from "@/i18n/status";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePlatformMonitor, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
+import { useAuth } from "@/contexts/AuthContext";
 
 const iconesPlateforme = PLATFORM_ICONS;
 const couleursAccent = PLATFORM_ACCENTS;
@@ -18,17 +20,26 @@ export default function StatusPage() {
   const [derniereVerification, setDerniereVerification] = useState(new Date());
   const t = useTranslation(statusTranslations);
   const { language } = useLanguage();
+  const { user } = useAuth();
 
-  usePageMeta({
-    title: t.meta.title,
-    description: t.meta.description,
-    ogImageAlt: t.meta.title + " — EMOTIONSCARE",
-  });
+  // Use real monitoring data when authenticated, fallback to static for public
+  const { data: monitorData, isLoading: monitorLoading } = usePlatformMonitor();
+  const refreshMonitor = useRefreshPlatformMonitor();
 
-  const plateformesProduction = MANAGED_PLATFORMS.filter((p) => p.status === "production");
-  const plateformesPrototype = MANAGED_PLATFORMS.filter((p) => p.status === "prototype");
-  const rafraichir = () => setDerniereVerification(new Date());
-  const toutOperationnel = true;
+  const handleRefresh = () => {
+    setDerniereVerification(new Date());
+    if (user) {
+      refreshMonitor.mutate();
+    }
+  };
+
+  // Derive operational status from real monitoring data when available
+  const toutOperationnel = monitorData
+    ? monitorData.summary.overall_status === "green"
+    : null; // null = unknown (public visitor, not authenticated)
+  const incidentCount = monitorData
+    ? monitorData.summary.platforms_red
+    : null;
 
   const locale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
   const dateLocale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-GB' : 'fr-FR';
