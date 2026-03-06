@@ -1,134 +1,165 @@
 
 
-# Audit Complet — EMOTIONSCARE HQ : De "Prototype Avancé" à "Révolutionnaire"
-
-## Ce qui existe et fonctionne bien
-
-Le socle est solide : 22+ pages HQ, 12 edge functions, auth sécurisée, notifications realtime, COS (Chief Operating System), Growth OS, briefing IA, approbations présidentielles, veille stratégique, finance Stripe, diagnostics, conformité RGPD, et un design premium bilingue (FR/EN). Le concept de "Siège Social Numérique" pour un Président unique est fort et différenciant.
+# AUDIT DÉFINITIF v3 — EMOTIONSCARE SASU
+## Post-corrections P0/P1/P2 — 6 mars 2026
 
 ---
 
-## Ce qui manque pour être UNIQUE et RÉVOLUTIONNAIRE
+## 1. RÉSUMÉ EXÉCUTIF
 
-### 1. INTELLIGENCE PROACTIVE — Le HQ ne pense pas encore tout seul
+La plateforme a significativement progressé. Tous les P0 sont corrigés (reset password, validation `trust-seal-chain`, CTA conversion). Les P1 StatusPage et cookie banner sont corrigés. Les P2 sidebar et copywriting features sont corrigés. La qualité technique reste solide.
 
-**Problème** : Le système attend que le Président agisse. Il faut cliquer "Demander un brief IA", "Lancer l'analyse", etc. Rien ne se déclenche automatiquement.
+Cependant, des problèmes structurels persistent : la section "Nos solutions" de la HP ne mentionne que 4 des 8 plateformes et omet les plus visibles (NEARVITY, UrgenceOS, Track Triumph, Gouvernance IA). Le PlatformShowcase affiche toujours des stats techniques (tables, branches, tests) incompréhensibles pour un visiteur. Le StatusPage affiche "Tous les systèmes opérationnels" même sans données (visiteur non authentifié), ce qui est trompeur. Deux React warnings en console (`Function components cannot be given refs`) sur `PublicFooter` et `CookieConsentBanner`.
 
-**Ce qu'il faut** :
-- **Morning Digest automatique** : chaque matin à 8h, un brief IA est généré et attend le Président sur le tableau de bord (scheduled-runs existe mais n'est pas câblé à un vrai cron)
-- **Alertes prédictives** : au lieu de constater "uptime = 92%", le système devrait prédire "UrgenceOS risque de tomber sous 90% d'ici 48h" basé sur les tendances
-- **Suggestions contextuelles** : "Vous n'avez pas consulté la page Finance depuis 12 jours — voici un résumé des changements"
+**Publiable aujourd'hui : OUI SOUS CONDITIONS**
+- Site vitrine public : OUI (réserves mineures)
+- HQ interne mono-utilisateur : OUI
+- SaaS pour utilisateurs payants : NON
 
-### 2. VOIX ET CONVERSATION — L'expérience Président est encore textuelle
+**Note globale : 15.5/20**
 
-**Problème** : Le "Appeler le DG" simule un appel mais c'est un bouton + texte. Pas de vrai dialogue.
+**Top 5 des risques restants :**
+1. StatusPage affiche "Tous les systèmes opérationnels" sans données réelles pour les visiteurs publics — affirmation non vérifiée présentée comme un fait
+2. PlatformShowcase affiche des stats techniques (723 tables, 635 branches, 294 tests) — jargon inaccessible pour un décideur
+3. Section "Nos solutions" ne couvre que 4/8 plateformes — les 4 omises sont visibles dans le showcase juste en dessous, créant une incohérence
+4. Console warnings React ref sur PublicFooter et CookieConsentBanner — ne casse rien mais signal de dette technique
+5. `cta.footer` affiche toujours "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs" — affirmation sans preuve, supprimée du rendu mais présente dans les traductions
 
-**Ce qu'il faut** :
-- **Chat IA persistant** : un assistant conversationnel dans le HQ (sidebar ou modal) où le Président peut poser des questions en langage naturel ("Quel est le churn ce mois ?", "Compare EmotionsCare et Med MNG")
-- **Historique des conversations** stocké en base pour continuité
-- **Voix** (optionnel mais différenciant) : Text-to-Speech sur les briefs pour écouter au lieu de lire
-
-### 3. DONNÉES VIVANTES — Trop de mock, pas assez de réel
-
-**Problème** : Veille stratégique = données hardcodées. Marketing = mock. RH = mock. Seuls Finance (Stripe) et Plateformes (DB) sont réels.
-
-**Ce qu'il faut** :
-- **Veille stratégique automatisée** : les sources (Product Hunt, TechCrunch, etc.) sont listées mais jamais scrapées automatiquement. Câbler Firecrawl + IA pour un vrai scan hebdomadaire
-- **Indicateur de provenance** systématique : chaque widget devrait afficher clairement "Données réelles" vs "Données simulées" (le pattern `DataSourceIndicator` existe mais n'est pas utilisé partout)
-- **Pipeline de données** : un système pour que chaque plateforme remonte ses KPIs réels via webhook ou API
-
-### 4. MOBILE-FIRST RÉEL — L'app n'est pas utilisable en déplacement
-
-**Problème** : La sidebar HQ à 26 liens secondaires n'est pas optimisée pour le mobile. Le Président devrait pouvoir piloter depuis son téléphone en 30 secondes.
-
-**Ce qu'il faut** :
-- **Mode "Président Mobile"** : un dashboard ultra-simplifié avec 3 cartes max (Santé écosystème, Décisions en attente, Brief du jour)
-- **PWA** : manifest.json, service worker, installation sur l'écran d'accueil
-- **Gestes tactiles** : swipe pour approuver/rejeter, pull-to-refresh natif
-
-### 5. TIMELINE DÉCISIONNELLE — Pas de mémoire stratégique
-
-**Problème** : L'audit log existe mais c'est un log technique. Il n'y a pas de vue "histoire des décisions stratégiques du Président".
-
-**Ce qu'il faut** :
-- **Journal Présidentiel** : chronologie des décisions majeures avec contexte, impact mesuré a posteriori, et notes personnelles
-- **Tableau de bord OKR vivant** : les objectifs trimestriels existent (EntreprisePage) mais ne sont pas connectés aux données réelles
-- **Rétrospective automatique** : "Ce trimestre, vous avez approuvé 47 actions, rejeté 12, le MRR a augmenté de 23%"
-
-### 6. SÉCURITÉ DE NIVEAU ENTREPRISE — Manques critiques
-
-**Problème** :
-- Pas de table `user_roles` séparée (AuthContext ne vérifie aucun rôle)
-- La page Auth affiche "7 Plateformes" au lieu de 8
-- Pas de 2FA / MFA
-- Pas de session timeout configurable
-
-**Ce qu'il faut** :
-- **RBAC avec table `user_roles`** selon les standards de sécurité
-- **MFA obligatoire** pour le Président (TOTP via Supabase Auth)
-- **Session management** : timeout après inactivité, log des sessions actives
-
-### 7. INTER-PLATEFORME — Les 8 plateformes sont isolées
-
-**Problème** : Chaque plateforme est un silo. Pas de vue corrélée.
-
-**Ce qu'il faut** :
-- **Matrice de corrélation** : "Quand EmotionsCare a un pic d'utilisateurs, Med MNG en bénéficie-t-il ?"
-- **Flux utilisateurs cross-plateforme** : combien d'utilisateurs utilisent 2+ plateformes ?
-- **Score de synergie écosystème** : métrique unique agrégée
-
-### 8. AUTOMATISATION AVANCÉE — L'Autopilot est limité
-
-**Problème** : L'Autopilot existe conceptuellement mais les règles sont simples (risque bas = auto, risque élevé = validation). Pas de workflows personnalisés.
-
-**Ce qu'il faut** :
-- **Règles conditionnelles** : "Si le churn dépasse 5% ET que c'est EmotionsCare, envoyer une alerte critique ET lancer une analyse IA automatique"
-- **Playbooks** : scénarios de réaction prédéfinis par type d'incident
-- **Escalation chain** : notification → alerte → pause automatique → rapport d'incident
-
-### 9. COHÉRENCE UI — Plusieurs standards coexistent
-
-**Problème** :
-- `ExecutiveHeader` + `MethodologyDisclosure` (standard HEC) utilisés sur certaines pages (Finance, Cockpit) mais pas toutes
-- Le HQ n'est pas internationalisé (les pages publiques ont i18n, le HQ est 100% français)
-- Certaines pages disent "7 plateformes" au lieu de 8
-
-**Ce qu'il faut** :
-- Appliquer le standard `ExecutiveHeader` + `MethodologyDisclosure` sur TOUTES les pages HQ
-- Mettre à jour toutes les références "7 plateformes" → dynamique depuis `MANAGED_PLATFORMS.length`
-- Uniformiser les états loading/empty/error sur chaque page
-
-### 10. CE QUI RENDRAIT LE PRODUIT VRAIMENT RÉVOLUTIONNAIRE
-
-| Feature | Impact | Effort |
-|---------|--------|--------|
-| Chat IA conversationnel persistant | Transforme l'UX de "dashboard" à "assistant" | Moyen |
-| Morning Digest automatique (cron) | Le HQ pense avant le Président | Faible |
-| PWA + mode mobile Président | Pilotage en 30 secondes depuis le téléphone | Moyen |
-| Journal décisionnel avec impact mesuré | Mémoire stratégique unique | Moyen |
-| Corrélation inter-plateformes | Vision écosystème inédite | Élevé |
-| Alertes prédictives (tendances) | Anticipation vs réaction | Élevé |
-| Veille automatisée (Firecrawl cron) | Intelligence concurrentielle vivante | Faible |
+**Top 5 des forces confirmées :**
+1. Reset password complet avec validation Zod, gestion lien expiré, redirection
+2. Sidebar HQ réduite à 7+12 liens groupés en 3 catégories — nettement plus lisible
+3. Features recentrées sur les bénéfices utilisateurs (santé, éducation, relocalisation, croissance)
+4. StatusPage connectée au monitoring réel via `usePlatformMonitor` pour les utilisateurs authentifiés
+5. Panic switch persisté en DB, statut dynamique ("Opérationnel" / "Manuel" / "Arrêt urgence")
 
 ---
 
-## Plan d'Implémentation Recommandé
+## 2. TABLEAU SCORE GLOBAL
 
-**Sprint 1 — Quick Wins (1 semaine)** :
-- Corriger toutes les références "7 plateformes" → dynamique
-- Appliquer `ExecutiveHeader` sur toutes les pages HQ manquantes
-- Ajouter un chat IA simple (sidebar) connecté à l'edge function `executive-run`
-- Configurer le Morning Digest automatique via `scheduled-runs`
+| Dimension | Note /20 | Observation | Criticité | Décision |
+|---|---|---|---|---|
+| Compréhension produit | 13 | Features recentrées mais ne couvrent que 4/8 plateformes | Majeur | Harmoniser avec le showcase |
+| Landing / Accueil | 16 | CTA contact fonctionnel, branding premium, features pertinentes | Mineur | OK |
+| Onboarding | 5 | Toujours inexistant pour visiteur externe — pas d'inscription, pas de demo | Bloquant (si SaaS B2B) | Hors scope si outil interne |
+| Navigation publique | 17 | Solide, i18n, responsive | — | OK |
+| Navigation HQ | 16 | Sidebar simplifiée, 3 catégories claires, badges dynamiques | Mineur | OK |
+| Clarté UX | 15 | StatusPage corrigée, SecuritePage corrigée, cookie banner compact | Mineur | OK |
+| Copywriting | 15 | Features recentrées sur les bénéfices. Showcase reste technique. | Mineur | Corriger showcase |
+| Crédibilité / Confiance | 15 | Pages légales complètes, SIREN visible, CTA contact | Mineur | OK |
+| Fonctionnalité principale (HQ) | 15 | Brief IA renommé, panic switch persisté, approbations | Mineur | OK |
+| Parcours utilisateur | 14 | Parcours interne OK. Parcours visiteur externe limité à contact. | Mineur | OK pour scope actuel |
+| Bugs / QA | 14 | 2 React warnings ref. Pas de bugs fonctionnels visibles. | Mineur | Corriger les warnings |
+| Sécurité préproduction | 17 | RLS, JWT/RBAC, reset password, panic switch DB, validation Zod | — | OK |
+| Conformité go-live | 16 | RGPD, cookies, mentions légales, CGV complets | — | OK |
 
-**Sprint 2 — Expérience Président (1-2 semaines)** :
-- PWA (manifest + service worker)
-- Mode mobile simplifié
-- Journal décisionnel (nouvelle table + page)
-- MFA via Supabase Auth
+---
 
-**Sprint 3 — Intelligence (2 semaines)** :
-- Veille automatisée avec Firecrawl
-- Alertes prédictives basées sur tendances
-- Matrice de corrélation inter-plateformes
-- Playbooks d'incident
+## 3. AUDIT PAGE PAR PAGE
+
+### HomePage (/) — 16/20
+- **Corrigé** : CTA "Nous contacter" en hero + "Demander une démonstration" en CTA bottom
+- **Corrigé** : Features recentrées sur bénéfices utilisateur (santé, éducation, relocalisation, croissance)
+- **Reste** : La section "Nos solutions" ne couvre que 4/8 plateformes. NEARVITY (social étudiant), UrgenceOS (urgences hospitalières), Track Triumph (compétition musicale) et Gouvernance IA (certification) sont absentes. L'utilisateur voit 4 solutions puis 8 plateformes dans le showcase — discontinuité.
+- **Reste** : Le PlatformShowcase affiche des métriques techniques (723 tables, 635 branches, 294 tests). Un décideur ne sait pas ce qu'est une "table" ou une "branche".
+- **Reste** : `cta.footer` dans les traductions contient encore "Utilisé par des professionnels..." mais n'est plus rendu — bonne suppression.
+- **Recommandation P2** : Remplacer les stats du showcase par des métriques compréhensibles (ex: "37 fonctionnalités", "7700+ améliorations", "294 tests qualité", "635 versions").
+
+### StatusPage (/status) — 15/20 (progression +2)
+- **Corrigé** : `toutOperationnel` dérive de `monitorData` via `usePlatformMonitor`. Affiche "Vérification..." pendant le chargement.
+- **Corrigé** : Le bouton Rafraîchir déclenche `refreshMonitor.mutate(undefined)` pour les utilisateurs authentifiés.
+- **Problème résiduel** : Pour un visiteur public non authentifié, `toutOperationnel` est `null` → le texte affiché est `t.hero.allOperational` ("Tous les systèmes opérationnels") avec un indicateur ambre. C'est contradictoire : le point ambre suggère un problème mais le texte dit "tout va bien". Il faudrait afficher "Statut public — données en temps réel réservées" ou similaire.
+- **Criticité** : Mineur (la page est publique, le monitoring réel nécessite une authentification — c'est cohérent avec le modèle de sécurité)
+
+### AuthPage (/auth) — 17/20 (progression +2)
+- **Corrigé** : Lien "Mot de passe oublié ?" fonctionnel avec dialog modal, envoi via `resetPasswordForEmail`, feedback "Email envoyé"
+- **Corrigé** : `ResetPasswordPage.tsx` gère le `PASSWORD_RECOVERY` event, validation Zod, lien expiré, redirection `/hq`
+- **Reste** : "39 Agents IA" hardcodé (ligne 311) — cosmétique pour un outil interne
+- **Reste** : Placeholder email `m.laeticia@emotionscare.com` révèle l'identité — acceptable pour usage mono-utilisateur
+
+### BriefingRoom (/hq) — 16/20 (progression +2)
+- **Corrigé** : "Appeler le DG" renommé en "Lancer le brief exécutif" avec icône `BrainCircuit`
+- **Corrigé** : Les états du bouton sont clairs : "Lancement du brief..." → "Analyse en cours..." → "Brief reçu — voir ci-dessous"
+- **Force** : KPIs avec null guards (`—` quand absent), empty state pour le brief, 3 actions guidées claires
+
+### SecuritePage (/hq/securite) — 16/20 (progression +5)
+- **Corrigé** : Panic switch persisté via `autopilotConfig` DB
+- **Corrigé** : Bouton Autopilot redondant supprimé — seul le Switch reste
+- **Corrigé** : "Sécurisé" remplacé par statut dynamique ("Arrêt urgence" / "Opérationnel" / "Manuel")
+- **Corrigé** : Secrets et Alertes affichent `—` au lieu de données fictives
+- **Corrigé** : IncidentCounter reçoit `null` → empty state
+
+### HQ Sidebar — 16/20 (progression +2)
+- **Corrigé** : Réduite de 27 à 19 liens (7 principaux + 12 secondaires en 3 groupes)
+- **Force** : Les 3 catégories (Opérations, Business, Gouvernance) sont claires et logiques
+- **Force** : Section secondaire repliable, s'ouvre automatiquement si on navigue vers une page secondaire
+
+### NotFound (404) — 14/20
+- **Inchangé** : Texte uniquement en français. Non i18n.
+
+### Cookie Banner — 16/20 (progression +2)
+- **Corrigé** : `line-clamp-2` sur mobile, padding réduit (`p-2 sm:p-4`)
+- **Force** : Conforme RGPD avec choix granulaire
+
+### Pages légales — 16/20
+- **Inchangé** : Complètes et professionnelles
+
+### ContactPage (/contact) — 16/20
+- **Inchangé** : Formulaire Zod + Edge Function, informations complètes
+
+---
+
+## 4. BUGS / QA
+
+| Problème | Fichier | Criticité |
+|---|---|---|
+| React warning: `PublicFooter` ne peut pas recevoir de ref | PublicLayout.tsx / PublicFooter.tsx | Mineur (cosmétique, pas de crash) |
+| React warning: `CookieConsentBanner` ne peut pas recevoir de ref | PublicLayout.tsx / CookieConsentBanner.tsx | Mineur |
+| StatusPage affiche "Opérationnel" sans données pour visiteur public | StatusPage.tsx ligne 122 | Mineur |
+
+---
+
+## 5. LISTE DES PROBLÈMES PRIORISÉS
+
+### P0 — Tous corrigés
+
+### P1 — Tous corrigés
+
+### P2 — Restants
+1. **PlatformShowcase stats techniques** — "723 tables", "635 branches", "294 tests" sont du jargon. Impact : le visiteur ne comprend pas la valeur. Recommandation : renommer en "fonctionnalités", "améliorations", "tests qualité", "versions".
+2. **Section "Nos solutions" ne couvre que 4/8 plateformes** — Incohérence avec le showcase qui en montre 8. Recommandation : soit ajouter les 4 manquantes (en grille 2x4), soit restructurer en "solutions phares" explicitement.
+3. **StatusPage texte trompeur pour visiteur public** — Affiche "Tous les systèmes opérationnels" sans données. Recommandation : afficher "Statut en temps réel réservé aux administrateurs" quand `toutOperationnel === null`.
+
+### P3 — Restants
+4. **React warnings ref** — `PublicFooter` et `CookieConsentBanner` reçoivent des refs sans `forwardRef`. Recommandation : ajouter `forwardRef` ou supprimer le ref dans `PublicLayout`.
+5. **NotFound non i18n** — Texte FR uniquement.
+6. **"39 Agents IA" hardcodé** sur AuthPage.
+7. **`cta.footer` "Utilisé par des professionnels..."** — Présent dans les traductions mais plus rendu. Nettoyer le code mort.
+
+---
+
+## 6. SÉCURITÉ / GO-LIVE READINESS
+
+| Observé | Risque | Action |
+|---|---|---|
+| Reset password fonctionnel | Faible | OK |
+| Panic switch persisté en DB | Faible | OK |
+| RLS + is_owner() SECURITY DEFINER | Faible | OK |
+| Lockout login côté client (contournable par refresh) | Faible | Acceptable pour mono-utilisateur |
+| `verify_jwt = false` dans config.toml | Moyen | Vérification manuelle dans chaque Edge Function — acceptable si systématique |
+| Console warnings React | Nul | Cosmétique |
+
+---
+
+## 7. VERDICT FINAL
+
+**La plateforme est-elle prête ?** OUI pour publication du site vitrine public et usage HQ mono-propriétaire.
+
+**Progression depuis le premier audit :** 13/20 → 14.5/20 → **15.5/20**. Tous les bloquants sont résolus. Les correctifs P1 sont terminés. Les P2 restants sont des améliorations de copywriting/UX, pas des risques.
+
+**3 corrections les plus rentables maintenant :**
+1. **Renommer les stats du PlatformShowcase** : "Évolutions" au lieu de "commits", "Structures" au lieu de "tables", "Versions" au lieu de "branches" — c'est déjà partiellement fait dans les traductions (`s.evolutions`, `s.structures`, `s.versions`) mais le showcase hero card utilise les labels corrects. Vérifier la cohérence sur toutes les cartes. (10 min)
+2. **StatusPage visiteur public** : Remplacer le texte quand `toutOperationnel === null` par "Statut en temps réel disponible après connexion" au lieu de "Tous les systèmes opérationnels" (5 min)
+3. **Corriger les React warnings ref** : Ajouter `forwardRef` sur `PublicFooter` et `CookieConsentBanner`, ou ne pas passer de ref dans `PublicLayout` (5 min)
+
+**Si j'étais décideur externe** : Je publierais aujourd'hui. Le site vitrine est professionnel, les pages légales sont complètes, le CTA de contact fonctionne, le reset password est opérationnel, le branding est premium. Les P2 restants sont des optimisations, pas des bloquants. Le HQ interne est solide pour un usage propriétaire.
 
