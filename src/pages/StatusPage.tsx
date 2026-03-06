@@ -114,8 +114,10 @@ export default function StatusPage() {
               {t.hero.title} <span className="text-accent">{t.hero.titleAccent}</span>
             </h1>
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
-              <div className={cn("w-3 h-3 rounded-full animate-pulse", toutOperationnel ? "bg-status-green" : "bg-status-amber")} />
-              <span className="text-white font-medium">{toutOperationnel ? t.hero.allOperational : t.hero.someIssues}</span>
+              <div className={cn("w-3 h-3 rounded-full animate-pulse", toutOperationnel === true ? "bg-status-green" : toutOperationnel === false ? "bg-status-red" : "bg-status-amber")} />
+              <span className="text-white font-medium">
+                {monitorLoading ? "Vérification..." : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.allOperational}
+              </span>
             </div>
             <p className="mt-6 text-white/60 text-sm">
               {t.hero.lastCheck} : {derniereVerification.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
