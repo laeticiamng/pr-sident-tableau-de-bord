@@ -144,17 +144,6 @@ export default function SecuritePage() {
                 />
               )}
             </div>
-            <Button 
-              variant={autopilotEnabled ? "outline" : "executive"}
-              className="w-full"
-              onClick={handleToggleAutopilot}
-              disabled={updateConfig.isPending}
-            >
-              {updateConfig.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : null}
-              {autopilotEnabled ? "Désactiver Autopilot" : "Activer Autopilot"}
-            </Button>
           </CardContent>
         </Card>
       </div>
