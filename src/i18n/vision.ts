@@ -73,7 +73,7 @@ export const visionTranslations = {
     },
     stats: {
       platforms: "Platforms",
-      aiAgents: "AI Agents",
+      aiAgents: "Automated processes",
       madeInFrance: "Made in France",
       monitoring: "Monitoring",
     },

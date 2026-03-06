@@ -138,10 +138,12 @@ export default function StatusPage() {
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-amber" /><span className="text-sm font-medium">{plateformesPrototype.length} {t.summary.prototypes}</span></div>
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-red" /><span className="text-sm font-medium">{incidentCount ?? 0} {t.summary.incidents}</span></div>
             </div>
-            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshMonitor.isPending}>
-              {refreshMonitor.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
-              {t.summary.refresh}
-            </Button>
+            {user && (
+              <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshMonitor.isPending}>
+                {refreshMonitor.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+                {t.summary.refresh}
+              </Button>
+            )}
           </div>
         </div>
       </section>

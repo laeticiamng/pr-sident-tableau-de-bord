@@ -169,13 +169,13 @@ export const homeTranslations = {
   },
   de: {
     hero: {
-      badge: "Digitaler Hauptsitz",
+      badge: "SaaS-Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
-      description: "8 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle, Leistung und KI-Governance",
+      subtitle: "Software, die Gesundheit und Bildung transformiert",
+      description: "8 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
       cta: "Plattformen entdecken",
-      ctaContact: "Kontaktieren Sie uns",
+      ctaContact: "Demo anfordern",
     },
     features: {
       label: "Unsere Lösungen",
