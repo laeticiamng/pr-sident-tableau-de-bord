@@ -1,13 +1,13 @@
 export const homeTranslations = {
   fr: {
     hero: {
-      badge: "Siège Social Numérique",
+      badge: "Éditeur de logiciels SaaS",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "Éditeur de logiciels SaaS — Santé, Éducation, International",
-      description: "8 plateformes innovantes pour la santé, l'éducation médicale, la relocalisation, la croissance, le social, les urgences, la performance et la gouvernance IA",
+      subtitle: "Des logiciels qui transforment la santé et l'éducation",
+      description: "8 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
       cta: "Découvrir les plateformes",
-      ctaContact: "Nous contacter",
+      ctaContact: "Demander une démo",
     },
     features: {
       label: "Nos solutions",
