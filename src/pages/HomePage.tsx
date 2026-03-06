@@ -25,12 +25,16 @@ import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
 
-const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap];
+const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap, Users, Siren, Music, ShieldCheck];
 const FEATURE_STYLES = [
   { color: "text-accent", bgColor: "bg-accent/10" },
   { color: "text-success", bgColor: "bg-success/10" },
   { color: "text-primary", bgColor: "bg-primary/10" },
   { color: "text-warning", bgColor: "bg-warning/10" },
+  { color: "text-info", bgColor: "bg-info/10" },
+  { color: "text-destructive", bgColor: "bg-destructive/10" },
+  { color: "text-accent", bgColor: "bg-accent/10" },
+  { color: "text-success", bgColor: "bg-success/10" },
 ];
 
 function ScrollReveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
