@@ -6,10 +6,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   Sparkles,
-  Brain,
-  Activity,
-  CheckCircle,
-  Search,
+  Heart,
+  GraduationCap,
+  Globe,
+  Zap,
   Building2
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
