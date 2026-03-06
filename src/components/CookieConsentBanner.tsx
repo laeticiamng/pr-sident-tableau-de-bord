@@ -16,8 +16,8 @@ export function CookieConsentBanner() {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:p-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="mx-auto max-w-2xl rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] p-2 sm:p-4 md:p-6 animate-in slide-in-from-bottom-4 duration-500">
+      <div className="mx-auto max-w-2xl rounded-xl sm:rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl">
         <div className="p-5 md:p-6">
           {/* Header */}
           <div className="flex items-center gap-2.5 mb-3">
