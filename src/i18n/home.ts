@@ -85,13 +85,13 @@ export const homeTranslations = {
   },
   en: {
     hero: {
-      badge: "Digital Headquarters",
+      badge: "SaaS Software Publisher",
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
-      subtitle: "SaaS Software Publisher — Health, Education, International",
-      description: "8 innovative platforms for healthcare, medical education, relocation, growth, social impact, emergencies, performance and AI governance",
+      subtitle: "Software that transforms healthcare and education",
+      description: "8 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
       cta: "Discover the platforms",
-      ctaContact: "Contact us",
+      ctaContact: "Request a demo",
     },
     features: {
       label: "Our Solutions",
