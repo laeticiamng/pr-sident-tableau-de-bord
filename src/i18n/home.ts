@@ -111,6 +111,7 @@ export const homeTranslations = {
       title: "Explore the ecosystem",
       subtitle: "Discover our 8 innovative platforms and how they transform their sectors.",
       button: "View platforms in detail",
+      contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
     showcase: {
