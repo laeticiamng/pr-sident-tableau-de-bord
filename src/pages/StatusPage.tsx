@@ -29,7 +29,7 @@ export default function StatusPage() {
   const handleRefresh = () => {
     setDerniereVerification(new Date());
     if (user) {
-      refreshMonitor.mutate();
+      refreshMonitor.mutate(undefined);
     }
   };
 
