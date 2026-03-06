@@ -15,6 +15,7 @@ import {
   Siren,
   Music,
   ShieldCheck,
+  Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
