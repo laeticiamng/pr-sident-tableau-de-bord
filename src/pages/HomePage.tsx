@@ -10,7 +10,11 @@ import {
   GraduationCap,
   Globe,
   Zap,
-  Building2
+  Building2,
+  Users,
+  Siren,
+  Music,
+  ShieldCheck,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
