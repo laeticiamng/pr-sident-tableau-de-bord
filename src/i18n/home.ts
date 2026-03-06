@@ -10,26 +10,26 @@ export const homeTranslations = {
       ctaContact: "Nous contacter",
     },
     features: {
-      label: "Fonctionnalités",
-      title: "Fonctionnalités du",
-      titleAccent: "Siège Numérique",
-      subtitle: "Un tableau de bord exécutif complet pour piloter l'ensemble de l'écosystème EMOTIONSCARE",
+      label: "Nos solutions",
+      title: "Des plateformes qui",
+      titleAccent: "changent la donne",
+      subtitle: "Chaque plateforme est conçue pour résoudre un problème concret dans la santé, l'éducation et l'international",
       items: [
         {
-          title: "Intelligence IA",
-          description: "Rapports stratégiques générés automatiquement chaque jour. Briefings de direction, audits de sécurité, veille concurrentielle — tout est synthétisé pour vous.",
+          title: "Bien-être des soignants",
+          description: "Prévention du burnout, résilience émotionnelle et accompagnement personnalisé pour les professionnels de santé. Un outil conçu avec et pour les équipes médicales.",
         },
         {
-          title: "Supervision en temps réel",
-          description: "Visualisez l'état de santé de toutes vos plateformes en un coup d'œil. Disponibilité, mises à jour et alertes centralisés.",
+          title: "Apprentissage médical innovant",
+          description: "L'éducation médicale réinventée par la musique et les méthodes cognitives. Des parcours adaptés qui transforment la mémorisation en expérience engageante.",
         },
         {
-          title: "Validation des actions",
-          description: "Chaque action critique passe par une validation présidentielle. Déploiements, modifications sensibles : rien ne se fait sans votre accord.",
+          title: "Relocalisation internationale simplifiée",
+          description: "Un système décisionnel intelligent qui accompagne chaque étape d'un projet de relocalisation — de l'analyse pays à l'installation concrète.",
         },
         {
-          title: "Veille stratégique",
-          description: "Recherche automatisée sur les tendances de votre marché. Analyse concurrentielle et opportunités identifiées en temps réel.",
+          title: "Croissance automatisée par l'IA",
+          description: "Une équipe de 39 experts IA qui travaillent 24/7 sur votre stratégie de croissance : acquisition, rétention, analyse concurrentielle et optimisation continue.",
         },
       ],
     },
