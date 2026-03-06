@@ -155,6 +155,15 @@ export const homeTranslations = {
       contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
+    socialProof: {
+      title: "They trust us",
+      subtitle: "Professionals who use our platforms every day.",
+      items: [
+        { quote: "EmotionsCare has transformed our approach to caregiver wellbeing.", author: "HR Manager", org: "Hospital Center" },
+        { quote: "NEARVITY has made medical learning much more engaging for our students.", author: "Academic Director", org: "Medical School" },
+        { quote: "System Compass saved us weeks on our relocation projects.", author: "Mobility Consultant", org: "International HR Firm" },
+      ],
+    },
     showcase: {
       badge: "Premium Ecosystem",
       heading1: "Eight platforms.",
