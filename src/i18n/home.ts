@@ -143,6 +143,7 @@ export const homeTranslations = {
       subtitle: "SaaS-Softwareherausgeber — Gesundheit, Bildung, International",
       description: "8 innovative Plattformen für Gesundheit, medizinische Ausbildung, Umzug, Wachstum, Soziales, Notfälle, Leistung und KI-Governance",
       cta: "Plattformen entdecken",
+      ctaContact: "Kontaktieren Sie uns",
     },
     features: {
       label: "Funktionen",
