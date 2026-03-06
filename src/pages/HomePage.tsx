@@ -88,6 +88,11 @@ export default function HomePage() {
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
+              <Link to="/contact" className="w-full sm:w-auto">
+                <Button variant="outline" size="lg" className="w-full min-w-[200px] border-white/30 text-white hover:bg-white/10 hover:text-white">
+                  {t.hero.ctaContact}
+                </Button>
+              </Link>
             </div>
 
             <div className="hidden sm:block mt-20 animate-bounce">
