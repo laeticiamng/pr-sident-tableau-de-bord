@@ -89,6 +89,7 @@ export const statusTranslations = {
       titleAccent: "Status",
       allOperational: "Alle Systeme sind betriebsbereit",
       someIssues: "Einige Systeme benötigen Aufmerksamkeit",
+      publicFallback: "Status basierend auf den letzten Deployments",
       lastCheck: "Letzte Überprüfung",
     },
     summary: {
