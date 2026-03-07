@@ -37,7 +37,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Gouvernance Unifiée",
       title1: "Un siège.",
-      title2: "Huit excellences.",
+      title2: "Dix excellences.",
       subtitle: "Toutes nos plateformes partagent la même infrastructure backend, les mêmes standards de sécurité et la même rigueur d'exécution.",
       cta: "Nous contacter",
     },
