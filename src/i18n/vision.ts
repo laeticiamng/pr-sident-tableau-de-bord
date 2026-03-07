@@ -3,7 +3,7 @@ export const visionTranslations = {
     meta: { title: "Vision & Valeurs", description: "Excellence, innovation, empathie, croissance. Une mission : créer des logiciels qui transforment la complexité en simplicité." },
     hero: {
       badge: "Notre Vision",
-      subtitle: "8 plateformes · 1 mission",
+      subtitle: "10 plateformes · 1 mission",
       title1: "Construire l'avenir",
       title2: "du logiciel",
       description: "Chez EMOTIONSCARE, nous croyons que la technologie doit servir l'humain, pas l'inverse. Notre mission : créer des outils qui simplifient la vie et libèrent le potentiel de chacun.",
@@ -46,7 +46,7 @@ export const visionTranslations = {
       items: [
         { date: "Mai 2025", title: "Création d'EMOTIONSCARE SASU", description: "Immatriculation au RCS d'Amiens (SIREN 944 505 445). Début de l'aventure entrepreneuriale dans l'édition de logiciels applicatifs." },
         { date: "2025", title: "Lancement des premières plateformes", description: "Développement et mise en production de l'écosystème fondateur : EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG." },
-        { date: "Début 2026", title: "Centre de pilotage & Expansion", description: "Création du centre de pilotage unifié avec IA intégrée. Lancement d'UrgenceOS (urgences hospitalières), Track Triumph (compétition musicale) et Gouvernance Agents IA (certification IA), portant l'écosystème à 8 plateformes." },
+        { date: "Début 2026", title: "Centre de pilotage & Expansion", description: "Création du centre de pilotage unifié avec IA intégrée. Lancement d'UrgenceOS, Track Triumph, Gouvernance Agents IA, StudyBeats et Vascular Atlas, portant l'écosystème à 10 plateformes." },
         { date: "Mi-2026", title: "Expansion & Intégrations", description: "Intégration des outils tiers (CRM, Analytics, Support) et déploiement des 39 processus automatisés de Growth Copilot." },
         { date: "À venir", title: "Et demain ?", description: "Expansion internationale, nouvelles plateformes et partenariats stratégiques. L'histoire continue de s'écrire..." },
       ],
@@ -56,7 +56,7 @@ export const visionTranslations = {
     meta: { title: "Vision & Values", description: "Excellence, innovation, empathy, growth. One mission: creating software that transforms complexity into simplicity." },
     hero: {
       badge: "Our Vision",
-      subtitle: "8 platforms · 1 mission",
+      subtitle: "10 platforms · 1 mission",
       title1: "Building the future",
       title2: "of software",
       description: "At EMOTIONSCARE, we believe technology should serve people, not the other way around. Our mission: creating tools that simplify life and unlock everyone's potential.",
@@ -99,7 +99,7 @@ export const visionTranslations = {
       items: [
         { date: "May 2025", title: "EMOTIONSCARE SASU founded", description: "Registered at the Amiens Trade Registry (SIREN 944 505 445). Beginning of the entrepreneurial journey in software publishing." },
         { date: "2025", title: "First platforms launched", description: "Development and production of the founding ecosystem: EmotionsCare, NEARVITY, System Compass, Growth Copilot and Med MNG." },
-        { date: "Early 2026", title: "Digital HQ & Expansion", description: "Creation of the Digital Headquarters — Unified command center with integrated AI. Launch of UrgenceOS (hospital emergencies) and Track Triumph (music competition), bringing the ecosystem to 8 platforms." },
+        { date: "Early 2026", title: "Digital HQ & Expansion", description: "Creation of the Digital Headquarters — Unified command center with integrated AI. Launch of UrgenceOS, Track Triumph, AI Governance, StudyBeats and Vascular Atlas, bringing the ecosystem to 10 platforms." },
         { date: "Mid-2026", title: "Expansion & Integrations", description: "Integration of third-party tools (CRM, Analytics, Support) and deployment of 39 automated processes from Growth Copilot." },
         { date: "Coming soon", title: "What's next?", description: "International expansion, new platforms and strategic partnerships. The story continues..." },
       ],
@@ -109,7 +109,7 @@ export const visionTranslations = {
     meta: { title: "Vision & Werte", description: "Exzellenz, Innovation, Empathie, Wachstum. Eine Mission: Software schaffen, die Komplexität in Einfachheit verwandelt." },
     hero: {
       badge: "Unsere Vision",
-      subtitle: "8 Plattformen · 1 Mission",
+      subtitle: "10 Plattformen · 1 Mission",
       title1: "Die Zukunft gestalten",
       title2: "der Software",
       description: "Bei EMOTIONSCARE glauben wir, dass Technologie den Menschen dienen sollte, nicht umgekehrt. Unsere Mission: Werkzeuge schaffen, die das Leben vereinfachen und das Potenzial jedes Einzelnen freisetzen.",
@@ -152,7 +152,7 @@ export const visionTranslations = {
       items: [
         { date: "Mai 2025", title: "Gründung EMOTIONSCARE SASU", description: "Eintragung im Handelsregister Amiens (SIREN 944 505 445). Beginn des unternehmerischen Abenteuers in der Softwareentwicklung." },
         { date: "2025", title: "Start der ersten Plattformen", description: "Entwicklung und Inbetriebnahme des Gründungsökosystems: EmotionsCare, NEARVITY, System Compass, Growth Copilot und Med MNG." },
-        { date: "Anfang 2026", title: "Digitaler Hauptsitz & Expansion", description: "Schaffung des Digitalen Hauptsitzes — Einheitliches Kommandozentrum mit integrierter KI. Start von UrgenceOS (Krankenhausnotfälle) und Track Triumph (Musikwettbewerb), Erweiterung auf 8 Plattformen." },
+        { date: "Anfang 2026", title: "Digitaler Hauptsitz & Expansion", description: "Schaffung des Digitalen Hauptsitzes mit integrierter KI. Start von UrgenceOS, Track Triumph, KI-Governance, StudyBeats und Vascular Atlas, Erweiterung auf 10 Plattformen." },
         { date: "Mitte 2026", title: "Expansion & Integrationen", description: "Integration von Drittanbieter-Tools (CRM, Analytics, Support) und Einsatz der 39 automatisierten Prozesse von Growth Copilot." },
         { date: "Demnächst", title: "Und morgen?", description: "Internationale Expansion, neue Plattformen und strategische Partnerschaften. Die Geschichte wird weitergeschrieben..." },
       ],

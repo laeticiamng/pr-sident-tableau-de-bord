@@ -1,5 +1,5 @@
-// Constantes pour les 8 plateformes managées (immuable)
-// Données synchronisées depuis GitHub - 4 Mars 2026
+// Constantes pour les 10 plateformes managées (immuable)
+// Données synchronisées depuis GitHub - 7 Mars 2026
 export const MANAGED_PLATFORMS = [
   {
     key: "emotionscare",

@@ -5,7 +5,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "Des logiciels qui transforment la santé et l'éducation",
-      description: "8 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
+      description: "10 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
       cta: "Découvrir les plateformes",
       ctaContact: "Demander une démo",
     },
@@ -47,6 +47,14 @@ export const homeTranslations = {
           title: "Gouvernance & certification IA",
           description: "Audit trail complet, conformité AI Act et traçabilité des décisions pour une intelligence artificielle de confiance.",
         },
+        {
+          title: "Mémorisation musicale",
+          description: "Transformez vos cours en chansons mémorables. 30 styles musicaux, quiz automatiques et neurosciences cognitives au service de l'apprentissage.",
+        },
+        {
+          title: "Médecine vasculaire IA",
+          description: "Assistant clinique IA, jumeau numérique vasculaire et simulation clinique pour l'excellence en chirurgie vasculaire.",
+        },
       ],
     },
     stats: {
@@ -57,7 +65,7 @@ export const homeTranslations = {
     },
     cta: {
       title: "Explorez l'écosystème",
-      subtitle: "Découvrez nos 8 plateformes innovantes et comment elles transforment leurs secteurs.",
+      subtitle: "Découvrez nos 10 plateformes innovantes et comment elles transforment leurs secteurs.",
       button: "Voir les plateformes en détail",
       contactButton: "Demander une démo",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
@@ -74,7 +82,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Écosystème Premium",
-      heading1: "Huit plateformes.",
+      heading1: "Dix plateformes.",
       heading2: "Une vision.",
       subtitle: "Chaque plateforme répond à un besoin spécifique, toutes sont pilotées depuis notre siège numérique avec les mêmes standards d'excellence.",
       production: "Production",
@@ -99,7 +107,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "Software that transforms healthcare and education",
-      description: "8 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
+      description: "10 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
       cta: "Discover the platforms",
       ctaContact: "Request a demo",
     },
@@ -141,6 +149,14 @@ export const homeTranslations = {
           title: "AI Governance & Certification",
           description: "Complete audit trail, AI Act compliance and decision traceability for trustworthy artificial intelligence.",
         },
+        {
+          title: "Musical Memorization",
+          description: "Transform your courses into memorable songs. 30 music styles, automatic quizzes and cognitive neuroscience for learning.",
+        },
+        {
+          title: "Vascular Medicine AI",
+          description: "AI clinical assistant, vascular digital twin and clinical simulation for vascular surgery excellence.",
+        },
       ],
     },
     stats: {
@@ -151,7 +167,7 @@ export const homeTranslations = {
     },
     cta: {
       title: "Explore the ecosystem",
-      subtitle: "Discover our 8 innovative platforms and how they transform their sectors.",
+      subtitle: "Discover our 10 innovative platforms and how they transform their sectors.",
       button: "View platforms in detail",
       contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
@@ -168,7 +184,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Premium Ecosystem",
-      heading1: "Eight platforms.",
+      heading1: "Ten platforms.",
       heading2: "One vision.",
       subtitle: "Each platform addresses a specific need, all are managed from our digital headquarters with the same standards of excellence.",
       production: "Production",
@@ -193,7 +209,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "Software, die Gesundheit und Bildung transformiert",
-      description: "8 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
+      description: "10 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
       cta: "Plattformen entdecken",
       ctaContact: "Demo anfordern",
     },
@@ -235,6 +251,14 @@ export const homeTranslations = {
           title: "KI-Governance & Zertifizierung",
           description: "Vollständiger Audit-Trail, AI Act-Konformität und Entscheidungsnachverfolgung für vertrauenswürdige KI.",
         },
+        {
+          title: "Musikalisches Memorieren",
+          description: "Verwandeln Sie Ihre Kurse in einprägsame Songs. 30 Musikstile, automatische Quizze und kognitive Neurowissenschaften.",
+        },
+        {
+          title: "Gefäßmedizin KI",
+          description: "KI-Klinikassistent, vaskulärer digitaler Zwilling und klinische Simulation für die Gefäßchirurgie.",
+        },
       ],
     },
     stats: {
@@ -245,7 +269,7 @@ export const homeTranslations = {
     },
     cta: {
       title: "Das Ökosystem erkunden",
-      subtitle: "Entdecken Sie unsere 8 innovativen Plattformen und wie sie ihre Branchen verändern.",
+      subtitle: "Entdecken Sie unsere 10 innovativen Plattformen und wie sie ihre Branchen verändern.",
       button: "Plattformen im Detail ansehen",
       contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
@@ -262,7 +286,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Premium-Ökosystem",
-      heading1: "Acht Plattformen.",
+      heading1: "Zehn Plattformen.",
       heading2: "Eine Vision.",
       subtitle: "Jede Plattform erfüllt einen spezifischen Bedarf, alle werden von unserem digitalen Hauptsitz mit denselben Exzellenzstandards gesteuert.",
       production: "Produktion",

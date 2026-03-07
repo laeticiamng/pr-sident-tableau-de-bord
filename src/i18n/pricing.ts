@@ -5,7 +5,7 @@ export const pricingTranslations = {
     subtitle: "Des solutions adaptées à chaque besoin, de l'essai gratuit à l'accompagnement sur mesure.",
     summary: {
       title: "En bref",
-      text: "EMOTIONSCARE propose 8 plateformes SaaS avec des modèles tarifaires adaptés : freemium pour les utilisateurs individuels, abonnements mensuels pour les professionnels, et tarifs sur mesure pour les établissements. Chaque plateforme a son propre plan tarifaire car les besoins varient selon le secteur.",
+      text: "EMOTIONSCARE propose 10 plateformes SaaS avec des modèles tarifaires adaptés : freemium pour les utilisateurs individuels, abonnements mensuels pour les professionnels, et tarifs sur mesure pour les établissements. Chaque plateforme a son propre plan tarifaire car les besoins varient selon le secteur.",
     },
     whoIsItFor: {
       title: "À qui s'adressent nos plateformes ?",
@@ -17,6 +17,8 @@ export const pricingTranslations = {
         { audience: "Étudiants", platform: "NEARVITY", model: "Gratuit" },
         { audience: "Artistes & communautés musicales", platform: "Track Triumph", model: "Freemium" },
         { audience: "Entreprises utilisant l'IA", platform: "Gouvernance Agents IA", model: "Sur devis" },
+        { audience: "Étudiants de tous niveaux", platform: "StudyBeats", model: "Freemium" },
+        { audience: "Chirurgiens & médecins vasculaires", platform: "Vascular Atlas", model: "Sur devis" },
       ],
     },
     cta: {
@@ -48,7 +50,7 @@ export const pricingTranslations = {
     subtitle: "Solutions tailored to every need, from free trials to custom enterprise packages.",
     summary: {
       title: "In brief",
-      text: "EMOTIONSCARE offers 8 SaaS platforms with tailored pricing models: freemium for individual users, monthly subscriptions for professionals, and custom pricing for institutions. Each platform has its own pricing plan because needs vary by sector.",
+      text: "EMOTIONSCARE offers 10 SaaS platforms with tailored pricing models: freemium for individual users, monthly subscriptions for professionals, and custom pricing for institutions. Each platform has its own pricing plan because needs vary by sector.",
     },
     whoIsItFor: {
       title: "Who are our platforms for?",
@@ -60,6 +62,8 @@ export const pricingTranslations = {
         { audience: "Students", platform: "NEARVITY", model: "Free" },
         { audience: "Artists & music communities", platform: "Track Triumph", model: "Freemium" },
         { audience: "Companies using AI", platform: "AI Governance", model: "Custom quote" },
+        { audience: "Students of all levels", platform: "StudyBeats", model: "Freemium" },
+        { audience: "Vascular surgeons & physicians", platform: "Vascular Atlas", model: "Custom quote" },
       ],
     },
     cta: {
@@ -91,7 +95,7 @@ export const pricingTranslations = {
     subtitle: "Lösungen für jeden Bedarf, von kostenlosen Tests bis hin zu maßgeschneiderten Unternehmenspaketen.",
     summary: {
       title: "Auf einen Blick",
-      text: "EMOTIONSCARE bietet 8 SaaS-Plattformen mit angepassten Preismodellen: Freemium für Einzelpersonen, monatliche Abonnements für Fachleute und individuelle Preise für Einrichtungen. Jede Plattform hat einen eigenen Tarif, da die Anforderungen je nach Branche variieren.",
+      text: "EMOTIONSCARE bietet 10 SaaS-Plattformen mit angepassten Preismodellen: Freemium für Einzelpersonen, monatliche Abonnements für Fachleute und individuelle Preise für Einrichtungen. Jede Plattform hat einen eigenen Tarif, da die Anforderungen je nach Branche variieren.",
     },
     whoIsItFor: {
       title: "Für wen sind unsere Plattformen?",
@@ -103,6 +107,8 @@ export const pricingTranslations = {
         { audience: "Studierende", platform: "NEARVITY", model: "Kostenlos" },
         { audience: "Künstler & Musikgemeinschaften", platform: "Track Triumph", model: "Freemium" },
         { audience: "Unternehmen mit KI", platform: "KI-Governance", model: "Individuelles Angebot" },
+        { audience: "Studierende aller Stufen", platform: "StudyBeats", model: "Freemium" },
+        { audience: "Gefäßchirurgen & -ärzte", platform: "Vascular Atlas", model: "Individuelles Angebot" },
       ],
     },
     cta: {
