@@ -59,6 +59,7 @@ export function buildOrganizationSchema() {
       "Compétition musicale",
       "Gouvernance IA",
       "Mémorisation par la musique",
+      "Médecine vasculaire",
     ],
     sameAs: [
       COMPANY_PROFILE.linkedinCompany,
