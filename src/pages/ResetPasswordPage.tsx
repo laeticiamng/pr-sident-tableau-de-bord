@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Loader2, Lock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { passwordSchema } from "@/lib/validation";
+import { getPasswordSchema } from "@/lib/validation";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { authTranslations } from "@/i18n/auth";
 
