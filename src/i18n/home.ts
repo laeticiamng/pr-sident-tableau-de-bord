@@ -184,7 +184,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Premium Ecosystem",
-      heading1: "Eight platforms.",
+      heading1: "Ten platforms.",
       heading2: "One vision.",
       subtitle: "Each platform addresses a specific need, all are managed from our digital headquarters with the same standards of excellence.",
       production: "Production",
