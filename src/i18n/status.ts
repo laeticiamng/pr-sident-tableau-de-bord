@@ -41,7 +41,7 @@ export const statusTranslations = {
     },
   },
   en: {
-    meta: { title: "Service Status", description: "Real-time availability of EMOTIONSCARE's 8 SaaS platforms." },
+    meta: { title: "Service Status", description: "Real-time availability of EMOTIONSCARE's 10 SaaS platforms." },
     hero: {
       badge: "Service status",
       title: "Platform",
