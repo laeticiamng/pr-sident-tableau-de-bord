@@ -201,6 +201,20 @@ const PLATFORM_GEO_META: Record<
       "traçabilité algorithmique",
     ],
   },
+  studybeats: {
+    applicationCategory: "EducationalApplication",
+    audience: "Étudiants de tous niveaux, lycéens, universitaires",
+    alternativeHeadline:
+      "Transformez vos cours en chansons mémorables — mémorisation par la musique et les neurosciences",
+    keywords: [
+      "mémorisation musicale",
+      "apprentissage par la musique",
+      "neurosciences cognitives",
+      "révision par chanson",
+      "quiz automatiques",
+      "StudyBeats",
+    ],
+  },
 };
 
 // ============================================
