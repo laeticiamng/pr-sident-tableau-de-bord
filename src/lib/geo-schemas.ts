@@ -57,6 +57,8 @@ export function buildOrganizationSchema() {
       "Automatisation business par IA",
       "Urgences hospitalières",
       "Compétition musicale",
+      "Gouvernance IA",
+      "Mémorisation par la musique",
     ],
     sameAs: [
       COMPANY_PROFILE.linkedinCompany,
