@@ -25,7 +25,7 @@ export function buildOrganizationSchema() {
     legalName: COMPANY_PROFILE.legalName,
     url: "https://president-cockpit-hq.lovable.app",
     description:
-      "Éditeur français de 9 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, mémorisation musicale par les neurosciences, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale et gouvernance IA.",
+      "Éditeur français de 10 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, mémorisation musicale par les neurosciences, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale, gouvernance IA et médecine vasculaire.",
     foundingDate: "2025-05-07",
     founder: {
       "@type": "Person",
@@ -59,6 +59,7 @@ export function buildOrganizationSchema() {
       "Compétition musicale",
       "Gouvernance IA",
       "Mémorisation par la musique",
+      "Médecine vasculaire",
     ],
     sameAs: [
       COMPANY_PROFILE.linkedinCompany,
@@ -215,6 +216,20 @@ const PLATFORM_GEO_META: Record<
       "StudyBeats",
     ],
   },
+  "vascular-atlas": {
+    applicationCategory: "HealthApplication",
+    audience: "Chirurgiens vasculaires, angiologues, médecins vasculaires",
+    alternativeHeadline:
+      "Plateforme clinique IA pour la médecine vasculaire — assistant, jumeau numérique et simulation",
+    keywords: [
+      "médecine vasculaire",
+      "chirurgie vasculaire IA",
+      "jumeau numérique vasculaire",
+      "simulation clinique",
+      "registre résultats vasculaires",
+      "certification CME",
+    ],
+  },
 };
 
 // ============================================
@@ -298,7 +313,7 @@ export function buildFAQSchema() {
         name: "Qu'est-ce qu'EMOTIONSCARE ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 9 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la mémorisation musicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale et la gouvernance IA. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
+          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 10 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la mémorisation musicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale, la gouvernance IA et la médecine vasculaire. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
         },
       },
       {
@@ -347,7 +362,7 @@ export function buildVisionPageSchema() {
     name: "Vision & Valeurs — EMOTIONSCARE",
     url: "https://president-cockpit-hq.lovable.app/vision",
     description:
-      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 9 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 10 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
     datePublished: "2025-05-07",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
@@ -377,7 +392,7 @@ export function buildVisionPageSchema() {
       {
         "@type": "WebPageElement",
         name: "Notre Histoire",
-        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 9 plateformes SaaS avec une équipe augmentée par l'IA.",
+        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 10 plateformes SaaS avec une équipe augmentée par l'IA.",
       },
     ],
     mainEntity: {
@@ -404,6 +419,7 @@ export function buildVisionPageSchema() {
         "Compétition musicale",
         "Gouvernance IA",
         "Mémorisation par la musique",
+        "Médecine vasculaire",
       ],
       ethicsPolicy: "https://president-cockpit-hq.lovable.app/legal/rgpd",
       numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
