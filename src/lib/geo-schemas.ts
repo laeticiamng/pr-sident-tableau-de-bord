@@ -216,6 +216,20 @@ const PLATFORM_GEO_META: Record<
       "StudyBeats",
     ],
   },
+  "vascular-atlas": {
+    applicationCategory: "HealthApplication",
+    audience: "Chirurgiens vasculaires, angiologues, médecins vasculaires",
+    alternativeHeadline:
+      "Plateforme clinique IA pour la médecine vasculaire — assistant, jumeau numérique et simulation",
+    keywords: [
+      "médecine vasculaire",
+      "chirurgie vasculaire IA",
+      "jumeau numérique vasculaire",
+      "simulation clinique",
+      "registre résultats vasculaires",
+      "certification CME",
+    ],
+  },
 };
 
 // ============================================
