@@ -362,7 +362,7 @@ export function buildVisionPageSchema() {
     name: "Vision & Valeurs — EMOTIONSCARE",
     url: "https://president-cockpit-hq.lovable.app/vision",
     description:
-      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 9 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 10 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
     datePublished: "2025-05-07",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
