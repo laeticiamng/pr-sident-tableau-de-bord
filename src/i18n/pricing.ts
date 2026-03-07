@@ -17,6 +17,8 @@ export const pricingTranslations = {
         { audience: "Étudiants", platform: "NEARVITY", model: "Gratuit" },
         { audience: "Artistes & communautés musicales", platform: "Track Triumph", model: "Freemium" },
         { audience: "Entreprises utilisant l'IA", platform: "Gouvernance Agents IA", model: "Sur devis" },
+        { audience: "Étudiants de tous niveaux", platform: "StudyBeats", model: "Freemium" },
+        { audience: "Chirurgiens & médecins vasculaires", platform: "Vascular Atlas", model: "Sur devis" },
       ],
     },
     cta: {
