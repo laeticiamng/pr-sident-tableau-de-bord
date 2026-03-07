@@ -18,6 +18,7 @@ import {
   Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
+import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
