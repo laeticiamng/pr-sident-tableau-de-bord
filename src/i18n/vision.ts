@@ -152,7 +152,7 @@ export const visionTranslations = {
       items: [
         { date: "Mai 2025", title: "Gründung EMOTIONSCARE SASU", description: "Eintragung im Handelsregister Amiens (SIREN 944 505 445). Beginn des unternehmerischen Abenteuers in der Softwareentwicklung." },
         { date: "2025", title: "Start der ersten Plattformen", description: "Entwicklung und Inbetriebnahme des Gründungsökosystems: EmotionsCare, NEARVITY, System Compass, Growth Copilot und Med MNG." },
-        { date: "Anfang 2026", title: "Digitaler Hauptsitz & Expansion", description: "Schaffung des Digitalen Hauptsitzes — Einheitliches Kommandozentrum mit integrierter KI. Start von UrgenceOS (Krankenhausnotfälle) und Track Triumph (Musikwettbewerb), Erweiterung auf 8 Plattformen." },
+        { date: "Anfang 2026", title: "Digitaler Hauptsitz & Expansion", description: "Schaffung des Digitalen Hauptsitzes mit integrierter KI. Start von UrgenceOS, Track Triumph, KI-Governance, StudyBeats und Vascular Atlas, Erweiterung auf 10 Plattformen." },
         { date: "Mitte 2026", title: "Expansion & Integrationen", description: "Integration von Drittanbieter-Tools (CRM, Analytics, Support) und Einsatz der 39 automatisierten Prozesse von Growth Copilot." },
         { date: "Demnächst", title: "Und morgen?", description: "Internationale Expansion, neue Plattformen und strategische Partnerschaften. Die Geschichte wird weitergeschrieben..." },
       ],

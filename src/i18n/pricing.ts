@@ -107,6 +107,8 @@ export const pricingTranslations = {
         { audience: "Studierende", platform: "NEARVITY", model: "Kostenlos" },
         { audience: "Künstler & Musikgemeinschaften", platform: "Track Triumph", model: "Freemium" },
         { audience: "Unternehmen mit KI", platform: "KI-Governance", model: "Individuelles Angebot" },
+        { audience: "Studierende aller Stufen", platform: "StudyBeats", model: "Freemium" },
+        { audience: "Gefäßchirurgen & -ärzte", platform: "Vascular Atlas", model: "Individuelles Angebot" },
       ],
     },
     cta: {

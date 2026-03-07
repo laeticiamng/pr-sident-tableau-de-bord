@@ -123,7 +123,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Einheitliche Governance",
       title1: "Ein Hauptsitz.",
-      title2: "Acht Spitzenleistungen.",
+      title2: "Zehn Spitzenleistungen.",
       subtitle: "Alle unsere Plattformen teilen die gleiche Backend-Infrastruktur, die gleichen Sicherheitsstandards und die gleiche Ausführungsstrenge.",
       cta: "Kontaktieren Sie uns",
     },
