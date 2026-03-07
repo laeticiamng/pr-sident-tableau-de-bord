@@ -155,6 +155,8 @@ export default function HomePage() {
 
       <PlatformShowcase />
 
+      <HomeFAQ />
+
       {/* SOCIAL PROOF */}
       <section className="py-20 md:py-28 bg-secondary/30">
         <div className="container px-4 sm:px-6 lg:px-8">
