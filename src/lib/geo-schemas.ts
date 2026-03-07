@@ -347,7 +347,7 @@ export function buildVisionPageSchema() {
       {
         "@type": "WebPageElement",
         name: "Notre Histoire",
-        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 7 plateformes SaaS avec une équipe augmentée par l'IA.",
+        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 8 plateformes SaaS avec une équipe augmentée par l'IA.",
       },
     ],
     mainEntity: {
