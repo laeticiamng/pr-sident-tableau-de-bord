@@ -80,7 +80,7 @@ export const platformsTranslations = {
     governance: {
       badge: "Unified Governance",
       title1: "One headquarters.",
-      title2: "Eight excellences.",
+      title2: "Ten excellences.",
       subtitle: "All our platforms share the same backend infrastructure, the same security standards and the same execution rigor.",
       cta: "Contact us",
     },
