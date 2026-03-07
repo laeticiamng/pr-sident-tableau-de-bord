@@ -25,7 +25,7 @@ export function buildOrganizationSchema() {
     legalName: COMPANY_PROFILE.legalName,
     url: "https://president-cockpit-hq.lovable.app",
     description:
-      "Éditeur français de 7 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières et compétition musicale.",
+      "Éditeur français de 8 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale et gouvernance IA.",
     foundingDate: "2025-05-07",
     founder: {
       "@type": "Person",
