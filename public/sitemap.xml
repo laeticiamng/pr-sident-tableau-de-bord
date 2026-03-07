@@ -32,6 +32,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://president-cockpit-hq.lovable.app/tarifs</loc>
+    <lastmod>2026-03-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://president-cockpit-hq.lovable.app/contact</loc>
     <lastmod>2026-03-07</lastmod>
     <changefreq>monthly</changefreq>

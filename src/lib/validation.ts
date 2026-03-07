@@ -1,13 +1,69 @@
 import { z } from "zod";
+import { validationTranslations } from "@/i18n/validation";
 
-// Common validation schemas
+type Lang = keyof typeof validationTranslations;
+
+// Get current language from document or default to FR
+function getLang(): Lang {
+  const lang = document.documentElement.lang?.slice(0, 2) as Lang;
+  return validationTranslations[lang] ? lang : "fr";
+}
+
+function t() {
+  return validationTranslations[getLang()];
+}
+
+// Common validation schemas — messages resolve at validation time
 export const emailSchema = z
   .string()
   .trim()
-  .min(1, "L'email est requis")
-  .email("Format d'email invalide")
-  .max(255, "L'email ne peut pas dépasser 255 caractères");
+  .min(1, { message: "email.required" })
+  .email({ message: "email.invalid" })
+  .max(255, { message: "email.tooLong" })
+  .transform((val) => val) // keep chain
+  .superRefine(() => {}); // placeholder
 
+// Re-export with dynamic messages
+export function getEmailSchema() {
+  const m = t().email;
+  return z.string().trim()
+    .min(1, m.required)
+    .email(m.invalid)
+    .max(255, m.tooLong);
+}
+
+export function getPasswordSchema() {
+  const m = t().password;
+  return z.string()
+    .min(8, m.tooShort)
+    .max(128, m.tooLong)
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, m.weak);
+}
+
+export function getNameSchema() {
+  const m = t().name;
+  return z.string().trim()
+    .min(1, m.required)
+    .max(100, m.tooLong)
+    .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, m.invalid);
+}
+
+export function getPhoneSchema() {
+  const m = t().phone;
+  return z.string().trim()
+    .regex(/^\+?[1-9]\d{6,14}$/, m.invalid)
+    .optional()
+    .or(z.literal(""));
+}
+
+export function getMessageSchema() {
+  const m = t().message;
+  return z.string().trim()
+    .min(10, m.tooShort)
+    .max(2000, m.tooLong);
+}
+
+// Static schemas (backward compatibility — FR messages, used by non-form code)
 export const passwordSchema = z
   .string()
   .min(8, "Le mot de passe doit contenir au moins 8 caractères")
@@ -47,14 +103,46 @@ export const urlSchema = z
   .optional()
   .or(z.literal(""));
 
-// Authentication schemas
+// Dynamic i18n-aware schemas (call these inside components)
+export function getLoginSchema() {
+  const m = t().password;
+  return z.object({
+    email: getEmailSchema(),
+    password: z.string().min(1, m.required),
+  });
+}
+
+export function getSignupSchema() {
+  const m = t().password;
+  return z.object({
+    email: getEmailSchema(),
+    password: getPasswordSchema(),
+    confirmPassword: z.string().min(1, m.confirm),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: m.mismatch,
+    path: ["confirmPassword"],
+  });
+}
+
+export function getContactSchema() {
+  const m = t().subject;
+  return z.object({
+    name: getNameSchema(),
+    email: getEmailSchema(),
+    phone: getPhoneSchema(),
+    subject: z.string().trim().min(1, m.required).max(200, m.tooLong),
+    message: getMessageSchema(),
+  });
+}
+
+// Static schemas (backward compat)
 export const loginSchema = z.object({
-  email: emailSchema,
+  email: z.string().trim().min(1, "L'email est requis").email("Format d'email invalide").max(255),
   password: z.string().min(1, "Le mot de passe est requis"),
 });
 
 export const signupSchema = z.object({
-  email: emailSchema,
+  email: z.string().trim().min(1, "L'email est requis").email("Format d'email invalide").max(255),
   password: passwordSchema,
   confirmPassword: z.string().min(1, "Confirmez le mot de passe"),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -62,10 +150,9 @@ export const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
-// Contact form schema
 export const contactSchema = z.object({
   name: nameSchema,
-  email: emailSchema,
+  email: z.string().trim().min(1, "L'email est requis").email("Format d'email invalide").max(255),
   phone: phoneSchema,
   subject: z.string().trim().min(1, "Le sujet est requis").max(200, "Le sujet est trop long"),
   message: messageSchema,
@@ -132,7 +219,6 @@ export function sanitizeHtml(input: string): string {
 }
 
 export function sanitizeForDisplay(input: string): string {
-  // Remove potentially dangerous patterns
   return input
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/javascript:/gi, "")

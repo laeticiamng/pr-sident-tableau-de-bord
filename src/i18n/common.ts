@@ -3,6 +3,7 @@ export const commonTranslations = {
     nav: {
       home: "Accueil",
       platforms: "Plateformes",
+      pricing: "Tarifs",
       status: "Statut",
       vision: "Vision",
       security: "Sécurité",
@@ -27,6 +28,7 @@ export const commonTranslations = {
     nav: {
       home: "Home",
       platforms: "Platforms",
+      pricing: "Pricing",
       status: "Status",
       vision: "Vision",
       security: "Security",
@@ -51,6 +53,7 @@ export const commonTranslations = {
     nav: {
       home: "Startseite",
       platforms: "Plattformen",
+      pricing: "Preise",
       status: "Status",
       vision: "Vision",
       security: "Sicherheit",

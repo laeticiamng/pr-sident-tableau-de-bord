@@ -11,7 +11,7 @@ import { commonTranslations } from "@/i18n/common";
 const navLinks = [
   { href: "/", key: "home" as const },
   { href: "/plateformes", key: "platforms" as const },
-  { href: "/status", key: "status" as const },
+  { href: "/tarifs", key: "pricing" as const },
   { href: "/vision", key: "vision" as const },
   { href: "/trust", key: "security" as const },
   { href: "/contact", key: "contact" as const },
