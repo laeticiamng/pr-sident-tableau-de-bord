@@ -209,7 +209,7 @@ export const homeTranslations = {
       madeIn: "🇫🇷 Made in France",
       title: "EMOTIONSCARE",
       subtitle: "Software, die Gesundheit und Bildung transformiert",
-      description: "8 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
+      description: "10 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
       cta: "Plattformen entdecken",
       ctaContact: "Demo anfordern",
     },
