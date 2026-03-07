@@ -419,6 +419,7 @@ export function buildVisionPageSchema() {
         "Compétition musicale",
         "Gouvernance IA",
         "Mémorisation par la musique",
+        "Médecine vasculaire",
       ],
       ethicsPolicy: "https://president-cockpit-hq.lovable.app/legal/rgpd",
       numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
