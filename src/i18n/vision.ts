@@ -100,7 +100,7 @@ export const visionTranslations = {
         { date: "May 2025", title: "EMOTIONSCARE SASU founded", description: "Registered at the Amiens Trade Registry (SIREN 944 505 445). Beginning of the entrepreneurial journey in software publishing." },
         { date: "2025", title: "First platforms launched", description: "Development and production of the founding ecosystem: EmotionsCare, NEARVITY, System Compass, Growth Copilot and Med MNG." },
         { date: "Early 2026", title: "Digital HQ & Expansion", description: "Creation of the Digital Headquarters — Unified command center with integrated AI. Launch of UrgenceOS (hospital emergencies) and Track Triumph (music competition), bringing the ecosystem to 8 platforms." },
-        { date: "Mid-2026", title: "Expansion & Integrations", description: "Integration of third-party tools (CRM, Analytics, Support) and deployment of 39 AI agents from Growth Copilot." },
+        { date: "Mid-2026", title: "Expansion & Integrations", description: "Integration of third-party tools (CRM, Analytics, Support) and deployment of 39 automated processes from Growth Copilot." },
         { date: "Coming soon", title: "What's next?", description: "International expansion, new platforms and strategic partnerships. The story continues..." },
       ],
     },
