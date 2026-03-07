@@ -90,7 +90,7 @@ export const platformsTranslations = {
       badge: "Vollständiges Ökosystem",
       title: "Unsere",
       titleAccent: "Plattformen",
-      subtitle: "Acht innovative Lösungen, eine einheitliche Vision. Jede Plattform glänzt in ihrem Bereich.",
+      subtitle: "Zehn innovative Lösungen, eine einheitliche Vision. Jede Plattform glänzt in ihrem Bereich.",
     },
     stats: {
       platforms: "Plattformen",
