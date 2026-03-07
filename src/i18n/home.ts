@@ -82,7 +82,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Écosystème Premium",
-      heading1: "Huit plateformes.",
+      heading1: "Dix plateformes.",
       heading2: "Une vision.",
       subtitle: "Chaque plateforme répond à un besoin spécifique, toutes sont pilotées depuis notre siège numérique avec les mêmes standards d'excellence.",
       production: "Production",
