@@ -30,6 +30,7 @@ const StatusPage = lazy(() => import("@/pages/StatusPage"));
 const VisionPage = lazy(() => import("@/pages/VisionPage"));
 const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const TrustPage = lazy(() => import("@/pages/TrustPage"));
+const TarifsPage = lazy(() => import("@/pages/TarifsPage"));
 
 // Legal Pages - lazy loaded (rarely visited)
 const MentionsLegalesPage = lazy(() => import("@/pages/legal/MentionsLegalesPage"));
