@@ -11,7 +11,7 @@ export const commonTranslations = {
       login: "Connexion",
     },
     footer: {
-      description: "Siège social numérique pilotant 8 plateformes innovantes. Éditeur de logiciels applicatifs basé à Amiens.",
+      description: "Éditeur français de 8 plateformes SaaS innovantes. Basé à Amiens.",
       navigation: "Navigation",
       legal: "Légal",
       legalNotice: "Mentions légales",
