@@ -1,134 +1,187 @@
 
 
-# Audit Complet — EMOTIONSCARE HQ : De "Prototype Avancé" à "Révolutionnaire"
-
-## Ce qui existe et fonctionne bien
-
-Le socle est solide : 22+ pages HQ, 12 edge functions, auth sécurisée, notifications realtime, COS (Chief Operating System), Growth OS, briefing IA, approbations présidentielles, veille stratégique, finance Stripe, diagnostics, conformité RGPD, et un design premium bilingue (FR/EN). Le concept de "Siège Social Numérique" pour un Président unique est fort et différenciant.
+# AUDIT DÉFINITIF AVANT MISE EN PRODUCTION — EMOTIONSCARE HQ (v2)
 
 ---
 
-## Ce qui manque pour être UNIQUE et RÉVOLUTIONNAIRE
+## 1. RÉSUMÉ EXÉCUTIF
 
-### 1. INTELLIGENCE PROACTIVE — Le HQ ne pense pas encore tout seul
+La plateforme a progressé depuis le dernier audit (corrections hero, 404 i18n, validation téléphone, placeholder email). L'infrastructure technique reste exemplaire. Cependant, plusieurs problèmes persistent ou sont apparus : la page Auth et la page ResetPassword contiennent encore du texte hardcodé en français (non i18n), le terme "Siège Social Numérique" persiste sur la page Auth, le panel droit Auth affiche encore "39 Agents IA" (non corrigé comme sur VisionPage), et la section Social Proof utilise des témoignages fictifs sans indication qu'ils sont illustratifs, ce qui constitue un risque de crédibilité et potentiellement légal.
 
-**Problème** : Le système attend que le Président agisse. Il faut cliquer "Demander un brief IA", "Lancer l'analyse", etc. Rien ne se déclenche automatiquement.
+**Publiable aujourd'hui : OUI SOUS CONDITIONS**
 
-**Ce qu'il faut** :
-- **Morning Digest automatique** : chaque matin à 8h, un brief IA est généré et attend le Président sur le tableau de bord (scheduled-runs existe mais n'est pas câblé à un vrai cron)
-- **Alertes prédictives** : au lieu de constater "uptime = 92%", le système devrait prédire "UrgenceOS risque de tomber sous 90% d'ici 48h" basé sur les tendances
-- **Suggestions contextuelles** : "Vous n'avez pas consulté la page Finance depuis 12 jours — voici un résumé des changements"
+**Note globale : 15.5/20** (progression de +1 par rapport au 14.5 précédent)
 
-### 2. VOIX ET CONVERSATION — L'expérience Président est encore textuelle
+**Top 5 des risques restants :**
+1. Page Auth entièrement hardcodée en français — casse l'expérience i18n
+2. Page ResetPassword entièrement hardcodée en français
+3. Témoignages Social Proof fictifs sans disclaimer — risque de crédibilité/légal
+4. "Siège Social Numérique" et "39 Agents IA" persistent sur la page Auth (panel droit)
+5. Stats techniques (tables, branches, edge functions) toujours visibles sur /plateformes sans contexte business
 
-**Problème** : Le "Appeler le DG" simule un appel mais c'est un bouton + texte. Pas de vrai dialogue.
-
-**Ce qu'il faut** :
-- **Chat IA persistant** : un assistant conversationnel dans le HQ (sidebar ou modal) où le Président peut poser des questions en langage naturel ("Quel est le churn ce mois ?", "Compare EmotionsCare et Med MNG")
-- **Historique des conversations** stocké en base pour continuité
-- **Voix** (optionnel mais différenciant) : Text-to-Speech sur les briefs pour écouter au lieu de lire
-
-### 3. DONNÉES VIVANTES — Trop de mock, pas assez de réel
-
-**Problème** : Veille stratégique = données hardcodées. Marketing = mock. RH = mock. Seuls Finance (Stripe) et Plateformes (DB) sont réels.
-
-**Ce qu'il faut** :
-- **Veille stratégique automatisée** : les sources (Product Hunt, TechCrunch, etc.) sont listées mais jamais scrapées automatiquement. Câbler Firecrawl + IA pour un vrai scan hebdomadaire
-- **Indicateur de provenance** systématique : chaque widget devrait afficher clairement "Données réelles" vs "Données simulées" (le pattern `DataSourceIndicator` existe mais n'est pas utilisé partout)
-- **Pipeline de données** : un système pour que chaque plateforme remonte ses KPIs réels via webhook ou API
-
-### 4. MOBILE-FIRST RÉEL — L'app n'est pas utilisable en déplacement
-
-**Problème** : La sidebar HQ à 26 liens secondaires n'est pas optimisée pour le mobile. Le Président devrait pouvoir piloter depuis son téléphone en 30 secondes.
-
-**Ce qu'il faut** :
-- **Mode "Président Mobile"** : un dashboard ultra-simplifié avec 3 cartes max (Santé écosystème, Décisions en attente, Brief du jour)
-- **PWA** : manifest.json, service worker, installation sur l'écran d'accueil
-- **Gestes tactiles** : swipe pour approuver/rejeter, pull-to-refresh natif
-
-### 5. TIMELINE DÉCISIONNELLE — Pas de mémoire stratégique
-
-**Problème** : L'audit log existe mais c'est un log technique. Il n'y a pas de vue "histoire des décisions stratégiques du Président".
-
-**Ce qu'il faut** :
-- **Journal Présidentiel** : chronologie des décisions majeures avec contexte, impact mesuré a posteriori, et notes personnelles
-- **Tableau de bord OKR vivant** : les objectifs trimestriels existent (EntreprisePage) mais ne sont pas connectés aux données réelles
-- **Rétrospective automatique** : "Ce trimestre, vous avez approuvé 47 actions, rejeté 12, le MRR a augmenté de 23%"
-
-### 6. SÉCURITÉ DE NIVEAU ENTREPRISE — Manques critiques
-
-**Problème** :
-- Pas de table `user_roles` séparée (AuthContext ne vérifie aucun rôle)
-- La page Auth affiche "7 Plateformes" au lieu de 8
-- Pas de 2FA / MFA
-- Pas de session timeout configurable
-
-**Ce qu'il faut** :
-- **RBAC avec table `user_roles`** selon les standards de sécurité
-- **MFA obligatoire** pour le Président (TOTP via Supabase Auth)
-- **Session management** : timeout après inactivité, log des sessions actives
-
-### 7. INTER-PLATEFORME — Les 8 plateformes sont isolées
-
-**Problème** : Chaque plateforme est un silo. Pas de vue corrélée.
-
-**Ce qu'il faut** :
-- **Matrice de corrélation** : "Quand EmotionsCare a un pic d'utilisateurs, Med MNG en bénéficie-t-il ?"
-- **Flux utilisateurs cross-plateforme** : combien d'utilisateurs utilisent 2+ plateformes ?
-- **Score de synergie écosystème** : métrique unique agrégée
-
-### 8. AUTOMATISATION AVANCÉE — L'Autopilot est limité
-
-**Problème** : L'Autopilot existe conceptuellement mais les règles sont simples (risque bas = auto, risque élevé = validation). Pas de workflows personnalisés.
-
-**Ce qu'il faut** :
-- **Règles conditionnelles** : "Si le churn dépasse 5% ET que c'est EmotionsCare, envoyer une alerte critique ET lancer une analyse IA automatique"
-- **Playbooks** : scénarios de réaction prédéfinis par type d'incident
-- **Escalation chain** : notification → alerte → pause automatique → rapport d'incident
-
-### 9. COHÉRENCE UI — Plusieurs standards coexistent
-
-**Problème** :
-- `ExecutiveHeader` + `MethodologyDisclosure` (standard HEC) utilisés sur certaines pages (Finance, Cockpit) mais pas toutes
-- Le HQ n'est pas internationalisé (les pages publiques ont i18n, le HQ est 100% français)
-- Certaines pages disent "7 plateformes" au lieu de 8
-
-**Ce qu'il faut** :
-- Appliquer le standard `ExecutiveHeader` + `MethodologyDisclosure` sur TOUTES les pages HQ
-- Mettre à jour toutes les références "7 plateformes" → dynamique depuis `MANAGED_PLATFORMS.length`
-- Uniformiser les états loading/empty/error sur chaque page
-
-### 10. CE QUI RENDRAIT LE PRODUIT VRAIMENT RÉVOLUTIONNAIRE
-
-| Feature | Impact | Effort |
-|---------|--------|--------|
-| Chat IA conversationnel persistant | Transforme l'UX de "dashboard" à "assistant" | Moyen |
-| Morning Digest automatique (cron) | Le HQ pense avant le Président | Faible |
-| PWA + mode mobile Président | Pilotage en 30 secondes depuis le téléphone | Moyen |
-| Journal décisionnel avec impact mesuré | Mémoire stratégique unique | Moyen |
-| Corrélation inter-plateformes | Vision écosystème inédite | Élevé |
-| Alertes prédictives (tendances) | Anticipation vs réaction | Élevé |
-| Veille automatisée (Firecrawl cron) | Intelligence concurrentielle vivante | Faible |
+**Top 5 des forces :**
+1. Sécurité backend exemplaire (RLS, RBAC, SECURITY DEFINER, rate limiting)
+2. i18n FR/EN/DE solide sur toutes les pages publiques principales (sauf Auth/Reset)
+3. Design system premium cohérent light/dark
+4. Pages légales exhaustives et conformes
+5. Validation des entrées avec Zod côté client + sanitization
 
 ---
 
-## Plan d'Implémentation Recommandé
+## 2. TABLEAU SCORE GLOBAL
 
-**Sprint 1 — Quick Wins (1 semaine)** :
-- Corriger toutes les références "7 plateformes" → dynamique
-- Appliquer `ExecutiveHeader` sur toutes les pages HQ manquantes
-- Ajouter un chat IA simple (sidebar) connecté à l'edge function `executive-run`
-- Configurer le Morning Digest automatique via `scheduled-runs`
+| Dimension | Note /20 | Observation | Criticité | Décision |
+|---|---|---|---|---|
+| Compréhension produit | 14 | Hero amélioré, mais toujours pas de parcours d'achat/essai | Majeur | Ajouter CTA conversion |
+| Landing / Accueil | 16 | Hero clair, Social Proof ajouté, animations fluides | Mineur | OK mais disclamer témoignages |
+| Onboarding | 10 | Aucun onboarding post-login. L'utilisateur HQ arrive sans guidance | Critique | Hors périmètre vitrine |
+| Navigation | 17 | Complète, responsive, i18n, footer riche | Cosmétique | OK |
+| Clarté UX | 16 | Bonne hiérarchie, scroll reveal, responsive | Mineur | OK |
+| Copywriting | 14 | Amélioré mais jargon persiste (Auth panel, PlateformesPage stats) | Majeur | Nettoyer jargon restant |
+| Crédibilité / Confiance | 14 | Social Proof ajouté mais fictif. Pages légales complètes | Majeur | Disclaimer ou vrais témoignages |
+| Parcours utilisateur | 15 | Landing→Contact OK. Landing→Auth→HQ OK. Pas de parcours d'essai | Mineur | OK pour vitrine |
+| Bugs / QA | 15 | Auth + ResetPassword non i18n | Majeur | Internationaliser |
+| Sécurité préproduction | 17 | Excellente. Lockout, RLS, JWT, sanitization | Cosmétique | OK |
+| Conformité go-live | 15 | Pages légales OK, RGPD OK, cookie consent OK | Mineur | OK |
 
-**Sprint 2 — Expérience Président (1-2 semaines)** :
-- PWA (manifest + service worker)
-- Mode mobile simplifié
-- Journal décisionnel (nouvelle table + page)
-- MFA via Supabase Auth
+---
 
-**Sprint 3 — Intelligence (2 semaines)** :
-- Veille automatisée avec Firecrawl
-- Alertes prédictives basées sur tendances
-- Matrice de corrélation inter-plateformes
-- Playbooks d'incident
+## 3. AUDIT PAGE PAR PAGE
+
+### 3.1 Page d'accueil (/) — 16/20
+- **Améliorations depuis dernier audit** : Hero reécrit avec bénéfice, Social Proof ajouté, CTA "Demander une démo"
+- **Ce qui est flou** : Les témoignages sont clairement fictifs ("Responsable RH, Centre Hospitalier" — anonyme et générique). Un utilisateur sceptique le détectera immédiatement.
+- **Ce qui manque** : Disclaimer sur les témoignages OU remplacement par de vrais témoignages. Section "Pour qui" avec personas clairs.
+- **Action** : Ajouter un disclaimer discret sous les témoignages ou les présenter comme "exemples de retours" en attendant de vrais témoignages.
+
+### 3.2 Page Plateformes (/plateformes) — 16/20
+- **Forces** : Présentation impressionnante, filtres Production/Prototype, descriptions riches
+- **Faiblesse persistante** : Les 6 stats par plateforme (Commits, Tables, Tests, Branches, Edge Functions, Modules) sont du jargon développeur. Un décideur ou prospect ne sait pas ce que "723 Structures" ou "261 Intégrations" signifie.
+- **Action** : Renommer "Structures" → "Modèles de données", "Intégrations" → "Services connectés", ou mieux : remplacer par des métriques business (utilisateurs actifs, satisfaction) quand disponibles.
+
+### 3.3 Page Auth (/auth) — 14/20 (baisse de 17 à 14)
+- **Problème critique** : TOUTE la page est hardcodée en français. Aucune utilisation de i18n. Textes concernés :
+  - "Siège Social Numérique" (mobile header + panel droit badge + subtitle)
+  - "Connexion à EMOTIONSCARE" / "Connexion"
+  - "Accédez au siège social numérique"
+  - "Email" / "Mot de passe" / "Mot de passe oublié ?"
+  - "Se connecter" / "Veuillez patienter..."
+  - "Connexion sécurisée et chiffrée"
+  - "Trop de tentatives" / "Identifiants incorrects"
+  - "Bienvenue, Madame la Présidente" (toast)
+  - "Réinitialiser le mot de passe" / "Envoyer" / "Email envoyé" / "Fermer"
+  - Panel droit : "39 Agents IA" (non corrigé comme VisionPage qui dit maintenant "Processus automatisés")
+  - Panel droit : "EMOTIONSCARE SASU — Siège Social Numérique"
+- **Impact** : Un visiteur EN ou DE arrive sur une page 100% française. Incohérence totale avec le reste du site.
+- **Criticité** : Majeur
+- **Action** : Créer `src/i18n/auth.ts` et internationaliser toute la page Auth.
+
+### 3.4 Page ResetPassword (/reset-password) — 12/20
+- **Même problème** : Intégralement en français, aucun i18n. Textes hardcodés :
+  - "Réinitialiser le mot de passe"
+  - "Nouveau mot de passe" / "Confirmer le mot de passe"
+  - "Mettre à jour le mot de passe"
+  - "Mot de passe mis à jour" / "Redirection vers le HQ..."
+  - "Lien de réinitialisation invalide ou expiré."
+  - "Retour à la connexion"
+  - "Les mots de passe ne correspondent pas"
+- **Criticité** : Majeur
+- **Action** : Créer des traductions et internationaliser.
+
+### 3.5 Page 404 — 17/20
+- **Corrigé** : Désormais i18n FR/EN/DE. Fonctionne dans PublicLayout.
+- **OK pour production.**
+
+### 3.6 Page Status (/status) — 16/20
+- **Corrigé** : Bouton Refresh conditionné à `user`. Fallback public fonctionnel.
+- **OK pour production.**
+
+### 3.7 Page Vision (/vision) — 16/20
+- **Corrigé** : "39 Agents IA" → "39 Processus automatisés" dans les stats.
+- **Faiblesse résiduelle** : L'historique mentionne encore "Siège Social Numérique" (timeline item Q1 2026). Terme interne.
+- **Action** : Remplacer par "Centre de pilotage unifié" ou "Tableau de bord de gouvernance".
+
+### 3.8 Page Contact (/contact) — 17/20
+- **Corrigé** : Validation téléphone internationale.
+- **OK pour production.**
+
+### 3.9 Page Trust (/trust) — 17/20
+- **OK pour production.** Bien structurée, transparente, liens compliance.
+
+### 3.10 Pages légales — 17/20
+- **OK pour production.** Complètes, i18n, noindex.
+
+---
+
+## 4. SÉCURITÉ / GO-LIVE READINESS
+
+| Observé | Risque | Action |
+|---|---|---|
+| Toast "Bienvenue, Madame la Présidente" hardcodé | Faible (info leak) | Généraliser ou i18n |
+| Auth page non i18n | Mineur | Internationaliser |
+| ResetPassword non i18n | Mineur | Internationaliser |
+| "39 Agents IA" sur Auth panel droit | Cosmétique | Aligner avec VisionPage |
+| Témoignages fictifs affichés comme réels | Mineur (légal) | Ajouter disclaimer |
+| RLS + RBAC + SECURITY DEFINER | Faible | OK |
+| Rate limiting auth | Faible | OK |
+| Cookie consent RGPD | Faible | OK |
+
+---
+
+## 5. LISTE DES PROBLÈMES PRIORISÉS
+
+### P0 — Impératif avant production
+Aucun bloquant technique absolu. Les corrections précédentes ont résolu les P0.
+
+### P1 — Très important
+1. **Auth page non internationalisée** — Impact : expérience cassée pour EN/DE. Où : AuthPage.tsx. Créer i18n/auth.ts et appliquer.
+2. **ResetPassword page non internationalisée** — Impact : idem. Où : ResetPasswordPage.tsx. Créer traductions.
+3. **Témoignages fictifs sans disclaimer** — Impact : crédibilité / risque légal. Où : HomePage Social Proof. Ajouter texte "Exemples de retours illustratifs".
+
+### P2 — Amélioration forte valeur
+4. **"Siège Social Numérique" persiste** — AuthPage panel droit, mobile header, VisionPage timeline. Remplacer par terme compréhensible.
+5. **"39 Agents IA" sur AuthPage panel droit** — Non aligné avec correction VisionPage. Corriger → "39 Processus automatisés".
+6. **Stats techniques PlateformesPage** — Renommer pour clarté business.
+7. **Toast "Bienvenue, Madame la Présidente"** — Personnalisé mais hardcodé. Internationaliser ou généraliser.
+
+### P3 — Confort / finition
+8. **"Siège Social Numérique" dans timeline VisionPage** — Reformuler.
+9. **PlateformesPage : double section stats** (hero + section governance bas) — redondance.
+
+---
+
+## 6. VERDICT FINAL
+
+La plateforme est nettement plus solide qu'au premier audit. Les corrections P0 ont été appliquées efficacement (hero, 404, téléphone, placeholder email, refresh conditionnel). La note passe de 14.5 à 15.5/20.
+
+**Ce qui bloque encore un go-live parfait** : L'incohérence i18n sur Auth et ResetPassword. Un visiteur qui navigue en anglais ou allemand atterrit sur des pages 100% françaises au moment critique de la connexion. C'est un défaut d'expérience majeur pour un produit qui revendique le trilinguisme.
+
+**Les 3 corrections les plus rentables** :
+1. **Internationaliser AuthPage** (créer i18n/auth.ts, ~30 clés)
+2. **Internationaliser ResetPasswordPage** (~15 clés)
+3. **Ajouter disclaimer sur Social Proof** (1 ligne de texte)
+
+**Si j'étais décideur externe** : Je publierais aujourd'hui le site vitrine public (pages /, /plateformes, /vision, /status, /trust, /contact, /legal/*). Mais je conditionnerais l'accès Auth aux utilisateurs FR uniquement jusqu'à l'internationalisation des pages Auth et Reset. Ou bien je ferais ces 3 corrections maintenant — elles prennent environ 20 minutes à implémenter.
+
+---
+
+## 7. PLAN D'IMPLÉMENTATION
+
+### Correction 1 : Internationaliser AuthPage
+- Créer `src/i18n/auth.ts` avec ~30 clés FR/EN/DE
+- Refactorer `AuthPage.tsx` pour utiliser `useTranslation(authTranslations)`
+- Corriger "39 Agents IA" → "39 Processus automatisés" dans le panel droit
+- Corriger "Siège Social Numérique" → "Éditeur de logiciels SaaS" ou "Centre de pilotage"
+- Internationaliser toast "Bienvenue" et messages d'erreur
+
+### Correction 2 : Internationaliser ResetPasswordPage
+- Ajouter les clés reset dans `auth.ts` ou créer un fichier dédié
+- Refactorer `ResetPasswordPage.tsx`
+
+### Correction 3 : Disclaimer Social Proof
+- Ajouter dans `homeTranslations` une clé `socialProof.disclaimer`
+- Afficher sous les témoignages en petit texte muted
+
+### Correction 4 : Nettoyage "Siège Social Numérique"
+- VisionPage timeline : remplacer dans `i18n/vision.ts`
 
