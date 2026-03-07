@@ -185,6 +185,20 @@ const PLATFORM_GEO_META: Record<
       "communauté musicale",
     ],
   },
+  "trust-seal-chain": {
+    applicationCategory: "BusinessApplication",
+    audience: "Entreprises utilisant des agents IA, responsables conformité, directeurs innovation",
+    alternativeHeadline:
+      "Certification et traçabilité des agents IA — conformité AI Act européen",
+    keywords: [
+      "gouvernance IA",
+      "certification agents IA",
+      "conformité AI Act",
+      "audit trail IA",
+      "scoring éthique",
+      "traçabilité algorithmique",
+    ],
+  },
 };
 
 // ============================================
