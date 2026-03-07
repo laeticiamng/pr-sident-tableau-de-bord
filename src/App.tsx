@@ -172,6 +172,7 @@ const App = () => (
             </BrowserRouter>
           </NetworkStatusProvider>
           </AuthProvider>
+          </LanguageProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
