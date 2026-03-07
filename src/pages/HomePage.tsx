@@ -178,7 +178,7 @@ export default function HomePage() {
                 </ScrollReveal>
               ))}
             </div>
-          </div>
+            <p className="text-xs text-muted-foreground text-center mt-6">{t.socialProof.disclaimer}</p>
         </div>
       </section>
 
