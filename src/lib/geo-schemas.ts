@@ -268,7 +268,7 @@ export function buildFAQSchema() {
         name: "Qu'est-ce qu'EMOTIONSCARE ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 7 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières et la compétition musicale. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
+          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 8 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale et la gouvernance IA. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
         },
       },
       {
