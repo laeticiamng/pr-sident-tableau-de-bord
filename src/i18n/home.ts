@@ -47,6 +47,14 @@ export const homeTranslations = {
           title: "Gouvernance & certification IA",
           description: "Audit trail complet, conformité AI Act et traçabilité des décisions pour une intelligence artificielle de confiance.",
         },
+        {
+          title: "Mémorisation musicale",
+          description: "Transformez vos cours en chansons mémorables. 30 styles musicaux, quiz automatiques et neurosciences cognitives au service de l'apprentissage.",
+        },
+        {
+          title: "Médecine vasculaire IA",
+          description: "Assistant clinique IA, jumeau numérique vasculaire et simulation clinique pour l'excellence en chirurgie vasculaire.",
+        },
       ],
     },
     stats: {
