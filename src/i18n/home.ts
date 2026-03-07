@@ -251,6 +251,14 @@ export const homeTranslations = {
           title: "KI-Governance & Zertifizierung",
           description: "Vollständiger Audit-Trail, AI Act-Konformität und Entscheidungsnachverfolgung für vertrauenswürdige KI.",
         },
+        {
+          title: "Musikalisches Memorieren",
+          description: "Verwandeln Sie Ihre Kurse in einprägsame Songs. 30 Musikstile, automatische Quizze und kognitive Neurowissenschaften.",
+        },
+        {
+          title: "Gefäßmedizin KI",
+          description: "KI-Klinikassistent, vaskulärer digitaler Zwilling und klinische Simulation für die Gefäßchirurgie.",
+        },
       ],
     },
     stats: {
