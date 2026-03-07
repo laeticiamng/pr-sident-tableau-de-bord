@@ -113,6 +113,20 @@ export const MANAGED_PLATFORMS = [
     status: "prototype",
     lastCommit: "2026-03-01",
   },
+  {
+    key: "studybeats",
+    name: "StudyBeats",
+    shortDescription: "Mémorisation par la musique basée sur les neurosciences",
+    description: "Transformez vos cours en chansons mémorables. Uploadez vos notes, choisissez parmi 30 styles musicaux (Rap, Lo-Fi, Pop, Jazz, Rock, EDM, Afrobeat, K-Pop…), et l'IA génère des paroles éducatives. Écoutez en boucle, révisez partout — puis testez-vous avec des quiz automatiques. La mémoire musicale au service de l'apprentissage.",
+    tagline: "Transforme tes cours en chansons",
+    github: "https://github.com/laeticiamng/learn-jams",
+    liveUrl: "https://learn-jams.lovable.app",
+    color: "bg-primary",
+    stats: { modules: 8, tables: 15, edgeFunctions: 10, branches: 2, commits: 500, tests: 60 },
+    features: ["30 styles musicaux", "Import PDF/photo/texte", "Quiz automatiques", "Écoute hors ligne", "Neurosciences cognitives"],
+    status: "production",
+    lastCommit: "2026-03-07",
+  },
 ] as const;
 
 // Profil de l'entreprise (données légales)
