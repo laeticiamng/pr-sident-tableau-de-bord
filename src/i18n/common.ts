@@ -53,6 +53,7 @@ export const commonTranslations = {
     nav: {
       home: "Startseite",
       platforms: "Plattformen",
+      pricing: "Preise",
       status: "Status",
       vision: "Vision",
       security: "Sicherheit",
