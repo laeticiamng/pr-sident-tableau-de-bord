@@ -27,8 +27,8 @@ export default function StatusPage() {
   const refreshMonitor = useRefreshPlatformMonitor();
 
   usePageMeta({
-    title: t.hero?.title || "Statut des plateformes",
-    description: t.hero?.subtitle || "État en temps réel des plateformes EMOTIONSCARE",
+    title: `${t.hero.title} ${t.hero.titleAccent}`,
+    description: t.hero.badge,
     canonicalPath: "/status",
   });
 
