@@ -388,6 +388,8 @@ export function buildVisionPageSchema() {
         "Automatisation business par IA",
         "Urgences hospitalières",
         "Compétition musicale",
+        "Gouvernance IA",
+        "Mémorisation par la musique",
       ],
       ethicsPolicy: "https://president-cockpit-hq.lovable.app/legal/rgpd",
       numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
