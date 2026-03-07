@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 
 const SITE_NAME = "EMOTIONSCARE";
-const DEFAULT_TITLE = "EMOTIONSCARE — Siège Social Numérique";
+const DEFAULT_TITLE = "EMOTIONSCARE — Éditeur français de 8 logiciels SaaS innovants";
 const DEFAULT_DESCRIPTION =
-  "Éditeur de logiciels applicatifs français. 8 plateformes innovantes pilotées depuis notre siège numérique.";
+  "Éditeur de logiciels applicatifs français. 8 plateformes SaaS innovantes : santé des soignants, apprentissage médical, relocalisation, automatisation IA. Basé à Amiens.";
 const SITE_URL = "https://president-cockpit-hq.lovable.app";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
+const HREFLANG_LOCALES = ["fr", "en", "de"] as const;
 
 interface PageMetaOptions {
   title: string;
@@ -36,7 +38,7 @@ function setMetaTag(property: string, content: string, isOg = true) {
 /**
  * Centralized hook for page-level SEO meta tags.
  * Sets document title, meta description, canonical link, robots directive,
- * and Open Graph / Twitter Card tags per page.
+ * Open Graph / Twitter Card tags, hreflang tags, and JSON-LD per page.
  * Restores defaults on unmount.
  */
 export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd, ogImage, ogImageAlt }: PageMetaOptions) {
@@ -66,6 +68,24 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
     }
     canonicalLink.setAttribute("href", canonicalUrl);
 
+    // Hreflang tags (multilingual SEO)
+    const hreflangLinks: HTMLLinkElement[] = [];
+    for (const locale of HREFLANG_LOCALES) {
+      const link = document.createElement("link");
+      link.setAttribute("rel", "alternate");
+      link.setAttribute("hreflang", locale);
+      link.setAttribute("href", canonicalUrl);
+      document.head.appendChild(link);
+      hreflangLinks.push(link);
+    }
+    // x-default → French (primary language)
+    const xDefaultLink = document.createElement("link");
+    xDefaultLink.setAttribute("rel", "alternate");
+    xDefaultLink.setAttribute("hreflang", "x-default");
+    xDefaultLink.setAttribute("href", canonicalUrl);
+    document.head.appendChild(xDefaultLink);
+    hreflangLinks.push(xDefaultLink);
+
     // OG tags
     setMetaTag("og:title", fullTitle);
     setMetaTag("og:description", desc);
@@ -78,11 +98,6 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
     setMetaTag("twitter:description", desc, false);
     setMetaTag("twitter:image", image, false);
     setMetaTag("twitter:image:alt", imageAlt, false);
-
-    // Twitter tags
-    setMetaTag("twitter:title", fullTitle, false);
-    setMetaTag("twitter:description", desc, false);
-    setMetaTag("twitter:image", image, false);
 
     // Robots noindex
     let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
@@ -119,6 +134,10 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
       if (canonicalLink) {
         canonicalLink.remove();
       }
+      // Remove hreflang links
+      for (const link of hreflangLinks) {
+        link.remove();
+      }
       if (noindex && robotsMeta) {
         robotsMeta.remove();
       }
@@ -127,7 +146,7 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
       setMetaTag("og:description", DEFAULT_DESCRIPTION);
       setMetaTag("og:url", SITE_URL);
       setMetaTag("og:image", DEFAULT_OG_IMAGE);
-setMetaTag("og:image:alt", "EMOTIONSCARE — Éditeur français de 8 plateformes SaaS innovantes");
+      setMetaTag("og:image:alt", "EMOTIONSCARE — Éditeur français de 8 plateformes SaaS innovantes");
       setMetaTag("twitter:title", DEFAULT_TITLE, false);
       setMetaTag("twitter:description", DEFAULT_DESCRIPTION, false);
       setMetaTag("twitter:image", DEFAULT_OG_IMAGE, false);

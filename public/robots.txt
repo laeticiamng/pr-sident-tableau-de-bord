@@ -29,6 +29,12 @@ Disallow: /hq/
 Disallow: /dashboard/
 Disallow: /auth
 
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /hq/
+Disallow: /dashboard/
+Disallow: /auth
+
 User-agent: ClaudeBot
 Allow: /
 Disallow: /hq/

@@ -25,7 +25,7 @@ export function buildOrganizationSchema() {
     legalName: COMPANY_PROFILE.legalName,
     url: "https://president-cockpit-hq.lovable.app",
     description:
-      "Éditeur français de 7 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières et compétition musicale.",
+      "Éditeur français de 8 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale et gouvernance IA.",
     foundingDate: "2025-05-07",
     founder: {
       "@type": "Person",
@@ -185,6 +185,20 @@ const PLATFORM_GEO_META: Record<
       "communauté musicale",
     ],
   },
+  "trust-seal-chain": {
+    applicationCategory: "BusinessApplication",
+    audience: "Entreprises utilisant des agents IA, responsables conformité, directeurs innovation",
+    alternativeHeadline:
+      "Certification et traçabilité des agents IA — conformité AI Act européen",
+    keywords: [
+      "gouvernance IA",
+      "certification agents IA",
+      "conformité AI Act",
+      "audit trail IA",
+      "scoring éthique",
+      "traçabilité algorithmique",
+    ],
+  },
 };
 
 // ============================================
@@ -268,7 +282,7 @@ export function buildFAQSchema() {
         name: "Qu'est-ce qu'EMOTIONSCARE ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 7 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières et la compétition musicale. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
+          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 8 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale et la gouvernance IA. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
         },
       },
       {
@@ -317,7 +331,7 @@ export function buildVisionPageSchema() {
     name: "Vision & Valeurs — EMOTIONSCARE",
     url: "https://president-cockpit-hq.lovable.app/vision",
     description:
-      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 7 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 8 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
     datePublished: "2025-05-07",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
@@ -347,7 +361,7 @@ export function buildVisionPageSchema() {
       {
         "@type": "WebPageElement",
         name: "Notre Histoire",
-        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 7 plateformes SaaS avec une équipe augmentée par l'IA.",
+        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 8 plateformes SaaS avec une équipe augmentée par l'IA.",
       },
     ],
     mainEntity: {
