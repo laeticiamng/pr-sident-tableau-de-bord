@@ -28,6 +28,7 @@ export const commonTranslations = {
     nav: {
       home: "Home",
       platforms: "Platforms",
+      pricing: "Pricing",
       status: "Status",
       vision: "Vision",
       security: "Security",
