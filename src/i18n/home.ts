@@ -149,6 +149,14 @@ export const homeTranslations = {
           title: "AI Governance & Certification",
           description: "Complete audit trail, AI Act compliance and decision traceability for trustworthy artificial intelligence.",
         },
+        {
+          title: "Musical Memorization",
+          description: "Transform your courses into memorable songs. 30 music styles, automatic quizzes and cognitive neuroscience for learning.",
+        },
+        {
+          title: "Vascular Medicine AI",
+          description: "AI clinical assistant, vascular digital twin and clinical simulation for vascular surgery excellence.",
+        },
       ],
     },
     stats: {
