@@ -1,133 +1,134 @@
 
 
-# AUDIT DÉFINITIF AVANT MISE EN PRODUCTION — EMOTIONSCARE HQ (v3)
+# Audit Complet — EMOTIONSCARE HQ : De "Prototype Avancé" à "Révolutionnaire"
+
+## Ce qui existe et fonctionne bien
+
+Le socle est solide : 22+ pages HQ, 12 edge functions, auth sécurisée, notifications realtime, COS (Chief Operating System), Growth OS, briefing IA, approbations présidentielles, veille stratégique, finance Stripe, diagnostics, conformité RGPD, et un design premium bilingue (FR/EN). Le concept de "Siège Social Numérique" pour un Président unique est fort et différenciant.
 
 ---
 
-## 1. RÉSUMÉ EXÉCUTIF
+## Ce qui manque pour être UNIQUE et RÉVOLUTIONNAIRE
 
-La plateforme a significativement progressé (hero reécrit, i18n auth/reset/404, Social Proof avec disclaimer, validation téléphone internationale, placeholder email anonymisé). Cependant, un **bug bloquant production** a été introduit lors de la dernière itération : les pages `/auth` et `/reset-password` utilisent `useTranslation()` qui requiert `LanguageProvider`, mais ces pages sont rendues **en dehors** de `PublicLayout` (seul endroit où `LanguageProvider` est monté). Les deux pages **crashent** avec l'erreur `"useLanguage must be used within LanguageProvider"`. Par ailleurs, toutes les validations Zod (`validation.ts`) restent hardcodées en français.
+### 1. INTELLIGENCE PROACTIVE — Le HQ ne pense pas encore tout seul
 
-**Publiable aujourd'hui : NON** — Bug bloquant sur les pages Auth et ResetPassword.
+**Problème** : Le système attend que le Président agisse. Il faut cliquer "Demander un brief IA", "Lancer l'analyse", etc. Rien ne se déclenche automatiquement.
 
-**Note globale : 14/20** (baisse de 15.5 a 14 due au bug bloquant introduit)
+**Ce qu'il faut** :
+- **Morning Digest automatique** : chaque matin à 8h, un brief IA est généré et attend le Président sur le tableau de bord (scheduled-runs existe mais n'est pas câblé à un vrai cron)
+- **Alertes prédictives** : au lieu de constater "uptime = 92%", le système devrait prédire "UrgenceOS risque de tomber sous 90% d'ici 48h" basé sur les tendances
+- **Suggestions contextuelles** : "Vous n'avez pas consulté la page Finance depuis 12 jours — voici un résumé des changements"
 
-**Top 5 des risques avant production :**
-1. **BLOQUANT** : Pages `/auth` et `/reset-password` crashent — `LanguageProvider` absent de leur arbre de composants
-2. Validation Zod entièrement en français (messages d'erreur formulaires)
-3. "39 AI agents" dans la timeline VisionPage (ligne "Mi-2026") reste du jargon interne
-4. Stats techniques sur PlateformesPage (tables, branches, edge functions) sans contexte business
-5. Aucun parcours d'inscription publique — pas de conversion possible
+### 2. VOIX ET CONVERSATION — L'expérience Président est encore textuelle
 
-**Top 5 des forces :**
-1. Sécurité backend exemplaire (RLS, RBAC, SECURITY DEFINER, rate limiting, lockout)
-2. Architecture i18n complète FR/EN/DE sur toutes les pages publiques
-3. Design system premium cohérent light/dark, responsive
-4. Pages légales exhaustives et conformes (RGPD, CGV, Mentions, Cookies)
-5. Infrastructure backend mature (16 Edge Functions sécurisées, audit trail)
+**Problème** : Le "Appeler le DG" simule un appel mais c'est un bouton + texte. Pas de vrai dialogue.
 
----
+**Ce qu'il faut** :
+- **Chat IA persistant** : un assistant conversationnel dans le HQ (sidebar ou modal) où le Président peut poser des questions en langage naturel ("Quel est le churn ce mois ?", "Compare EmotionsCare et Med MNG")
+- **Historique des conversations** stocké en base pour continuité
+- **Voix** (optionnel mais différenciant) : Text-to-Speech sur les briefs pour écouter au lieu de lire
 
-## 2. TABLEAU SCORE GLOBAL
+### 3. DONNÉES VIVANTES — Trop de mock, pas assez de réel
 
-| Dimension | Note /20 | Observation | Criticité | Décision |
-|---|---|---|---|---|
-| Compréhension produit | 15 | Hero reécrit, proposition de valeur claire | Mineur | OK |
-| Landing / Accueil | 17 | Hero, Social Proof avec disclaimer, CTA demo | Cosmétique | OK |
-| Navigation | 17 | Complète, responsive, i18n, footer riche | Cosmétique | OK |
-| Clarté UX | 16 | Bonne hiérarchie, scroll reveal, responsive | Mineur | OK |
-| Copywriting | 15 | Amélioré, jargon résiduel dans VisionPage timeline | Mineur | Nettoyer |
-| Crédibilité / Confiance | 16 | Social Proof avec disclaimer, pages légales | Cosmétique | OK |
-| Page Auth | **3** | **CRASH — useLanguage hors LanguageProvider** | **Bloquant** | **Fix immédiat** |
-| Page ResetPassword | **3** | **CRASH — idem** | **Bloquant** | **Fix immédiat** |
-| Parcours utilisateur | 12 | Landing→Contact OK, Auth **cassé** | Bloquant | Fix immédiat |
-| Bugs / QA | 8 | Auth+Reset crashent, validation Zod FR-only | Bloquant | Fix immédiat |
-| Sécurité préproduction | 17 | Excellente. Lockout, RLS, JWT, sanitization | Cosmétique | OK |
-| Conformité go-live | 15 | Pages légales OK, RGPD OK, cookie consent OK | Mineur | OK |
+**Problème** : Veille stratégique = données hardcodées. Marketing = mock. RH = mock. Seuls Finance (Stripe) et Plateformes (DB) sont réels.
 
----
+**Ce qu'il faut** :
+- **Veille stratégique automatisée** : les sources (Product Hunt, TechCrunch, etc.) sont listées mais jamais scrapées automatiquement. Câbler Firecrawl + IA pour un vrai scan hebdomadaire
+- **Indicateur de provenance** systématique : chaque widget devrait afficher clairement "Données réelles" vs "Données simulées" (le pattern `DataSourceIndicator` existe mais n'est pas utilisé partout)
+- **Pipeline de données** : un système pour que chaque plateforme remonte ses KPIs réels via webhook ou API
 
-## 3. AUDIT PAGE PAR PAGE
+### 4. MOBILE-FIRST RÉEL — L'app n'est pas utilisable en déplacement
 
-### 3.1 Page d'accueil (/) — 17/20 (+1)
-- **OK pour production.** Hero clair, Social Proof avec disclaimer, CTA "Demander une démo", stats pertinentes, animations fluides.
-- **Résidu mineur** : Le showcase utilise "structures" et "évolutions" comme labels de stats techniques — un décideur ne sait pas ce que signifient ces métriques.
+**Problème** : La sidebar HQ à 26 liens secondaires n'est pas optimisée pour le mobile. Le Président devrait pouvoir piloter depuis son téléphone en 30 secondes.
 
-### 3.2 Page Plateformes (/plateformes) — 16/20
-- **Inchangé.** Stats techniques (tables, branches, edge functions) restent visibles sans contexte business.
-- **Recommandation** : Renommer ou contextualiser les labels techniques.
+**Ce qu'il faut** :
+- **Mode "Président Mobile"** : un dashboard ultra-simplifié avec 3 cartes max (Santé écosystème, Décisions en attente, Brief du jour)
+- **PWA** : manifest.json, service worker, installation sur l'écran d'accueil
+- **Gestes tactiles** : swipe pour approuver/rejeter, pull-to-refresh natif
 
-### 3.3 Page Auth (/auth) — 3/20 (CRASH)
-- **Bug bloquant** : Le composant appelle `useTranslation(authTranslations)` qui invoque `useLanguage()`. La route `/auth` est en dehors de `PublicLayout`, donc en dehors de `LanguageProvider`. La page **crash avec une erreur React** : `"useLanguage must be used within LanguageProvider"`.
-- **Conséquence** : Aucun utilisateur ne peut se connecter. La plateforme est inutilisable.
-- **Criticité** : Bloquant production
-- **Fix** : Wrapper les routes `/auth` et `/reset-password` dans un `LanguageProvider`, soit en les déplaçant dans `PublicLayout`, soit en ajoutant un wrapper dédié.
+### 5. TIMELINE DÉCISIONNELLE — Pas de mémoire stratégique
 
-### 3.4 Page ResetPassword (/reset-password) — 3/20 (CRASH)
-- **Même bug** que `/auth`. Crash immédiat.
-- **Criticité** : Bloquant production
+**Problème** : L'audit log existe mais c'est un log technique. Il n'y a pas de vue "histoire des décisions stratégiques du Président".
 
-### 3.5 Pages publiques (404, Status, Vision, Trust, Contact, Legal) — 16-17/20
-- **Toutes OK pour production.**
+**Ce qu'il faut** :
+- **Journal Présidentiel** : chronologie des décisions majeures avec contexte, impact mesuré a posteriori, et notes personnelles
+- **Tableau de bord OKR vivant** : les objectifs trimestriels existent (EntreprisePage) mais ne sont pas connectés aux données réelles
+- **Rétrospective automatique** : "Ce trimestre, vous avez approuvé 47 actions, rejeté 12, le MRR a augmenté de 23%"
 
----
+### 6. SÉCURITÉ DE NIVEAU ENTREPRISE — Manques critiques
 
-## 4. PROBLÈMES RESTANTS
+**Problème** :
+- Pas de table `user_roles` séparée (AuthContext ne vérifie aucun rôle)
+- La page Auth affiche "7 Plateformes" au lieu de 8
+- Pas de 2FA / MFA
+- Pas de session timeout configurable
 
-### 4.1 Validation Zod hardcodée en français — 12/20
-- **Problème** : Toutes les erreurs de validation Zod dans `src/lib/validation.ts` sont en français : "L'email est requis", "Format d'email invalide", "Le mot de passe doit contenir au moins 8 caractères", etc. (~15 messages).
-- **Conséquence** : Un utilisateur EN/DE verra des erreurs en français sur le formulaire de contact et d'authentification.
-- **Criticité** : Majeur (pas bloquant, mais incohérence flagrante)
-- **Fix** : Soit passer les messages de validation dans l'i18n, soit utiliser des codes d'erreur traduits côté composant.
+**Ce qu'il faut** :
+- **RBAC avec table `user_roles`** selon les standards de sécurité
+- **MFA obligatoire** pour le Président (TOTP via Supabase Auth)
+- **Session management** : timeout après inactivité, log des sessions actives
 
-### 4.2 VisionPage timeline "39 AI agents" — Mineur
-- **Ligne "Mi-2026"** dit "déploiement des 39 agents IA de Growth Copilot" dans les 3 langues. Le terme "agents IA" est du jargon interne. Les stats de la page principale disent correctement "Processus automatisés" mais la timeline n'est pas alignée.
-- **Fix** : Remplacer "agents IA" par "processus automatisés" dans les 3 langues de la timeline.
+### 7. INTER-PLATEFORME — Les 8 plateformes sont isolées
 
----
+**Problème** : Chaque plateforme est un silo. Pas de vue corrélée.
 
-## 5. LISTE DES PROBLÈMES PRIORISÉS
+**Ce qu'il faut** :
+- **Matrice de corrélation** : "Quand EmotionsCare a un pic d'utilisateurs, Med MNG en bénéficie-t-il ?"
+- **Flux utilisateurs cross-plateforme** : combien d'utilisateurs utilisent 2+ plateformes ?
+- **Score de synergie écosystème** : métrique unique agrégée
 
-### P0 — Bloquant production
-1. **AuthPage crash — LanguageProvider manquant** — Les routes `/auth` et `/reset-password` sont hors de `PublicLayout` qui est le seul endroit où `LanguageProvider` est monté. `useTranslation()` → `useLanguage()` → `throw Error`. Page blanche. **Impact** : Aucun utilisateur ne peut se connecter. **Fix** : Wrapper `/auth` et `/reset-password` dans un `LanguageProvider`. Soit (a) les déplacer dans `PublicLayout` sans header/footer, (b) ajouter un wrapper dédié `AuthLayout` avec `LanguageProvider`, ou (c) monter `LanguageProvider` au niveau `App.tsx` au lieu de `PublicLayout`.
+### 8. AUTOMATISATION AVANCÉE — L'Autopilot est limité
 
-### P1 — Très important
-2. **Validation Zod FR-only** — 15+ messages d'erreur visibles par l'utilisateur sont hardcodés en français dans `validation.ts`. **Impact** : Incohérence i18n flagrante sur le formulaire de contact et d'auth. **Fix** : Deux approches possibles : (a) déplacer `LanguageProvider` au niveau App et passer les messages via un hook, ou (b) ne pas traduire les messages Zod mais les overrider dans les composants (plus simple).
+**Problème** : L'Autopilot existe conceptuellement mais les règles sont simples (risque bas = auto, risque élevé = validation). Pas de workflows personnalisés.
 
-### P2 — Amélioration forte valeur
-3. **Timeline VisionPage "agents IA"** — Aligner avec "processus automatisés" dans les 3 langues.
-4. **Stats techniques PlateformesPage** — Contextualiser pour non-développeurs.
+**Ce qu'il faut** :
+- **Règles conditionnelles** : "Si le churn dépasse 5% ET que c'est EmotionsCare, envoyer une alerte critique ET lancer une analyse IA automatique"
+- **Playbooks** : scénarios de réaction prédéfinis par type d'incident
+- **Escalation chain** : notification → alerte → pause automatique → rapport d'incident
 
----
+### 9. COHÉRENCE UI — Plusieurs standards coexistent
 
-## 6. VERDICT FINAL
+**Problème** :
+- `ExecutiveHeader` + `MethodologyDisclosure` (standard HEC) utilisés sur certaines pages (Finance, Cockpit) mais pas toutes
+- Le HQ n'est pas internationalisé (les pages publiques ont i18n, le HQ est 100% français)
+- Certaines pages disent "7 plateformes" au lieu de 8
 
-**La plateforme n'est PAS publiable en l'état.** Le bug sur les pages Auth et ResetPassword est un bloquant absolu : aucun utilisateur ne peut se connecter.
+**Ce qu'il faut** :
+- Appliquer le standard `ExecutiveHeader` + `MethodologyDisclosure` sur TOUTES les pages HQ
+- Mettre à jour toutes les références "7 plateformes" → dynamique depuis `MANAGED_PLATFORMS.length`
+- Uniformiser les états loading/empty/error sur chaque page
 
-**La cause racine** est structurelle : `LanguageProvider` est monté uniquement dans `PublicLayout`, mais les pages Auth/Reset sont des routes indépendantes. L'ajout de `useTranslation()` dans le dernier commit a introduit cette régression.
+### 10. CE QUI RENDRAIT LE PRODUIT VRAIMENT RÉVOLUTIONNAIRE
 
-**La correction la plus simple et la plus robuste** : remonter `LanguageProvider` au niveau de `App.tsx` (au-dessus de `<BrowserRouter>` ou juste en dessous), de sorte que TOUTES les routes y aient accès. C'est la solution architecturalement correcte car la langue est un contexte global, pas propre au layout public.
-
-**Les 3 corrections à faire immédiatement :**
-1. **Remonter `LanguageProvider` dans `App.tsx`** au lieu de `PublicLayout` — corrige le crash Auth/Reset ET simplifie l'architecture
-2. **Retirer `LanguageProvider` de `PublicLayout`** pour éviter un double wrapping
-3. **Aligner "agents IA" → "processus automatisés"** dans la timeline VisionPage
-
-**Si j'étais décideur externe** : Je refuserais la mise en production tant que le bug Auth n'est pas corrigé. C'est un fix de 5 minutes (déplacer 2 lignes de code), mais sans lui la plateforme est inutilisable.
+| Feature | Impact | Effort |
+|---------|--------|--------|
+| Chat IA conversationnel persistant | Transforme l'UX de "dashboard" à "assistant" | Moyen |
+| Morning Digest automatique (cron) | Le HQ pense avant le Président | Faible |
+| PWA + mode mobile Président | Pilotage en 30 secondes depuis le téléphone | Moyen |
+| Journal décisionnel avec impact mesuré | Mémoire stratégique unique | Moyen |
+| Corrélation inter-plateformes | Vision écosystème inédite | Élevé |
+| Alertes prédictives (tendances) | Anticipation vs réaction | Élevé |
+| Veille automatisée (Firecrawl cron) | Intelligence concurrentielle vivante | Faible |
 
 ---
 
-## PLAN D'IMPLÉMENTATION
+## Plan d'Implémentation Recommandé
 
-### Correction 1 (P0 — BLOQUANT) : Remonter LanguageProvider dans App.tsx
-- Ajouter `<LanguageProvider>` dans `App.tsx` au niveau global (wrapper autour de `<BrowserRouter>` ou juste en dessous de `<AuthProvider>`)
-- Retirer `<LanguageProvider>` de `PublicLayout.tsx` (pour éviter le double nesting)
-- Cela corrige Auth, ResetPassword, NotFound, et toute future route
+**Sprint 1 — Quick Wins (1 semaine)** :
+- Corriger toutes les références "7 plateformes" → dynamique
+- Appliquer `ExecutiveHeader` sur toutes les pages HQ manquantes
+- Ajouter un chat IA simple (sidebar) connecté à l'edge function `executive-run`
+- Configurer le Morning Digest automatique via `scheduled-runs`
 
-### Correction 2 (P1) : Internationaliser les messages de validation Zod
-- Option recommandée : ne PAS modifier `validation.ts` directement (les schémas Zod sont statiques). Au lieu de cela, dans les composants, intercepter les erreurs Zod et les mapper vers des traductions i18n. Alternative simple : utiliser `.refine()` avec des codes d'erreur et mapper côté composant.
-- Option pragmatique pour le go-live : laisser les messages FR dans Zod (la majorité des utilisateurs cibles sont FR) et ajouter un TODO pour la v2.
+**Sprint 2 — Expérience Président (1-2 semaines)** :
+- PWA (manifest + service worker)
+- Mode mobile simplifié
+- Journal décisionnel (nouvelle table + page)
+- MFA via Supabase Auth
 
-### Correction 3 (P2) : Aligner "agents IA" dans la timeline VisionPage
-- Dans `src/i18n/vision.ts`, modifier les 3 occurrences (FR/EN/DE) de l'item "Mi-2026" / "Mid-2026" / "Mitte 2026" pour remplacer "agents IA" / "AI agents" / "KI-Agenten" par "processus automatisés" / "automated processes" / "automatisierte Prozesse"
+**Sprint 3 — Intelligence (2 semaines)** :
+- Veille automatisée avec Firecrawl
+- Alertes prédictives basées sur tendances
+- Matrice de corrélation inter-plateformes
+- Playbooks d'incident
 

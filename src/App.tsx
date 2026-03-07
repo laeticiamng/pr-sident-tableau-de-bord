@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
@@ -87,6 +88,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
+          <LanguageProvider>
           <AuthProvider>
           <NetworkStatusProvider>
             <Toaster />
@@ -170,6 +172,7 @@ const App = () => (
             </BrowserRouter>
           </NetworkStatusProvider>
           </AuthProvider>
+          </LanguageProvider>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
