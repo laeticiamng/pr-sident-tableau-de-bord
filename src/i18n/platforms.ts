@@ -4,7 +4,7 @@ export const platformsTranslations = {
       badge: "Écosystème Complet",
       title: "Nos",
       titleAccent: "Plateformes",
-      subtitle: "Huit solutions innovantes, une vision unifiée. Chaque plateforme excelle dans son domaine.",
+      subtitle: "Dix solutions innovantes, une vision unifiée. Chaque plateforme excelle dans son domaine.",
     },
     stats: {
       platforms: "Plateformes",
