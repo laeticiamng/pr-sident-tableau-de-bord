@@ -31,6 +31,7 @@ export default function TrustPage() {
     description: t.meta.description,
     ogImageAlt: t.meta.title + " — EMOTIONSCARE",
     jsonLd: geoSchemas,
+    canonicalPath: "/trust",
   });
 
   const { user } = useAuth();

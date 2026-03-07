@@ -44,7 +44,7 @@ export default function AuthPage() {
     if (isLocked) return;
     setIsLoading(true);
 
-    const validationResult = loginSchema.safeParse({ email, password });
+    const validationResult = getLoginSchema().safeParse({ email, password });
     if (!validationResult.success) {
       toast.error(validationResult.error.errors[0].message);
       setIsLoading(false);

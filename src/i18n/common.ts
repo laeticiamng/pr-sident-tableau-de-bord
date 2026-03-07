@@ -61,7 +61,7 @@ export const commonTranslations = {
       login: "Anmelden",
     },
     footer: {
-      description: "Digitaler Hauptsitz zur Steuerung von 8 innovativen Plattformen. Softwareherausgeber mit Sitz in Amiens, Frankreich.",
+      description: "Französischer Herausgeber von 8 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
       navigation: "Navigation",
       legal: "Rechtliches",
       legalNotice: "Impressum",

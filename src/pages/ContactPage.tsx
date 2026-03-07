@@ -27,10 +27,11 @@ export default function ContactPage() {
     title: t.meta.title,
     description: t.meta.description,
     ogImageAlt: t.meta.title + " — EMOTIONSCARE",
+    canonicalPath: "/contact",
   });
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(getContactSchema()),
     defaultValues: { name: "", email: "", phone: "", subject: "", message: "" },
   });
 
