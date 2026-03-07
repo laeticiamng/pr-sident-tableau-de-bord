@@ -47,7 +47,7 @@ export const visionTranslations = {
         { date: "Mai 2025", title: "Création d'EMOTIONSCARE SASU", description: "Immatriculation au RCS d'Amiens (SIREN 944 505 445). Début de l'aventure entrepreneuriale dans l'édition de logiciels applicatifs." },
         { date: "2025", title: "Lancement des premières plateformes", description: "Développement et mise en production de l'écosystème fondateur : EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG." },
         { date: "Début 2026", title: "Centre de pilotage & Expansion", description: "Création du centre de pilotage unifié avec IA intégrée. Lancement d'UrgenceOS (urgences hospitalières), Track Triumph (compétition musicale) et Gouvernance Agents IA (certification IA), portant l'écosystème à 8 plateformes." },
-        { date: "Mi-2026", title: "Expansion & Intégrations", description: "Intégration des outils tiers (CRM, Analytics, Support) et déploiement des 39 agents IA de Growth Copilot." },
+        { date: "Mi-2026", title: "Expansion & Intégrations", description: "Intégration des outils tiers (CRM, Analytics, Support) et déploiement des 39 processus automatisés de Growth Copilot." },
         { date: "À venir", title: "Et demain ?", description: "Expansion internationale, nouvelles plateformes et partenariats stratégiques. L'histoire continue de s'écrire..." },
       ],
     },
