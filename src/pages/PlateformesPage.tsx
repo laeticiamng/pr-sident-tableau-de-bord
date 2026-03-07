@@ -45,6 +45,7 @@ export default function PlateformesPage() {
     description: t.hero.subtitle,
     ogImageAlt: "EMOTIONSCARE — " + t.hero.badge,
     jsonLd: geoSchemas,
+    canonicalPath: "/plateformes",
   });
 
   const statusIcons = {

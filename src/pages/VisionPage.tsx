@@ -20,6 +20,7 @@ export default function VisionPage() {
     description: t.meta.description,
     ogImageAlt: t.meta.title + " — EMOTIONSCARE",
     jsonLd: geoSchemas,
+    canonicalPath: "/vision",
   });
 
   const testCount = MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tests, 0).toLocaleString("fr-FR");

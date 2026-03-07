@@ -26,6 +26,12 @@ export default function StatusPage() {
   const { data: monitorData, isLoading: monitorLoading } = usePlatformMonitor();
   const refreshMonitor = useRefreshPlatformMonitor();
 
+  usePageMeta({
+    title: `${t.hero.title} ${t.hero.titleAccent}`,
+    description: t.hero.badge,
+    canonicalPath: "/status",
+  });
+
   const handleRefresh = () => {
     setDerniereVerification(new Date());
     if (user) {

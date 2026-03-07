@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { contactSchema, sanitizeHtml } from "@/lib/validation";
+import { getContactSchema, sanitizeHtml } from "@/lib/validation";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,7 +17,7 @@ import { logger } from "@/lib/logger";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { contactTranslations } from "@/i18n/contact";
 
-type ContactFormData = z.infer<typeof contactSchema>;
+type ContactFormData = z.infer<ReturnType<typeof getContactSchema>>;
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,10 +27,11 @@ export default function ContactPage() {
     title: t.meta.title,
     description: t.meta.description,
     ogImageAlt: t.meta.title + " — EMOTIONSCARE",
+    canonicalPath: "/contact",
   });
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(getContactSchema()),
     defaultValues: { name: "", email: "", phone: "", subject: "", message: "" },
   });
 

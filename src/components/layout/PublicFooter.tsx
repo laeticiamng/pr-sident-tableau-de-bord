@@ -38,6 +38,7 @@ export function PublicFooter() {
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">{t.nav.home}</Link></li>
               <li><Link to="/plateformes" className="hover:text-primary transition-colors">{t.nav.platforms}</Link></li>
+              <li><Link to="/tarifs" className="hover:text-primary transition-colors">{t.nav.pricing}</Link></li>
               <li><Link to="/status" className="hover:text-primary transition-colors">{t.nav.status}</Link></li>
               <li><Link to="/vision" className="hover:text-primary transition-colors">{t.nav.vision}</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">{t.nav.contact}</Link></li>

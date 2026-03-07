@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { loginSchema } from "@/lib/validation";
+import { getLoginSchema } from "@/lib/validation";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { authTranslations } from "@/i18n/auth";
@@ -44,7 +44,7 @@ export default function AuthPage() {
     if (isLocked) return;
     setIsLoading(true);
 
-    const validationResult = loginSchema.safeParse({ email, password });
+    const validationResult = getLoginSchema().safeParse({ email, password });
     if (!validationResult.success) {
       toast.error(validationResult.error.errors[0].message);
       setIsLoading(false);

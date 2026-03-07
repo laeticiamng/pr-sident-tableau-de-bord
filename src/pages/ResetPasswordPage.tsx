@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2, Loader2, Lock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { passwordSchema } from "@/lib/validation";
+import { getPasswordSchema } from "@/lib/validation";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { authTranslations } from "@/i18n/auth";
 
@@ -32,7 +33,7 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = passwordSchema.safeParse(password);
+    const validation = getPasswordSchema().safeParse(password);
     if (!validation.success) {
       toast.error(validation.error.errors[0].message);
       return;
@@ -60,7 +61,10 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
