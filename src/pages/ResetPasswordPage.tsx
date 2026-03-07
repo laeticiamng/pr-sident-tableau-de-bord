@@ -33,7 +33,7 @@ export default function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validation = passwordSchema.safeParse(password);
+    const validation = getPasswordSchema().safeParse(password);
     if (!validation.success) {
       toast.error(validation.error.errors[0].message);
       return;
