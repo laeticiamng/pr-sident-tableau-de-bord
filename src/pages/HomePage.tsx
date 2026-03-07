@@ -15,6 +15,7 @@ import {
   Siren,
   Music,
   ShieldCheck,
+  HeartPulse,
   Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
