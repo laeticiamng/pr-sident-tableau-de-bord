@@ -70,6 +70,7 @@ export const homeTranslations = {
         { quote: "NEARVITY a rendu l'apprentissage médical beaucoup plus engageant pour nos étudiants.", author: "Directrice pédagogique", org: "Faculté de Médecine" },
         { quote: "System Compass nous a fait gagner des semaines dans nos projets de relocalisation.", author: "Consultant mobilité", org: "Cabinet RH International" },
       ],
+      disclaimer: "* Témoignages illustratifs représentant des cas d'usage types de nos plateformes.",
     },
     showcase: {
       badge: "Écosystème Premium",
@@ -163,6 +164,7 @@ export const homeTranslations = {
         { quote: "NEARVITY has made medical learning much more engaging for our students.", author: "Academic Director", org: "Medical School" },
         { quote: "System Compass saved us weeks on our relocation projects.", author: "Mobility Consultant", org: "International HR Firm" },
       ],
+      disclaimer: "* Illustrative testimonials representing typical use cases of our platforms.",
     },
     showcase: {
       badge: "Premium Ecosystem",
@@ -256,6 +258,7 @@ export const homeTranslations = {
         { quote: "NEARVITY hat das medizinische Lernen für unsere Studierenden viel ansprechender gemacht.", author: "Pädagogische Direktorin", org: "Medizinische Fakultät" },
         { quote: "System Compass hat uns Wochen bei unseren Umzugsprojekten gespart.", author: "Mobilitätsberater", org: "Internationale HR-Firma" },
       ],
+      disclaimer: "* Beispielhafte Erfahrungsberichte, die typische Anwendungsfälle unserer Plattformen darstellen.",
     },
     showcase: {
       badge: "Premium-Ökosystem",

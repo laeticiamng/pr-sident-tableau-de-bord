@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Building2, Loader2, Lock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { passwordSchema } from "@/lib/validation";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { authTranslations } from "@/i18n/auth";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -15,36 +17,28 @@ export default function ResetPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
   const navigate = useNavigate();
+  const t = useTranslation(authTranslations);
 
   useEffect(() => {
-    // Check if we have a recovery session from the URL hash
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const type = hashParams.get("type");
-    
-    if (type === "recovery") {
-      setIsValidSession(true);
-    }
+    if (type === "recovery") setIsValidSession(true);
 
-    // Also listen for auth state changes (Supabase handles the token exchange)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setIsValidSession(true);
-      }
+      if (event === "PASSWORD_RECOVERY") setIsValidSession(true);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     const validation = passwordSchema.safeParse(password);
     if (!validation.success) {
       toast.error(validation.error.errors[0].message);
       return;
     }
     if (password !== confirmPassword) {
-      toast.error("Les mots de passe ne correspondent pas");
+      toast.error(t.resetMismatch);
       return;
     }
 
@@ -55,11 +49,11 @@ export default function ResetPasswordPage() {
         toast.error(error.message);
       } else {
         setIsSuccess(true);
-        toast.success("Mot de passe mis à jour avec succès");
+        toast.success(t.resetSuccessToast);
         setTimeout(() => navigate("/hq"), 2000);
       }
     } catch {
-      toast.error("Une erreur est survenue");
+      toast.error(t.genericError);
     } finally {
       setIsLoading(false);
     }
@@ -74,8 +68,8 @@ export default function ResetPasswordPage() {
               <Building2 className="h-8 w-8" />
             </div>
           </div>
-          <h1 className="text-2xl font-bold">Réinitialiser le mot de passe</h1>
-          <p className="text-muted-foreground text-sm mt-2">EMOTIONSCARE SASU</p>
+          <h1 className="text-2xl font-bold">{t.resetTitle}</h1>
+          <p className="text-muted-foreground text-sm mt-2">{t.resetBrand}</p>
         </div>
 
         {isSuccess ? (
@@ -85,20 +79,20 @@ export default function ResetPasswordPage() {
                 <CheckCircle className="h-8 w-8 text-success" />
               </div>
             </div>
-            <p className="font-medium">Mot de passe mis à jour</p>
-            <p className="text-sm text-muted-foreground">Redirection vers le HQ...</p>
+            <p className="font-medium">{t.resetSuccess}</p>
+            <p className="text-sm text-muted-foreground">{t.resetRedirecting}</p>
           </div>
         ) : !isValidSession ? (
           <div className="text-center space-y-4 p-6 rounded-xl border bg-card">
-            <p className="text-muted-foreground">Lien de réinitialisation invalide ou expiré.</p>
+            <p className="text-muted-foreground">{t.resetInvalidLink}</p>
             <Button variant="outline" onClick={() => navigate("/auth")}>
-              Retour à la connexion
+              {t.resetBackToLogin}
             </Button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 p-6 rounded-xl border bg-card">
             <div className="space-y-2">
-              <Label htmlFor="password">Nouveau mot de passe</Label>
+              <Label htmlFor="password">{t.resetNewPassword}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -107,13 +101,13 @@ export default function ResetPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
-                  placeholder="Min. 8 caractères, majuscule, chiffre"
+                  placeholder={t.resetNewPasswordPlaceholder}
                   required
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm">Confirmer le mot de passe</Label>
+              <Label htmlFor="confirm">{t.resetConfirm}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -122,14 +116,14 @@ export default function ResetPasswordPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10"
-                  placeholder="Confirmez le mot de passe"
+                  placeholder={t.resetConfirmPlaceholder}
                   required
                 />
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Mettre à jour le mot de passe
+              {t.resetSubmit}
             </Button>
           </form>
         )}

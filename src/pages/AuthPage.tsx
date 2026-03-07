@@ -9,9 +9,11 @@ import { Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { loginSchema } from "@/lib/validation";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { authTranslations } from "@/i18n/auth";
 
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_DURATION_MS = 60_000; // 1 minute
+const LOCKOUT_DURATION_MS = 60_000;
 
 export default function AuthPage() {
   const [email, setEmail] = useState("");
@@ -25,24 +27,22 @@ export default function AuthPage() {
   const attemptsRef = useRef(0);
   const lockoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
+  const t = useTranslation(authTranslations);
 
   const startLockout = useCallback(() => {
     setIsLocked(true);
-    toast.error("Trop de tentatives", {
-      description: "Veuillez patienter 1 minute avant de réessayer.",
-    });
+    toast.error(t.tooManyAttempts, { description: t.tooManyAttemptsDesc });
     lockoutTimerRef.current = setTimeout(() => {
       setIsLocked(false);
       attemptsRef.current = 0;
     }, LOCKOUT_DURATION_MS);
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLocked) return;
     setIsLoading(true);
 
-    // Validate inputs with shared schema
     const validationResult = loginSchema.safeParse({ email, password });
     if (!validationResult.success) {
       toast.error(validationResult.error.errors[0].message);
@@ -51,18 +51,15 @@ export default function AuthPage() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
         attemptsRef.current += 1;
         if (attemptsRef.current >= MAX_ATTEMPTS) {
           startLockout();
         } else if (error.message.includes("Invalid login credentials")) {
-          toast.error("Identifiants incorrects", {
-            description: `${MAX_ATTEMPTS - attemptsRef.current} tentative(s) restante(s)`,
+          toast.error(t.invalidCredentials, {
+            description: `${MAX_ATTEMPTS - attemptsRef.current} ${t.attemptsRemaining}`,
           });
         } else {
           toast.error(error.message);
@@ -73,11 +70,11 @@ export default function AuthPage() {
 
       if (data.user) {
         attemptsRef.current = 0;
-        toast.success("Bienvenue, Madame la Présidente");
+        toast.success(t.welcomeToast);
         navigate("/hq");
       }
     } catch {
-      toast.error("Une erreur est survenue");
+      toast.error(t.genericError);
     } finally {
       setIsLoading(false);
     }
@@ -85,10 +82,9 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row relative overflow-hidden bg-background">
-      {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.03)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
-      
-      {/* Mobile Header - Only visible on mobile */}
+
+      {/* Mobile Header */}
       <div className="lg:hidden relative z-10 bg-hero-gradient py-8 px-4 text-center">
         <div className="flex justify-center mb-4">
           <div className="relative">
@@ -100,10 +96,10 @@ export default function AuthPage() {
             </div>
           </div>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-1">EMOTIONSCARE</h2>
-        <p className="text-sm text-white/70">Siège Social Numérique</p>
+        <h2 className="text-2xl font-bold text-white mb-1">{t.mobileHeader}</h2>
+        <p className="text-sm text-white/70">{t.mobileSubtitle}</p>
       </div>
-      
+
       {/* Left Panel - Form */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative z-10">
         <div className="w-full max-w-sm sm:max-w-md">
@@ -119,30 +115,26 @@ export default function AuthPage() {
                 </div>
               </div>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-2">Connexion à EMOTIONSCARE</h1>
-            <p className="text-muted-foreground text-base sm:text-lg">
-              Accédez au siège social numérique
-            </p>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t.desktopTitle}</h1>
+            <p className="text-muted-foreground text-base sm:text-lg">{t.desktopSubtitle}</p>
           </div>
 
           {/* Mobile Title */}
           <div className="lg:hidden text-center mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold mb-1">Connexion</h1>
-            <p className="text-muted-foreground text-sm sm:text-base">
-              Accédez au siège social numérique
-            </p>
+            <h1 className="text-xl sm:text-2xl font-bold mb-1">{t.mobileTitle}</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">{t.mobileDesc}</p>
           </div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">{t.email}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder="votre@email.com"
+                  placeholder={t.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -155,13 +147,13 @@ export default function AuthPage() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-medium">Mot de passe</Label>
+                <Label htmlFor="password" className="text-sm font-medium">{t.password}</Label>
                 <button
                   type="button"
                   onClick={() => setShowForgot(true)}
                   className="text-xs text-accent hover:text-accent/80 transition-colors"
                 >
-                  Mot de passe oublié ?
+                  {t.forgotPassword}
                 </button>
               </div>
               <div className="relative">
@@ -169,7 +161,7 @@ export default function AuthPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t.passwordPlaceholder}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -187,16 +179,12 @@ export default function AuthPage() {
               className="w-full h-11 sm:h-12 text-sm sm:text-base"
               disabled={isLoading || isLocked}
             >
-              {isLocked ? (
-                "Veuillez patienter..."
-              ) : isLoading ? (
+              {isLocked ? t.pleaseWait : isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                  Connexion...
+                  {t.loggingIn}
                 </>
-              ) : (
-                "Se connecter"
-              )}
+              ) : t.login}
             </Button>
           </form>
 
@@ -204,7 +192,7 @@ export default function AuthPage() {
             <div className="p-1.5 rounded-full bg-success/10">
               <Shield className="h-3 w-3 text-success" />
             </div>
-            Connexion sécurisée et chiffrée
+            {t.secureConnection}
           </div>
 
           {/* Forgot Password Dialog */}
@@ -218,23 +206,21 @@ export default function AuthPage() {
                         <Mail className="h-6 w-6 text-success" />
                       </div>
                     </div>
-                    <h3 className="text-lg font-semibold">Email envoyé</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Si un compte existe avec cette adresse, vous recevrez un lien de réinitialisation.
-                    </p>
+                    <h3 className="text-lg font-semibold">{t.forgotSentTitle}</h3>
+                    <p className="text-sm text-muted-foreground">{t.forgotSentDesc}</p>
                     <Button variant="outline" className="w-full" onClick={() => { setShowForgot(false); setForgotSent(false); setForgotEmail(""); }}>
-                      Fermer
+                      {t.forgotClose}
                     </Button>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Réinitialiser le mot de passe</h3>
-                    <p className="text-sm text-muted-foreground">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+                    <h3 className="text-lg font-semibold">{t.forgotTitle}</h3>
+                    <p className="text-sm text-muted-foreground">{t.forgotDesc}</p>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="email"
-                        placeholder="votre@email.com"
+                        placeholder={t.emailPlaceholder}
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         className="pl-10"
@@ -243,7 +229,7 @@ export default function AuthPage() {
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" className="flex-1" onClick={() => setShowForgot(false)} disabled={forgotLoading}>
-                        Annuler
+                        {t.forgotCancel}
                       </Button>
                       <Button
                         className="flex-1"
@@ -257,7 +243,7 @@ export default function AuthPage() {
                           setForgotSent(true);
                         }}
                       >
-                        {forgotLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Envoyer"}
+                        {forgotLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : t.forgotSend}
                       </Button>
                     </div>
                   </div>
@@ -270,50 +256,46 @@ export default function AuthPage() {
 
       {/* Right Panel - Premium Branding (Desktop only) */}
       <div className="hidden lg:flex flex-1 relative items-center justify-center p-8 xl:p-12 overflow-hidden">
-        {/* Gradient Background */}
         <div className="absolute inset-0 bg-hero-gradient" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(var(--accent)/0.2),transparent)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(var(--primary)/0.3),transparent)]" />
-        
-        {/* Floating Orbs */}
+
         <div className="absolute top-1/4 left-1/4 w-48 xl:w-64 h-48 xl:h-64 bg-accent/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-36 xl:w-48 h-36 xl:h-48 bg-primary-foreground/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-        
-        {/* Grid Pattern */}
+
         <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.1)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        
+
         <div className="relative z-10 max-w-md xl:max-w-lg text-center text-white">
           <div className="mb-6 xl:mb-8 animate-fade-in">
             <Badge variant="gold" className="px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm glow-gold">
               <Sparkles className="h-3 w-3 xl:h-4 xl:w-4 mr-1.5 xl:mr-2" />
-              Siège Social Numérique
+              {t.panelBadge}
             </Badge>
           </div>
-          
+
           <h2 className="text-3xl xl:text-5xl font-bold mb-3 xl:mb-4 animate-slide-up tracking-tight">
-            EMOTIONSCARE
+            {t.panelTitle}
           </h2>
           <p className="text-base xl:text-lg text-white/60 mb-6 xl:mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-            EMOTIONSCARE SASU — Siège Social Numérique
+            {t.panelSubtitle}
           </p>
-          
+
           <p className="text-base xl:text-xl text-white/70 mb-8 xl:mb-12 animate-slide-up leading-relaxed px-4" style={{ animationDelay: "0.2s" }}>
-            Accédez à votre espace de gestion pour piloter vos plateformes et suivre vos indicateurs.
+            {t.panelDesc}
           </p>
-          
-          {/* Stats */}
+
           <div className="grid grid-cols-3 gap-3 xl:gap-6 text-center animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">{MANAGED_PLATFORMS.length}</div>
-              <div className="text-xs xl:text-sm text-white/60">Plateformes</div>
+              <div className="text-xs xl:text-sm text-white/60">{t.panelPlatforms}</div>
             </div>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">39</div>
-              <div className="text-xs xl:text-sm text-white/60">Agents IA</div>
+              <div className="text-xs xl:text-sm text-white/60">{t.panelProcesses}</div>
             </div>
             <div className="p-4 xl:p-6 rounded-xl xl:rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10">
               <div className="text-2xl xl:text-4xl font-bold text-accent mb-1 xl:mb-2">24/7</div>
-              <div className="text-xs xl:text-sm text-white/60">Monitoring</div>
+              <div className="text-xs xl:text-sm text-white/60">{t.panelMonitoring}</div>
             </div>
           </div>
         </div>
