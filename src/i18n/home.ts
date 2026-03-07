@@ -286,7 +286,7 @@ export const homeTranslations = {
     },
     showcase: {
       badge: "Premium-Ökosystem",
-      heading1: "Acht Plattformen.",
+      heading1: "Zehn Plattformen.",
       heading2: "Eine Vision.",
       subtitle: "Jede Plattform erfüllt einen spezifischen Bedarf, alle werden von unserem digitalen Hauptsitz mit denselben Exzellenzstandards gesteuert.",
       production: "Produktion",
