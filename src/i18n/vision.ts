@@ -56,7 +56,7 @@ export const visionTranslations = {
     meta: { title: "Vision & Values", description: "Excellence, innovation, empathy, growth. One mission: creating software that transforms complexity into simplicity." },
     hero: {
       badge: "Our Vision",
-      subtitle: "8 platforms · 1 mission",
+      subtitle: "10 platforms · 1 mission",
       title1: "Building the future",
       title2: "of software",
       description: "At EMOTIONSCARE, we believe technology should serve people, not the other way around. Our mission: creating tools that simplify life and unlock everyone's potential.",
