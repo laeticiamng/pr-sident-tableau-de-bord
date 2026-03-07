@@ -11,7 +11,7 @@ export const commonTranslations = {
       login: "Connexion",
     },
     footer: {
-      description: "Éditeur français de 8 plateformes SaaS innovantes. Basé à Amiens.",
+      description: "Éditeur français de 9 plateformes SaaS innovantes. Basé à Amiens.",
       navigation: "Navigation",
       legal: "Légal",
       legalNotice: "Mentions légales",
@@ -36,7 +36,7 @@ export const commonTranslations = {
       login: "Login",
     },
     footer: {
-      description: "French publisher of 8 innovative SaaS platforms. Based in Amiens, France.",
+      description: "French publisher of 9 innovative SaaS platforms. Based in Amiens, France.",
       navigation: "Navigation",
       legal: "Legal",
       legalNotice: "Legal Notice",
@@ -61,7 +61,7 @@ export const commonTranslations = {
       login: "Anmelden",
     },
     footer: {
-      description: "Französischer Herausgeber von 8 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
+      description: "Französischer Herausgeber von 9 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
       navigation: "Navigation",
       legal: "Rechtliches",
       legalNotice: "Impressum",
