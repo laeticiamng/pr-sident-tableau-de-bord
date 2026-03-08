@@ -107,7 +107,7 @@ export default function PlateformesPage() {
               {t.hero.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms },
                 { value: formatNumber(totals.commits), label: t.stats.evolutions },
@@ -343,7 +343,7 @@ export default function PlateformesPage() {
               {t.governance.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6 mb-12">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms, icon: Layers },
                 { value: formatNumber(totals.commits), label: t.stats.evolutions, icon: GitCommit },

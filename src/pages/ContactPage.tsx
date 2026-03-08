@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,9 +120,9 @@ export default function ContactPage() {
                   <div className="grid gap-1 leading-none">
                     <Label htmlFor="consent" className="text-sm font-normal text-muted-foreground cursor-pointer">
                       {t.form.consentLabel}{" "}
-                      <a href="/legal/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:no-underline">
+                      <Link to="/legal/confidentialite" className="text-accent underline hover:no-underline">
                         {t.form.consentLink}
-                      </a> *
+                      </Link> *
                     </Label>
                     {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
                   </div>
@@ -156,7 +157,7 @@ export default function ContactPage() {
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent"><MapPin className="h-6 w-6" /></div>
                   <div>
                     <h3 className="font-semibold mb-1">{t.info.headquarters}</h3>
-                    <p className="text-muted-foreground">Appartement 1, 5 Rue Caudron<br />80000 Amiens, France</p>
+                    <p className="text-muted-foreground">80000 Amiens, France</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
