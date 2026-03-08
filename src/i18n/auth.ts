@@ -29,6 +29,7 @@ export const authTranslations = {
     forgotCancel: "Annuler",
     forgotSend: "Envoyer",
     forgotClose: "Fermer",
+    backToHome: "Retour à l'accueil",
     // Right panel
     panelBadge: "Éditeur de logiciels SaaS",
     panelTitle: "EMOTIONSCARE",

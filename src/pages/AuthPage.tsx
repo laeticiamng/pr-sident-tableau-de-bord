@@ -87,7 +87,7 @@ export default function AuthPage() {
       <div className="absolute top-4 left-4 z-20">
         <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="h-4 w-4" />
-          <span className="hidden sm:inline">Retour à l'accueil</span>
+          <span className="hidden sm:inline">{t.backToHome}</span>
         </Link>
       </div>
       <div className="absolute top-4 right-4 z-20">

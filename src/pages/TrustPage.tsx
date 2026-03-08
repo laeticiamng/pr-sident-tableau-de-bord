@@ -137,7 +137,7 @@ export default function TrustPage() {
                   <h3 className="font-semibold mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
                   <Link to={complianceLinks[i]} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-                    {item.linkLabel}<ExternalLink className="h-3.5 w-3.5" />
+                    {item.linkLabel}<ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </CardContent>
               </Card>

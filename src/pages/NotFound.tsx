@@ -13,7 +13,7 @@ const NotFound = () => {
   usePageMeta({ title: t.title, noindex: true });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
+    <div className="flex min-h-[60vh] items-center justify-center bg-background relative overflow-hidden">
       <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--muted)/0.03)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--muted)/0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
       
       <div className="relative z-10 text-center px-4 max-w-md mx-auto">
