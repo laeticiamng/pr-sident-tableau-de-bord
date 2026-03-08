@@ -51,6 +51,7 @@ export const statusTranslations = {
       someIssues: "Some systems need attention",
       publicFallback: "Status based on latest deployments",
       lastCheck: "Last check",
+      checking: "Checking…",
     },
     summary: {
       inProduction: "in production",
