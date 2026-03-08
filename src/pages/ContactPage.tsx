@@ -109,13 +109,11 @@ export default function ContactPage() {
                   {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
                 </div>
                 <div className="flex items-start gap-3">
+                  <input type="checkbox" id="consent" className="hidden" {...register("consent")} />
                   <Checkbox
-                    id="consent"
-                    checked={!!register("consent").value}
-                    onCheckedChange={(checked) => {
-                      register("consent").onChange({ target: { name: "consent", value: checked } });
-                    }}
-                    {...register("consent")}
+                    id="consent-visual"
+                    checked={watch("consent") as unknown as boolean}
+                    onCheckedChange={(checked) => setValue("consent", checked as unknown as true, { shouldValidate: true })}
                     aria-invalid={!!errors.consent}
                   />
                   <div className="grid gap-1 leading-none">
