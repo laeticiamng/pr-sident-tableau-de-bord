@@ -17,6 +17,7 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { HQLayout } from "@/components/layout/HQLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ModuleGuard } from "@/components/auth/ModuleGuard";
 
 // Critical pages - loaded immediately
 import HomePage from "@/pages/HomePage";
