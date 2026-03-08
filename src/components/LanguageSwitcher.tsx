@@ -20,7 +20,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             "flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium hover:bg-secondary transition-colors",
             className
           )}
-          aria-label="Changer de langue"
+          aria-label={t.changeLanguage}
         >
           <span className="text-base leading-none">{current.flag}</span>
           <span className="hidden sm:inline text-xs text-muted-foreground uppercase">{current.code}</span>
