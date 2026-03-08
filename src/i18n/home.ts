@@ -213,9 +213,9 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Platforms",
-      evolutions: "Evolutions",
+      evolutions: "Updates",
       madeInFrance: "Made in France",
-      monitoring: "Monitoring",
+      monitoring: "Uptime",
     },
     cta: {
       title: "Explore the ecosystem",
