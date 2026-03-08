@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
+import { ArrowLeft, Building2, Loader2, Shield, Sparkles, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { getLoginSchema } from "@/lib/validation";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
@@ -83,7 +83,13 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row relative overflow-hidden bg-background">
-      {/* Language Switcher - top right corner */}
+      {/* Top bar - back link + language switcher */}
+      <div className="absolute top-4 left-4 z-20">
+        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">Retour à l'accueil</span>
+        </Link>
+      </div>
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher />
       </div>
