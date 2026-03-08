@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
 const SITE_NAME = "EMOTIONSCARE";
-const DEFAULT_TITLE = "EMOTIONSCARE — Éditeur français de 10 logiciels SaaS innovants";
+const DEFAULT_TITLE = "EMOTIONSCARE — Éditeur français de 10 logiciels innovants";
 const DEFAULT_DESCRIPTION =
-  "Éditeur de logiciels applicatifs français. 10 plateformes SaaS innovantes : santé des soignants, apprentissage médical, mémorisation musicale, médecine vasculaire, relocalisation, automatisation IA. Basé à Amiens.";
+  "Éditeur de logiciels français. 10 plateformes innovantes : santé des soignants, apprentissage médical, mémorisation musicale, médecine vasculaire, relocalisation, automatisation IA. Basé à Amiens.";
 const SITE_URL = "https://president-cockpit-hq.lovable.app";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
 
