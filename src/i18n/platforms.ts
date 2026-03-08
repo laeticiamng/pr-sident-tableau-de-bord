@@ -129,6 +129,58 @@ export const platformsTranslations = {
       lastUpdate: "Last update",
       modulesLabel: "Modules",
     },
+    platforms: {
+      emotionscare: {
+        tagline: "Caring for those who care",
+        description: "France's first platform dedicated to the emotional wellbeing of healthcare workers and medical students. 37 integrated modules: AI emotional scan, personalized coaching with Nyvée, music therapy, VR and gamification. Designed to reduce burnout and strengthen daily resilience.",
+        features: ["AI Emotional Scan", "AI Coach Nyvée", "Suno Music Therapy", "B2B HR Dashboard", "XP Gamification"],
+      },
+      nearvity: {
+        tagline: "Connect with the people around you",
+        description: "A real-time social connection mobile app for students. A smart radar detects who is available around you based on 3 signals (open, conditional, busy). Pair sessions, ghost mode and group messaging for authentic campus encounters.",
+        features: ["Real-time Radar", "3 Signal States", "Pair Sessions", "Ghost Mode", "GDPR Export"],
+      },
+      "system-compass": {
+        tagline: "Navigate country systems with intelligence",
+        description: "Decision intelligence for international relocation. Personalized analysis of 50+ countries with tax simulation, quality of life comparison and tailored recommendations. For expats, digital nomads, entrepreneurs and institutions.",
+        features: ["Personalized Exit Keys", "50+ Country Profiles", "Tax Simulator", "TraceOS Audit", "Gamified Life Game"],
+      },
+      "growth-copilot": {
+        tagline: "Premium expertise, delivered simply",
+        description: "Your team of 39 ready-to-use AI experts. 2 directors and 37 specialized agents covering 11 departments: marketing, sales, finance, product, engineering and more. Every task is validated, traced and automated.",
+        features: ["39 AI Experts (2 Dir + 37 Dept)", "11 Business Departments", "Presidential Validation", "Voice Commands", "Automated Planning"],
+      },
+      "med-mng": {
+        tagline: "One song = One medical item mastered",
+        description: "Revolutionizing medical learning through music. Each ECN/EDN item becomes an AI-generated song you naturally retain. Smart medical copilot for research, revision and understanding.",
+        features: ["AI Medical Copilot", "AI Music Generation", "Continuous Listening", "AI Medical Research", "Available Offline"],
+      },
+      "swift-care-hub": {
+        tagline: "From admission to discharge, every second counts",
+        description: "A real-time app that digitizes the entire patient journey in the ER — from admission to discharge. Panoramic board by zone, patient file with medical timeline, 1-tap nurse board, smart IOA triage.",
+        features: ["Real-time Panoramic Board", "1-tap Nurse Board", "Smart IOA Triage", "Complete Patient File", "Medical Audit Trail"],
+      },
+      "track-triumph-tavern": {
+        tagline: "Submit. Vote. Triumph.",
+        description: "A music competition platform where artists submit their tracks weekly and the community votes. Immersive feed, multi-criteria scoring, weekly rankings and Hall of Fame.",
+        features: ["Weekly Submissions", "Community Votes", "Category Rankings", "Hall of Fame", "AI Feedback"],
+      },
+      "trust-seal-chain": {
+        tagline: "AI trust, certified and traceable",
+        description: "A certification and traceability platform for AI agents. Trust registry, automated algorithmic decision auditing, ethical scoring and European AI Act compliance.",
+        features: ["Trust Seal Certification", "AI Audit Trail", "Ethical Scoring", "AI Act Compliance", "Agent Registry"],
+      },
+      studybeats: {
+        tagline: "Turn your courses into songs",
+        description: "Transform your courses into memorable songs. Upload your notes, choose from 30 music styles, and AI generates educational lyrics. Listen on repeat, study anywhere — then test yourself with automatic quizzes.",
+        features: ["30 Music Styles", "PDF/Photo/Text Import", "Automatic Quizzes", "Offline Listening", "Cognitive Neuroscience"],
+      },
+      "vascular-atlas": {
+        tagline: "Vascular excellence, augmented by AI",
+        description: "AI-augmented clinical platform for vascular medicine. AI clinical assistant, vascular digital twin, global outcomes registry, CME certification and international expert network.",
+        features: ["AI Clinical Assistant", "Vascular Digital Twin", "Global Outcomes Registry", "Certification & CME", "Clinical Simulation"],
+      },
+    },
     governance: {
       badge: "Unified Governance",
       title1: "One headquarters.",
