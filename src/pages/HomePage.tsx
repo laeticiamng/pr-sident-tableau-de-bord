@@ -6,16 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   Sparkles,
-  Heart,
-  GraduationCap,
-  Globe,
-  Zap,
   Building2,
-  Users,
-  Siren,
-  Music,
-  ShieldCheck,
-  HeartPulse,
   Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
@@ -24,23 +15,10 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
+import { getPlatformConfig } from "@/lib/platformConfig";
 import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
-
-const FEATURE_ICONS = [Heart, GraduationCap, Globe, Zap, Users, Siren, Music, ShieldCheck, Music, HeartPulse];
-const FEATURE_STYLES = [
-  { color: "text-accent", bgColor: "bg-accent/10" },
-  { color: "text-success", bgColor: "bg-success/10" },
-  { color: "text-primary", bgColor: "bg-primary/10" },
-  { color: "text-warning", bgColor: "bg-warning/10" },
-  { color: "text-info", bgColor: "bg-info/10" },
-  { color: "text-destructive", bgColor: "bg-destructive/10" },
-  { color: "text-accent", bgColor: "bg-accent/10" },
-  { color: "text-success", bgColor: "bg-success/10" },
-  { color: "text-primary", bgColor: "bg-primary/10" },
-  { color: "text-destructive", bgColor: "bg-destructive/10" },
-];
 
 function ScrollReveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
@@ -117,7 +95,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FEATURES */}
+      {/* FEATURES — driven by MANAGED_PLATFORMS, no parallel arrays */}
       <section className="py-20 md:py-32 bg-background">
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
@@ -131,15 +109,16 @@ export default function HomePage() {
 
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {t.features.items.map((feature, index) => {
-                const Icon = FEATURE_ICONS[index] || Heart;
-                const style = FEATURE_STYLES[index] || { color: "text-muted-foreground", bgColor: "bg-muted/10" };
+                const platformKey = MANAGED_PLATFORMS[index]?.key;
+                const cfg = getPlatformConfig(platformKey ?? "");
+                const Icon = cfg.icon;
                 return (
                   <ScrollReveal key={index} delay={index * 75}>
                     <Card className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 h-full">
                       <CardContent className="p-5 sm:p-6">
                         <div className="flex flex-col gap-3">
-                          <div className={`p-2.5 rounded-xl ${style.bgColor} w-fit transition-transform group-hover:scale-110`}>
-                            <Icon className={`h-5 w-5 ${style.color}`} />
+                          <div className={`p-2.5 rounded-xl ${cfg.featureBg} w-fit transition-transform group-hover:scale-110`}>
+                            <Icon className={`h-5 w-5 ${cfg.featureColor}`} />
                           </div>
                           <div>
                             <h3 className="text-base font-semibold mb-1.5">{feature.title}</h3>
