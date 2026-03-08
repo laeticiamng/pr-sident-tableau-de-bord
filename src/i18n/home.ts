@@ -97,8 +97,8 @@ export const homeTranslations = {
       proto: "Bientôt",
       visit: "Visiter",
       viewAll: "Voir toutes les plateformes",
-      modulesLabel: "modules",
-      structuresLabel: "structures",
+      modulesLabel: "fonctionnalités",
+      structuresLabel: "composants",
       platforms: {
         emotionscare: {
           tagline: "Prendre soin de celles et ceux qui prennent soin",
