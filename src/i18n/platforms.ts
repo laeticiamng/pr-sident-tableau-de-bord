@@ -224,6 +224,58 @@ export const platformsTranslations = {
       lastUpdate: "Letztes Update",
       modulesLabel: "Module",
     },
+    platforms: {
+      emotionscare: {
+        tagline: "Für die sorgen, die für andere sorgen",
+        description: "Frankreichs erste Plattform für das emotionale Wohlbefinden von Pflegekräften und Medizinstudierenden. 37 integrierte Module: KI-Emotions-Scan, personalisiertes Coaching mit Nyvée, Musiktherapie, VR und Gamification. Entwickelt zur Burnout-Reduktion und täglichen Resilienzstärkung.",
+        features: ["KI-Emotions-Scan", "KI-Coach Nyvée", "Suno Musiktherapie", "B2B HR Dashboard", "XP Gamification"],
+      },
+      nearvity: {
+        tagline: "Verbinde dich mit den Menschen um dich herum",
+        description: "Eine Echtzeit-App für soziale Verbindungen unter Studierenden. Ein intelligentes Radar erkennt, wer in Ihrer Nähe verfügbar ist, basierend auf 3 Signalen (offen, bedingt, beschäftigt). Paar-Sessions, Ghost-Modus und Gruppennachrichten für authentische Campus-Begegnungen.",
+        features: ["Echtzeit-Radar", "3 Signalzustände", "Paar-Sessions", "Ghost-Modus", "DSGVO-Export"],
+      },
+      "system-compass": {
+        tagline: "Navigiere Ländersysteme mit Intelligenz",
+        description: "Entscheidungsintelligenz für internationale Umzüge. Personalisierte Analyse von 50+ Ländern mit Steuersimulation, Lebensqualitätsvergleich und maßgeschneiderten Empfehlungen. Für Expats, digitale Nomaden, Unternehmer und Institutionen.",
+        features: ["Personalisierte Exit Keys", "50+ Länderprofile", "Steuersimulator", "TraceOS Audit", "Gamifiziertes Life Game"],
+      },
+      "growth-copilot": {
+        tagline: "Premium-Expertise, einfach geliefert",
+        description: "Ihr Team aus 39 einsatzbereiten KI-Experten. 2 Direktoren und 37 spezialisierte Agenten für 11 Abteilungen: Marketing, Vertrieb, Finanzen, Produkt, Engineering und mehr. Jede Aufgabe wird validiert, nachverfolgt und automatisiert.",
+        features: ["39 KI-Experten (2 Dir + 37 Abt)", "11 Geschäftsbereiche", "Präsidentielle Validierung", "Sprachbefehle", "Automatisierte Planung"],
+      },
+      "med-mng": {
+        tagline: "Ein Song = Ein medizinisches Thema gemeistert",
+        description: "Revolution des medizinischen Lernens durch Musik. Jeder ECN/EDN-Punkt wird zu einem KI-generierten Song, den Sie sich natürlich merken. Intelligenter medizinischer Copilot für Forschung, Wiederholung und Verständnis.",
+        features: ["KI-Medizin-Copilot", "KI-Musikgenerierung", "Dauerhörer", "KI-Medizinforschung", "Offline verfügbar"],
+      },
+      "swift-care-hub": {
+        tagline: "Von der Aufnahme bis zur Entlassung zählt jede Sekunde",
+        description: "Eine Echtzeit-App, die den gesamten Patientenpfad in der Notaufnahme digitalisiert — von der Aufnahme bis zur Entlassung. Panorama-Board nach Zone, Patientenakte mit medizinischer Timeline, 1-Tap-Pflegetafel, intelligente IOA-Triage.",
+        features: ["Echtzeit-Panorama-Board", "1-Tap Pflegetafel", "Intelligente IOA-Triage", "Komplette Patientenakte", "Medizinischer Audit Trail"],
+      },
+      "track-triumph-tavern": {
+        tagline: "Einreichen. Abstimmen. Triumphieren.",
+        description: "Eine Musik-Wettbewerbsplattform, auf der Künstler wöchentlich ihre Tracks einreichen und die Community abstimmt. Immersiver Feed, Mehrkriterienbewertung, wöchentliche Rankings und Hall of Fame.",
+        features: ["Wöchentliche Einreichungen", "Community-Abstimmungen", "Kategorie-Rankings", "Hall of Fame", "KI-Feedback"],
+      },
+      "trust-seal-chain": {
+        tagline: "KI-Vertrauen, zertifiziert und nachverfolgbar",
+        description: "Eine Zertifizierungs- und Rückverfolgbarkeitsplattform für KI-Agenten. Vertrauensregister, automatisiertes algorithmisches Entscheidungsaudit, ethisches Scoring und europäische AI-Act-Konformität.",
+        features: ["Trust Seal Zertifizierung", "KI-Audit Trail", "Ethisches Scoring", "AI Act Konformität", "Agentenregister"],
+      },
+      studybeats: {
+        tagline: "Verwandle deine Kurse in Songs",
+        description: "Verwandeln Sie Ihre Kurse in einprägsame Songs. Laden Sie Ihre Notizen hoch, wählen Sie aus 30 Musikstilen, und die KI generiert Bildungstexte. Hören Sie in Dauerschleife, lernen Sie überall — und testen Sie sich mit automatischen Quizzen.",
+        features: ["30 Musikstile", "PDF/Foto/Text Import", "Automatische Quizze", "Offline hören", "Kognitive Neurowissenschaften"],
+      },
+      "vascular-atlas": {
+        tagline: "Vaskuläre Exzellenz, erweitert durch KI",
+        description: "KI-erweiterte klinische Plattform für Gefäßmedizin. KI-Klinikassistent, vaskulärer digitaler Zwilling, globales Ergebnisregister, CME-Zertifizierung und internationales Expertennetzwerk.",
+        features: ["KI-Klinikassistent", "Vaskulärer digitaler Zwilling", "Globales Ergebnisregister", "Zertifizierung & CME", "Klinische Simulation"],
+      },
+    },
     governance: {
       badge: "Einheitliche Governance",
       title1: "Ein Hauptsitz.",
