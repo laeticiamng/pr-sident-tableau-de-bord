@@ -31,13 +31,13 @@ export const authTranslations = {
     forgotClose: "Fermer",
     backToHome: "Retour à l'accueil",
     // Right panel
-    panelBadge: "Éditeur de logiciels SaaS",
+    panelBadge: "Éditeur de logiciels",
     panelTitle: "EMOTIONSCARE",
-    panelSubtitle: "EMOTIONSCARE SASU — Éditeur de logiciels SaaS",
+    panelSubtitle: "EMOTIONSCARE SASU — Éditeur de logiciels",
     panelDesc: "Accédez à votre espace de gestion pour piloter vos plateformes et suivre vos indicateurs.",
     panelPlatforms: "Plateformes",
-    panelProcesses: "Processus automatisés",
-    panelMonitoring: "Monitoring",
+    panelProcesses: "Automatisations",
+    panelMonitoring: "Disponibilité 24/7",
     // Reset password page
     resetTitle: "Réinitialiser le mot de passe",
     resetBrand: "EMOTIONSCARE SASU",
