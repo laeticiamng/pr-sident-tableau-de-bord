@@ -37,6 +37,7 @@ export default function PlateformesPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "production" | "prototype">("all");
   const t = useTranslation(platformsTranslations);
   const { language } = useLanguage();
+  const pt = t.platforms as Record<string, { tagline: string; description: string; features: readonly string[] }>;
 
   const geoSchemas = useMemo(() => getPlateformesPageSchemas(), []);
 
