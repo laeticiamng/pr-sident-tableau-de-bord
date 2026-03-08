@@ -9,6 +9,7 @@ export const statusTranslations = {
       someIssues: "Certains systèmes nécessitent attention",
       publicFallback: "Statut basé sur les derniers déploiements",
       lastCheck: "Dernière vérification",
+      checking: "Vérification…",
     },
     summary: {
       inProduction: "en production",
@@ -50,6 +51,7 @@ export const statusTranslations = {
       someIssues: "Some systems need attention",
       publicFallback: "Status based on latest deployments",
       lastCheck: "Last check",
+      checking: "Checking…",
     },
     summary: {
       inProduction: "in production",
@@ -91,6 +93,7 @@ export const statusTranslations = {
       someIssues: "Einige Systeme benötigen Aufmerksamkeit",
       publicFallback: "Status basierend auf den letzten Deployments",
       lastCheck: "Letzte Überprüfung",
+      checking: "Überprüfung…",
     },
     summary: {
       inProduction: "in Produktion",

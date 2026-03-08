@@ -30,9 +30,6 @@ const NotFound = () => {
         </h1>
         
         <p className="text-muted-foreground text-lg mb-2">
-          <code className="text-sm bg-muted px-2 py-1 rounded">{location.pathname}</code> {t.description}
-        </p>
-        <p className="text-muted-foreground mb-8">
           {t.hint}
         </p>
         
