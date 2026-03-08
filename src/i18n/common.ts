@@ -24,6 +24,7 @@ export const commonTranslations = {
       theme: "Thème",
       allRights: "Tous droits réservés.",
       softwareEditor: "Éditeur de logiciels",
+      skipToContent: "Aller au contenu principal",
     },
   },
   en: {
@@ -51,6 +52,7 @@ export const commonTranslations = {
       theme: "Theme",
       allRights: "All rights reserved.",
       softwareEditor: "Software Publisher",
+      skipToContent: "Skip to main content",
     },
   },
   de: {
@@ -78,6 +80,7 @@ export const commonTranslations = {
       theme: "Design",
       allRights: "Alle Rechte vorbehalten.",
       softwareEditor: "Softwareherausgeber",
+      skipToContent: "Zum Hauptinhalt springen",
     },
   },
 } as const;
