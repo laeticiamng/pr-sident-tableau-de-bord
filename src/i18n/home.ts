@@ -324,6 +324,7 @@ export const homeTranslations = {
       title: "Plattformen, die",
       titleAccent: "den Unterschied machen",
       subtitle: "Jede Plattform löst ein konkretes Problem im Gesundheitswesen, in der Bildung und in der internationalen Mobilität",
+      viewAll: "Alle Lösungen ansehen",
       items: [
         {
           title: "Wohlbefinden im Gesundheitswesen",
