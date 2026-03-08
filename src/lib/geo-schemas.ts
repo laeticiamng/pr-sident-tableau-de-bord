@@ -49,7 +49,7 @@ export function buildOrganizationSchema() {
     },
     numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
     knowsAbout: [
-      "SaaS",
+      "Logiciels applicatifs",
       "Intelligence artificielle appliquée",
       "Santé mentale des soignants",
       "EdTech médicale",
