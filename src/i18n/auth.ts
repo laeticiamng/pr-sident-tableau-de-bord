@@ -82,6 +82,7 @@ export const authTranslations = {
     forgotCancel: "Cancel",
     forgotSend: "Send",
     forgotClose: "Close",
+    backToHome: "Back to home",
     panelBadge: "SaaS Software Publisher",
     panelTitle: "EMOTIONSCARE",
     panelSubtitle: "EMOTIONSCARE SASU — SaaS Software Publisher",
