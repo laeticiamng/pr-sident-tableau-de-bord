@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: "EMOTIONSCARE HQ — Siège Social Numérique",
         short_name: "HQ",
-        description: "Pilotez vos plateformes SaaS depuis votre téléphone en 30 secondes.",
+        description: "Pilotez vos plateformes depuis votre téléphone en 30 secondes.",
         theme_color: "#0a0a0a",
         background_color: "#0a0a0a",
         display: "standalone",

@@ -84,7 +84,7 @@ export default function FinancePage() {
       <ExecutiveHeader
         title="Finance & ROI"
         subtitle={`Vue financière consolidée des ${MANAGED_PLATFORMS.length} plateformes`}
-        context="Indicateurs SaaS standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
+        context="Indicateurs financiers standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
         source={{
           source: "stripe",
           lastUpdated: kpis?.lastUpdated,

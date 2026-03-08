@@ -145,6 +145,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HowItWorks />
+
       <PlatformShowcase />
 
       <HomeFAQ />

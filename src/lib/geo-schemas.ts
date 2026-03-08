@@ -281,7 +281,7 @@ export function buildPlatformItemListSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Plateformes SaaS EMOTIONSCARE",
+    name: "Plateformes EMOTIONSCARE",
     description:
       `Les ${MANAGED_PLATFORMS.length} plateformes logicielles éditées par EMOTIONSCARE SASU, couvrant la santé, l'éducation, l'international, l'automatisation et le divertissement.`,
     numberOfItems: MANAGED_PLATFORMS.length,
