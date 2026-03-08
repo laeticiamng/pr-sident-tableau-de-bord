@@ -47,6 +47,10 @@ export const validationTranslations = {
     runType: {
       invalid: "Type de run invalide",
     },
+    consent: {
+      required: "Vous devez accepter la politique de confidentialité",
+    },
+    },
   },
   en: {
     email: {
