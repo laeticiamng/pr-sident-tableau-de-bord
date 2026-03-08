@@ -222,10 +222,19 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
 
             {isExpanded && (
               <div className="mt-1 space-y-3 animate-fade-in">
-                {secondaryGroups.map((group) => (
+                {secondaryGroups.map((group) => {
+                  const groupCount = group.label === "Opérations" ? opsCount
+                    : group.label === "Gouvernance" ? recentAuditCount
+                    : 0;
+                  return (
                   <div key={group.label}>
-                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-                      {group.label}
+                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 flex items-center justify-between">
+                      <span>{group.label}</span>
+                      {groupCount > 0 && (
+                        <Badge variant="subtle" className="h-4 min-w-[16px] rounded-full px-1.5 py-0 text-[9px] font-medium">
+                          {groupCount}
+                        </Badge>
+                      )}
                     </div>
                     <ul className="space-y-0.5">
                       {group.items.map((link) => {
