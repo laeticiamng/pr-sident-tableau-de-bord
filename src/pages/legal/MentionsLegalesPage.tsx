@@ -27,7 +27,7 @@ export default function MentionsLegalesPage() {
 
       <section className="py-16 md:py-20">
         <div className="container">
-          <div className="mx-auto max-w-3xl prose prose-slate">
+          <div className="mx-auto max-w-3xl prose prose-slate dark:prose-invert">
             <h2>{t.mentions.editor}</h2>
             <table className="w-full text-sm">
               <tbody>
