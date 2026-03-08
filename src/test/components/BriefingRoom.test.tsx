@@ -34,9 +34,9 @@ describe("BriefingRoom", () => {
     expect(screen.getByText(/Madame la Présidente/)).toBeInTheDocument();
   });
 
-  it("renders call DG button", () => {
+  it("renders executive brief button", () => {
     renderWithProviders(<BriefingRoom />);
-    expect(screen.getByText("Appeler le DG")).toBeInTheDocument();
+    expect(screen.getByText(/Lancer le brief exécutif/)).toBeInTheDocument();
   });
 
   it("renders KPI cards", () => {
