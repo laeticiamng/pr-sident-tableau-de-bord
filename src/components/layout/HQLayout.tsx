@@ -13,6 +13,7 @@ import { useRunQueue } from "@/hooks/useRunQueue";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { HQChatSidebar } from "@/components/hq/HQChatSidebar";
+import { AnnouncementBanner } from "@/components/ui/announcement-banner";
 
 export function HQLayout() {
   const { user } = useAuth();
@@ -63,6 +64,18 @@ export function HQLayout() {
               <NotificationCenter />
             </div>
           </div>
+
+          {/* Announcement HQ — Glassmorphic dark */}
+          <AnnouncementBanner
+            variant="glassmorphic"
+            tone="dark"
+            icon="megaphone"
+            message="Cockpit v3 — Nouveaux widgets IA et monitoring temps réel disponibles"
+            ctaLabel="Voir les nouveautés"
+            onCtaClick={() => window.location.hash = "#nouveautes"}
+            dismissKey="hq-cockpit-v3"
+            className="mb-4 lg:mb-6"
+          />
 
           {/* File d'attente des runs (uniquement si des runs sont en cours) */}
           <RunQueueWidget className="mb-4 lg:mb-6" compact />
