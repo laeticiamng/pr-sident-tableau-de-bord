@@ -36,6 +36,8 @@ export const commonTranslations = {
       security: "Security",
       contact: "Contact",
       login: "Login",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
     },
     footer: {
       description: "French publisher of 10 innovative SaaS platforms. Based in Amiens, France.",
