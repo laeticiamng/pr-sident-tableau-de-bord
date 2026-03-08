@@ -52,6 +52,7 @@ export const commonTranslations = {
       theme: "Theme",
       allRights: "All rights reserved.",
       softwareEditor: "Software Publisher",
+      skipToContent: "Skip to main content",
     },
   },
   de: {
