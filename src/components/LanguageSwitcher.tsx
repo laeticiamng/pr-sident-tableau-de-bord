@@ -1,5 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 import { LANGUAGES } from "@/i18n/types";
+import { themeTranslations } from "@/i18n/theme";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
