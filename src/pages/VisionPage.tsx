@@ -15,6 +15,7 @@ const COMMITMENT_ICONS = [Shield, Users, Award, Rocket];
 export default function VisionPage() {
   const geoSchemas = useMemo(() => getVisionPageSchemas(), []);
   const t = useTranslation(visionTranslations);
+  const { language } = useLanguage();
 
   usePageMeta({
     title: t.meta.title,
@@ -24,7 +25,8 @@ export default function VisionPage() {
     canonicalPath: "/vision",
   });
 
-  const testCount = MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tests, 0).toLocaleString("fr-FR");
+  const locale = language === 'de' ? 'de-DE' : language === 'en' ? 'en-US' : 'fr-FR';
+  const testCount = MANAGED_PLATFORMS.reduce((s, p) => s + p.stats.tests, 0).toLocaleString(locale);
 
   return (
     <div className="flex flex-col">
