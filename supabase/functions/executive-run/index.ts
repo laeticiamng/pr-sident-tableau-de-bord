@@ -701,7 +701,7 @@ Deno.serve(async (req) => {
     if (template.usePerplexity) {
       console.log("[Executive Run] Fetching Perplexity intelligence...");
       const searchQuery = run_type === "DAILY_EXECUTIVE_BRIEF"
-        ? "Actualités et tendances du marché des logiciels applicatifs en France cette semaine. SaaS, no-code, IA."
+        ? "Actualités et tendances du marché des logiciels applicatifs en France cette semaine. No-code, IA, plateformes."
         : run_type === "MARKETING_WEEK_PLAN"
         ? "Stratégies marketing digital efficaces pour éditeurs de logiciels B2B en 2025. Tendances, canaux, exemples."
         : run_type === "COMPETITIVE_ANALYSIS"
