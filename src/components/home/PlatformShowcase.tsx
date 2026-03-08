@@ -94,13 +94,13 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                       {MANAGED_PLATFORMS[0].name}
                     </h3>
                     
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 md:mb-6 leading-relaxed">
-                      {MANAGED_PLATFORMS[0].tagline}
-                    </p>
-                    
-                    <p className="hidden md:block text-sm md:text-base text-muted-foreground mb-4 md:mb-6 lg:mb-8 line-clamp-3">
-                      {MANAGED_PLATFORMS[0].description}
-                    </p>
+                     <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 md:mb-6 leading-relaxed">
+                       {pt[MANAGED_PLATFORMS[0].key]?.tagline ?? MANAGED_PLATFORMS[0].tagline}
+                     </p>
+                     
+                     <p className="hidden md:block text-sm md:text-base text-muted-foreground mb-4 md:mb-6 lg:mb-8 line-clamp-3">
+                       {pt[MANAGED_PLATFORMS[0].key]?.description ?? MANAGED_PLATFORMS[0].description}
+                     </p>
 
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-4 sm:mb-5 md:mb-6 lg:mb-8">
                       {MANAGED_PLATFORMS[0].features.slice(0, 3).map((feature) => (
