@@ -89,9 +89,7 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
   const location = useLocation();
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
-  const { data: recentRuns } = useRecentRuns(50);
   const { data: platforms } = usePlatforms();
-  const { data: auditLogs } = useAuditLogs(50);
   const { data: unreadMessagesCount } = useQuery({
     queryKey: ["contact-messages-unread-count"],
     queryFn: async () => {
