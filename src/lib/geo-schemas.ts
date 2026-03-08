@@ -409,7 +409,7 @@ export function buildVisionPageSchema() {
       slogan:
         "Créer des logiciels qui transforment la complexité en simplicité, et qui permettent à chacun de se concentrer sur ce qui compte vraiment.",
       knowsAbout: [
-        "SaaS",
+        "Logiciels applicatifs",
         "Intelligence artificielle appliquée",
         "Santé mentale des soignants",
         "EdTech médicale",
