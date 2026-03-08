@@ -125,7 +125,7 @@ export default function StatusPage() {
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
               <div className={cn("w-3 h-3 rounded-full", toutOperationnel === true ? "bg-status-green animate-pulse" : toutOperationnel === false ? "bg-status-red animate-pulse" : "bg-muted-foreground/50")} />
               <span className="text-white font-medium">
-                {monitorLoading ? "Vérification..." : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.publicFallback}
+                {monitorLoading ? t.hero.checking : toutOperationnel === true ? t.hero.allOperational : toutOperationnel === false ? t.hero.someIssues : t.hero.publicFallback}
               </span>
             </div>
             <p className="mt-6 text-white/60 text-sm">

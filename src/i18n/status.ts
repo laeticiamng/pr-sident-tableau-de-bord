@@ -93,6 +93,7 @@ export const statusTranslations = {
       someIssues: "Einige Systeme benötigen Aufmerksamkeit",
       publicFallback: "Status basierend auf den letzten Deployments",
       lastCheck: "Letzte Überprüfung",
+      checking: "Überprüfung…",
     },
     summary: {
       inProduction: "in Produktion",
