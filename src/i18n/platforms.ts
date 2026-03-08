@@ -34,6 +34,58 @@ export const platformsTranslations = {
       lastUpdate: "Dernière MAJ",
       modulesLabel: "Modules",
     },
+    platforms: {
+      emotionscare: {
+        tagline: "Prendre soin de celles et ceux qui prennent soin",
+        description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé avec Nyvée, musicothérapie, réalité virtuelle et gamification. Conçu pour réduire l'épuisement professionnel et renforcer la résilience au quotidien.",
+        features: ["Scan émotionnel IA", "Coach IA Nyvée", "Musicothérapie Suno", "Dashboard B2B RH", "Gamification XP"],
+      },
+      nearvity: {
+        tagline: "Connecte-toi avec les gens autour de toi",
+        description: "Application mobile de connexion sociale en temps réel pour étudiants. Un radar intelligent détecte qui est disponible autour de vous selon 3 signaux (ouvert, conditionnel, occupé). Sessions en binôme, mode fantôme et messagerie de groupe pour des rencontres authentiques sur le campus.",
+        features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
+      },
+      "system-compass": {
+        tagline: "Navigue les systèmes-pays avec intelligence",
+        description: "Intelligence décisionnelle pour la relocalisation internationale. Analyse personnalisée de 50+ pays avec simulation fiscale, comparaison qualité de vie et recommandations sur mesure. Pour expatriés, nomades digitaux, entrepreneurs et institutions.",
+        features: ["Exit Keys personnalisées", "Profils 50+ pays", "Simulateur fiscal", "TraceOS audit", "Life Game gamifié"],
+      },
+      "growth-copilot": {
+        tagline: "Compétence premium, livrée simplement",
+        description: "Votre équipe de 39 experts IA prêts à l'emploi. 2 directeurs et 37 agents spécialisés couvrent 11 départements : marketing, ventes, finance, produit, engineering et plus. Chaque tâche est validée, tracée et automatisée.",
+        features: ["39 experts IA (2 Dir + 37 Dept)", "11 départements métier", "Validation présidentielle", "Commandes vocales", "Planification automatisée"],
+      },
+      "med-mng": {
+        tagline: "Une chanson = Un item médical maîtrisé",
+        description: "Révolution de l'apprentissage médical par la musique. Chaque item ECN/EDN devient une chanson générée par IA que vous retenez naturellement. Copilote médical intelligent pour la recherche, la révision et la compréhension.",
+        features: ["Copilote médical IA", "Génération musicale IA", "Écoute en continu", "Recherche médicale IA", "Disponible hors connexion"],
+      },
+      "swift-care-hub": {
+        tagline: "De l'admission à la sortie, chaque seconde compte",
+        description: "Application temps réel qui digitalise l'ensemble du parcours patient aux urgences — de l'admission à la sortie. Board panoramique par zone, dossier patient avec timeline médicale, pancarte IDE en 1 tap, tri IOA intelligent.",
+        features: ["Board panoramique temps réel", "Pancarte IDE 1 tap", "Tri IOA intelligent", "Dossier patient complet", "Audit trail médical"],
+      },
+      "track-triumph-tavern": {
+        tagline: "Soumettez. Votez. Triomphez.",
+        description: "Plateforme de compétition musicale où les artistes soumettent leurs morceaux chaque semaine et la communauté vote. Feed immersif, notation multi-critères, classements hebdomadaires et Hall of Fame.",
+        features: ["Soumissions hebdomadaires", "Votes communautaires", "Classements par catégorie", "Hall of Fame", "Feedback IA"],
+      },
+      "trust-seal-chain": {
+        tagline: "La confiance IA, certifiée et traçable",
+        description: "Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance, audit automatisé des décisions algorithmiques, scoring éthique et conformité AI Act européen.",
+        features: ["Trust Seal certification", "Audit trail IA", "Scoring éthique", "Conformité AI Act", "Registre agents"],
+      },
+      studybeats: {
+        tagline: "Transforme tes cours en chansons",
+        description: "Transformez vos cours en chansons mémorables. Uploadez vos notes, choisissez parmi 30 styles musicaux, et l'IA génère des paroles éducatives. Écoutez en boucle, révisez partout — puis testez-vous avec des quiz automatiques.",
+        features: ["30 styles musicaux", "Import PDF/photo/texte", "Quiz automatiques", "Écoute hors ligne", "Neurosciences cognitives"],
+      },
+      "vascular-atlas": {
+        tagline: "L'excellence vasculaire, augmentée par l'IA",
+        description: "Plateforme clinique augmentée par l'IA pour la médecine vasculaire. Assistant clinique IA, jumeau numérique vasculaire, registre mondial des résultats, certification CME et réseau d'experts internationaux.",
+        features: ["Assistant clinique IA", "Jumeau numérique vasculaire", "Registre mondial des résultats", "Certification & CME", "Simulation clinique"],
+      },
+    },
     governance: {
       badge: "Gouvernance Unifiée",
       title1: "Un siège.",
