@@ -57,6 +57,7 @@ export function PublicFooter() {
                 <button
                   onClick={reopenBanner}
                   className="inline-flex items-center gap-1 hover:text-primary transition-colors"
+                  aria-label={t.footer.cookieSettings}
                 >
                   <Cookie className="h-3 w-3" />
                   {t.footer.cookieSettings}
