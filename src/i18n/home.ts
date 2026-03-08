@@ -157,9 +157,9 @@ export const homeTranslations = {
     hero: {
       badge: "SaaS Software Publisher",
       madeIn: "🇫🇷 Made in France",
-      title: "EMOTIONSCARE",
-      subtitle: "Software that transforms healthcare and education",
-      description: "10 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
+      title: "Healthcare and education deserve better software",
+      subtitle: "10 platforms built in France for caregivers, students, expats and entrepreneurs",
+      description: "Emotional wellbeing, medical learning, international relocation, AI-powered growth — each platform solves a real problem.",
       cta: "Discover the platforms",
       ctaContact: "Request a demo",
     },
