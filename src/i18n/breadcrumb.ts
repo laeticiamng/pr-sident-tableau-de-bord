@@ -16,6 +16,7 @@ export const breadcrumbTranslations = {
     cookies: "Cookies",
   },
   en: {
+    ariaLabel: "Breadcrumb",
     home: "Home",
     platforms: "Platforms",
     vision: "Vision & Values",
