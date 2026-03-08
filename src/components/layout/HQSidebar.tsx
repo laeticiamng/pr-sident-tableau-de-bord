@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
+import { useCanAccessModule } from "@/hooks/usePermissions";
 
 // Items principaux — toujours visibles
 const mainLinks = [
