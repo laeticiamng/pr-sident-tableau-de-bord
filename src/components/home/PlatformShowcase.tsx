@@ -214,9 +214,9 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                         {platform.name}
                       </h3>
                       
-                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-2 sm:mb-3 md:mb-4 line-clamp-2">
-                        {platform.shortDescription}
-                      </p>
+                       <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-2 sm:mb-3 md:mb-4 line-clamp-2">
+                         {pt[platform.key]?.shortDescription ?? platform.shortDescription}
+                       </p>
 
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
                         <span>{platform.stats.modules} {s.modulesLabel}</span>
