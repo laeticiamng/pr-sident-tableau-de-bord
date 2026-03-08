@@ -188,4 +188,4 @@ export const briefingTranslations = {
       reflection: "Reflexion",
     },
   },
-} satisfies Translations;
+};

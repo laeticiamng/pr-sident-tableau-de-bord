@@ -95,4 +95,4 @@ export const settingsTranslations = {
       firecrawl: { name: "Firecrawl API", description: "Web Scraping für Wettbewerbsanalyse" },
     },
   },
-} satisfies Translations;
+};
