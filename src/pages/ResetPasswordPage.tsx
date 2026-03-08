@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Loader2, Lock, CheckCircle } from "lucide-react";
+import { ArrowLeft, Building2, Loader2, Lock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { getPasswordSchema } from "@/lib/validation";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -62,6 +62,12 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 left-4 z-20">
+        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">{t.backToHome}</span>
+        </Link>
+      </div>
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher />
       </div>
@@ -106,6 +112,7 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
                   placeholder={t.resetNewPasswordPlaceholder}
+                  autoComplete="new-password"
                   required
                 />
               </div>
@@ -121,6 +128,7 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10"
                   placeholder={t.resetConfirmPlaceholder}
+                  autoComplete="new-password"
                   required
                 />
               </div>
