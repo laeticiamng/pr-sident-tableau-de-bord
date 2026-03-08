@@ -1,5 +1,6 @@
 export const breadcrumbTranslations = {
   fr: {
+    ariaLabel: "Fil d'Ariane",
     home: "Accueil",
     platforms: "Plateformes",
     vision: "Vision & Valeurs",
