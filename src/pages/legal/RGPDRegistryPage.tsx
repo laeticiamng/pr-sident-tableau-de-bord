@@ -56,14 +56,7 @@ const subProcessors = [
   {
     name: "Lovable Cloud",
     location: "UE (Allemagne/Irlande)",
-    purpose: "Hébergement application et Edge Functions",
-    dpa: "Oui",
-    scc: "N/A (UE)",
-  },
-  {
-    name: "Supabase",
-    location: "UE (Allemagne)",
-    purpose: "Base de données et authentification",
+    purpose: "Hébergement application, base de données et authentification",
     dpa: "Oui",
     scc: "N/A (UE)",
   },
