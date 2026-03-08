@@ -1,5 +1,6 @@
 export const breadcrumbTranslations = {
   fr: {
+    ariaLabel: "Fil d'Ariane",
     home: "Accueil",
     platforms: "Plateformes",
     vision: "Vision & Valeurs",
@@ -15,6 +16,7 @@ export const breadcrumbTranslations = {
     cookies: "Cookies",
   },
   en: {
+    ariaLabel: "Breadcrumb",
     home: "Home",
     platforms: "Platforms",
     vision: "Vision & Values",
@@ -30,6 +32,7 @@ export const breadcrumbTranslations = {
     cookies: "Cookies",
   },
   de: {
+    ariaLabel: "Brotkrümelnavigation",
     home: "Startseite",
     platforms: "Plattformen",
     vision: "Vision & Werte",

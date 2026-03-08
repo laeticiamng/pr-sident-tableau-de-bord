@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,6 @@ import { useTranslation } from "@/contexts/LanguageContext";
 import { notFoundTranslations } from "@/i18n/notfound";
 
 const NotFound = () => {
-  const location = useLocation();
   const t = useTranslation(notFoundTranslations);
 
   usePageMeta({ title: t.title, noindex: true });
@@ -29,7 +28,7 @@ const NotFound = () => {
           {t.title}
         </h1>
         
-        <p className="text-muted-foreground text-lg mb-2">
+        <p className="text-muted-foreground text-lg mb-8">
           {t.hint}
         </p>
         

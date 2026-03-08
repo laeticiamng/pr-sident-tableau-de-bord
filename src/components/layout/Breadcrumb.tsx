@@ -36,7 +36,7 @@ export function Breadcrumb() {
   const isLegal = path.startsWith("/legal/");
 
   return (
-    <nav aria-label="Fil d'Ariane" className="container px-4 sm:px-6 lg:px-8 pt-4">
+    <nav aria-label={t.ariaLabel} className="container px-4 sm:px-6 lg:px-8 pt-4">
       <ol className="flex items-center gap-1.5 text-sm text-muted-foreground" itemScope itemType="https://schema.org/BreadcrumbList">
         <li className="flex items-center gap-1.5" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
           <Link to="/" className="hover:text-foreground transition-colors flex items-center gap-1" itemProp="item">
