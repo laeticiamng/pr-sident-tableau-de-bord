@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2, Loader2, Lock, CheckCircle } from "lucide-react";
+import { ArrowLeft, Building2, Loader2, Lock, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { getPasswordSchema } from "@/lib/validation";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
