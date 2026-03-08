@@ -104,6 +104,12 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
   });
   const [showMore, setShowMore] = useState(false);
 
+  const isExpanded = showMore || allSecondaryLinks.some(link => location.pathname === link.href);
+
+  // Lazy-load heavy queries only when sidebar section is expanded
+  const { data: recentRuns } = useRecentRuns(50, isExpanded);
+  const { data: auditLogs } = useAuditLogs(50, isExpanded);
+
   const pendingCount = pendingApprovals?.length || 0;
   const failedRunsCount = recentRuns?.filter(r => {
     const d = new Date(r.created_at);
