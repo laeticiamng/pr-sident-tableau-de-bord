@@ -93,13 +93,22 @@ export function PublicHeader() {
         </div>
       </div>
 
+      {/* Mobile menu backdrop */}
+      {mobileMenuOpen && (
+        <div 
+          className="md:hidden fixed inset-0 top-16 bg-background/80 backdrop-blur-sm z-40"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       <div 
         className={cn(
-          "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
+          "md:hidden overflow-hidden transition-all duration-300 ease-in-out relative z-50",
           mobileMenuOpen ? "max-h-[500px] border-t" : "max-h-0"
         )}
       >
-        <nav className="container py-4 px-4 flex flex-col gap-2 bg-background/95 backdrop-blur-lg">
+        <nav className="container py-4 px-4 flex flex-col gap-2 bg-background">
           {navLinks.map((link) => (
             <Link
               key={link.href}
