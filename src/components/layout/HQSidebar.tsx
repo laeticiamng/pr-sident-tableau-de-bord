@@ -30,7 +30,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
+import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
 
 // Items principaux — toujours visibles
 const mainLinks = [
