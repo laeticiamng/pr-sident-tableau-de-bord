@@ -1,6 +1,6 @@
 export const statusTranslations = {
   fr: {
-    meta: { title: "Statut des Services", description: "Disponibilité en temps réel des 10 plateformes SaaS EMOTIONSCARE." },
+    meta: { title: "Statut des Services", description: "Disponibilité en temps réel des 10 plateformes EMOTIONSCARE." },
     hero: {
       badge: "Statut des services",
       title: "Statut des",
