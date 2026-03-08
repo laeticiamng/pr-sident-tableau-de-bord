@@ -87,7 +87,7 @@ export function PublicHeader() {
           <button
             className="md:hidden p-2 rounded-lg hover:bg-secondary transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label={mobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-label={mobileMenuOpen ? t.nav.closeMenu : t.nav.openMenu}
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>

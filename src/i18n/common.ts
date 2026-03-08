@@ -9,6 +9,8 @@ export const commonTranslations = {
       security: "Sécurité",
       contact: "Contact",
       login: "Connexion",
+      openMenu: "Ouvrir le menu",
+      closeMenu: "Fermer le menu",
     },
     footer: {
       description: "Éditeur français de 10 plateformes SaaS innovantes. Basé à Amiens.",
@@ -34,6 +36,8 @@ export const commonTranslations = {
       security: "Security",
       contact: "Contact",
       login: "Login",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
     },
     footer: {
       description: "French publisher of 10 innovative SaaS platforms. Based in Amiens, France.",
@@ -59,6 +63,8 @@ export const commonTranslations = {
       security: "Sicherheit",
       contact: "Kontakt",
       login: "Anmelden",
+      openMenu: "Menü öffnen",
+      closeMenu: "Menü schließen",
     },
     footer: {
       description: "Französischer Herausgeber von 10 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
