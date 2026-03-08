@@ -133,6 +133,7 @@ export const authTranslations = {
     forgotCancel: "Abbrechen",
     forgotSend: "Senden",
     forgotClose: "Schließen",
+    backToHome: "Zurück zur Startseite",
     panelBadge: "SaaS-Softwareherausgeber",
     panelTitle: "EMOTIONSCARE",
     panelSubtitle: "EMOTIONSCARE SASU — SaaS-Softwareherausgeber",

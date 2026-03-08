@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity } from "lucide-react";
+import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
