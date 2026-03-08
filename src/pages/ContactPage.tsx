@@ -121,7 +121,7 @@ export default function ContactPage() {
                       {t.form.consentLabel}{" "}
                       <Link to="/legal/confidentialite" className="text-accent underline hover:no-underline">
                         {t.form.consentLink}
-                      </a> *
+                      </Link> *
                     </Label>
                     {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
                   </div>
