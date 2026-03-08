@@ -9,6 +9,8 @@ export const commonTranslations = {
       security: "Sécurité",
       contact: "Contact",
       login: "Connexion",
+      openMenu: "Ouvrir le menu",
+      closeMenu: "Fermer le menu",
     },
     footer: {
       description: "Éditeur français de 10 plateformes SaaS innovantes. Basé à Amiens.",
