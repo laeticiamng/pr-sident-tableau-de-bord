@@ -9,6 +9,7 @@ export const statusTranslations = {
       someIssues: "Certains systèmes nécessitent attention",
       publicFallback: "Statut basé sur les derniers déploiements",
       lastCheck: "Dernière vérification",
+      checking: "Vérification…",
     },
     summary: {
       inProduction: "en production",
