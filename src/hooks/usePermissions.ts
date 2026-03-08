@@ -33,11 +33,11 @@ export const ROLE_LABELS: Record<AppRole, string> = {
 export const ROLE_COLORS: Record<AppRole, string> = {
   owner: "bg-primary text-primary-foreground",
   admin: "bg-destructive text-destructive-foreground",
-  finance: "bg-green-500 text-white",
-  marketing: "bg-purple-500 text-white",
-  support: "bg-blue-500 text-white",
-  product: "bg-orange-500 text-white",
-  engineering: "bg-slate-600 text-white",
+  finance: "bg-success text-success-foreground",
+  marketing: "bg-accent text-accent-foreground",
+  support: "bg-primary/80 text-primary-foreground",
+  product: "bg-warning text-warning-foreground",
+  engineering: "bg-muted-foreground text-background",
   viewer: "bg-muted text-muted-foreground",
 };
 
