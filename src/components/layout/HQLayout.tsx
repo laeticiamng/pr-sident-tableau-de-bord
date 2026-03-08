@@ -13,6 +13,7 @@ import { useRunQueue } from "@/hooks/useRunQueue";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { HQChatSidebar } from "@/components/hq/HQChatSidebar";
+import { AnnouncementBanner } from "@/components/ui/announcement-banner";
 
 export function HQLayout() {
   const { user } = useAuth();
