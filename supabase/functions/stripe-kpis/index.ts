@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Stripe KPIs] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================

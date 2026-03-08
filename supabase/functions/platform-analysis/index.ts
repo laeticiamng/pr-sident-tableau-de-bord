@@ -297,7 +297,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Platform Analysis] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
 
     const { platform_key, analysis_type = "full" }: AnalysisRequest = await req.json();

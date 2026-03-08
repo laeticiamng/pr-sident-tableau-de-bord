@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    console.log(`[Check API Status] Authenticated user: ${userId}`);
+    // userId authenticated
 
     // Check for API keys presence (not their values, just existence)
     const status = {

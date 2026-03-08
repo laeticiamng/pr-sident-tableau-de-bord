@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Platform Monitor] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================

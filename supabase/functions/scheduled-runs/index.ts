@@ -266,7 +266,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Scheduler] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================

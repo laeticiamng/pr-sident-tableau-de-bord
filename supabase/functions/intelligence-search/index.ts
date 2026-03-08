@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Intelligence Search] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================
