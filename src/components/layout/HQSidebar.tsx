@@ -87,6 +87,8 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: recentRuns } = useRecentRuns(50);
+  const { data: platforms } = usePlatforms();
+  const { data: auditLogs } = useAuditLogs(50);
   const { data: unreadMessagesCount } = useQuery({
     queryKey: ["contact-messages-unread-count"],
     queryFn: async () => {
@@ -105,6 +107,15 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const failedRunsCount = recentRuns?.filter(r => {
     const d = new Date(r.created_at);
     return r.status === "failed" && Date.now() - d.getTime() < 24 * 3600 * 1000;
+  }).length || 0;
+
+  // Section counters
+  const platformAlertCount = platforms?.filter(p => p.status === "red" || p.status === "amber").length || 0;
+  const runningCount = recentRuns?.filter(r => r.status === "running" || r.status === "pending").length || 0;
+  const opsCount = failedRunsCount + runningCount;
+  const recentAuditCount = auditLogs?.filter(l => {
+    const d = new Date(l.created_at);
+    return Date.now() - d.getTime() < 24 * 3600 * 1000;
   }).length || 0;
 
   // Ouvre automatiquement la section secondaire si on est sur une de ces pages
