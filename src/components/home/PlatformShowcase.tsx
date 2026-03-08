@@ -20,6 +20,31 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
 
+// Preview images mapping
+import emotionscarePreview from "@/assets/previews/emotionscare-preview.jpg";
+import nearvityPreview from "@/assets/previews/nearvity-preview.jpg";
+import systemCompassPreview from "@/assets/previews/system-compass-preview.jpg";
+import growthCopilotPreview from "@/assets/previews/growth-copilot-preview.jpg";
+import medMngPreview from "@/assets/previews/med-mng-preview.jpg";
+import urgenceosPreview from "@/assets/previews/urgenceos-preview.jpg";
+import trackTriumphPreview from "@/assets/previews/track-triumph-preview.jpg";
+import governancePreview from "@/assets/previews/governance-ia-preview.jpg";
+import studybeatsPreview from "@/assets/previews/studybeats-preview.jpg";
+import vascularPreview from "@/assets/previews/vascular-atlas-preview.jpg";
+
+const platformPreviews: Record<string, string> = {
+  emotionscare: emotionscarePreview,
+  nearvity: nearvityPreview,
+  "system-compass": systemCompassPreview,
+  "growth-copilot": growthCopilotPreview,
+  "med-mng": medMngPreview,
+  "swift-care-hub": urgenceosPreview,
+  "track-triumph-tavern": trackTriumphPreview,
+  "trust-seal-chain": governancePreview,
+  studybeats: studybeatsPreview,
+  "vascular-atlas": vascularPreview,
+};
+
 const platformIcons = PLATFORM_ICONS;
 const platformGradients = PLATFORM_GRADIENTS;
 const platformAccents = PLATFORM_ACCENTS;
