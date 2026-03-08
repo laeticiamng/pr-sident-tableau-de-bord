@@ -3,6 +3,17 @@ import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+const errorTexts = {
+  fr: { title: "Une erreur est survenue", desc: "L'application a rencontré un problème inattendu. Veuillez réessayer ou retourner à l'accueil.", retry: "Réessayer", home: "Accueil", support: "Si le problème persiste, contactez le support technique." },
+  en: { title: "An error occurred", desc: "The application encountered an unexpected problem. Please try again or go back to the home page.", retry: "Try again", home: "Home", support: "If the problem persists, contact technical support." },
+  de: { title: "Ein Fehler ist aufgetreten", desc: "Die Anwendung hat ein unerwartetes Problem festgestellt. Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.", retry: "Erneut versuchen", home: "Startseite", support: "Wenn das Problem weiterhin besteht, wenden Sie sich an den technischen Support." },
+} as const;
+
+function getErrorTexts() {
+  const lang = (typeof localStorage !== "undefined" && localStorage.getItem("preferred-lang")) || "fr";
+  return errorTexts[lang as keyof typeof errorTexts] || errorTexts.fr;
+}
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
