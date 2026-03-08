@@ -470,4 +470,70 @@ const { data: logs } = await supabase.rpc("get_hq_audit_logs", {
 
 ---
 
-*Dernière mise à jour: 03/02/2026 — v1.0*
+---
+
+## 📦 Platform Registry Contract
+
+Le registre `MANAGED_PLATFORMS` est la source de vérité pour les 10 plateformes gérées par EMOTIONSCARE.
+
+### Clés de plateformes
+
+| Clé | Nom affiché | Statut |
+|-----|-------------|--------|
+| `emotionscare` | EmotionsCare | production |
+| `nearvity` | NEARVITY | prototype |
+| `system-compass` | System Compass | production |
+| `growth-copilot` | Growth Copilot | production |
+| `med-mng` | Med MNG | production |
+| `swift-care-hub` | UrgenceOS | prototype |
+| `track-triumph-tavern` | Track Triumph | production |
+| `trust-seal-chain` | Gouvernance Agents IA | prototype |
+| `studybeats` | StudyBeats | production |
+| `vascular-atlas` | Vascular Atlas | prototype |
+
+### Shape attendu (TypeScript)
+
+```typescript
+{
+  key: string;             // Identifiant unique (slug)
+  name: string;            // Nom d'affichage
+  shortDescription: string;// Résumé court
+  description: string;     // Description complète
+  tagline: string;         // Accroche marketing
+  github: string;          // URL du repo GitHub
+  liveUrl: string;         // URL de production/preview
+  color: string;           // Classe Tailwind de couleur
+  stats: {
+    modules: number;
+    tables: number;
+    edgeFunctions: number;
+    branches: number;
+    commits: number;
+    tests: number;
+  };
+  features: string[];      // 5 features clés
+  status: "production" | "prototype" | "beta" | "deprecated";
+  lastCommit: string;      // Format YYYY-MM-DD
+}
+```
+
+### Fichiers source de vérité
+
+| Fichier | Rôle |
+|---------|------|
+| `src/lib/constants.ts` | Données + stats des 10 plateformes |
+| `src/lib/platformConfig.ts` | Icônes, accents, styles visuels |
+| `src/lib/validation.ts` | `platformKeySchema` + `managedPlatformSchema` (Zod) |
+| `src/i18n/platforms.ts` | Traductions FR/EN/DE (tagline, description, features) |
+| `src/i18n/home.ts` | Features items pour la page d'accueil |
+
+### Synchronisation
+
+L'ajout d'une plateforme nécessite la mise à jour de **tous** les fichiers ci-dessus. Un test automatisé (`platform-config-sync.test.ts`) vérifie :
+- Chaque clé a une config visuelle (pas de fallback default)
+- Le nombre de features items i18n == nombre de plateformes
+- Le schema Zod valide le shape complet de chaque entrée
+
+---
+
+*Dernière mise à jour: 08/03/2026 — v1.1*

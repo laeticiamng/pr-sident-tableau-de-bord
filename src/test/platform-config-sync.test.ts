@@ -38,4 +38,15 @@ describe("Platform registry sync", () => {
     const result = platformKeySchema.safeParse("nonexistent");
     expect(result.success).toBe(false);
   });
+
+  it("every MANAGED_PLATFORMS entry passes full Zod shape validation", async () => {
+    const { managedPlatformSchema } = await import("@/lib/validation");
+    for (const platform of MANAGED_PLATFORMS) {
+      const result = managedPlatformSchema.safeParse(platform);
+      if (!result.success) {
+        throw new Error(`Platform "${platform.key}" failed validation: ${result.error.message}`);
+      }
+      expect(result.success).toBe(true);
+    }
+  });
 });
