@@ -62,6 +62,12 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 left-4 z-20">
+        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          <span className="hidden sm:inline">{t.backToHome}</span>
+        </Link>
+      </div>
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher />
       </div>
