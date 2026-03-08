@@ -20,52 +20,26 @@ import { useApiStatus } from "@/hooks/useApiStatus";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { PushNotificationSettings } from "@/components/hq/PushNotificationSettings";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { settingsTranslations } from "@/i18n/settings";
 
-const API_CONFIG = [
-  {
-    key: "github",
-    name: "GitHub API",
-    icon: GitBranch,
-    description: "Synchronisation des commits, PRs, issues",
-    envVar: "GITHUB_TOKEN",
-    docsUrl: "https://github.com/settings/tokens",
-  },
-  {
-    key: "stripe",
-    name: "Stripe API",
-    icon: CreditCard,
-    description: "KPIs financiers et métriques de paiement",
-    envVar: "STRIPE_SECRET_KEY",
-    docsUrl: "https://dashboard.stripe.com/apikeys",
-  },
-  {
-    key: "perplexity",
-    name: "Perplexity AI",
-    icon: Search,
-    description: "Veille stratégique et recherche temps réel",
-    envVar: "PERPLEXITY_API_KEY",
-    docsUrl: "https://www.perplexity.ai/settings/api",
-  },
-  {
-    key: "lovable_ai",
-    name: "Lovable AI Gateway",
-    icon: Sparkles,
-    description: "Routeur IA multi-modèles pour les runs exécutifs",
-    envVar: "LOVABLE_API_KEY",
-    docsUrl: null, // Managed automatically
-  },
-  {
-    key: "firecrawl",
-    name: "Firecrawl API",
-    icon: Globe,
-    description: "Web scraping pour analyse concurrentielle",
-    envVar: "FIRECRAWL_API_KEY",
-    docsUrl: "https://firecrawl.dev/app/api-keys",
-  },
+const API_KEYS: Array<{
+  key: string;
+  icon: typeof GitBranch;
+  envVar: string;
+  docsUrl: string | null;
+  i18nKey: "github" | "stripe" | "perplexity" | "lovable_ai" | "firecrawl";
+}> = [
+  { key: "github", icon: GitBranch, envVar: "GITHUB_TOKEN", docsUrl: "https://github.com/settings/tokens", i18nKey: "github" },
+  { key: "stripe", icon: CreditCard, envVar: "STRIPE_SECRET_KEY", docsUrl: "https://dashboard.stripe.com/apikeys", i18nKey: "stripe" },
+  { key: "perplexity", icon: Search, envVar: "PERPLEXITY_API_KEY", docsUrl: "https://www.perplexity.ai/settings/api", i18nKey: "perplexity" },
+  { key: "lovable_ai", icon: Sparkles, envVar: "LOVABLE_API_KEY", docsUrl: null, i18nKey: "lovable_ai" },
+  { key: "firecrawl", icon: Globe, envVar: "FIRECRAWL_API_KEY", docsUrl: "https://firecrawl.dev/app/api-keys", i18nKey: "firecrawl" },
 ];
 
 export default function SettingsPage() {
   const { data: apiStatus, isLoading, isError, refetch, isFetching } = useApiStatus();
+  const t = useTranslation(settingsTranslations);
 
   const connectedCount = apiStatus
     ? Object.values(apiStatus.status).filter(Boolean).length
@@ -74,22 +48,13 @@ export default function SettingsPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <ExecutiveHeader
-        title="Paramètres"
-        subtitle="Configuration des intégrations et API"
+        title={t.title}
+        subtitle={t.subtitle}
         source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
-            Actualiser
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+            {isFetching ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCw className="h-4 w-4 mr-2" />}
+            {t.refresh}
           </Button>
         }
       />
@@ -99,20 +64,16 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-accent" />
-            Statut des Connexions
+            {t.connectionStatus}
           </CardTitle>
           <CardDescription>
-            {isLoading
-              ? "Vérification en cours..."
-              : isError
-              ? "Erreur de vérification"
-              : `${connectedCount}/${API_CONFIG.length} intégrations configurées`}
+            {isLoading ? t.checking : isError ? t.checkError : t.integrationsConfigured(connectedCount, API_KEYS.length)}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {apiStatus && (
             <p className="text-xs text-muted-foreground">
-              Dernière vérification : {new Date(apiStatus.checked_at).toLocaleString("fr-FR")}
+              {t.lastCheck} : {new Date(apiStatus.checked_at).toLocaleString()}
             </p>
           )}
         </CardContent>
@@ -121,23 +82,23 @@ export default function SettingsPage() {
       {/* Instructions Alert */}
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertTitle>Comment configurer les clés API ?</AlertTitle>
+        <AlertTitle>{t.howTo.title}</AlertTitle>
         <AlertDescription className="mt-2">
-          Les clés API sont stockées de manière sécurisée dans les secrets de Lovable Cloud.
-          Pour ajouter ou modifier une clé :
+          {t.howTo.description}
           <ol className="list-decimal ml-4 mt-2 space-y-1 text-sm">
-            <li>Ouvrez les paramètres du projet Lovable</li>
-            <li>Accédez à <strong>Cloud &gt; Secrets</strong></li>
-            <li>Ajoutez ou modifiez le secret correspondant</li>
+            <li>{t.howTo.step1}</li>
+            <li>{t.howTo.step2} <strong>{t.howTo.step2bold}</strong></li>
+            <li>{t.howTo.step3}</li>
           </ol>
         </AlertDescription>
       </Alert>
 
       {/* API Connections Grid */}
       <div className="grid gap-4 md:grid-cols-2">
-        {API_CONFIG.map((api) => {
+        {API_KEYS.map((api) => {
           const isConnected = apiStatus?.status?.[api.key as keyof typeof apiStatus.status];
           const Icon = api.icon;
+          const apiT = t.apis[api.i18nKey];
 
           return (
             <Card key={api.key} className="card-executive">
@@ -148,13 +109,9 @@ export default function SettingsPage() {
                       <Icon className={`h-5 w-5 ${isConnected ? "text-success" : "text-muted-foreground"}`} />
                     </div>
                     <div>
-                      <h3 className="font-semibold">{api.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        {api.description}
-                      </p>
-                      <p className="text-xs text-muted-foreground/60 font-mono mt-2">
-                        {api.envVar}
-                      </p>
+                      <h3 className="font-semibold">{apiT.name}</h3>
+                      <p className="text-sm text-muted-foreground mt-0.5">{apiT.description}</p>
+                      <p className="text-xs text-muted-foreground/60 font-mono mt-2">{api.envVar}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -163,23 +120,18 @@ export default function SettingsPage() {
                     ) : isConnected ? (
                       <Badge variant="subtle" className="bg-success/10 text-success border-success/20">
                         <CheckCircle className="h-3 w-3 mr-1" />
-                        Connecté
+                        {t.connected}
                       </Badge>
                     ) : (
                       <Badge variant="subtle" className="bg-destructive/10 text-destructive border-destructive/20">
                         <XCircle className="h-3 w-3 mr-1" />
-                        Non configuré
+                        {t.notConfigured}
                       </Badge>
                     )}
                     {api.docsUrl && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs h-7 px-2"
-                        asChild
-                      >
+                      <Button variant="ghost" size="sm" className="text-xs h-7 px-2" asChild>
                         <a href={api.docsUrl} target="_blank" rel="noopener noreferrer">
-                          Obtenir clé
+                          {t.getKey}
                           <ExternalLink className="h-3 w-3 ml-1" />
                         </a>
                       </Button>
@@ -207,13 +159,8 @@ export default function SettingsPage() {
               <Info className="h-5 w-5 text-accent" />
             </div>
             <div>
-              <h3 className="font-semibold text-accent">Sécurité des clés API</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Les clés API ne sont jamais exposées côté client. Seul le statut de connexion
-                (connecté/non connecté) est vérifié via une edge function sécurisée.
-                Les clés sont stockées de manière chiffrée dans Lovable Cloud et ne sont accessibles
-                que par les edge functions côté serveur.
-              </p>
+              <h3 className="font-semibold text-accent">{t.security.title}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{t.security.text}</p>
             </div>
           </div>
         </CardContent>

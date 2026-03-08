@@ -13,14 +13,14 @@ import { useMorningDigest } from "@/hooks/useMorningDigest";
 import { RunResultPanel } from "@/components/hq/RunResultPanel";
 import ReactMarkdown from "react-markdown";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
 import { useState, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { briefingTranslations } from "@/i18n/briefing";
 
-/**
- * MobileBriefing — Vue mobile ultra-simplifiée.
- * 3 cartes max pour piloter en 30 secondes.
- */
+const dateFnsLocales = { fr, en: enGB, de };
+
 export function MobileBriefing() {
   const { data: platforms } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
@@ -29,6 +29,9 @@ export function MobileBriefing() {
   const executeRun = useExecuteRun();
   const [runResult, setRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling">("idle");
+  const t = useTranslation(briefingTranslations);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   const greenCount = platforms?.filter(p => p.status === "green").length || 0;
   const amberCount = platforms?.filter(p => p.status === "amber").length || 0;
@@ -50,59 +53,45 @@ export function MobileBriefing() {
     }
   };
 
-  const greeting = new Date().getHours() < 12 ? "Bonjour" : new Date().getHours() < 18 ? "Bon après-midi" : "Bonsoir";
+  const greeting = new Date().getHours() < 12 ? t.greetingMorning : new Date().getHours() < 18 ? t.greetingAfternoon : t.greetingEvening;
 
   return (
     <div className="space-y-4 animate-fade-in pb-6">
       {/* Greeting + CTA */}
       <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 text-primary-foreground">
-        <h1 className="text-xl font-bold mb-1">{greeting}, Présidente</h1>
+        <h1 className="text-xl font-bold mb-1">{greeting}, {t.presidentShort}</h1>
         <p className="text-primary-foreground/70 text-sm mb-4">
           {greenCount === total && total > 0
-            ? "Tout est opérationnel ✓"
-            : `${greenCount}/${total} plateformes OK`}
-          {pendingCount > 0 && ` · ${pendingCount} décision${pendingCount > 1 ? "s" : ""}`}
+            ? t.mobileAllOk
+            : t.mobilePlatformsOk(greenCount, total)}
+          {pendingCount > 0 && ` · ${t.mobileDecisions(pendingCount)}`}
         </p>
-        <Button
-          variant="hero"
-          size="lg"
-          className="w-full gap-2 py-5"
-          onClick={handleCall}
-          disabled={callState === "calling"}
-        >
+        <Button variant="hero" size="lg" className="w-full gap-2 py-5" onClick={handleCall} disabled={callState === "calling"}>
           {callState === "calling" ? (
-            <><PhoneCall className="h-5 w-5 animate-pulse" /> Connexion...</>
+            <><PhoneCall className="h-5 w-5 animate-pulse" /> {t.connecting}</>
           ) : (
-            <><Phone className="h-5 w-5" /> Appeler le DG</>
+            <><Phone className="h-5 w-5" /> {t.callDG}</>
           )}
         </Button>
       </div>
 
-      {/* Run result */}
-      {runResult && (
-        <RunResultPanel runResult={runResult} onClose={() => setRunResult(null)} />
-      )}
+      {runResult && <RunResultPanel runResult={runResult} onClose={() => setRunResult(null)} />}
 
-      {/* Card 1: KPI Strip — Swipeable */}
+      {/* KPI Carousel */}
       <KPICarousel
-        mrr={mrr}
-        uptime={uptime}
-        greenCount={greenCount}
-        amberCount={amberCount}
-        redCount={redCount}
-        total={total}
-        pendingCount={pendingCount}
+        mrr={mrr} uptime={uptime} greenCount={greenCount} amberCount={amberCount}
+        redCount={redCount} total={total} pendingCount={pendingCount} t={t}
       />
 
-      {/* Card 2: Morning Digest (compact) */}
+      {/* Morning Digest */}
       {digest?.executive_summary ? (
         <Card className="card-executive border-primary/20">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Brief du jour</span>
+              <span className="text-sm font-semibold">{t.briefToday}</span>
               <span className="text-[10px] text-muted-foreground ml-auto">
-                {formatDistanceToNow(new Date(digest.created_at), { addSuffix: true, locale: fr })}
+                {formatDistanceToNow(new Date(digest.created_at), { addSuffix: true, locale })}
               </span>
             </div>
             <div className="prose prose-sm dark:prose-invert max-w-none text-xs text-foreground/85 leading-relaxed line-clamp-6">
@@ -114,31 +103,25 @@ export function MobileBriefing() {
         <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
           <CardContent className="p-4 flex flex-col items-center text-center gap-3">
             <Sparkles className="h-5 w-5 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">Aucun brief aujourd'hui</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 text-xs"
-              onClick={async () => {
-                const result = await executeRun.mutateAsync({ run_type: "DAILY_EXECUTIVE_BRIEF" });
-                setRunResult(result);
-              }}
+            <p className="text-xs text-muted-foreground">{t.noBriefMobile}</p>
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs"
+              onClick={async () => { const result = await executeRun.mutateAsync({ run_type: "DAILY_EXECUTIVE_BRIEF" }); setRunResult(result); }}
               disabled={executeRun.isPending}
             >
               {executeRun.isPending ? (
-                <><Loader2 className="h-3 w-3 animate-spin" /> Génération…</>
+                <><Loader2 className="h-3 w-3 animate-spin" /> {t.generatingShort}</>
               ) : (
-                <><Sparkles className="h-3 w-3" /> Générer le brief</>
+                <><Sparkles className="h-3 w-3" /> {t.generateBriefShort}</>
               )}
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Card 3: Recent Decisions (compact) */}
-      <CompactDecisions />
+      {/* Compact Decisions */}
+      <CompactDecisions t={t} locale={locale} />
 
-      {/* Card 4: Quick Actions (2 max) */}
+      {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
         <Link to="/hq/plateformes" className="block">
           <Card className="card-executive h-full">
@@ -148,7 +131,7 @@ export function MobileBriefing() {
                 {amberCount > 0 && <AlertTriangle className="h-4 w-4 text-warning" />}
                 {redCount > 0 && <XCircle className="h-4 w-4 text-destructive" />}
               </div>
-              <span className="text-xs font-semibold">Plateformes</span>
+              <span className="text-xs font-semibold">{t.platforms}</span>
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
             </CardContent>
           </Card>
@@ -162,7 +145,7 @@ export function MobileBriefing() {
               ) : (
                 <CheckCircle className="h-4 w-4 text-success" />
               )}
-              <span className="text-xs font-semibold">Décisions</span>
+              <span className="text-xs font-semibold">{t.decisions}</span>
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
             </CardContent>
           </Card>
@@ -174,16 +157,9 @@ export function MobileBriefing() {
 
 // ── Compact Decisions Widget (Mobile) ────────────────────────────────
 
-function CompactDecisions() {
+function CompactDecisions({ t, locale }: { t: any; locale: any }) {
   const { data: entries, isLoading } = useJournalEntries();
   const recent = (entries || []).slice(0, 2);
-
-  const typeLabels: Record<string, string> = {
-    decision: "Décision",
-    note: "Note",
-    milestone: "Jalon",
-    reflection: "Réflexion",
-  };
 
   const typeColors: Record<string, string> = {
     decision: "bg-accent/10 text-accent",
@@ -195,9 +171,7 @@ function CompactDecisions() {
   if (isLoading) {
     return (
       <Card className="card-executive">
-        <CardContent className="p-3">
-          <div className="h-10 rounded bg-muted/50 animate-pulse" />
-        </CardContent>
+        <CardContent className="p-3"><div className="h-10 rounded bg-muted/50 animate-pulse" /></CardContent>
       </Card>
     );
   }
@@ -206,7 +180,7 @@ function CompactDecisions() {
     return (
       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardContent className="p-3 text-center">
-          <p className="text-[10px] text-muted-foreground">Aucune décision récente</p>
+          <p className="text-[10px] text-muted-foreground">{t.noRecentDecisions}</p>
         </CardContent>
       </Card>
     );
@@ -218,21 +192,21 @@ function CompactDecisions() {
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
             <BookOpen className="h-3.5 w-3.5 text-accent" />
-            <span className="text-xs font-semibold">Décisions récentes</span>
+            <span className="text-xs font-semibold">{t.recentDecisions}</span>
           </div>
           <Link to="/hq/journal" className="text-[10px] text-accent hover:underline flex items-center gap-0.5">
-            Voir <ChevronRight className="h-2.5 w-2.5" />
+            {t.viewAll} <ChevronRight className="h-2.5 w-2.5" />
           </Link>
         </div>
         <div className="space-y-1.5">
           {recent.map((entry) => (
             <div key={entry.id} className="flex items-center gap-2 p-2 rounded-md border bg-card">
               <Badge variant="outline" className={`text-[8px] px-1 py-0 shrink-0 ${typeColors[entry.entry_type] || ""}`}>
-                {typeLabels[entry.entry_type] || entry.entry_type}
+                {t.typeLabels[entry.entry_type as keyof typeof t.typeLabels] || entry.entry_type}
               </Badge>
               <p className="text-[11px] font-medium truncate flex-1">{entry.title}</p>
               <span className="text-[9px] text-muted-foreground shrink-0">
-                {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+                {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale })}
               </span>
             </div>
           ))}
@@ -252,14 +226,11 @@ interface KPICarouselProps {
   redCount: number;
   total: number;
   pendingCount: number;
+  t: ReturnType<typeof useTranslation<typeof briefingTranslations>>;
 }
 
-function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pendingCount }: KPICarouselProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "start",
-    containScroll: "trimSnaps",
-    dragFree: true,
-  });
+function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pendingCount, t }: KPICarouselProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps", dragFree: true });
   const [activeIndex, setActiveIndex] = useState(0);
 
   const onSelect = useCallback(() => {
@@ -278,15 +249,15 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
     {
       icon: <DollarSign className="h-5 w-5 text-success" />,
       value: mrr != null && mrr > 0 ? formatCurrency(mrr) : "—",
-      label: "MRR",
-      sublabel: "Revenus mensuels",
+      label: t.mrr,
+      sublabel: t.mrrSub,
       bg: "bg-success/5 border-success/20",
     },
     {
       icon: <Wifi className="h-5 w-5 text-accent" />,
       value: uptime != null && uptime > 0 ? `${uptime}%` : "—",
-      label: "Uptime",
-      sublabel: "Disponibilité moyenne",
+      label: t.uptime,
+      sublabel: t.uptimeSub,
       bg: "bg-accent/5 border-accent/20",
     },
     {
@@ -296,8 +267,8 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
         {redCount > 0 && <XCircle className="h-4 w-4 text-destructive" />}
       </div>,
       value: `${greenCount}/${total}`,
-      label: "Plateformes",
-      sublabel: `${greenCount} opérationnelles`,
+      label: t.platforms,
+      sublabel: t.platformsOperational(greenCount),
       bg: greenCount === total ? "bg-success/5 border-success/20" : "bg-warning/5 border-warning/20",
     },
     {
@@ -305,8 +276,8 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
         ? <Badge variant="destructive" className="text-xs px-2">{pendingCount}</Badge>
         : <CheckCircle className="h-5 w-5 text-success" />,
       value: pendingCount > 0 ? `${pendingCount}` : "0",
-      label: "Décisions",
-      sublabel: pendingCount > 0 ? "en attente" : "tout à jour",
+      label: t.decisions,
+      sublabel: pendingCount > 0 ? t.pending : t.allUpToDate,
       bg: pendingCount > 0 ? "bg-warning/5 border-warning/20" : "bg-muted/30 border-border",
     },
   ];
@@ -331,14 +302,10 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
           ))}
         </div>
       </div>
-      {/* Dots indicator */}
       <div className="flex justify-center gap-1.5">
         {kpis.map((_, i) => (
-          <button
-            key={i}
-            className={`h-1.5 rounded-full transition-all ${
-              i === activeIndex ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"
-            }`}
+          <button key={i}
+            className={`h-1.5 rounded-full transition-all ${i === activeIndex ? "w-4 bg-primary" : "w-1.5 bg-muted-foreground/30"}`}
             onClick={() => emblaApi?.scrollTo(i)}
           />
         ))}
