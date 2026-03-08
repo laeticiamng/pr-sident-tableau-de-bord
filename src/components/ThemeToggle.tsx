@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sun, Moon, Monitor, Contrast } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { themeTranslations } from "@/i18n/theme";
 
 interface ThemeToggleProps {
   className?: string;
@@ -19,6 +21,7 @@ interface ThemeToggleProps {
 export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
   function ThemeToggle({ className, variant = "default" }, ref) {
     const { theme, setTheme, resolvedTheme, monochrome, setMonochrome } = useTheme();
+    const t = useTranslation(themeTranslations);
 
     if (variant === "minimal") {
       return (
@@ -28,11 +31,11 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
           size="icon"
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className={cn("h-9 w-9 relative overflow-hidden", className)}
-          aria-label={resolvedTheme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
+          aria-label={resolvedTheme === "dark" ? t.toggleLight : t.toggleDark}
         >
           <Sun className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
           <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Changer de thème</span>
+          <span className="sr-only">{t.changeTheme}</span>
         </Button>
       );
     }
@@ -45,7 +48,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             variant="ghost" 
             size="icon" 
             className={cn("h-9 w-9 relative overflow-hidden", className)}
-            aria-label="Sélectionner un thème"
+            aria-label={t.selectTheme}
           >
             {monochrome ? (
               <Contrast className="h-4 w-4" />
@@ -55,7 +58,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
                 <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
               </>
             )}
-            <span className="sr-only">Changer de thème</span>
+            <span className="sr-only">{t.changeTheme}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="animate-in fade-in-0 zoom-in-95">
@@ -64,7 +67,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             className="gap-2 cursor-pointer"
           >
             <Sun className="h-4 w-4" />
-            <span>Clair</span>
+            <span>{t.light}</span>
             {theme === "light" && <span className="ml-auto text-accent">✓</span>}
           </DropdownMenuItem>
           <DropdownMenuItem 
@@ -72,7 +75,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             className="gap-2 cursor-pointer"
           >
             <Moon className="h-4 w-4" />
-            <span>Sombre</span>
+            <span>{t.dark}</span>
             {theme === "dark" && <span className="ml-auto text-accent">✓</span>}
           </DropdownMenuItem>
           <DropdownMenuItem 
@@ -80,7 +83,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             className="gap-2 cursor-pointer"
           >
             <Monitor className="h-4 w-4" />
-            <span>Système</span>
+            <span>{t.system}</span>
             {theme === "system" && <span className="ml-auto text-accent">✓</span>}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -89,7 +92,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             className="gap-2 cursor-pointer"
           >
             <Contrast className="h-4 w-4" />
-            <span>Monochrome</span>
+            <span>{t.monochrome}</span>
             {monochrome && <span className="ml-auto text-accent">✓</span>}
           </DropdownMenuItem>
         </DropdownMenuContent>

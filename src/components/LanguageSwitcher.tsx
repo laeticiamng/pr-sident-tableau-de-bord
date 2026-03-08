@@ -1,11 +1,14 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "@/contexts/LanguageContext";
 import { LANGUAGES } from "@/i18n/types";
+import { themeTranslations } from "@/i18n/theme";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export function LanguageSwitcher({ className }: { className?: string }) {
   const { language, setLanguage } = useLanguage();
+  const t = useTranslation(themeTranslations);
   const [open, setOpen] = useState(false);
   const current = LANGUAGES.find((l) => l.code === language)!;
 
@@ -17,7 +20,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             "flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium hover:bg-secondary transition-colors",
             className
           )}
-          aria-label="Changer de langue"
+          aria-label={t.changeLanguage}
         >
           <span className="text-base leading-none">{current.flag}</span>
           <span className="hidden sm:inline text-xs text-muted-foreground uppercase">{current.code}</span>
