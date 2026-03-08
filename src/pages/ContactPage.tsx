@@ -108,6 +108,26 @@ export default function ContactPage() {
                   <Textarea id="message" placeholder={t.form.messagePlaceholder} rows={5} {...register("message")} aria-invalid={!!errors.message} className={errors.message ? "border-destructive" : ""} />
                   {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
                 </div>
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="consent"
+                    checked={!!register("consent").value}
+                    onCheckedChange={(checked) => {
+                      register("consent").onChange({ target: { name: "consent", value: checked } });
+                    }}
+                    {...register("consent")}
+                    aria-invalid={!!errors.consent}
+                  />
+                  <div className="grid gap-1 leading-none">
+                    <Label htmlFor="consent" className="text-sm font-normal text-muted-foreground cursor-pointer">
+                      {t.form.consentLabel}{" "}
+                      <a href="/legal/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:no-underline">
+                        {t.form.consentLink}
+                      </a> *
+                    </Label>
+                    {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
+                  </div>
+                </div>
                 <Button type="submit" variant="executive" size="lg" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t.form.submitting}</>) : t.form.submit}
                 </Button>
