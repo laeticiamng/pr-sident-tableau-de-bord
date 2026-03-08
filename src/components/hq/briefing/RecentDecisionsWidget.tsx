@@ -116,7 +116,7 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
 
 RecentDecisionsWidget.displayName = "RecentDecisionsWidget";
 
-function DecisionRow({ entry, t, locale }: { entry: JournalEntry; t: typeof translations.fr; locale: Locale }) {
+function DecisionRow({ entry, t, locale }: { entry: JournalEntry; t: typeof translations.fr; locale: typeof fr }) {
   const hasImpact = !!entry.impact_measured?.summary;
 
   return (
