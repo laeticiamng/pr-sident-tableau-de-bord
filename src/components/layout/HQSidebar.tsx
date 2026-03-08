@@ -200,7 +200,15 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                         {unreadMessagesCount}
                       </Badge>
                     )}
-                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                    {link.href === "/hq/plateformes" && platformAlertCount > 0 && (
+                      <Badge
+                        variant="warning"
+                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                      >
+                        {platformAlertCount}
+                      </Badge>
+                    )}
+                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && link.href !== "/hq/plateformes" && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
                   </Link>
                 </li>
               );
