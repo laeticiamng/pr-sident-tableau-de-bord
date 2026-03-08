@@ -135,7 +135,7 @@ export default function HomePage() {
             <div className="mt-8 text-center">
               <Link to="/plateformes">
                 <Button variant="outline" size="default" className="group">
-                  {t.features.viewAll ?? "Voir toutes nos solutions"}
+                  {t.features.viewAll}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
