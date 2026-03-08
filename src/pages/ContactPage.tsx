@@ -119,7 +119,7 @@ export default function ContactPage() {
                   <div className="grid gap-1 leading-none">
                     <Label htmlFor="consent" className="text-sm font-normal text-muted-foreground cursor-pointer">
                       {t.form.consentLabel}{" "}
-                      <a href="/legal/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:no-underline">
+                      <Link to="/legal/confidentialite" className="text-accent underline hover:no-underline">
                         {t.form.consentLink}
                       </a> *
                     </Label>
