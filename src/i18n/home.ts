@@ -253,6 +253,58 @@ export const homeTranslations = {
       viewAll: "View all platforms",
       modulesLabel: "modules",
       structuresLabel: "structures",
+      platforms: {
+        emotionscare: {
+          tagline: "Caring for those who care",
+          shortDescription: "Emotional wellbeing for healthcare workers and medical students",
+          description: "France's first platform dedicated to the emotional wellbeing of healthcare workers and medical students. 37 integrated modules: AI emotional scan, personalized coaching, music therapy and gamification.",
+        },
+        nearvity: {
+          tagline: "Connect with the people around you",
+          shortDescription: "Real-time social connection for students",
+          description: "A real-time social connection mobile app for students. A smart radar detects who is available around you based on 3 signals.",
+        },
+        "system-compass": {
+          tagline: "Navigate country systems with intelligence",
+          shortDescription: "Decision intelligence for international relocation",
+          description: "Decision intelligence for international relocation. Personalized analysis of 50+ countries with tax simulation and quality of life comparison.",
+        },
+        "growth-copilot": {
+          tagline: "Premium expertise, delivered simply",
+          shortDescription: "39 AI experts covering 11 business departments",
+          description: "Your team of 39 ready-to-use AI experts. 2 directors and 37 specialized agents covering 11 departments.",
+        },
+        "med-mng": {
+          tagline: "One song = One medical item mastered",
+          shortDescription: "Revolutionary medical learning through AI music",
+          description: "Revolutionizing medical learning through music. Each ECN/EDN item becomes an AI-generated song you naturally retain.",
+        },
+        "swift-care-hub": {
+          tagline: "From admission to discharge, every second counts",
+          shortDescription: "The hospital emergency operating system",
+          description: "A real-time app that digitizes the entire patient journey in the ER — from admission to discharge.",
+        },
+        "track-triumph-tavern": {
+          tagline: "Submit. Vote. Triumph.",
+          shortDescription: "Community music competition with votes and rankings",
+          description: "A music competition platform where artists submit their tracks weekly and the community votes.",
+        },
+        "trust-seal-chain": {
+          tagline: "AI trust, certified and traceable",
+          shortDescription: "AI agent certification and traceability",
+          description: "A certification and traceability platform for AI agents. Trust registry and automated decision auditing.",
+        },
+        studybeats: {
+          tagline: "Turn your courses into songs",
+          shortDescription: "Neuroscience-based musical memorization",
+          description: "Transform your courses into memorable songs. 30 music styles and automatic quizzes.",
+        },
+        "vascular-atlas": {
+          tagline: "Vascular excellence, augmented by AI",
+          shortDescription: "AI clinical platform for vascular medicine",
+          description: "AI-augmented clinical platform for vascular medicine. AI clinical assistant and vascular digital twin.",
+        },
+      },
     },
   },
   de: {
