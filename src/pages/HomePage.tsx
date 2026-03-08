@@ -10,6 +10,7 @@ import {
   Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
+import { HowItWorks } from "@/components/home/HowItWorks";
 import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
