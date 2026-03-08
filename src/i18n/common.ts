@@ -41,7 +41,7 @@ export const commonTranslations = {
       closeMenu: "Close menu",
     },
     footer: {
-      description: "French publisher of 10 innovative SaaS platforms. Based in Amiens, France.",
+      description: "French publisher of 10 innovative platforms. Based in Amiens, France.",
       navigation: "Navigation",
       legal: "Legal",
       legalNotice: "Legal Notice",
