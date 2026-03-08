@@ -407,6 +407,58 @@ export const homeTranslations = {
       viewAll: "Alle Plattformen ansehen",
       modulesLabel: "Module",
       structuresLabel: "Strukturen",
+      platforms: {
+        emotionscare: {
+          tagline: "Für die sorgen, die für andere sorgen",
+          shortDescription: "Emotionales Wohlbefinden für Pflegekräfte und Medizinstudierende",
+          description: "Frankreichs erste Plattform für das emotionale Wohlbefinden von Pflegekräften und Medizinstudierenden. 37 integrierte Module: KI-Emotions-Scan, personalisiertes Coaching, Musiktherapie und Gamification.",
+        },
+        nearvity: {
+          tagline: "Verbinde dich mit den Menschen um dich herum",
+          shortDescription: "Echtzeit-Sozialverbindung für Studierende",
+          description: "Eine Echtzeit-App für soziale Verbindungen unter Studierenden. Ein intelligentes Radar erkennt, wer in Ihrer Nähe verfügbar ist.",
+        },
+        "system-compass": {
+          tagline: "Navigiere Ländersysteme mit Intelligenz",
+          shortDescription: "Entscheidungsintelligenz für internationale Umzüge",
+          description: "Entscheidungsintelligenz für internationale Umzüge. Personalisierte Analyse von über 50 Ländern mit Steuersimulation und Lebensqualitätsvergleich.",
+        },
+        "growth-copilot": {
+          tagline: "Premium-Expertise, einfach geliefert",
+          shortDescription: "39 KI-Experten für 11 Geschäftsbereiche",
+          description: "Ihr Team aus 39 einsatzbereiten KI-Experten. 2 Direktoren und 37 spezialisierte Agenten für 11 Abteilungen.",
+        },
+        "med-mng": {
+          tagline: "Ein Song = Ein medizinisches Thema gemeistert",
+          shortDescription: "Revolutionäres medizinisches Lernen durch KI-Musik",
+          description: "Revolution des medizinischen Lernens durch Musik. Jeder ECN/EDN-Punkt wird zu einem KI-generierten Song.",
+        },
+        "swift-care-hub": {
+          tagline: "Von der Aufnahme bis zur Entlassung zählt jede Sekunde",
+          shortDescription: "Das Betriebssystem der Notaufnahme",
+          description: "Eine Echtzeit-App, die den gesamten Patientenpfad in der Notaufnahme digitalisiert — von der Aufnahme bis zur Entlassung.",
+        },
+        "track-triumph-tavern": {
+          tagline: "Einreichen. Abstimmen. Triumphieren.",
+          shortDescription: "Musik-Wettbewerb mit Community-Votes und Rankings",
+          description: "Eine Musik-Wettbewerbsplattform, auf der Künstler wöchentlich ihre Tracks einreichen und die Community abstimmt.",
+        },
+        "trust-seal-chain": {
+          tagline: "KI-Vertrauen, zertifiziert und nachverfolgbar",
+          shortDescription: "Zertifizierung und Rückverfolgbarkeit von KI-Agenten",
+          description: "Eine Zertifizierungs- und Rückverfolgbarkeitsplattform für KI-Agenten. Vertrauensregister und automatisiertes Entscheidungsaudit.",
+        },
+        studybeats: {
+          tagline: "Verwandle deine Kurse in Songs",
+          shortDescription: "Musikalisches Memorieren basierend auf Neurowissenschaften",
+          description: "Verwandeln Sie Ihre Kurse in einprägsame Songs. 30 Musikstile und automatische Quizze.",
+        },
+        "vascular-atlas": {
+          tagline: "Vaskuläre Exzellenz, erweitert durch KI",
+          shortDescription: "KI-Klinikplattform für Gefäßmedizin",
+          description: "KI-erweiterte klinische Plattform für Gefäßmedizin. KI-Klinikassistent und vaskulärer digitaler Zwilling.",
+        },
+      },
     },
   },
 } as const;
