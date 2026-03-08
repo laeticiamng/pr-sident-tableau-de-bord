@@ -80,6 +80,7 @@ export const commonTranslations = {
       theme: "Design",
       allRights: "Alle Rechte vorbehalten.",
       softwareEditor: "Softwareherausgeber",
+      skipToContent: "Zum Hauptinhalt springen",
     },
   },
 } as const;
