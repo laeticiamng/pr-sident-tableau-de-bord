@@ -125,7 +125,6 @@ export default function UserManagementPage() {
       <ExecutiveHeader
         title="Gestion des Utilisateurs"
         subtitle="Créez des comptes, assignez des rôles et gérez les accès au HQ"
-        icon={Users}
       />
 
       {/* Stats */}
