@@ -30,7 +30,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
+import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
 
 // Items principaux — toujours visibles
 const mainLinks = [
@@ -87,6 +87,8 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: recentRuns } = useRecentRuns(50);
+  const { data: platforms } = usePlatforms();
+  const { data: auditLogs } = useAuditLogs(50);
   const { data: unreadMessagesCount } = useQuery({
     queryKey: ["contact-messages-unread-count"],
     queryFn: async () => {
@@ -105,6 +107,15 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
   const failedRunsCount = recentRuns?.filter(r => {
     const d = new Date(r.created_at);
     return r.status === "failed" && Date.now() - d.getTime() < 24 * 3600 * 1000;
+  }).length || 0;
+
+  // Section counters
+  const platformAlertCount = platforms?.filter(p => p.status === "red" || p.status === "amber").length || 0;
+  const runningCount = recentRuns?.filter(r => r.status === "running" || r.status === "pending").length || 0;
+  const opsCount = failedRunsCount + runningCount;
+  const recentAuditCount = auditLogs?.filter(l => {
+    const d = new Date(l.created_at);
+    return Date.now() - d.getTime() < 24 * 3600 * 1000;
   }).length || 0;
 
   // Ouvre automatiquement la section secondaire si on est sur une de ces pages
@@ -189,7 +200,15 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                         {unreadMessagesCount}
                       </Badge>
                     )}
-                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                    {link.href === "/hq/plateformes" && platformAlertCount > 0 && (
+                      <Badge
+                        variant="warning"
+                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
+                      >
+                        {platformAlertCount}
+                      </Badge>
+                    )}
+                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && link.href !== "/hq/plateformes" && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
                   </Link>
                 </li>
               );
@@ -211,10 +230,19 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
 
             {isExpanded && (
               <div className="mt-1 space-y-3 animate-fade-in">
-                {secondaryGroups.map((group) => (
+                {secondaryGroups.map((group) => {
+                  const groupCount = group.label === "Opérations" ? opsCount
+                    : group.label === "Gouvernance" ? recentAuditCount
+                    : 0;
+                  return (
                   <div key={group.label}>
-                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-                      {group.label}
+                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 flex items-center justify-between">
+                      <span>{group.label}</span>
+                      {groupCount > 0 && (
+                        <Badge variant="subtle" className="h-4 min-w-[16px] rounded-full px-1.5 py-0 text-[9px] font-medium">
+                          {groupCount}
+                        </Badge>
+                      )}
                     </div>
                     <ul className="space-y-0.5">
                       {group.items.map((link) => {
