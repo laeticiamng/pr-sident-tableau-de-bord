@@ -51,7 +51,8 @@ export function getNameSchema() {
 export function getPhoneSchema() {
   const m = t().phone;
   return z.string().trim()
-    .regex(/^\+?[1-9]\d{6,14}$/, m.invalid)
+    .transform((val) => val.replace(/[\s\-().]/g, ""))
+    .pipe(z.string().regex(/^\+?[1-9]\d{6,14}$/, m.invalid))
     .optional()
     .or(z.literal(""));
 }
@@ -83,10 +84,11 @@ export const nameSchema = z
 export const phoneSchema = z
   .string()
   .trim()
-  .regex(
+  .transform((val) => val.replace(/[\s\-().]/g, ""))
+  .pipe(z.string().regex(
     /^\+?[1-9]\d{6,14}$/,
-    "Format de téléphone invalide (ex: +33612345678 ou +1234567890)"
-  )
+    "Format de téléphone invalide (ex: +33 6 12 34 56 78 ou 06 12 34 56 78)"
+  ))
   .optional()
   .or(z.literal(""));
 
