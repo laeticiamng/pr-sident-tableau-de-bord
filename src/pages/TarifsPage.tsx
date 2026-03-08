@@ -92,9 +92,14 @@ export default function TarifsPage() {
                         <p className="font-medium">{item.audience}</p>
                         <p className="text-sm text-muted-foreground">{item.platform}</p>
                       </div>
-                      <Badge variant="outline" className="w-fit text-sm">
-                        {item.model}
-                      </Badge>
+                      <div className="flex flex-col sm:items-end gap-1">
+                        <span className="text-sm font-semibold text-accent">
+                          {(item as any).price}
+                        </span>
+                        <Badge variant="outline" className="w-fit text-xs">
+                          {item.model}
+                        </Badge>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

@@ -3,9 +3,9 @@ export const homeTranslations = {
     hero: {
       badge: "Éditeur de logiciels SaaS",
       madeIn: "🇫🇷 Made in France",
-      title: "EMOTIONSCARE",
-      subtitle: "Des logiciels qui transforment la santé et l'éducation",
-      description: "10 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
+      title: "La santé et l'éducation méritent de meilleurs logiciels",
+      subtitle: "10 plateformes conçues en France pour les soignants, étudiants, expatriés et entrepreneurs",
+      description: "Bien-être émotionnel, apprentissage médical, relocalisation internationale, croissance par l'IA — chaque plateforme résout un problème concret.",
       cta: "Découvrir les plateformes",
       ctaContact: "Demander une démo",
     },
@@ -14,6 +14,7 @@ export const homeTranslations = {
       title: "Des plateformes qui",
       titleAccent: "changent la donne",
       subtitle: "Chaque plateforme est conçue pour résoudre un problème concret dans la santé, l'éducation et l'international",
+      viewAll: "Voir toutes nos solutions",
       items: [
         {
           title: "Bien-être des soignants",
@@ -157,9 +158,9 @@ export const homeTranslations = {
     hero: {
       badge: "SaaS Software Publisher",
       madeIn: "🇫🇷 Made in France",
-      title: "EMOTIONSCARE",
-      subtitle: "Software that transforms healthcare and education",
-      description: "10 SaaS platforms for healthcare professionals, medical students, expats and entrepreneurs. Built in France, used everywhere.",
+      title: "Healthcare and education deserve better software",
+      subtitle: "10 platforms built in France for caregivers, students, expats and entrepreneurs",
+      description: "Emotional wellbeing, medical learning, international relocation, AI-powered growth — each platform solves a real problem.",
       cta: "Discover the platforms",
       ctaContact: "Request a demo",
     },
@@ -168,6 +169,7 @@ export const homeTranslations = {
       title: "Platforms that",
       titleAccent: "make a difference",
       subtitle: "Each platform is built to solve a real problem in healthcare, education and international mobility",
+      viewAll: "View all our solutions",
       items: [
         {
           title: "Healthcare Worker Wellbeing",
@@ -311,9 +313,9 @@ export const homeTranslations = {
     hero: {
       badge: "SaaS-Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
-      title: "EMOTIONSCARE",
-      subtitle: "Software, die Gesundheit und Bildung transformiert",
-      description: "10 SaaS-Plattformen für Gesundheitsfachkräfte, Medizinstudierende, Expats und Unternehmer. Entwickelt in Frankreich, weltweit genutzt.",
+      title: "Gesundheit und Bildung verdienen bessere Software",
+      subtitle: "10 Plattformen aus Frankreich für Pflegekräfte, Studierende, Expats und Unternehmer",
+      description: "Emotionales Wohlbefinden, medizinisches Lernen, internationale Umzüge, KI-gestütztes Wachstum — jede Plattform löst ein konkretes Problem.",
       cta: "Plattformen entdecken",
       ctaContact: "Demo anfordern",
     },
@@ -322,6 +324,7 @@ export const homeTranslations = {
       title: "Plattformen, die",
       titleAccent: "den Unterschied machen",
       subtitle: "Jede Plattform löst ein konkretes Problem im Gesundheitswesen, in der Bildung und in der internationalen Mobilität",
+      viewAll: "Alle Lösungen ansehen",
       items: [
         {
           title: "Wohlbefinden im Gesundheitswesen",

@@ -108,7 +108,7 @@ export default function HomePage() {
             </ScrollReveal>
 
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              {t.features.items.map((feature, index) => {
+              {t.features.items.slice(0, 4).map((feature, index) => {
                 const platformKey = MANAGED_PLATFORMS[index]?.key;
                 const cfg = getPlatformConfig(platformKey ?? "");
                 const Icon = cfg.icon;
@@ -130,6 +130,15 @@ export default function HomePage() {
                   </ScrollReveal>
                 );
               })}
+            </div>
+
+            <div className="mt-8 text-center">
+              <Link to="/plateformes">
+                <Button variant="outline" size="default" className="group">
+                  {t.features.viewAll}
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
