@@ -169,6 +169,31 @@ export const approvalSchema = z.object({
 // Platform key validation — derived from MANAGED_PLATFORMS to stay in sync
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 
+// Full platform shape validation (used in tests, not runtime)
+const platformStatsSchema = z.object({
+  modules: z.number().int().nonnegative(),
+  tables: z.number().int().nonnegative(),
+  edgeFunctions: z.number().int().nonnegative(),
+  branches: z.number().int().nonnegative(),
+  commits: z.number().int().nonnegative(),
+  tests: z.number().int().nonnegative(),
+});
+
+export const managedPlatformSchema = z.object({
+  key: z.string().min(1),
+  name: z.string().min(1),
+  shortDescription: z.string().min(1),
+  description: z.string().min(10),
+  tagline: z.string().min(1),
+  github: z.string().url(),
+  liveUrl: z.string().url(),
+  color: z.string().min(1),
+  stats: platformStatsSchema,
+  features: z.array(z.string().min(1)).min(1),
+  status: z.enum(["production", "prototype", "beta", "deprecated"]),
+  lastCommit: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+});
+
 const PLATFORM_KEYS = MANAGED_PLATFORMS.map((p) => p.key) as unknown as readonly [string, ...string[]];
 export const platformKeySchema = z.enum(PLATFORM_KEYS, {
   errorMap: () => ({ message: "Plateforme invalide" }),
