@@ -28,6 +28,7 @@ import {
   Bot,
   Scale,
   BookOpen,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
@@ -80,9 +81,10 @@ const allSecondaryLinks = secondaryGroups.flatMap(g => g.items);
 interface HQSidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  onCommandOpen?: () => void;
 }
 
-export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
+export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarProps) {
   const location = useLocation();
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
@@ -118,13 +120,10 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
     return Date.now() - d.getTime() < 24 * 3600 * 1000;
   }).length || 0;
 
-  // Ouvre automatiquement la section secondaire si on est sur une de ces pages
   const isOnSecondaryPage = allSecondaryLinks.some(link => location.pathname === link.href);
 
   const handleLinkClick = () => {
-    if (onClose) {
-      onClose();
-    }
+    if (onClose) onClose();
   };
 
   const isExpanded = showMore || isOnSecondaryPage;
@@ -149,66 +148,78 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
         )}
       >
         {/* Logo - Desktop only */}
-        <div className="hidden lg:block p-6 border-b border-sidebar-border">
+        <div className="hidden lg:block p-5 border-b border-sidebar-border">
           <Link to="/hq" className="flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
-              <Building2 className="h-5 w-5" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+              <Building2 className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-              <span className="text-xs text-sidebar-foreground/60">Siège Social</span>
+              <span className="text-[11px] text-sidebar-foreground/50">Siège Social</span>
             </div>
           </Link>
         </div>
 
+        {/* Command Search Bar — 21st.dev pattern */}
+        <div className="hidden lg:block px-4 pt-4 pb-2">
+          <button
+            onClick={onCommandOpen}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground/50 text-sm hover:bg-sidebar-accent/50 hover:text-sidebar-foreground/70 transition-colors"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span className="flex-1 text-left text-xs">Rechercher…</span>
+            <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded border border-sidebar-border bg-sidebar px-1.5 font-mono text-[10px] font-medium text-sidebar-foreground/40">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
+
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-1">
           {/* Section principale */}
-          <div className="px-3 mb-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50">
+          <div className="px-3 mb-2 mt-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
             Principal
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-0.5">
             {mainLinks.map((link) => {
               const isActive = location.pathname === link.href;
+              const hasBadge = (link.showBadge && pendingCount > 0) ||
+                ("showMessagesBadge" in link && link.showMessagesBadge && (unreadMessagesCount ?? 0) > 0) ||
+                (link.href === "/hq/plateformes" && platformAlertCount > 0);
+
               return (
                 <li key={link.href}>
                   <Link
                     to={link.href}
                     onClick={handleLinkClick}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors",
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-150",
                       isActive
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                        : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
+                        : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     )}
                   >
                     <link.icon className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">{link.label}</span>
+                    <span className="truncate flex-1">{link.label}</span>
+                    {/* 21st.dev-style right-aligned count */}
                     {link.showBadge && pendingCount > 0 && (
-                      <Badge
-                        variant="destructive"
-                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                      >
+                      <span className="text-[11px] font-medium tabular-nums text-destructive">
                         {pendingCount}
-                      </Badge>
+                      </span>
                     )}
                     {"showMessagesBadge" in link && link.showMessagesBadge && (unreadMessagesCount ?? 0) > 0 && (
-                      <Badge
-                        variant="destructive"
-                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                      >
+                      <span className="text-[11px] font-medium tabular-nums text-destructive">
                         {unreadMessagesCount}
-                      </Badge>
+                      </span>
                     )}
                     {link.href === "/hq/plateformes" && platformAlertCount > 0 && (
-                      <Badge
-                        variant="warning"
-                        className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                      >
+                      <span className="text-[11px] font-medium tabular-nums text-warning">
                         {platformAlertCount}
-                      </Badge>
+                      </span>
                     )}
-                    {isActive && !link.showBadge && !("showMessagesBadge" in link && link.showMessagesBadge) && link.href !== "/hq/plateformes" && <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0" />}
+                    {isActive && !hasBadge && (
+                      <ChevronRight className="h-3 w-3 ml-auto flex-shrink-0 opacity-50" />
+                    )}
                   </Link>
                 </li>
               );
@@ -216,16 +227,21 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
           </ul>
 
           {/* Séparateur + section repliable */}
-          <div className="pt-4">
+          <div className="pt-3">
             <button
               onClick={() => setShowMore(!isExpanded)}
-              className="flex items-center gap-2 w-full px-3 py-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/50 hover:text-sidebar-foreground/70 transition-colors"
+              className="flex items-center gap-2 w-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 hover:text-sidebar-foreground/60 transition-colors"
             >
               <ChevronDown className={cn(
                 "h-3 w-3 transition-transform duration-200",
                 isExpanded && "rotate-180"
               )} />
-              Tous les services
+              <span className="flex-1 text-left">Tous les services</span>
+              {!isExpanded && (opsCount + recentAuditCount) > 0 && (
+                <span className="text-[10px] tabular-nums text-sidebar-foreground/30">
+                  {opsCount + recentAuditCount}
+                </span>
+              )}
             </button>
 
             {isExpanded && (
@@ -234,55 +250,54 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
                   const groupCount = group.label === "Opérations" ? opsCount
                     : group.label === "Gouvernance" ? recentAuditCount
                     : 0;
+
                   return (
-                  <div key={group.label}>
-                    <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40 flex items-center justify-between">
-                      <span>{group.label}</span>
-                      {groupCount > 0 && (
-                        <Badge variant="subtle" className="h-4 min-w-[16px] rounded-full px-1.5 py-0 text-[9px] font-medium">
-                          {groupCount}
-                        </Badge>
-                      )}
+                    <div key={group.label}>
+                      <div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/35 flex items-center justify-between">
+                        <span>{group.label}</span>
+                        {groupCount > 0 && (
+                          <span className="text-[10px] tabular-nums font-medium text-sidebar-foreground/50">
+                            {groupCount}
+                          </span>
+                        )}
+                      </div>
+                      <ul className="space-y-0.5">
+                        {group.items.map((link) => {
+                          const isActive = location.pathname === link.href;
+                          return (
+                            <li key={link.href}>
+                              <Link
+                                to={link.href}
+                                onClick={handleLinkClick}
+                                className={cn(
+                                  "flex items-center gap-3 px-3 py-1.5 rounded-lg text-[13px] transition-all duration-150",
+                                  isActive
+                                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-medium"
+                                    : "text-sidebar-foreground/55 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                )}
+                              >
+                                <link.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span className="truncate flex-1">{link.label}</span>
+                                {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
+                                  <span className="text-[11px] font-medium tabular-nums text-destructive">
+                                    {failedRunsCount}
+                                  </span>
+                                )}
+                              </Link>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
-                    <ul className="space-y-0.5">
-                      {group.items.map((link) => {
-                        const isActive = location.pathname === link.href;
-                        return (
-                          <li key={link.href}>
-                            <Link
-                              to={link.href}
-                              onClick={handleLinkClick}
-                              className={cn(
-                                "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors",
-                                isActive
-                                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                              )}
-                            >
-                              <link.icon className="h-4 w-4 flex-shrink-0" />
-                              <span className="truncate">{link.label}</span>
-                              {"showFailedBadge" in link && link.showFailedBadge && failedRunsCount > 0 && (
-                                <Badge
-                                  variant="destructive"
-                                  className="ml-auto h-5 min-w-[20px] rounded-full p-0 flex items-center justify-center text-[10px]"
-                                >
-                                  {failedRunsCount}
-                                </Badge>
-                              )}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-3 border-t border-sidebar-border">
           <Button
             variant="ghost"
             size="sm"
@@ -290,9 +305,9 @@ export function HQSidebar({ isOpen = true, onClose }: HQSidebarProps) {
               handleLinkClick();
               signOut();
             }}
-            className="w-full justify-start text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="w-full justify-start text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent text-[13px]"
           >
-            <LogOut className="h-4 w-4 mr-3" />
+            <LogOut className="h-3.5 w-3.5 mr-3" />
             Déconnexion
           </Button>
         </div>
