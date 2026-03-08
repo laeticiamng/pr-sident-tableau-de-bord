@@ -5,13 +5,42 @@ import { BookOpen, ChevronRight, CheckCircle2, Clock, Database } from "lucide-re
 import { useJournalEntries, type JournalEntry } from "@/hooks/useJournal";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
 
-const typeLabels: Record<string, string> = {
-  decision: "Décision",
-  note: "Note",
-  milestone: "Jalon",
-  reflection: "Réflexion",
+const dateFnsLocales = { fr, en: enGB, de } as const;
+
+const translations = {
+  fr: {
+    recentDecisions: "Décisions récentes",
+    viewAll: "Voir tout",
+    noDecisions: "Aucune décision enregistrée",
+    noDecisionsDesc: "Consignez vos décisions dans le",
+    journalLink: "Journal Présidentiel",
+    impactMeasured: "Impact mesuré",
+    pending: "En attente",
+    typeLabels: { decision: "Décision", note: "Note", milestone: "Jalon", reflection: "Réflexion" } as Record<string, string>,
+  },
+  en: {
+    recentDecisions: "Recent decisions",
+    viewAll: "View all",
+    noDecisions: "No decisions recorded",
+    noDecisionsDesc: "Record your decisions in the",
+    journalLink: "Presidential Journal",
+    impactMeasured: "Impact measured",
+    pending: "Pending",
+    typeLabels: { decision: "Decision", note: "Note", milestone: "Milestone", reflection: "Reflection" } as Record<string, string>,
+  },
+  de: {
+    recentDecisions: "Letzte Entscheidungen",
+    viewAll: "Alle ansehen",
+    noDecisions: "Keine Entscheidungen aufgezeichnet",
+    noDecisionsDesc: "Erfassen Sie Ihre Entscheidungen im",
+    journalLink: "Präsidialjournal",
+    impactMeasured: "Wirkung gemessen",
+    pending: "Ausstehend",
+    typeLabels: { decision: "Entscheidung", note: "Notiz", milestone: "Meilenstein", reflection: "Reflexion" } as Record<string, string>,
+  },
 };
 
 const typeColors: Record<string, string> = {
@@ -23,6 +52,9 @@ const typeColors: Record<string, string> = {
 
 export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { data: entries, isLoading } = useJournalEntries();
+  const t = useTranslation(translations);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   const recent = (entries || []).slice(0, 3);
 
@@ -32,7 +64,7 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <BookOpen className="h-5 w-5 text-accent" />
-            <h3 className="font-semibold">Décisions récentes</h3>
+            <h3 className="font-semibold">{t.recentDecisions}</h3>
           </div>
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
@@ -49,10 +81,10 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
       <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
         <CardContent className="p-6 text-center">
           <Database className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
-          <h3 className="font-semibold text-sm text-muted-foreground">Aucune décision enregistrée</h3>
+          <h3 className="font-semibold text-sm text-muted-foreground">{t.noDecisions}</h3>
           <p className="text-xs text-muted-foreground/70 mt-1">
-            Consignez vos décisions dans le{" "}
-            <Link to="/hq/journal" className="text-accent underline">Journal Présidentiel</Link>.
+            {t.noDecisionsDesc}{" "}
+            <Link to="/hq/journal" className="text-accent underline">{t.journalLink}</Link>.
           </p>
         </CardContent>
       </Card>
@@ -65,16 +97,16 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-accent" />
-            <h3 className="font-semibold">Décisions récentes</h3>
+            <h3 className="font-semibold">{t.recentDecisions}</h3>
           </div>
           <Link to="/hq/journal" className="text-xs text-accent hover:underline flex items-center gap-1">
-            Voir tout <ChevronRight className="h-3 w-3" />
+            {t.viewAll} <ChevronRight className="h-3 w-3" />
           </Link>
         </div>
 
         <div className="space-y-3">
           {recent.map((entry) => (
-            <DecisionRow key={entry.id} entry={entry} />
+            <DecisionRow key={entry.id} entry={entry} t={t} locale={locale} />
           ))}
         </div>
       </CardContent>
@@ -84,7 +116,7 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
 
 RecentDecisionsWidget.displayName = "RecentDecisionsWidget";
 
-function DecisionRow({ entry }: { entry: JournalEntry }) {
+function DecisionRow({ entry, t, locale }: { entry: JournalEntry; t: typeof translations.fr; locale: Locale }) {
   const hasImpact = !!entry.impact_measured?.summary;
 
   return (
@@ -92,10 +124,10 @@ function DecisionRow({ entry }: { entry: JournalEntry }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${typeColors[entry.entry_type] || ""}`}>
-            {typeLabels[entry.entry_type] || entry.entry_type}
+            {t.typeLabels[entry.entry_type] || entry.entry_type}
           </Badge>
           <span className="text-[10px] text-muted-foreground">
-            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+            {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale })}
           </span>
         </div>
         <p className="text-sm font-medium truncate">{entry.title}</p>
@@ -114,12 +146,12 @@ function DecisionRow({ entry }: { entry: JournalEntry }) {
         {hasImpact ? (
           <Badge variant="outline" className="text-[9px] gap-1 bg-success/10 text-success border-success/20">
             <CheckCircle2 className="h-2.5 w-2.5" />
-            Impact mesuré
+            {t.impactMeasured}
           </Badge>
         ) : (
           <Badge variant="outline" className="text-[9px] gap-1 bg-warning/10 text-warning border-warning/20">
             <Clock className="h-2.5 w-2.5" />
-            En attente
+            {t.pending}
           </Badge>
         )}
       </div>
