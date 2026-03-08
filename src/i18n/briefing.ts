@@ -1,5 +1,3 @@
-import type { Translations } from "./types";
-
 export const briefingTranslations = {
   fr: {
     greetingMorning: "Bonjour",
