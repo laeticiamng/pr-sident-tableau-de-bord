@@ -440,7 +440,7 @@ export function buildTrustPageSchema() {
       "Mesures de sécurité, conformité RGPD et architecture de protection des données d'EMOTIONSCARE SASU. Chiffrement AES-256, RLS deny-by-default, audit immuable et conformité OWASP ASVS Niveau 2.",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
-    keywords: "sécurité données, RGPD, chiffrement AES-256, RLS, conformité OWASP, protection données santé, cybersécurité SaaS",
+    keywords: "sécurité données, RGPD, chiffrement AES-256, RLS, conformité OWASP, protection données santé, cybersécurité logiciels",
     isPartOf: {
       "@type": "WebSite",
       url: "https://president-cockpit-hq.lovable.app",
