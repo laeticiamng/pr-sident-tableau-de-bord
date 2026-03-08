@@ -46,7 +46,7 @@ export function HQLayout() {
       />
 
       {/* Sidebar */}
-      <HQSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <HQSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onCommandOpen={() => setCommandOpen(true)} />
 
       {/* Command Palette (accessible via Cmd+K pour utilisateurs avancés) */}
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
