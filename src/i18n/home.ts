@@ -1,7 +1,7 @@
 export const homeTranslations = {
   fr: {
     hero: {
-      badge: "Éditeur de logiciels SaaS",
+      badge: "Éditeur de logiciels",
       madeIn: "🇫🇷 Made in France",
       title: "La santé et l'éducation méritent de meilleurs logiciels",
       subtitle: "10 plateformes conçues en France pour les soignants, étudiants, expatriés et entrepreneurs",
@@ -156,7 +156,7 @@ export const homeTranslations = {
   },
   en: {
     hero: {
-      badge: "SaaS Software Publisher",
+      badge: "Software Publisher",
       madeIn: "🇫🇷 Made in France",
       title: "Healthcare and education deserve better software",
       subtitle: "10 platforms built in France for caregivers, students, expats and entrepreneurs",
@@ -311,7 +311,7 @@ export const homeTranslations = {
   },
   de: {
     hero: {
-      badge: "SaaS-Softwareherausgeber",
+      badge: "Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
       title: "Gesundheit und Bildung verdienen bessere Software",
       subtitle: "10 Plattformen aus Frankreich für Pflegekräfte, Studierende, Expats und Unternehmer",
