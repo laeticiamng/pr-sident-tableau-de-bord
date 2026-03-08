@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, ChevronRight, CheckCircle2, Clock, Database } from "lucide-react";
@@ -20,7 +21,7 @@ const typeColors: Record<string, string> = {
   reflection: "bg-primary/10 text-primary",
 };
 
-export function RecentDecisionsWidget() {
+export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { data: entries, isLoading } = useJournalEntries();
 
   const recent = (entries || []).slice(0, 3);
@@ -79,7 +80,9 @@ export function RecentDecisionsWidget() {
       </CardContent>
     </Card>
   );
-}
+});
+
+RecentDecisionsWidget.displayName = "RecentDecisionsWidget";
 
 function DecisionRow({ entry }: { entry: JournalEntry }) {
   const hasImpact = !!entry.impact_measured?.summary;
