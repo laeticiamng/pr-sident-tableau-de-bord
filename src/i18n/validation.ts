@@ -103,7 +103,6 @@ export const validationTranslations = {
     consent: {
       required: "You must accept the privacy policy",
     },
-    },
   },
   de: {
     email: {
