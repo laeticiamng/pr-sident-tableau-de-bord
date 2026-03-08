@@ -99,6 +99,58 @@ export const homeTranslations = {
       viewAll: "Voir toutes les plateformes",
       modulesLabel: "modules",
       structuresLabel: "structures",
+      platforms: {
+        emotionscare: {
+          tagline: "Prendre soin de celles et ceux qui prennent soin",
+          shortDescription: "Bien-être émotionnel des soignants et étudiants en médecine",
+          description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé avec Nyvée, musicothérapie, réalité virtuelle et gamification.",
+        },
+        nearvity: {
+          tagline: "Connecte-toi avec les gens autour de toi",
+          shortDescription: "Connexion sociale en temps réel pour étudiants",
+          description: "Application mobile de connexion sociale en temps réel pour étudiants. Un radar intelligent détecte qui est disponible autour de vous selon 3 signaux.",
+        },
+        "system-compass": {
+          tagline: "Navigue les systèmes-pays avec intelligence",
+          shortDescription: "Intelligence décisionnelle pour la relocalisation internationale",
+          description: "Intelligence décisionnelle pour la relocalisation internationale. Analyse personnalisée de 50+ pays avec simulation fiscale et comparaison qualité de vie.",
+        },
+        "growth-copilot": {
+          tagline: "Compétence premium, livrée simplement",
+          shortDescription: "39 experts IA couvrant 11 départements métier",
+          description: "Votre équipe de 39 experts IA prêts à l'emploi. 2 directeurs et 37 agents spécialisés couvrent 11 départements.",
+        },
+        "med-mng": {
+          tagline: "Une chanson = Un item médical maîtrisé",
+          shortDescription: "Apprentissage médical révolutionnaire par la musique IA",
+          description: "Révolution de l'apprentissage médical par la musique. Chaque item ECN/EDN devient une chanson générée par IA.",
+        },
+        "swift-care-hub": {
+          tagline: "De l'admission à la sortie, chaque seconde compte",
+          shortDescription: "Le système d'exploitation des urgences hospitalières",
+          description: "Application temps réel qui digitalise l'ensemble du parcours patient aux urgences — de l'admission à la sortie.",
+        },
+        "track-triumph-tavern": {
+          tagline: "Soumettez. Votez. Triomphez.",
+          shortDescription: "Compétition musicale communautaire avec votes et classements",
+          description: "Plateforme de compétition musicale où les artistes soumettent leurs morceaux chaque semaine et la communauté vote.",
+        },
+        "trust-seal-chain": {
+          tagline: "La confiance IA, certifiée et traçable",
+          shortDescription: "Certification et traçabilité des agents IA",
+          description: "Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance et audit automatisé.",
+        },
+        studybeats: {
+          tagline: "Transforme tes cours en chansons",
+          shortDescription: "Mémorisation par la musique basée sur les neurosciences",
+          description: "Transformez vos cours en chansons mémorables. 30 styles musicaux et quiz automatiques.",
+        },
+        "vascular-atlas": {
+          tagline: "L'excellence vasculaire, augmentée par l'IA",
+          shortDescription: "Plateforme clinique IA pour la médecine vasculaire",
+          description: "Plateforme clinique augmentée par l'IA pour la médecine vasculaire. Assistant clinique IA et jumeau numérique.",
+        },
+      },
     },
   },
   en: {
@@ -201,6 +253,58 @@ export const homeTranslations = {
       viewAll: "View all platforms",
       modulesLabel: "modules",
       structuresLabel: "structures",
+      platforms: {
+        emotionscare: {
+          tagline: "Caring for those who care",
+          shortDescription: "Emotional wellbeing for healthcare workers and medical students",
+          description: "France's first platform dedicated to the emotional wellbeing of healthcare workers and medical students. 37 integrated modules: AI emotional scan, personalized coaching, music therapy and gamification.",
+        },
+        nearvity: {
+          tagline: "Connect with the people around you",
+          shortDescription: "Real-time social connection for students",
+          description: "A real-time social connection mobile app for students. A smart radar detects who is available around you based on 3 signals.",
+        },
+        "system-compass": {
+          tagline: "Navigate country systems with intelligence",
+          shortDescription: "Decision intelligence for international relocation",
+          description: "Decision intelligence for international relocation. Personalized analysis of 50+ countries with tax simulation and quality of life comparison.",
+        },
+        "growth-copilot": {
+          tagline: "Premium expertise, delivered simply",
+          shortDescription: "39 AI experts covering 11 business departments",
+          description: "Your team of 39 ready-to-use AI experts. 2 directors and 37 specialized agents covering 11 departments.",
+        },
+        "med-mng": {
+          tagline: "One song = One medical item mastered",
+          shortDescription: "Revolutionary medical learning through AI music",
+          description: "Revolutionizing medical learning through music. Each ECN/EDN item becomes an AI-generated song you naturally retain.",
+        },
+        "swift-care-hub": {
+          tagline: "From admission to discharge, every second counts",
+          shortDescription: "The hospital emergency operating system",
+          description: "A real-time app that digitizes the entire patient journey in the ER — from admission to discharge.",
+        },
+        "track-triumph-tavern": {
+          tagline: "Submit. Vote. Triumph.",
+          shortDescription: "Community music competition with votes and rankings",
+          description: "A music competition platform where artists submit their tracks weekly and the community votes.",
+        },
+        "trust-seal-chain": {
+          tagline: "AI trust, certified and traceable",
+          shortDescription: "AI agent certification and traceability",
+          description: "A certification and traceability platform for AI agents. Trust registry and automated decision auditing.",
+        },
+        studybeats: {
+          tagline: "Turn your courses into songs",
+          shortDescription: "Neuroscience-based musical memorization",
+          description: "Transform your courses into memorable songs. 30 music styles and automatic quizzes.",
+        },
+        "vascular-atlas": {
+          tagline: "Vascular excellence, augmented by AI",
+          shortDescription: "AI clinical platform for vascular medicine",
+          description: "AI-augmented clinical platform for vascular medicine. AI clinical assistant and vascular digital twin.",
+        },
+      },
     },
   },
   de: {
@@ -303,6 +407,58 @@ export const homeTranslations = {
       viewAll: "Alle Plattformen ansehen",
       modulesLabel: "Module",
       structuresLabel: "Strukturen",
+      platforms: {
+        emotionscare: {
+          tagline: "Für die sorgen, die für andere sorgen",
+          shortDescription: "Emotionales Wohlbefinden für Pflegekräfte und Medizinstudierende",
+          description: "Frankreichs erste Plattform für das emotionale Wohlbefinden von Pflegekräften und Medizinstudierenden. 37 integrierte Module: KI-Emotions-Scan, personalisiertes Coaching, Musiktherapie und Gamification.",
+        },
+        nearvity: {
+          tagline: "Verbinde dich mit den Menschen um dich herum",
+          shortDescription: "Echtzeit-Sozialverbindung für Studierende",
+          description: "Eine Echtzeit-App für soziale Verbindungen unter Studierenden. Ein intelligentes Radar erkennt, wer in Ihrer Nähe verfügbar ist.",
+        },
+        "system-compass": {
+          tagline: "Navigiere Ländersysteme mit Intelligenz",
+          shortDescription: "Entscheidungsintelligenz für internationale Umzüge",
+          description: "Entscheidungsintelligenz für internationale Umzüge. Personalisierte Analyse von über 50 Ländern mit Steuersimulation und Lebensqualitätsvergleich.",
+        },
+        "growth-copilot": {
+          tagline: "Premium-Expertise, einfach geliefert",
+          shortDescription: "39 KI-Experten für 11 Geschäftsbereiche",
+          description: "Ihr Team aus 39 einsatzbereiten KI-Experten. 2 Direktoren und 37 spezialisierte Agenten für 11 Abteilungen.",
+        },
+        "med-mng": {
+          tagline: "Ein Song = Ein medizinisches Thema gemeistert",
+          shortDescription: "Revolutionäres medizinisches Lernen durch KI-Musik",
+          description: "Revolution des medizinischen Lernens durch Musik. Jeder ECN/EDN-Punkt wird zu einem KI-generierten Song.",
+        },
+        "swift-care-hub": {
+          tagline: "Von der Aufnahme bis zur Entlassung zählt jede Sekunde",
+          shortDescription: "Das Betriebssystem der Notaufnahme",
+          description: "Eine Echtzeit-App, die den gesamten Patientenpfad in der Notaufnahme digitalisiert — von der Aufnahme bis zur Entlassung.",
+        },
+        "track-triumph-tavern": {
+          tagline: "Einreichen. Abstimmen. Triumphieren.",
+          shortDescription: "Musik-Wettbewerb mit Community-Votes und Rankings",
+          description: "Eine Musik-Wettbewerbsplattform, auf der Künstler wöchentlich ihre Tracks einreichen und die Community abstimmt.",
+        },
+        "trust-seal-chain": {
+          tagline: "KI-Vertrauen, zertifiziert und nachverfolgbar",
+          shortDescription: "Zertifizierung und Rückverfolgbarkeit von KI-Agenten",
+          description: "Eine Zertifizierungs- und Rückverfolgbarkeitsplattform für KI-Agenten. Vertrauensregister und automatisiertes Entscheidungsaudit.",
+        },
+        studybeats: {
+          tagline: "Verwandle deine Kurse in Songs",
+          shortDescription: "Musikalisches Memorieren basierend auf Neurowissenschaften",
+          description: "Verwandeln Sie Ihre Kurse in einprägsame Songs. 30 Musikstile und automatische Quizze.",
+        },
+        "vascular-atlas": {
+          tagline: "Vaskuläre Exzellenz, erweitert durch KI",
+          shortDescription: "KI-Klinikplattform für Gefäßmedizin",
+          description: "KI-erweiterte klinische Plattform für Gefäßmedizin. KI-Klinikassistent und vaskulärer digitaler Zwilling.",
+        },
+      },
     },
   },
 } as const;

@@ -30,6 +30,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
     const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
     const t = useTranslation(homeTranslations);
     const s = t.showcase;
+    const pt = s.platforms as Record<string, { tagline: string; shortDescription: string; description: string }>;
 
     return (
       <section ref={ref} className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background relative overflow-hidden" {...props}>
@@ -93,13 +94,13 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                       {MANAGED_PLATFORMS[0].name}
                     </h3>
                     
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 md:mb-6 leading-relaxed">
-                      {MANAGED_PLATFORMS[0].tagline}
-                    </p>
-                    
-                    <p className="hidden md:block text-sm md:text-base text-muted-foreground mb-4 md:mb-6 lg:mb-8 line-clamp-3">
-                      {MANAGED_PLATFORMS[0].description}
-                    </p>
+                     <p className="text-xs sm:text-sm md:text-base lg:text-lg text-muted-foreground mb-3 sm:mb-4 md:mb-6 leading-relaxed">
+                       {pt[MANAGED_PLATFORMS[0].key]?.tagline ?? MANAGED_PLATFORMS[0].tagline}
+                     </p>
+                     
+                     <p className="hidden md:block text-sm md:text-base text-muted-foreground mb-4 md:mb-6 lg:mb-8 line-clamp-3">
+                       {pt[MANAGED_PLATFORMS[0].key]?.description ?? MANAGED_PLATFORMS[0].description}
+                     </p>
 
                     <div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-4 sm:mb-5 md:mb-6 lg:mb-8">
                       {MANAGED_PLATFORMS[0].features.slice(0, 3).map((feature) => (
@@ -213,9 +214,9 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                         {platform.name}
                       </h3>
                       
-                      <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-2 sm:mb-3 md:mb-4 line-clamp-2">
-                        {platform.shortDescription}
-                      </p>
+                       <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground mb-2 sm:mb-3 md:mb-4 line-clamp-2">
+                         {pt[platform.key]?.shortDescription ?? platform.shortDescription}
+                       </p>
 
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
                         <span>{platform.stats.modules} {s.modulesLabel}</span>
