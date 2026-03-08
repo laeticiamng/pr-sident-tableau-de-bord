@@ -156,7 +156,7 @@ export default function ContactPage() {
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent"><MapPin className="h-6 w-6" /></div>
                   <div>
                     <h3 className="font-semibold mb-1">{t.info.headquarters}</h3>
-                    <p className="text-muted-foreground">Appartement 1, 5 Rue Caudron<br />80000 Amiens, France</p>
+                    <p className="text-muted-foreground">80000 Amiens, France</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
