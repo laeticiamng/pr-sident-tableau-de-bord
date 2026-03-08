@@ -24,6 +24,7 @@ export const commonTranslations = {
       theme: "Thème",
       allRights: "Tous droits réservés.",
       softwareEditor: "Éditeur de logiciels",
+      skipToContent: "Aller au contenu principal",
     },
   },
   en: {
