@@ -30,7 +30,11 @@ import ReactMarkdown from "react-markdown";
 import { RecentDecisionsWidget } from "@/components/hq/briefing/RecentDecisionsWidget";
 import { useJournalEntries } from "@/hooks/useJournal";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { briefingTranslations } from "@/i18n/briefing";
+
+const dateFnsLocales = { fr, en: enGB, de };
 
 export default function BriefingRoom() {
   const isMobile = useIsMobile();
@@ -43,9 +47,12 @@ export default function BriefingRoom() {
   const executeRun = useExecuteRun();
   const [lastRunResult, setLastRunResult] = useState<ExecutiveRunResult | null>(null);
   const [callState, setCallState] = useState<"idle" | "calling" | "connected" | "done">("idle");
+  const t = useTranslation(briefingTranslations);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   const currentTime = new Date();
-  const greeting = currentTime.getHours() < 12 ? "Bonjour" : currentTime.getHours() < 18 ? "Bon après-midi" : "Bonsoir";
+  const greeting = currentTime.getHours() < 12 ? t.greetingMorning : currentTime.getHours() < 18 ? t.greetingAfternoon : t.greetingEvening;
 
   const greenCount = platforms?.filter(p => p.status === "green").length || 0;
   const amberCount = platforms?.filter(p => p.status === "amber").length || 0;
@@ -53,7 +60,6 @@ export default function BriefingRoom() {
   const totalPlatforms = platforms?.length || 8;
   const pendingCount = pendingApprovals?.length || 0;
 
-  // KPIs exécutifs — null guards + error handling
   const mrr = stripeError ? null : (stripeData?.kpis?.mrr ?? 0);
   const mrrChange = stripeError ? null : (stripeData?.kpis?.mrrChange ?? 0);
 
@@ -78,8 +84,6 @@ export default function BriefingRoom() {
 
   const handleCallDG = async () => {
     setCallState("calling");
-
-    // Simule le démarrage de l'appel
     setTimeout(() => setCallState("connected"), 1500);
 
     try {
@@ -98,37 +102,16 @@ export default function BriefingRoom() {
     refetchRuns();
   };
 
-  // Texte et icône du bouton selon l'état
   const callButtonContent = () => {
     switch (callState) {
       case "calling":
-        return (
-          <>
-            <Zap className="h-5 w-5 animate-pulse" />
-            Lancement du brief...
-          </>
-        );
+        return (<><Zap className="h-5 w-5 animate-pulse" />{t.launchBrief}</>);
       case "connected":
-        return (
-          <>
-            <Loader2 className="h-5 w-5 animate-spin" />
-            Analyse en cours...
-          </>
-        );
+        return (<><Loader2 className="h-5 w-5 animate-spin" />{t.analyzing}</>);
       case "done":
-        return (
-          <>
-            <CheckCircle className="h-5 w-5" />
-            Brief reçu — voir ci-dessous
-          </>
-        );
+        return (<><CheckCircle className="h-5 w-5" />{t.briefReceived}</>);
       default:
-        return (
-          <>
-            <BrainCircuit className="h-5 w-5" />
-            Lancer le brief exécutif
-          </>
-        );
+        return (<><BrainCircuit className="h-5 w-5" />{t.launchExecutiveBrief}</>);
     }
   };
 
@@ -136,27 +119,25 @@ export default function BriefingRoom() {
 
   return (
     <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
-      {/* En-tête simple */}
+      {/* En-tête */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.15),transparent)]" />
-
         <div className="relative z-10 flex flex-col gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, Madame la Présidente</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, {t.presidentTitle}</h1>
             <p className="text-primary-foreground/70 text-lg">
-              {platformsLoading ? "Chargement..." : (
+              {platformsLoading ? t.loading : (
                 <>
                   {greenCount === totalPlatforms
-                    ? "Toutes vos plateformes fonctionnent parfaitement."
-                    : `${greenCount}/${totalPlatforms} plateformes opérationnelles.`
+                    ? t.allOperational
+                    : t.platformsOk(greenCount, totalPlatforms)
                   }
-                  {pendingCount > 0 && ` ${pendingCount} décision${pendingCount > 1 ? "s" : ""} en attente.`}
+                  {pendingCount > 0 && ` ${t.pendingDecisions(pendingCount)}`}
                 </>
               )}
             </p>
           </div>
 
-          {/* Bouton Appeler le DG — proéminent */}
           <Button
             variant="hero"
             size="lg"
@@ -168,35 +149,28 @@ export default function BriefingRoom() {
           </Button>
 
           {callState === "done" && (
-            <p className="text-sm text-primary-foreground/60">
-              Le résultat de votre appel s'affiche plus bas sur cette page.
-            </p>
+            <p className="text-sm text-primary-foreground/60">{t.resultBelow}</p>
           )}
         </div>
       </div>
 
-      {/* Résultat de l'appel (si disponible) */}
+      {/* Run result */}
       {lastRunResult && (
         <RunResultPanel
           runResult={lastRunResult}
-          onClose={() => {
-            setLastRunResult(null);
-            setCallState("idle");
-          }}
+          onClose={() => { setLastRunResult(null); setCallState("idle"); }}
         />
       )}
 
-      {/* KPIs Exécutifs */}
+      {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Card className="card-executive">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-success/10">
-              <DollarSign className="h-5 w-5 text-success" />
-            </div>
+            <div className="p-2 rounded-lg bg-success/10"><DollarSign className="h-5 w-5 text-success" /></div>
             <div>
               <p className="text-xl font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
-                MRR
+                {t.mrr}
                 {stripeError && <span className="text-destructive" title="Service indisponible">⚠</span>}
                 {mrrChange != null && mrrChange !== 0 && (
                   <span className={mrrChange > 0 ? "text-success" : "text-destructive"}>
@@ -210,26 +184,22 @@ export default function BriefingRoom() {
 
         <Card className="card-executive">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
-              <Bot className="h-5 w-5 text-primary" />
-            </div>
+            <div className="p-2 rounded-lg bg-primary/10"><Bot className="h-5 w-5 text-primary" /></div>
             <div>
               <p className="text-xl font-bold">{activeAgents24h}</p>
-              <p className="text-xs text-muted-foreground">Agents actifs 24h</p>
+              <p className="text-xs text-muted-foreground">{t.agentsActive24h}</p>
             </div>
           </CardContent>
         </Card>
 
         <Card className="card-executive">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-accent/10">
-              <Wifi className="h-5 w-5 text-accent" />
-            </div>
+            <div className="p-2 rounded-lg bg-accent/10"><Wifi className="h-5 w-5 text-accent" /></div>
             <div>
               <p className="text-xl font-bold">{globalUptime != null && globalUptime > 0 ? `${globalUptime}%` : "—"}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
-                Uptime global
-                <Badge variant="outline" className="text-[9px] px-1 py-0">Moyenne</Badge>
+                {t.uptimeGlobal}
+                <Badge variant="outline" className="text-[9px] px-1 py-0">{t.average}</Badge>
               </p>
             </div>
           </CardContent>
@@ -237,32 +207,26 @@ export default function BriefingRoom() {
 
         <Card className="card-executive">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-warning/10">
-              <Clock className="h-5 w-5 text-warning" />
-            </div>
+            <div className="p-2 rounded-lg bg-warning/10"><Clock className="h-5 w-5 text-warning" /></div>
             <div>
               {lastRun ? (
                 <>
                   <p className="text-xl font-bold flex items-center gap-1.5">
-                    {lastRun.status === "completed" ? (
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    ) : lastRun.status === "failed" ? (
-                      <XCircle className="h-4 w-4 text-destructive" />
-                    ) : (
-                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    )}
+                    {lastRun.status === "completed" ? <CheckCircle className="h-4 w-4 text-success" /> :
+                     lastRun.status === "failed" ? <XCircle className="h-4 w-4 text-destructive" /> :
+                     <Loader2 className="h-4 w-4 animate-spin text-primary" />}
                     <span className="text-sm font-medium truncate max-w-[80px]">
                       {lastRun.run_type.replace(/_/g, " ").slice(0, 12)}
                     </span>
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(lastRun.created_at), { addSuffix: true, locale: fr })}
+                    {formatDistanceToNow(new Date(lastRun.created_at), { addSuffix: true, locale })}
                   </p>
                 </>
               ) : (
                 <>
                   <p className="text-xl font-bold">—</p>
-                  <p className="text-xs text-muted-foreground">Dernier run</p>
+                  <p className="text-xs text-muted-foreground">{t.lastRun}</p>
                 </>
               )}
             </div>
@@ -277,25 +241,23 @@ export default function BriefingRoom() {
               </div>
               <div>
                 <p className="text-xl font-bold">{decisionsWithoutImpact}</p>
-                <p className="text-xs text-muted-foreground">Sans impact mesuré</p>
+                <p className="text-xs text-muted-foreground">{t.withoutImpact}</p>
               </div>
             </CardContent>
           </Card>
         </Link>
       </div>
 
-      {/* Morning Digest automatique */}
+      {/* Morning Digest */}
       {morningDigest?.executive_summary ? (
         <Card className="card-executive border-primary/20 bg-primary/[0.02]">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
+              <div className="p-2 rounded-lg bg-primary/10"><Sparkles className="h-5 w-5 text-primary" /></div>
               <div>
-                <h3 className="font-semibold">Brief du jour</h3>
+                <h3 className="font-semibold">{t.briefToday}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {morningDigest.triggered_by === "manual" ? "Demandé manuellement" : "Généré automatiquement"} — {formatDistanceToNow(new Date(morningDigest.created_at), { addSuffix: true, locale: fr })}
+                  {morningDigest.triggered_by === "manual" ? t.triggeredManually : t.triggeredAuto} — {formatDistanceToNow(new Date(morningDigest.created_at), { addSuffix: true, locale })}
                 </p>
               </div>
             </div>
@@ -307,74 +269,42 @@ export default function BriefingRoom() {
       ) : (
         <Card className="card-executive border-dashed border-2 border-muted-foreground/20">
           <CardContent className="p-6 flex flex-col items-center text-center gap-4">
-            <div className="p-3 rounded-full bg-muted/50">
-              <Sparkles className="h-6 w-6 text-muted-foreground" />
-            </div>
+            <div className="p-3 rounded-full bg-muted/50"><Sparkles className="h-6 w-6 text-muted-foreground" /></div>
             <div>
-              <h3 className="font-semibold text-muted-foreground">Aucun brief généré aujourd'hui</h3>
-              <p className="text-sm text-muted-foreground/70 mt-1">
-                Le brief automatique est programmé chaque matin à 8h. Vous pouvez en demander un maintenant.
-              </p>
+              <h3 className="font-semibold text-muted-foreground">{t.noBrief}</h3>
+              <p className="text-sm text-muted-foreground/70 mt-1">{t.noBriefDesc}</p>
             </div>
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={handleBrief}
-              disabled={executeRun.isPending}
-            >
+            <Button variant="outline" className="gap-2" onClick={handleBrief} disabled={executeRun.isPending}>
               {executeRun.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Génération en cours…
-                </>
+                <><Loader2 className="h-4 w-4 animate-spin" />{t.generating}</>
               ) : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  Générer le brief maintenant
-                </>
+                <><Sparkles className="h-4 w-4" />{t.generateBrief}</>
               )}
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Décisions récentes du Journal */}
+      {/* Recent Decisions */}
       <RecentDecisionsWidget />
 
-      {/* Parcours guidé — 3 actions claires */}
+      {/* Quick Actions */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">Que souhaitez-vous faire ?</h2>
+        <h2 className="text-lg font-semibold mb-4">{t.whatToDo}</h2>
         <div className="grid gap-4 md:grid-cols-3">
-          {/* Action 1: Voir les plateformes */}
           <Link to="/hq/plateformes" className="block group">
             <Card className="card-executive h-full transition-all duration-200 group-hover:border-accent/50 group-hover:shadow-lg">
               <CardContent className="p-6 flex flex-col items-start gap-4">
-                <div className="p-3 rounded-xl bg-accent/10">
-                  <Layers className="h-6 w-6 text-accent" />
-                </div>
+                <div className="p-3 rounded-xl bg-accent/10"><Layers className="h-6 w-6 text-accent" /></div>
                 <div className="flex-1">
-                  <h3 className="font-semibold mb-1">Voir mes plateformes</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Consultez l'état de vos {totalPlatforms} plateformes en un coup d'oeil.
-                  </p>
+                  <h3 className="font-semibold mb-1">{t.viewPlatforms}</h3>
+                  <p className="text-sm text-muted-foreground">{t.viewPlatformsDesc(totalPlatforms)}</p>
                 </div>
                 <div className="flex items-center gap-2 w-full">
                   <div className="flex items-center gap-1.5 text-xs">
-                    {greenCount > 0 && (
-                      <span className="flex items-center gap-1 text-success">
-                        <CheckCircle className="h-3.5 w-3.5" /> {greenCount}
-                      </span>
-                    )}
-                    {amberCount > 0 && (
-                      <span className="flex items-center gap-1 text-warning">
-                        <AlertTriangle className="h-3.5 w-3.5" /> {amberCount}
-                      </span>
-                    )}
-                    {redCount > 0 && (
-                      <span className="flex items-center gap-1 text-destructive">
-                        <XCircle className="h-3.5 w-3.5" /> {redCount}
-                      </span>
-                    )}
+                    {greenCount > 0 && <span className="flex items-center gap-1 text-success"><CheckCircle className="h-3.5 w-3.5" /> {greenCount}</span>}
+                    {amberCount > 0 && <span className="flex items-center gap-1 text-warning"><AlertTriangle className="h-3.5 w-3.5" /> {amberCount}</span>}
+                    {redCount > 0 && <span className="flex items-center gap-1 text-destructive"><XCircle className="h-3.5 w-3.5" /> {redCount}</span>}
                   </div>
                   <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
@@ -382,7 +312,6 @@ export default function BriefingRoom() {
             </Card>
           </Link>
 
-          {/* Action 2: Approbations */}
           <Link to="/hq/approbations" className="block group">
             <Card className={`card-executive h-full transition-all duration-200 group-hover:border-accent/50 group-hover:shadow-lg ${pendingCount > 0 ? "border-warning/30" : ""}`}>
               <CardContent className="p-6 flex flex-col items-start gap-4">
@@ -390,48 +319,29 @@ export default function BriefingRoom() {
                   <CheckSquare className={`h-6 w-6 ${pendingCount > 0 ? "text-warning" : "text-success"}`} />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold mb-1">Mes décisions en attente</h3>
+                  <h3 className="font-semibold mb-1">{t.myPendingDecisions}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {pendingCount > 0
-                      ? `${pendingCount} action${pendingCount > 1 ? "s" : ""} nécessite${pendingCount > 1 ? "nt" : ""} votre validation.`
-                      : "Aucune décision en attente. Tout est à jour."
-                    }
+                    {pendingCount > 0 ? t.pendingActions(pendingCount) : t.noDecisionsPending}
                   </p>
                 </div>
                 <div className="flex items-center w-full">
-                  {pendingCount > 0 && (
-                    <Badge variant="destructive" className="text-xs">
-                      {pendingCount} en attente
-                    </Badge>
-                  )}
+                  {pendingCount > 0 && <Badge variant="destructive" className="text-xs">{t.pendingBadge(pendingCount)}</Badge>}
                   <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
               </CardContent>
             </Card>
           </Link>
 
-          {/* Action 3: Brief exécutif */}
           <button onClick={handleBrief} disabled={executeRun.isPending} className="block group text-left w-full">
             <Card className="card-executive h-full transition-all duration-200 group-hover:border-accent/50 group-hover:shadow-lg">
               <CardContent className="p-6 flex flex-col items-start gap-4">
-                <div className="p-3 rounded-xl bg-accent/10">
-                  <Sparkles className="h-6 w-6 text-accent" />
-                </div>
+                <div className="p-3 rounded-xl bg-accent/10"><Sparkles className="h-6 w-6 text-accent" /></div>
                 <div className="flex-1">
-                  <h3 className="font-semibold mb-1">Demander un brief IA</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Recevez un résumé intelligent de l'activité de toutes vos plateformes.
-                  </p>
+                  <h3 className="font-semibold mb-1">{t.askAIBrief}</h3>
+                  <p className="text-sm text-muted-foreground">{t.askAIBriefDesc}</p>
                 </div>
                 <div className="flex items-center w-full">
-                  {executeRun.isPending ? (
-                    <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      Génération en cours...
-                    </span>
-                  ) : (
-                    <span className="text-xs text-accent font-medium">Lancer le brief</span>
-                  )}
+                  {executeRun.isPending && <Badge variant="outline" className="text-xs gap-1"><Loader2 className="h-3 w-3 animate-spin" />{t.generating}</Badge>}
                   <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground group-hover:text-accent transition-colors" />
                 </div>
               </CardContent>
@@ -439,27 +349,6 @@ export default function BriefingRoom() {
           </button>
         </div>
       </div>
-
-      {/* Résumé santé — simple, 3 chiffres */}
-      <Card className="card-executive">
-        <CardContent className="p-6">
-          <h3 className="font-semibold mb-4">Santé de l'écosystème</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 rounded-xl bg-success/5 border border-success/20">
-              <div className="text-3xl font-bold text-success">{greenCount}</div>
-              <div className="text-sm text-muted-foreground mt-1">Opérationnelles</div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-warning/5 border border-warning/20">
-              <div className="text-3xl font-bold text-warning">{amberCount}</div>
-              <div className="text-sm text-muted-foreground mt-1">À surveiller</div>
-            </div>
-            <div className="text-center p-4 rounded-xl bg-destructive/5 border border-destructive/20">
-              <div className="text-3xl font-bold text-destructive">{redCount}</div>
-              <div className="text-sm text-muted-foreground mt-1">Critiques</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
