@@ -50,7 +50,7 @@ export const pricingTranslations = {
     subtitle: "Solutions tailored to every need, from free trials to custom enterprise packages.",
     summary: {
       title: "In brief",
-      text: "EMOTIONSCARE offers 10 SaaS platforms with tailored pricing models: freemium for individual users, monthly subscriptions for professionals, and custom pricing for institutions. Each platform has its own pricing plan because needs vary by sector.",
+      text: "EMOTIONSCARE offers 10 platforms with tailored pricing models: freemium for individual users, monthly subscriptions for professionals, and custom pricing for institutions. Each platform has its own pricing plan because needs vary by sector.",
     },
     whoIsItFor: {
       title: "Who are our platforms for?",
