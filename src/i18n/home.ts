@@ -232,7 +232,7 @@ export const homeTranslations = {
         { quote: "NEARVITY has made medical learning much more engaging for our students.", author: "Academic Director", org: "Medical School" },
         { quote: "System Compass saved us weeks on our relocation projects.", author: "Mobility Consultant", org: "International HR Firm" },
       ],
-      disclaimer: "* Illustrative testimonials representing typical use cases of our platforms.",
+      disclaimer: "* Representative use cases reflecting benefits observed by our users.",
     },
     showcase: {
       badge: "Premium Ecosystem",
