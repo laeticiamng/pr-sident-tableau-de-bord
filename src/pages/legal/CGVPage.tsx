@@ -28,7 +28,7 @@ export default function CGVPage() {
 
       <section className="py-16 md:py-20">
         <div className="container">
-          <div className="mx-auto max-w-3xl prose prose-slate">
+          <div className="mx-auto max-w-3xl prose prose-slate dark:prose-invert">
             {c.articles.map((article, i) => (
               <div key={i}>
                 <h2>{article.title}</h2>
