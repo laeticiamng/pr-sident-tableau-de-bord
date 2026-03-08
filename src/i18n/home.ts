@@ -59,9 +59,9 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plateformes",
-      evolutions: "Évolutions",
+      evolutions: "Mises à jour",
       madeInFrance: "Made in France",
-      monitoring: "Monitoring",
+      monitoring: "Surveillance",
     },
     cta: {
       title: "Explorez l'écosystème",
