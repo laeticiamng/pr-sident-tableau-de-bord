@@ -80,7 +80,9 @@ export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttrib
       </CardContent>
     </Card>
   );
-}
+});
+
+RecentDecisionsWidget.displayName = "RecentDecisionsWidget";
 
 function DecisionRow({ entry }: { entry: JournalEntry }) {
   const hasImpact = !!entry.impact_measured?.summary;
