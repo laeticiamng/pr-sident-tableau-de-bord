@@ -142,7 +142,9 @@ export default function StatusPage() {
             <div className="flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-green" /><span className="text-sm font-medium">{plateformesProduction.length} {t.summary.inProduction}</span></div>
               <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-amber" /><span className="text-sm font-medium">{plateformesPrototype.length} {t.summary.prototypes}</span></div>
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-red" /><span className="text-sm font-medium">{incidentCount ?? 0} {t.summary.incidents}</span></div>
+              {user && incidentCount !== null && incidentCount > 0 && (
+                <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-status-red" /><span className="text-sm font-medium">{incidentCount} {t.summary.incidents}</span></div>
+              )}
             </div>
             {user && (
               <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshMonitor.isPending}>

@@ -236,7 +236,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                           )}
                         >
                           {s.visit}
-                          <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
+                          <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
                         </a>
                       </div>
                     </div>

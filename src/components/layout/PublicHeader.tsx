@@ -96,10 +96,10 @@ export function PublicHeader() {
       <div 
         className={cn(
           "md:hidden overflow-hidden transition-all duration-300 ease-in-out",
-          mobileMenuOpen ? "max-h-80 border-t" : "max-h-0"
+          mobileMenuOpen ? "max-h-[500px] border-t" : "max-h-0"
         )}
       >
-        <nav className="container py-4 px-4 flex flex-col gap-2 bg-background">
+        <nav className="container py-4 px-4 flex flex-col gap-2 bg-background/95 backdrop-blur-lg">
           {navLinks.map((link) => (
             <Link
               key={link.href}
