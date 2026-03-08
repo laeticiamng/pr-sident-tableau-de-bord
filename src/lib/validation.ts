@@ -51,7 +51,8 @@ export function getNameSchema() {
 export function getPhoneSchema() {
   const m = t().phone;
   return z.string().trim()
-    .regex(/^\+?[1-9]\d{6,14}$/, m.invalid)
+    .transform((val) => val.replace(/[\s\-().]/g, ""))
+    .pipe(z.string().regex(/^\+?[1-9]\d{6,14}$/, m.invalid))
     .optional()
     .or(z.literal(""));
 }
