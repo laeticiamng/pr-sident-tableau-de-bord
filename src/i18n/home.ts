@@ -367,9 +367,9 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plattformen",
-      evolutions: "Entwicklungen",
+      evolutions: "Aktualisierungen",
       madeInFrance: "Made in France",
-      monitoring: "Monitoring",
+      monitoring: "Verfügbarkeit",
     },
     cta: {
       title: "Das Ökosystem erkunden",
