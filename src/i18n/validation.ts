@@ -47,6 +47,9 @@ export const validationTranslations = {
     runType: {
       invalid: "Type de run invalide",
     },
+    consent: {
+      required: "Vous devez accepter la politique de confidentialité",
+    },
   },
   en: {
     email: {
@@ -96,6 +99,9 @@ export const validationTranslations = {
     runType: {
       invalid: "Invalid run type",
     },
+    consent: {
+      required: "You must accept the privacy policy",
+    },
   },
   de: {
     email: {
@@ -144,6 +150,9 @@ export const validationTranslations = {
     },
     runType: {
       invalid: "Ungültiger Run-Typ",
+    },
+    consent: {
+      required: "Sie müssen die Datenschutzrichtlinie akzeptieren",
     },
   },
 } as const;

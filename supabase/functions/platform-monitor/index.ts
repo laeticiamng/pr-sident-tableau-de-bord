@@ -117,7 +117,7 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    console.log(`[Platform Monitor] Authenticated user: ${userId}`);
+    // userId authenticated
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Platform Monitor] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================

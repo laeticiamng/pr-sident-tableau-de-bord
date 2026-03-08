@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -30,9 +31,9 @@ export default function ContactPage() {
     canonicalPath: "/contact",
   });
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormData>({
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<ContactFormData>({
     resolver: zodResolver(getContactSchema()),
-    defaultValues: { name: "", email: "", phone: "", subject: "", message: "" },
+    defaultValues: { name: "", email: "", phone: "", subject: "", message: "", consent: false as unknown as true },
   });
 
   const onSubmit = async (data: ContactFormData) => {
@@ -106,6 +107,24 @@ export default function ContactPage() {
                   <Label htmlFor="message">{t.form.messageLabel}</Label>
                   <Textarea id="message" placeholder={t.form.messagePlaceholder} rows={5} {...register("message")} aria-invalid={!!errors.message} className={errors.message ? "border-destructive" : ""} />
                   {errors.message && <p className="text-xs text-destructive">{errors.message.message}</p>}
+                </div>
+                <div className="flex items-start gap-3">
+                  <input type="checkbox" id="consent" className="hidden" {...register("consent")} />
+                  <Checkbox
+                    id="consent-visual"
+                    checked={watch("consent") as unknown as boolean}
+                    onCheckedChange={(checked) => setValue("consent", checked as unknown as true, { shouldValidate: true })}
+                    aria-invalid={!!errors.consent}
+                  />
+                  <div className="grid gap-1 leading-none">
+                    <Label htmlFor="consent" className="text-sm font-normal text-muted-foreground cursor-pointer">
+                      {t.form.consentLabel}{" "}
+                      <a href="/legal/confidentialite" target="_blank" rel="noopener noreferrer" className="text-accent underline hover:no-underline">
+                        {t.form.consentLink}
+                      </a> *
+                    </Label>
+                    {errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
+                  </div>
                 </div>
                 <Button type="submit" variant="executive" size="lg" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />{t.form.submitting}</>) : t.form.submit}

@@ -280,7 +280,7 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    console.log(`[Platform Analysis] Authenticated user: ${userId}`);
+    // userId authenticated
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -297,7 +297,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`[Platform Analysis] User ${userId} authorized as owner`);
+    // owner role verified
     // ============================================
 
     const { platform_key, analysis_type = "full" }: AnalysisRequest = await req.json();

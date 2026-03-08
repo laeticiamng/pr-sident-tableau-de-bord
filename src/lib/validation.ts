@@ -126,12 +126,14 @@ export function getSignupSchema() {
 
 export function getContactSchema() {
   const m = t().subject;
+  const consent = t().consent;
   return z.object({
     name: getNameSchema(),
     email: getEmailSchema(),
     phone: getPhoneSchema(),
     subject: z.string().trim().min(1, m.required).max(200, m.tooLong),
     message: getMessageSchema(),
+    consent: z.literal(true, { errorMap: () => ({ message: consent.required }) }),
   });
 }
 

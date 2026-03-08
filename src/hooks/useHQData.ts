@@ -182,7 +182,7 @@ export function usePendingApprovals() {
 }
 
 // Hook: Fetch recent runs
-export function useRecentRuns(limit = 10) {
+export function useRecentRuns(limit = 10, enabled = true) {
   return useQuery({
     queryKey: ["hq", "runs", "recent", limit],
     queryFn: async () => {
@@ -195,11 +195,12 @@ export function useRecentRuns(limit = 10) {
 
       return (data as Run[]) || [];
     },
+    enabled,
   });
 }
 
 // Hook: Fetch audit logs
-export function useAuditLogs(limit = 50) {
+export function useAuditLogs(limit = 50, enabled = true) {
   return useQuery({
     queryKey: ["hq", "audit_logs", limit],
     queryFn: async () => {
@@ -212,6 +213,7 @@ export function useAuditLogs(limit = 50) {
 
       return (data as AuditLog[]) || [];
     },
+    enabled,
   });
 }
 

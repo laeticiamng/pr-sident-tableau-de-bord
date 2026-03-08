@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
+import { useCanAccessModule } from "@/hooks/usePermissions";
 
 // Items principaux — toujours visibles
 const mainLinks = [
@@ -88,9 +89,7 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
   const location = useLocation();
   const { signOut } = useAuth();
   const { data: pendingApprovals } = usePendingApprovals();
-  const { data: recentRuns } = useRecentRuns(50);
   const { data: platforms } = usePlatforms();
-  const { data: auditLogs } = useAuditLogs(50);
   const { data: unreadMessagesCount } = useQuery({
     queryKey: ["contact-messages-unread-count"],
     queryFn: async () => {
@@ -104,6 +103,12 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
     refetchInterval: 30_000,
   });
   const [showMore, setShowMore] = useState(false);
+
+  const isExpanded = showMore || allSecondaryLinks.some(link => location.pathname === link.href);
+
+  // Lazy-load heavy queries only when sidebar section is expanded
+  const { data: recentRuns } = useRecentRuns(50, isExpanded);
+  const { data: auditLogs } = useAuditLogs(50, isExpanded);
 
   const pendingCount = pendingApprovals?.length || 0;
   const failedRunsCount = recentRuns?.filter(r => {
@@ -120,13 +125,9 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
     return Date.now() - d.getTime() < 24 * 3600 * 1000;
   }).length || 0;
 
-  const isOnSecondaryPage = allSecondaryLinks.some(link => location.pathname === link.href);
-
   const handleLinkClick = () => {
     if (onClose) onClose();
   };
-
-  const isExpanded = showMore || isOnSecondaryPage;
 
   return (
     <>
