@@ -169,6 +169,7 @@ export const homeTranslations = {
       title: "Platforms that",
       titleAccent: "make a difference",
       subtitle: "Each platform is built to solve a real problem in healthcare, education and international mobility",
+      viewAll: "View all our solutions",
       items: [
         {
           title: "Healthcare Worker Wellbeing",
