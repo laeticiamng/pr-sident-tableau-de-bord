@@ -31,7 +31,7 @@ export default function ContactPage() {
     canonicalPath: "/contact",
   });
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormData>({
+  const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<ContactFormData>({
     resolver: zodResolver(getContactSchema()),
     defaultValues: { name: "", email: "", phone: "", subject: "", message: "", consent: false as unknown as true },
   });
