@@ -53,6 +53,7 @@ export default function HQPlateformesPage() {
   const { data: platforms, isLoading, refetch } = usePlatforms();
   const executeRun = useExecuteRun();
   const [preparingRelease, setPreparingRelease] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [analysisDialogOpen, setAnalysisDialogOpen] = useState(false);
   const [selectedPlatformForAnalysis, setSelectedPlatformForAnalysis] = useState<{
     key: string;
