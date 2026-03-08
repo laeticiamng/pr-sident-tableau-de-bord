@@ -125,13 +125,9 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
     return Date.now() - d.getTime() < 24 * 3600 * 1000;
   }).length || 0;
 
-  const isOnSecondaryPage = allSecondaryLinks.some(link => location.pathname === link.href);
-
   const handleLinkClick = () => {
     if (onClose) onClose();
   };
-
-  const isExpanded = showMore || isOnSecondaryPage;
 
   return (
     <>
