@@ -13,7 +13,7 @@ export const commonTranslations = {
       closeMenu: "Fermer le menu",
     },
     footer: {
-      description: "Éditeur français de 10 plateformes SaaS innovantes. Basé à Amiens.",
+      description: "Éditeur français de 10 plateformes innovantes. Basé à Amiens.",
       navigation: "Navigation",
       legal: "Légal",
       legalNotice: "Mentions légales",
