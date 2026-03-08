@@ -244,6 +244,18 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                          {pt[platform.key]?.shortDescription ?? platform.shortDescription}
                        </p>
 
+                      {/* Preview screenshot */}
+                      {platformPreviews[platform.key] && (
+                        <div className="hidden md:block mb-3 md:mb-4 rounded-lg overflow-hidden border border-border/30">
+                          <img 
+                            src={platformPreviews[platform.key]} 
+                            alt={platform.name}
+                            className="w-full h-24 lg:h-32 object-cover object-top opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
                         <span>{platform.stats.modules} {s.modulesLabel}</span>
                         <span className="hidden md:inline">•</span>
