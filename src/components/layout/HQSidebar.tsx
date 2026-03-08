@@ -29,6 +29,7 @@ import {
   Scale,
   BookOpen,
   Search,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
@@ -42,6 +43,7 @@ const mainLinks = [
   { href: "/hq/journal", label: "Journal", icon: BookOpen },
   { href: "/hq/cockpit", label: "Cockpit", icon: Gauge },
   { href: "/hq/messages", label: "Messages", icon: Mail, showMessagesBadge: true },
+  { href: "/hq/utilisateurs", label: "Utilisateurs", icon: Users },
   { href: "/hq/settings", label: "Paramètres", icon: Settings },
 ];
 
