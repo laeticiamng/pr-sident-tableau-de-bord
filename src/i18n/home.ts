@@ -14,6 +14,7 @@ export const homeTranslations = {
       title: "Des plateformes qui",
       titleAccent: "changent la donne",
       subtitle: "Chaque plateforme est conçue pour résoudre un problème concret dans la santé, l'éducation et l'international",
+      viewAll: "Voir toutes nos solutions",
       items: [
         {
           title: "Bien-être des soignants",
