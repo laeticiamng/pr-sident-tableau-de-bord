@@ -3,6 +3,17 @@ import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+const errorTexts = {
+  fr: { title: "Une erreur est survenue", desc: "L'application a rencontré un problème inattendu. Veuillez réessayer ou retourner à l'accueil.", retry: "Réessayer", home: "Accueil", support: "Si le problème persiste, contactez le support technique." },
+  en: { title: "An error occurred", desc: "The application encountered an unexpected problem. Please try again or go back to the home page.", retry: "Try again", home: "Home", support: "If the problem persists, contact technical support." },
+  de: { title: "Ein Fehler ist aufgetreten", desc: "Die Anwendung hat ein unerwartetes Problem festgestellt. Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.", retry: "Erneut versuchen", home: "Startseite", support: "Wenn das Problem weiterhin besteht, wenden Sie sich an den technischen Support." },
+} as const;
+
+function getErrorTexts() {
+  const lang = (typeof localStorage !== "undefined" && localStorage.getItem("preferred-lang")) || "fr";
+  return errorTexts[lang as keyof typeof errorTexts] || errorTexts.fr;
+}
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
@@ -53,6 +64,8 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
+      const t = getErrorTexts();
+
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-background">
           <Card className="max-w-lg w-full border-destructive/20">
@@ -60,13 +73,10 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="mx-auto mb-4 p-3 rounded-full bg-destructive/10 w-fit">
                 <AlertTriangle className="h-8 w-8 text-destructive" />
               </div>
-              <CardTitle className="text-xl">Une erreur est survenue</CardTitle>
-              <CardDescription>
-                L'application a rencontré un problème inattendu. Veuillez réessayer ou retourner à l'accueil.
-              </CardDescription>
+              <CardTitle className="text-xl">{t.title}</CardTitle>
+              <CardDescription>{t.desc}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Error Details (Development Only) */}
               {import.meta.env.DEV && this.state.error && (
                 <div className="p-4 rounded-lg bg-destructive/5 border border-destructive/20">
                   <p className="font-mono text-sm text-destructive mb-2">
@@ -80,30 +90,18 @@ export class ErrorBoundary extends Component<Props, State> {
                 </div>
               )}
 
-              {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  variant="default" 
-                  onClick={this.handleRetry}
-                  className="flex-1"
-                >
+                <Button variant="default" onClick={this.handleRetry} className="flex-1">
                   <RefreshCw className="h-4 w-4 mr-2" />
-                  Réessayer
+                  {t.retry}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={this.handleGoHome}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={this.handleGoHome} className="flex-1">
                   <Home className="h-4 w-4 mr-2" />
-                  Accueil
+                  {t.home}
                 </Button>
               </div>
 
-              {/* Support Info */}
-              <p className="text-xs text-center text-muted-foreground">
-                Si le problème persiste, contactez le support technique.
-              </p>
+              <p className="text-xs text-center text-muted-foreground">{t.support}</p>
             </CardContent>
           </Card>
         </div>
