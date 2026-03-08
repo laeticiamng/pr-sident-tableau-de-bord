@@ -50,7 +50,6 @@ export const validationTranslations = {
     consent: {
       required: "Vous devez accepter la politique de confidentialité",
     },
-    },
   },
   en: {
     email: {
