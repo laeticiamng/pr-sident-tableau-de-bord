@@ -5,7 +5,7 @@ export const pricingTranslations = {
     subtitle: "Des solutions adaptées à chaque besoin, de l'essai gratuit à l'accompagnement sur mesure.",
     summary: {
       title: "En bref",
-      text: "EMOTIONSCARE propose 10 plateformes SaaS avec des modèles tarifaires adaptés : freemium pour les utilisateurs individuels, abonnements mensuels pour les professionnels, et tarifs sur mesure pour les établissements. Chaque plateforme a son propre plan tarifaire car les besoins varient selon le secteur.",
+      text: "EMOTIONSCARE propose 10 plateformes avec des modèles tarifaires adaptés : freemium pour les utilisateurs individuels, abonnements mensuels pour les professionnels, et tarifs sur mesure pour les établissements. Chaque plateforme a son propre plan tarifaire car les besoins varient selon le secteur.",
     },
     whoIsItFor: {
       title: "À qui s'adressent nos plateformes ?",
