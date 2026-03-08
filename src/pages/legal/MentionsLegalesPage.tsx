@@ -44,7 +44,7 @@ export default function MentionsLegalesPage() {
             <table className="w-full text-sm">
               <tbody>
                 <tr><td className="font-medium py-2">{t.mentions.hostingFields.host}</td><td className="py-2">Lovable (Gptengineer, Inc.)</td></tr>
-                <tr><td className="font-medium py-2">{t.mentions.hostingFields.infrastructure}</td><td className="py-2">Amazon Web Services (AWS) via Supabase — Région eu-west (Irlande, UE)</td></tr>
+                <tr><td className="font-medium py-2">{t.mentions.hostingFields.infrastructure}</td><td className="py-2">Amazon Web Services (AWS) — Région eu-west (Irlande, UE)</td></tr>
                 <tr><td className="font-medium py-2">{t.mentions.hostingFields.cdn}</td><td className="py-2">Netlify / Cloudflare Pages</td></tr>
                 <tr><td className="font-medium py-2">{t.mentions.hostingFields.contact}</td><td className="py-2">support@lovable.dev</td></tr>
               </tbody>
