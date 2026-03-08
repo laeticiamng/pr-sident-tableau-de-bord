@@ -157,7 +157,7 @@ export function MobileBriefing() {
 
 // ── Compact Decisions Widget (Mobile) ────────────────────────────────
 
-function CompactDecisions({ t, locale }: { t: ReturnType<typeof useTranslation<typeof briefingTranslations>>; locale: Locale }) {
+function CompactDecisions({ t, locale }: { t: any; locale: any }) {
   const { data: entries, isLoading } = useJournalEntries();
   const recent = (entries || []).slice(0, 2);
 
