@@ -18,11 +18,14 @@ import {
   GitCommit,
   TestTube2,
   Database,
-  Brain
+  Brain,
+  LayoutGrid,
+  List
 } from "lucide-react";
 import { usePlatforms, useExecuteRun } from "@/hooks/useHQData";
 import { MultiPlatformUptimeChart } from "@/components/hq/platforms/MultiPlatformUptimeChart";
 import { PlatformAnalysisDialog } from "@/components/hq/platforms/PlatformAnalysisDialog";
+import { PlatformPreviewCard } from "@/components/hq/platforms/PlatformPreviewCard";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 
