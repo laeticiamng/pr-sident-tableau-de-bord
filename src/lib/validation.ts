@@ -166,19 +166,11 @@ export const approvalSchema = z.object({
   reason: z.string().trim().max(500, "La raison ne peut pas dépasser 500 caractères").optional(),
 });
 
-// Platform key validation
-export const platformKeySchema = z.enum([
-  "emotionscare",
-  "nearvity",
-  "system-compass",
-  "growth-copilot",
-  "med-mng",
-  "swift-care-hub",
-  "track-triumph-tavern",
-  "trust-seal-chain",
-  "studybeats",
-  "vascular-atlas",
-], {
+// Platform key validation — derived from MANAGED_PLATFORMS to stay in sync
+import { MANAGED_PLATFORMS } from "@/lib/constants";
+
+const PLATFORM_KEYS = MANAGED_PLATFORMS.map((p) => p.key) as unknown as readonly [string, ...string[]];
+export const platformKeySchema = z.enum(PLATFORM_KEYS, {
   errorMap: () => ({ message: "Plateforme invalide" }),
 });
 

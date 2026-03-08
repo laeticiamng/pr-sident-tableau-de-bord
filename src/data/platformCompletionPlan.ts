@@ -80,7 +80,7 @@ export const DELIVERY_PHASES: DeliveryPhase[] = [
     phase: "Phase 1 — Finalisation cockpit",
     objectif: "Avoir un cockpit présidentiel entièrement exploitable en production Lovable.",
     livrables: [
-      "KPI harmonisés des 8 plateformes (uptime, utilisateurs, alertes)",
+      "KPI harmonisés des 10 plateformes (uptime, utilisateurs, alertes)",
       "Rapport quotidien IA consolidé et historisé",
       "Validation présidentielle unifiée (approuver/rejeter + journal RGPD)",
     ],
