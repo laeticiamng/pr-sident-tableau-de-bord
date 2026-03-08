@@ -155,6 +155,5 @@ export const validationTranslations = {
     consent: {
       required: "Sie müssen die Datenschutzrichtlinie akzeptieren",
     },
-    },
   },
 } as const;
