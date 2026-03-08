@@ -280,7 +280,7 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    console.log(`[Platform Analysis] Authenticated user: ${userId}`);
+    // userId authenticated
 
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
