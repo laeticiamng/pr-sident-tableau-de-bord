@@ -5,9 +5,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon, Monitor, Contrast } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ThemeToggleProps {
@@ -17,7 +18,7 @@ interface ThemeToggleProps {
 
 export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
   function ThemeToggle({ className, variant = "default" }, ref) {
-    const { theme, setTheme, resolvedTheme } = useTheme();
+    const { theme, setTheme, resolvedTheme, monochrome, setMonochrome } = useTheme();
 
     if (variant === "minimal") {
       return (
@@ -46,8 +47,14 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             className={cn("h-9 w-9 relative overflow-hidden", className)}
             aria-label="Sélectionner un thème"
           >
-            <Sun className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
-            <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
+            {monochrome ? (
+              <Contrast className="h-4 w-4" />
+            ) : (
+              <>
+                <Sun className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-0 scale-100 dark:-rotate-90 dark:scale-0" />
+                <Moon className="h-4 w-4 absolute transition-all duration-300 ease-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
+              </>
+            )}
             <span className="sr-only">Changer de thème</span>
           </Button>
         </DropdownMenuTrigger>
@@ -75,6 +82,15 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(
             <Monitor className="h-4 w-4" />
             <span>Système</span>
             {theme === "system" && <span className="ml-auto text-accent">✓</span>}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            onClick={() => setMonochrome(!monochrome)} 
+            className="gap-2 cursor-pointer"
+          >
+            <Contrast className="h-4 w-4" />
+            <span>Monochrome</span>
+            {monochrome && <span className="ml-auto text-accent">✓</span>}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
