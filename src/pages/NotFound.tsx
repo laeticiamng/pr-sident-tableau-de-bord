@@ -7,7 +7,6 @@ import { useTranslation } from "@/contexts/LanguageContext";
 import { notFoundTranslations } from "@/i18n/notfound";
 
 const NotFound = () => {
-  const location = useLocation();
   const t = useTranslation(notFoundTranslations);
 
   usePageMeta({ title: t.title, noindex: true });
