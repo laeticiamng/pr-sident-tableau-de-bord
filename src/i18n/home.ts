@@ -3,9 +3,9 @@ export const homeTranslations = {
     hero: {
       badge: "Éditeur de logiciels SaaS",
       madeIn: "🇫🇷 Made in France",
-      title: "EMOTIONSCARE",
-      subtitle: "Des logiciels qui transforment la santé et l'éducation",
-      description: "10 plateformes SaaS pour les professionnels de santé, les étudiants en médecine, les expatriés et les entrepreneurs. Conçues en France, utilisées partout.",
+      title: "La santé et l'éducation méritent de meilleurs logiciels",
+      subtitle: "10 plateformes conçues en France pour les soignants, étudiants, expatriés et entrepreneurs",
+      description: "Bien-être émotionnel, apprentissage médical, relocalisation internationale, croissance par l'IA — chaque plateforme résout un problème concret.",
       cta: "Découvrir les plateformes",
       ctaContact: "Demander une démo",
     },
