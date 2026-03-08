@@ -100,6 +100,10 @@ export const validationTranslations = {
     runType: {
       invalid: "Invalid run type",
     },
+    consent: {
+      required: "You must accept the privacy policy",
+    },
+    },
   },
   de: {
     email: {
