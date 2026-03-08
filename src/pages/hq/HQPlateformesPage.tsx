@@ -150,7 +150,49 @@ export default function HQPlateformesPage() {
       {/* Multi-Platform Uptime Chart */}
       <MultiPlatformUptimeChart />
 
-      {/* Platform Selector */}
+      {/* View Mode Toggle + Platform Selector */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Aperçu des Plateformes</h2>
+        <div className="flex items-center gap-1 border rounded-lg p-0.5">
+          <Button
+            variant={viewMode === "grid" ? "default" : "ghost"}
+            size="sm"
+            className="h-7 w-7 p-0"
+            onClick={() => setViewMode("grid")}
+          >
+            <LayoutGrid className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "default" : "ghost"}
+            size="sm"
+            className="h-7 w-7 p-0"
+            onClick={() => setViewMode("list")}
+          >
+            <List className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Visual Preview Grid — 21st.dev style */}
+      {viewMode === "grid" && selectedPlatform === "all" && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {isLoading ? (
+            Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-video rounded-xl" />
+            ))
+          ) : (
+            platforms?.map((platform) => (
+              <PlatformPreviewCard
+                key={platform.key}
+                platform={platform}
+                onSelect={(key) => setSearchParams({ platform: key })}
+              />
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Platform Selector Tabs */}
       <Tabs 
         value={selectedPlatform} 
         onValueChange={(v) => setSearchParams({ platform: v })}
