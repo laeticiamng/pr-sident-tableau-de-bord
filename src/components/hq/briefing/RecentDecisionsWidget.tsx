@@ -21,7 +21,7 @@ const typeColors: Record<string, string> = {
   reflection: "bg-primary/10 text-primary",
 };
 
-export function RecentDecisionsWidget() {
+export const RecentDecisionsWidget = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>((props, ref) => {
   const { data: entries, isLoading } = useJournalEntries();
 
   const recent = (entries || []).slice(0, 3);
