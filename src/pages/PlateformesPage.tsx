@@ -244,15 +244,15 @@ export default function PlateformesPage() {
                       </div>
 
                       <p className={cn("text-base md:text-lg font-medium mb-3", platformAccents[platform.key])}>
-                        "{platform.tagline}"
+                        "{pt[platform.key]?.tagline ?? platform.tagline}"
                       </p>
 
                       <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-5">
-                        {platform.description}
+                        {pt[platform.key]?.description ?? platform.description}
                       </p>
 
                       <div className="flex flex-wrap gap-2 mb-6">
-                        {platform.features.map((feature) => (
+                        {(pt[platform.key]?.features ?? platform.features).map((feature) => (
                           <span 
                             key={feature}
                             className="px-2.5 py-1 text-xs font-medium bg-secondary/80 rounded-full border border-border/50 transition-colors duration-300 hover:border-accent/30"
