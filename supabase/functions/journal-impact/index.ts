@@ -144,7 +144,7 @@ Deno.serve(async (req: Request) => {
       })),
     };
 
-    const systemPrompt = `Tu es l'analyste stratégique en chef d'EMOTIONSCARE SASU, un éditeur de logiciels SaaS français.
+    const systemPrompt = `Tu es l'analyste stratégique en chef d'EMOTIONSCARE SASU, un éditeur de logiciels français.
 
 Ta mission : analyser l'IMPACT RÉEL d'une décision présidentielle en comparant les KPIs et l'état du système avant et après la date de la décision.
 

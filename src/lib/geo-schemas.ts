@@ -25,7 +25,7 @@ export function buildOrganizationSchema() {
     legalName: COMPANY_PROFILE.legalName,
     url: "https://president-cockpit-hq.lovable.app",
     description:
-      "Éditeur français de 10 logiciels SaaS spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, mémorisation musicale par les neurosciences, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale, gouvernance IA et médecine vasculaire.",
+      "Éditeur français de 10 logiciels spécialisés : santé émotionnelle des soignants, apprentissage médical par la musique, mémorisation musicale par les neurosciences, relocalisation internationale, automatisation IA, connexion sociale étudiante, urgences hospitalières, compétition musicale, gouvernance IA et médecine vasculaire.",
     foundingDate: "2025-05-07",
     founder: {
       "@type": "Person",
@@ -49,7 +49,7 @@ export function buildOrganizationSchema() {
     },
     numberOfEmployees: { "@type": "QuantitativeValue", value: 1 },
     knowsAbout: [
-      "SaaS",
+      "Logiciels applicatifs",
       "Intelligence artificielle appliquée",
       "Santé mentale des soignants",
       "EdTech médicale",
@@ -281,7 +281,7 @@ export function buildPlatformItemListSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Plateformes SaaS EMOTIONSCARE",
+    name: "Plateformes EMOTIONSCARE",
     description:
       `Les ${MANAGED_PLATFORMS.length} plateformes logicielles éditées par EMOTIONSCARE SASU, couvrant la santé, l'éducation, l'international, l'automatisation et le divertissement.`,
     numberOfItems: MANAGED_PLATFORMS.length,
