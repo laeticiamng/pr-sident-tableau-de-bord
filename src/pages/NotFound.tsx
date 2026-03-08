@@ -28,7 +28,7 @@ const NotFound = () => {
           {t.title}
         </h1>
         
-        <p className="text-muted-foreground text-lg mb-2">
+        <p className="text-muted-foreground text-lg mb-8">
           {t.hint}
         </p>
         

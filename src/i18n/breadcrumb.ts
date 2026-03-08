@@ -32,6 +32,7 @@ export const breadcrumbTranslations = {
     cookies: "Cookies",
   },
   de: {
+    ariaLabel: "Brotkrümelnavigation",
     home: "Startseite",
     platforms: "Plattformen",
     vision: "Vision & Werte",
