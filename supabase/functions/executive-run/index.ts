@@ -587,7 +587,7 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-    console.log(`[Executive Run] Authenticated user: ${userId}`);
+    // userId authenticated
 
     // Create admin client for privileged operations
     const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
