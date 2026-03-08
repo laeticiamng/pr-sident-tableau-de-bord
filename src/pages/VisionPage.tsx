@@ -6,6 +6,7 @@ import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { getVisionPageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { visionTranslations } from "@/i18n/vision";
 
 const VALUE_ICONS = [Target, Lightbulb, Heart, TrendingUp];
