@@ -30,6 +30,7 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
     const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
     const t = useTranslation(homeTranslations);
     const s = t.showcase;
+    const pt = s.platforms as Record<string, { tagline: string; shortDescription: string; description: string }>;
 
     return (
       <section ref={ref} className="py-16 sm:py-24 md:py-32 lg:py-40 bg-background relative overflow-hidden" {...props}>
