@@ -137,21 +137,21 @@ const App = () => (
                     <Route path="/hq/historique" element={<HistoriquePage />} />
                     
                     {/* Fonctions */}
-                    <Route path="/hq/securite" element={<SecuritePage />} />
-                    <Route path="/hq/marketing" element={<MarketingPage />} />
-                    <Route path="/hq/ventes" element={<VentesPage />} />
-                    <Route path="/hq/finance" element={<FinancePage />} />
-                    <Route path="/hq/produit" element={<ProduitPage />} />
-                    <Route path="/hq/engineering" element={<EngineeringPage />} />
-                    <Route path="/hq/support" element={<SupportPage />} />
+                    <Route path="/hq/securite" element={<ModuleGuard module="security"><SecuritePage /></ModuleGuard>} />
+                    <Route path="/hq/marketing" element={<ModuleGuard module="marketing"><MarketingPage /></ModuleGuard>} />
+                    <Route path="/hq/ventes" element={<ModuleGuard module="sales"><VentesPage /></ModuleGuard>} />
+                    <Route path="/hq/finance" element={<ModuleGuard module="finance"><FinancePage /></ModuleGuard>} />
+                    <Route path="/hq/produit" element={<ModuleGuard module="product"><ProduitPage /></ModuleGuard>} />
+                    <Route path="/hq/engineering" element={<ModuleGuard module="engineering"><EngineeringPage /></ModuleGuard>} />
+                    <Route path="/hq/support" element={<ModuleGuard module="support"><SupportPage /></ModuleGuard>} />
                     <Route path="/hq/veille" element={<VeillePage />} />
 
                     {/* Gouvernance */}
-                    <Route path="/hq/audit" element={<AuditPage />} />
+                    <Route path="/hq/audit" element={<ModuleGuard module="audit"><AuditPage /></ModuleGuard>} />
                     <Route path="/hq/entreprise" element={<EntreprisePage />} />
-                    <Route path="/hq/diagnostics" element={<DiagnosticsPage />} />
-                    <Route path="/hq/rh" element={<RHPage />} />
-                    <Route path="/hq/conformite" element={<ConformitePage />} />
+                    <Route path="/hq/diagnostics" element={<ModuleGuard module="diagnostics"><DiagnosticsPage /></ModuleGuard>} />
+                    <Route path="/hq/rh" element={<ModuleGuard module="hr"><RHPage /></ModuleGuard>} />
+                    <Route path="/hq/conformite" element={<ModuleGuard module="compliance"><ConformitePage /></ModuleGuard>} />
                     <Route path="/hq/data" element={<DataAnalyticsPage />} />
                     <Route path="/hq/settings" element={<SettingsPage />} />
                     <Route path="/hq/agents-monitoring" element={<AgentsMonitoringPage />} />
