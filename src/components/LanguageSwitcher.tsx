@@ -8,6 +8,7 @@ import { useState } from "react";
 
 export function LanguageSwitcher({ className }: { className?: string }) {
   const { language, setLanguage } = useLanguage();
+  const t = useTranslation(themeTranslations);
   const [open, setOpen] = useState(false);
   const current = LANGUAGES.find((l) => l.code === language)!;
 
