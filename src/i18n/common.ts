@@ -63,6 +63,8 @@ export const commonTranslations = {
       security: "Sicherheit",
       contact: "Kontakt",
       login: "Anmelden",
+      openMenu: "Menü öffnen",
+      closeMenu: "Menü schließen",
     },
     footer: {
       description: "Französischer Herausgeber von 10 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
