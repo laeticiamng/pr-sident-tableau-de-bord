@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity } from "lucide-react";
+import { Shield, Lock, Eye, Server, FileCheck, ExternalLink, CheckCircle2, Activity, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -137,7 +137,7 @@ export default function TrustPage() {
                   <h3 className="font-semibold mb-2">{item.title}</h3>
                   <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
                   <Link to={complianceLinks[i]} className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
-                    {item.linkLabel}<ExternalLink className="h-3.5 w-3.5" />
+                    {item.linkLabel}<ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </CardContent>
               </Card>

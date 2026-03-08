@@ -29,6 +29,7 @@ export const authTranslations = {
     forgotCancel: "Annuler",
     forgotSend: "Envoyer",
     forgotClose: "Fermer",
+    backToHome: "Retour à l'accueil",
     // Right panel
     panelBadge: "Éditeur de logiciels SaaS",
     panelTitle: "EMOTIONSCARE",
@@ -81,6 +82,7 @@ export const authTranslations = {
     forgotCancel: "Cancel",
     forgotSend: "Send",
     forgotClose: "Close",
+    backToHome: "Back to home",
     panelBadge: "SaaS Software Publisher",
     panelTitle: "EMOTIONSCARE",
     panelSubtitle: "EMOTIONSCARE SASU — SaaS Software Publisher",
@@ -131,6 +133,7 @@ export const authTranslations = {
     forgotCancel: "Abbrechen",
     forgotSend: "Senden",
     forgotClose: "Schließen",
+    backToHome: "Zurück zur Startseite",
     panelBadge: "SaaS-Softwareherausgeber",
     panelTitle: "EMOTIONSCARE",
     panelSubtitle: "EMOTIONSCARE SASU — SaaS-Softwareherausgeber",

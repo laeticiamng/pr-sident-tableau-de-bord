@@ -192,7 +192,7 @@ export default function StatusPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {t.legend.items.map((item) => (
                 <div key={item.color} className="flex items-center gap-3 p-4 rounded-xl bg-secondary/30 border border-border/50">
-                  <div className={`w-3 h-3 rounded-full bg-status-${item.color}`} />
+                  <div className={`w-3 h-3 rounded-full ${item.color === 'green' ? 'bg-status-green' : item.color === 'amber' ? 'bg-status-amber' : 'bg-status-red'}`} />
                   <div>
                     <div className="text-sm font-medium">{item.label}</div>
                     <div className="text-xs text-muted-foreground">{item.description}</div>
