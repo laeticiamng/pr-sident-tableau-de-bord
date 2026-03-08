@@ -311,7 +311,7 @@ export const homeTranslations = {
   },
   de: {
     hero: {
-      badge: "SaaS-Softwareherausgeber",
+      badge: "Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
       title: "Gesundheit und Bildung verdienen bessere Software",
       subtitle: "10 Plattformen aus Frankreich für Pflegekräfte, Studierende, Expats und Unternehmer",
