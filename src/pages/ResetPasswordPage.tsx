@@ -128,6 +128,7 @@ export default function ResetPasswordPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="pl-10"
                   placeholder={t.resetConfirmPlaceholder}
+                  autoComplete="new-password"
                   required
                 />
               </div>
