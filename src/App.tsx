@@ -74,6 +74,7 @@ const SettingsPage = lazy(() => import("@/pages/hq/SettingsPage"));
 const AgentsMonitoringPage = lazy(() => import("@/pages/hq/AgentsMonitoringPage"));
 const MessagesPage = lazy(() => import("@/pages/hq/MessagesPage"));
 const JournalPage = lazy(() => import("@/pages/hq/JournalPage"));
+const UserManagementPage = lazy(() => import("@/pages/hq/UserManagementPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
