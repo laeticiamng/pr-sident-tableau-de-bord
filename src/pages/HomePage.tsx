@@ -131,8 +131,8 @@ export default function HomePage() {
 
             <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
               {t.features.items.map((feature, index) => {
-                const Icon = FEATURE_ICONS[index];
-                const style = FEATURE_STYLES[index];
+                const Icon = FEATURE_ICONS[index] || Heart;
+                const style = FEATURE_STYLES[index] || { color: "text-muted-foreground", bgColor: "bg-muted/10" };
                 return (
                   <ScrollReveal key={index} delay={index * 75}>
                     <Card className="group border-border/60 hover:border-accent/40 hover:shadow-lg transition-all duration-300 h-full">

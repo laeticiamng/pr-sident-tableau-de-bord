@@ -150,7 +150,7 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
       setMetaTag("twitter:title", DEFAULT_TITLE, false);
       setMetaTag("twitter:description", DEFAULT_DESCRIPTION, false);
       setMetaTag("twitter:image", DEFAULT_OG_IMAGE, false);
-      setMetaTag("twitter:image:alt", "EMOTIONSCARE — Éditeur français de 8 plateformes SaaS innovantes", false);
+      setMetaTag("twitter:image:alt", "EMOTIONSCARE — Éditeur français de 10 plateformes SaaS innovantes", false);
       // Remove injected JSON-LD scripts
       for (const script of jsonLdScripts) {
         script.remove();
