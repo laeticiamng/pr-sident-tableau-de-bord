@@ -1,5 +1,3 @@
-import type { Translations } from "./types";
-
 export const settingsTranslations = {
   fr: {
     title: "Paramètres",
