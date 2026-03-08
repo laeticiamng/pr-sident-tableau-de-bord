@@ -48,7 +48,7 @@ export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd
     const path = canonicalPath ?? window.location.pathname;
     const canonicalUrl = `${SITE_URL}${path}`;
     const image = ogImage || DEFAULT_OG_IMAGE;
-    const imageAlt = ogImageAlt || "EMOTIONSCARE — Éditeur français de 10 plateformes SaaS innovantes";
+    const imageAlt = ogImageAlt || "EMOTIONSCARE — Éditeur français de 10 plateformes innovantes";
 
     // Title
     document.title = fullTitle;
