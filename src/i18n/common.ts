@@ -69,7 +69,7 @@ export const commonTranslations = {
       closeMenu: "Menü schließen",
     },
     footer: {
-      description: "Französischer Herausgeber von 10 innovativen SaaS-Plattformen. Sitz in Amiens, Frankreich.",
+      description: "Französischer Herausgeber von 10 innovativen Plattformen. Sitz in Amiens, Frankreich.",
       navigation: "Navigation",
       legal: "Rechtliches",
       legalNotice: "Impressum",
