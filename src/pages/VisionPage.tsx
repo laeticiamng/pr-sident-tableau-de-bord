@@ -116,13 +116,13 @@ export default function VisionPage() {
               const Icon = COMMITMENT_ICONS[index];
               const stat = 'stat' in engagement ? engagement.stat : `${testCount}+`;
               return (
-                <div key={index} className="text-center p-6 rounded-2xl border hover:border-accent/50 transition-all duration-300 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={index} className="text-center p-6 rounded-2xl border hover:border-accent/50 transition-all duration-300 animate-fade-in overflow-hidden" style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
                     <Icon className="h-6 w-6" />
                   </div>
-                  <div className="text-2xl font-bold text-accent mb-1">{stat}</div>
-                  <h3 className="font-semibold mb-1">{engagement.title}</h3>
-                  <p className="text-sm text-muted-foreground">{engagement.description}</p>
+                  <div className="text-2xl font-bold text-accent mb-1 truncate">{stat}</div>
+                  <h3 className="font-semibold mb-1 truncate">{engagement.title}</h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">{engagement.description}</p>
                 </div>
               );
             })}
