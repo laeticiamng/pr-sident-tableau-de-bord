@@ -313,7 +313,7 @@ export function buildFAQSchema() {
         name: "Qu'est-ce qu'EMOTIONSCARE ?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "EMOTIONSCARE SASU est un éditeur de logiciels applicatifs français basé à Amiens, qui développe 10 plateformes SaaS spécialisées dans la santé, l'éducation médicale, la mémorisation musicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale, la gouvernance IA et la médecine vasculaire. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
+          text: "EMOTIONSCARE SASU est un éditeur de logiciels français basé à Amiens, qui développe 10 plateformes spécialisées dans la santé, l'éducation médicale, la mémorisation musicale, la relocalisation internationale, l'automatisation par IA, la connexion sociale étudiante, les urgences hospitalières, la compétition musicale, la gouvernance IA et la médecine vasculaire. Chaque plateforme résout un problème concret avec de l'intelligence artificielle appliquée.",
         },
       },
       {
@@ -362,7 +362,7 @@ export function buildVisionPageSchema() {
     name: "Vision & Valeurs — EMOTIONSCARE",
     url: "https://president-cockpit-hq.lovable.app/vision",
     description:
-      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 10 plateformes SaaS au service de la santé, de l'éducation et de l'international.",
+      "Vision, mission et valeurs d'EMOTIONSCARE SASU : excellence, innovation, empathie et croissance. Éditeur français de 10 plateformes au service de la santé, de l'éducation et de l'international.",
     datePublished: "2025-05-07",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
@@ -392,7 +392,7 @@ export function buildVisionPageSchema() {
       {
         "@type": "WebPageElement",
         name: "Notre Histoire",
-        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 10 plateformes SaaS avec une équipe augmentée par l'IA.",
+        description: "Fondée en mai 2025 à Amiens, EMOTIONSCARE SASU développe 10 plateformes avec une équipe augmentée par l'IA.",
       },
     ],
     mainEntity: {
@@ -409,7 +409,7 @@ export function buildVisionPageSchema() {
       slogan:
         "Créer des logiciels qui transforment la complexité en simplicité, et qui permettent à chacun de se concentrer sur ce qui compte vraiment.",
       knowsAbout: [
-        "SaaS",
+        "Logiciels applicatifs",
         "Intelligence artificielle appliquée",
         "Santé mentale des soignants",
         "EdTech médicale",
@@ -440,7 +440,7 @@ export function buildTrustPageSchema() {
       "Mesures de sécurité, conformité RGPD et architecture de protection des données d'EMOTIONSCARE SASU. Chiffrement AES-256, RLS deny-by-default, audit immuable et conformité OWASP ASVS Niveau 2.",
     dateModified: "2026-03-01",
     inLanguage: "fr-FR",
-    keywords: "sécurité données, RGPD, chiffrement AES-256, RLS, conformité OWASP, protection données santé, cybersécurité SaaS",
+    keywords: "sécurité données, RGPD, chiffrement AES-256, RLS, conformité OWASP, protection données santé, cybersécurité logiciels",
     isPartOf: {
       "@type": "WebSite",
       url: "https://president-cockpit-hq.lovable.app",
