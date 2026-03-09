@@ -163,7 +163,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               <Badge variant="subtle" className="text-xs">Live</Badge>
             </h2>
             <p className="text-sm text-muted-foreground">
-              Surveillance temps réel des agents autonomes
+              {t.realtimeSurveillance}
             </p>
           </div>
         </div>
