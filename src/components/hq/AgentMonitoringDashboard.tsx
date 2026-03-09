@@ -198,7 +198,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold text-success">{successRate}%</p>
               )}
-              <p className="text-xs text-muted-foreground">Taux succès</p>
+              <p className="text-xs text-muted-foreground">{t.successRate}</p>
             </div>
           </CardContent>
         </Card>
