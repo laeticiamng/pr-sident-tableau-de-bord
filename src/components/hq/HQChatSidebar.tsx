@@ -217,7 +217,7 @@ export function HQChatSidebar() {
       }
     } catch (e) {
       console.error("Failed to delete conversation:", e);
-      toast.error("Impossible de supprimer la conversation");
+      toast.error(t.deleteConversationError);
     }
   }, [currentConversationId]);
 
