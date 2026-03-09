@@ -370,7 +370,7 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plattformen",
-      evolutions: "Aktualisierungen",
+      evolutions: "Funktionen",
       madeInFrance: "Made in France",
       monitoring: "Verfügbarkeit",
     },
