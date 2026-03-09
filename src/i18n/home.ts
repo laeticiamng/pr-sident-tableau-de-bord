@@ -277,9 +277,9 @@ export const homeTranslations = {
           description: "Your team of 39 ready-to-use AI experts covering 11 departments.",
         },
         "med-mng": {
-          tagline: "One song = One medical item mastered",
+          tagline: "One song = One medical concept mastered",
           shortDescription: "Revolutionary medical learning through AI music",
-          description: "Revolutionizing medical learning through music. Each ECN/EDN item becomes an AI-generated song you naturally retain.",
+          description: "Revolutionizing medical learning through music. Each medical concept becomes an AI-generated song you naturally retain.",
         },
         "swift-care-hub": {
           tagline: "From admission to discharge, every second counts",
