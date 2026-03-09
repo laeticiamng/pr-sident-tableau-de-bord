@@ -79,7 +79,7 @@ export const homeTranslations = {
         { quote: "NEARVITY a rendu l'apprentissage médical beaucoup plus engageant pour nos étudiants.", author: "Directrice pédagogique", org: "Faculté de Médecine" },
         { quote: "System Compass nous a fait gagner des semaines dans nos projets de relocalisation.", author: "Consultant mobilité", org: "Cabinet RH International" },
       ],
-      disclaimer: "* Cas d'usage représentatifs des bénéfices observés par nos utilisateurs.",
+      disclaimer: "Nos plateformes sont en cours de déploiement auprès de premiers utilisateurs.",
     },
     showcase: {
       badge: "Écosystème Premium",
