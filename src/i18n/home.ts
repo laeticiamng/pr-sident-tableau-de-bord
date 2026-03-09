@@ -215,7 +215,7 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Platforms",
-      evolutions: "Updates",
+      evolutions: "Features",
       madeInFrance: "Made in France",
       monitoring: "Uptime",
     },
