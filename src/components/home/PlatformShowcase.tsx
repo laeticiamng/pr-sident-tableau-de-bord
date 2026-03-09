@@ -254,8 +254,6 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
 
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
                         <span>{platform.stats.modules} {s.modulesLabel}</span>
-                        <span className="hidden md:inline">•</span>
-                        <span className="hidden md:inline">{platform.stats.tables} {s.structuresLabel}</span>
                       </div>
 
                       <div className="flex items-center gap-1.5 sm:gap-2">
