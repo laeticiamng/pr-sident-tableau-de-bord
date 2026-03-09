@@ -37,7 +37,7 @@ const translations = {
         description: "Browse our 10 solutions and find the one that fits your needs: healthcare, education, international or growth.",
       },
       {
-        icon: UserPlus,
+        icon: MessageCircle,
         title: "Talk to our team",
         description: "Contact us to find the right solution for your profession. Guaranteed response within 48h, no commitment.",
       },
