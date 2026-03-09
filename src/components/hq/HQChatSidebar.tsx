@@ -176,7 +176,7 @@ export function HQChatSidebar() {
       setViewMode("chat");
     } catch (e) {
       console.error("Failed to load conversation:", e);
-      toast.error("Impossible de charger la conversation");
+      toast.error(t.loadConversationError);
     }
   }, []);
 
