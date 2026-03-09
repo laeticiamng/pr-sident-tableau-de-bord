@@ -39,7 +39,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://world-alignment.lovable.app",
     color: "bg-primary",
     stats: { modules: 20, tables: 57, edgeFunctions: 25, branches: 1, commits: 1272, tests: 718 },
-    features: ["Exit Keys personnalisées", "Profils 50+ pays", "Simulateur fiscal", "TraceOS audit", "Life Game gamifié"],
+    features: ["Analyse pays personnalisée", "Profils 50+ pays", "Simulateur fiscal", "Traçabilité des décisions", "Parcours interactif"],
     status: "production",
     lastCommit: "2026-02-05",
   },
