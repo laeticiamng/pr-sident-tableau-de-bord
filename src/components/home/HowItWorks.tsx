@@ -1,4 +1,4 @@
-import { Search, UserPlus, Rocket } from "lucide-react";
+import { Search, MessageCircle, Rocket } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
