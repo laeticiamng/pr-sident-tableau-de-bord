@@ -53,7 +53,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://www.agent-growth-automator.com",
     color: "bg-accent",
     stats: { modules: 11, tables: 30, edgeFunctions: 25, branches: 5, commits: 2134, tests: 128 },
-    features: ["39 experts IA (2 Dir + 37 Dept)", "11 départements métier", "Validation présidentielle", "Commandes vocales", "Planification automatisée"],
+    features: ["39 experts IA", "11 départements métier", "Validation dirigeant", "Commandes vocales", "Planification automatisée"],
     status: "production",
     lastCommit: "2026-02-05",
   },
