@@ -232,7 +232,7 @@ export default function DiagnosticsPage() {
       />
 
       {/* Global Status */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className={`card-executive border-2 ${
           overallStatus === "healthy" ? "border-success/30" :
           overallStatus === "error" ? "border-destructive/30" : "border-warning/30"

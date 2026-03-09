@@ -313,7 +313,7 @@ export default function RGPDRegistryPage() {
           <div className="mx-auto max-w-4xl">
             <h2 className="text-headline-2 mb-6">Droits des personnes concernées</h2>
             
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { right: "Accès", desc: "Obtenir copie de vos données", icon: Download },
                 { right: "Rectification", desc: "Corriger données inexactes", icon: UserCheck },

@@ -72,9 +72,9 @@ export function AITransparencyPanel({ runResult, className }: AITransparencyPane
           <CardContent>
             <Tabs defaultValue="current" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="current">{t.aiCurrentRun}</TabsTrigger>
-                <TabsTrigger value="gateway">{t.aiGateway}</TabsTrigger>
-                <TabsTrigger value="principles">{t.aiPrinciples}</TabsTrigger>
+                <TabsTrigger value="current" className="text-xs sm:text-sm">{t.aiCurrentRun}</TabsTrigger>
+                <TabsTrigger value="gateway" className="text-xs sm:text-sm">{t.aiGateway}</TabsTrigger>
+                <TabsTrigger value="principles" className="text-xs sm:text-sm">{t.aiPrinciples}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="current" className="space-y-4 pt-4">

@@ -168,18 +168,18 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="text-center p-3 rounded-lg bg-success/10 border border-success/20">
-              <div className="text-2xl font-bold text-success">{greenCount}</div>
-              <div className="text-xs text-muted-foreground">Opérationnelles</div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4">
+            <div className="text-center p-2 sm:p-3 rounded-lg bg-success/10 border border-success/20">
+              <div className="text-xl sm:text-2xl font-bold text-success">{greenCount}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Opérationnelles</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-warning/10 border border-warning/20">
-              <div className="text-2xl font-bold text-warning">{amberCount}</div>
-              <div className="text-xs text-muted-foreground">Attention</div>
+            <div className="text-center p-2 sm:p-3 rounded-lg bg-warning/10 border border-warning/20">
+              <div className="text-xl sm:text-2xl font-bold text-warning">{amberCount}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Attention</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-              <div className="text-2xl font-bold text-destructive">{redCount}</div>
-              <div className="text-xs text-muted-foreground">Critiques</div>
+            <div className="text-center p-2 sm:p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+              <div className="text-xl sm:text-2xl font-bold text-destructive">{redCount}</div>
+              <div className="text-[10px] sm:text-xs text-muted-foreground">Critiques</div>
             </div>
           </div>
           <div className="space-y-2">

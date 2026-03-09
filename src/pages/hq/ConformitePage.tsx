@@ -96,7 +96,7 @@ export default function ConformitePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {RGPD_RIGHTS.map(right => {
               const Icon = right.icon;
               return (

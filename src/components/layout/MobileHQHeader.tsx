@@ -14,10 +14,13 @@ export function MobileHQHeader({ sidebarOpen, onToggleSidebar }: MobileHQHeaderP
   const t = useTranslation(hqCommon);
   
   return (
-    <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-sidebar border-b border-sidebar-border flex items-center justify-between px-4">
+    <header
+      className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-sidebar border-b border-sidebar-border flex items-center justify-between px-3 sm:px-4 safe-top"
+      style={{ height: `calc(3.5rem + env(safe-area-inset-top, 0px))`, paddingTop: `env(safe-area-inset-top, 0px)` }}
+    >
       <button
         onClick={onToggleSidebar}
-        className="p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
+        className="p-2.5 -ml-1 rounded-lg hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
         aria-label={sidebarOpen ? t.closeMenu : t.openMenu}
       >
         {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

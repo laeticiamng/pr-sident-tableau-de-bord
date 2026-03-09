@@ -117,7 +117,7 @@ export default function FinancePage() {
       )}
 
       {/* KPIs */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         {financialKPIs.map((kpi) => (
           <Card key={kpi.label} className="card-executive">
             <CardContent className="p-6">
@@ -267,7 +267,7 @@ export default function FinancePage() {
               {platformCosts.map((platform) => (
                 <div 
                   key={platform.name} 
-                  className="flex items-center justify-between p-3 rounded-lg border"
+                  className="flex items-center justify-between flex-wrap gap-2 p-3 rounded-lg border"
                 >
                   <span className="font-medium text-sm">{platform.name}</span>
                   <div className="flex items-center gap-3">

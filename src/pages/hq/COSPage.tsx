@@ -52,7 +52,7 @@ export default function COSPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4 sm:p-6 md:p-8 text-white">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.1),transparent)]" />
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
 
@@ -62,7 +62,7 @@ export default function COSPage() {
               <Crosshair className="h-3 w-3 mr-1" />
               Chief Operating System
             </Badge>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">
               {greeting}, Madame la Presidente
             </h1>
             <p className="text-white/60 text-lg">

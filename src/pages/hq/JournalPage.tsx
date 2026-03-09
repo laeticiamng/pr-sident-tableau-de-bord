@@ -221,7 +221,7 @@ function LiveKPIStrip() {
     <Card className="card-executive">
       <CardContent className="p-4">
         <h4 className="text-xs font-semibold text-muted-foreground mb-3">{t.journalKPIs}</h4>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
           <div><p className="text-lg font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p><p className="text-[10px] text-muted-foreground">MRR</p></div>
           <div><p className="text-lg font-bold">{clients ?? "—"}</p><p className="text-[10px] text-muted-foreground">{t.journalActiveClients}</p></div>
           <div><p className="text-lg font-bold">{uptime != null ? `${uptime}%` : "—"}</p><p className="text-[10px] text-muted-foreground">Uptime</p></div>

@@ -70,7 +70,7 @@ export default function VeillePage() {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className="card-executive bg-gradient-to-br from-accent/5 to-transparent border-accent/20">
           <CardContent className="p-6 text-center">
             <Eye className="h-8 w-8 mx-auto mb-3 text-accent" />

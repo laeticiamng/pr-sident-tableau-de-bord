@@ -82,7 +82,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
           <Circle className={cn("absolute bottom-0 right-0 h-2 w-2 fill-current", isConnected ? "text-success" : "text-destructive")} />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-[calc(100vw-2rem)] sm:w-80 max-w-sm p-0" align="end">
         <div className="flex items-center justify-between p-3 border-b">
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-sm">{t.notifications}</h4>

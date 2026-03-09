@@ -94,7 +94,7 @@ export default function PlateformesPage() {
               {t.hero.badge}
             </Badge>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[0.95]">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[0.95]">
               {t.hero.title} <span className="text-accent">{t.hero.titleAccent}</span>
             </h1>
             

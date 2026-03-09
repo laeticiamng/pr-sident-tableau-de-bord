@@ -254,6 +254,8 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   /* Theme transition for smooth light/dark mode switching */
@@ -261,7 +263,7 @@
   html.theme-transition *,
   html.theme-transition *::before,
   html.theme-transition *::after {
-    transition: 
+    transition:
       background-color 0.4s ease-out,
       border-color 0.3s ease-out,
       color 0.3s ease-out,
@@ -273,6 +275,31 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overflow-x: hidden;
+  }
+
+  /* Root container — prevent overflow + use dvh for mobile */
+  #root {
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* iOS keyboard zoom prevention — force 16px on small screens */
+  @supports (-webkit-touch-callout: none) {
+    @media (max-width: 639px) {
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="number"],
+      input[type="tel"],
+      input[type="url"],
+      input[type="search"],
+      select,
+      textarea {
+        font-size: 16px !important;
+      }
+    }
   }
 
   /* Premium Typography */
@@ -488,10 +515,40 @@
   }
 
   .shadow-premium-lg {
-    box-shadow: 
+    box-shadow:
       0 10px 15px -3px hsl(220 9% 46% / 0.1),
       0 4px 6px -4px hsl(220 9% 46% / 0.1),
       0 0 0 1px hsl(220 13% 91% / 0.5),
       0 0 40px -10px hsl(38 92% 50% / 0.1);
+  }
+
+  /* Safe area insets for iOS notch / home indicator */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Scrollable tabs / horizontal scroll container */
+  .scroll-snap-x {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scroll-snap-x::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-snap-x > * {
+    scroll-snap-align: start;
+  }
+
+  /* Mobile-friendly card hover — disable translate on touch */
+  @media (hover: none) {
+    .card-executive:hover {
+      transform: none !important;
+    }
   }
 }

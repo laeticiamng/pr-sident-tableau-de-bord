@@ -94,7 +94,7 @@ export default function SettingsPage() {
       </Alert>
 
       {/* API Connections Grid */}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
         {API_KEYS.map((api) => {
           const isConnected = apiStatus?.status?.[api.key as keyof typeof apiStatus.status];
           const Icon = api.icon;
@@ -102,7 +102,7 @@ export default function SettingsPage() {
 
           return (
             <Card key={api.key} className="card-executive">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
                     <div className={`p-2.5 rounded-lg ${isConnected ? "bg-success/10" : "bg-muted"}`}>

@@ -79,7 +79,7 @@ export default function HistoriquePage() {
       />
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold mb-1">

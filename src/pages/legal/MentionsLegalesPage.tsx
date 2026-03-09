@@ -29,26 +29,30 @@ export default function MentionsLegalesPage() {
         <div className="container">
           <div className="mx-auto max-w-3xl prose prose-slate dark:prose-invert">
             <h2>{t.mentions.editor}</h2>
-            <table className="w-full text-sm">
-              <tbody>
-                {Object.entries(t.mentions.fields).map(([key, label]) => (
-                  <tr key={key}>
-                    <td className="font-medium py-2">{label}</td>
-                    <td className="py-2">{COMPANY_PROFILE[key as keyof typeof COMPANY_PROFILE]}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody>
+                  {Object.entries(t.mentions.fields).map(([key, label]) => (
+                    <tr key={key}>
+                      <td className="font-medium py-2">{label}</td>
+                      <td className="py-2">{COMPANY_PROFILE[key as keyof typeof COMPANY_PROFILE]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             <h2>{t.mentions.hosting}</h2>
-            <table className="w-full text-sm">
-              <tbody>
-                <tr><td className="font-medium py-2">{t.mentions.hostingFields.host}</td><td className="py-2">Lovable (Gptengineer, Inc.)</td></tr>
-                <tr><td className="font-medium py-2">{t.mentions.hostingFields.infrastructure}</td><td className="py-2">Amazon Web Services (AWS) — Région eu-west (Irlande, UE)</td></tr>
-                <tr><td className="font-medium py-2">{t.mentions.hostingFields.cdn}</td><td className="py-2">Netlify / Cloudflare Pages</td></tr>
-                <tr><td className="font-medium py-2">{t.mentions.hostingFields.contact}</td><td className="py-2">support@lovable.dev</td></tr>
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <tbody>
+                  <tr><td className="font-medium py-2">{t.mentions.hostingFields.host}</td><td className="py-2">Lovable (Gptengineer, Inc.)</td></tr>
+                  <tr><td className="font-medium py-2">{t.mentions.hostingFields.infrastructure}</td><td className="py-2">Amazon Web Services (AWS) — Région eu-west (Irlande, UE)</td></tr>
+                  <tr><td className="font-medium py-2">{t.mentions.hostingFields.cdn}</td><td className="py-2">Netlify / Cloudflare Pages</td></tr>
+                  <tr><td className="font-medium py-2">{t.mentions.hostingFields.contact}</td><td className="py-2">support@lovable.dev</td></tr>
+                </tbody>
+              </table>
+            </div>
 
             <h2>{t.mentions.ip}</h2>
             <p>{t.mentions.ipText}</p>

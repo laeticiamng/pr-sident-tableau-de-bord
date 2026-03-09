@@ -123,7 +123,7 @@ export default function UserManagementPage() {
     <div className="space-y-6">
       <ExecutiveHeader title={t.title} subtitle={t.subtitle} />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">

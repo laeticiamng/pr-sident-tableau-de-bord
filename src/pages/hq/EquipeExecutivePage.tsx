@@ -82,7 +82,7 @@ export default function EquipeExecutivePage() {
       />
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className="card-executive bg-gradient-to-br from-gold/10 to-transparent border-gold/30">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold mb-1">{agentStats.total}</div>

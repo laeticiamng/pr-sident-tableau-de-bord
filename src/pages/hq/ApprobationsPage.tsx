@@ -111,7 +111,7 @@ export default function ApprobationsPage() {
                     <p className="text-muted-foreground mb-6">{action.description}</p>
                   )}
                   
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <Button
                       variant="executive"
                       onClick={() => handleDecision(action.id, "approved")}

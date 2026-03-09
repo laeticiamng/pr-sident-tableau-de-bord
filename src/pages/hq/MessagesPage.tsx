@@ -207,7 +207,7 @@ export default function MessagesPage() {
                   className="py-4 px-5 cursor-pointer"
                   onClick={() => handleExpand(msg)}
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start justify-between gap-4 flex-col sm:flex-row">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {isUnread && (

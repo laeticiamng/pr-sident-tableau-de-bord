@@ -310,13 +310,14 @@ export function HQChatSidebar() {
         <Button
           variant="executive"
           size="icon"
-          className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          className="fixed bottom-6 right-4 sm:right-6 z-50 h-12 w-12 sm:h-14 sm:w-14 rounded-full shadow-xl hover:shadow-2xl transition-all"
+          style={{ bottom: `calc(1.5rem + env(safe-area-inset-bottom, 0px))` }}
           aria-label={t.openChatAI}
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[420px] p-0 flex flex-col">
+      <SheetContent side="right" className="w-[100vw] sm:w-[420px] max-w-full p-0 flex flex-col">
         <SheetHeader className="p-4 pb-2 border-b">
           <div className="flex items-center justify-between">
             {viewMode === "history" ? (
@@ -483,7 +484,7 @@ export function HQChatSidebar() {
             </ScrollArea>
 
             {/* Input */}
-            <div className="p-4 pt-2 border-t">
+            <div className="p-4 pt-2 border-t safe-bottom">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
