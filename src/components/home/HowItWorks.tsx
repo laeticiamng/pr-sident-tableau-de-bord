@@ -16,8 +16,8 @@ const translations = {
       },
       {
         icon: UserPlus,
-        title: "Créez votre compte",
-        description: "Inscription gratuite en 30 secondes. Aucune carte bancaire requise. Accédez immédiatement à votre espace.",
+        title: "Échangez avec notre équipe",
+        description: "Contactez-nous pour découvrir la solution adaptée à votre métier. Réponse garantie sous 48h, sans engagement.",
       },
       {
         icon: Rocket,
