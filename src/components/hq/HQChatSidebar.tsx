@@ -336,7 +336,7 @@ export function HQChatSidebar() {
                   {t.aiAssistant}
                 </SheetTitle>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => setViewMode("history")} className="h-8 w-8" title="Historique">
+                  <Button variant="ghost" size="icon" onClick={() => setViewMode("history")} className="h-8 w-8" title={t.history}>
                     <Clock className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={newChat} className="h-8 w-8" title="Nouvelle conversation">
