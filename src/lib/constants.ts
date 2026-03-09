@@ -123,7 +123,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://learn-jams.lovable.app",
     color: "bg-primary",
     stats: { modules: 8, tables: 15, edgeFunctions: 10, branches: 2, commits: 500, tests: 60 },
-    features: ["30 styles musicaux", "Import PDF/photo/texte", "Quiz automatiques", "Écoute hors ligne", "Neurosciences cognitives"],
+    features: ["30 styles musicaux", "Import PDF / photo / texte", "Quiz automatiques", "Écoute hors ligne", "Basé sur les neurosciences"],
     status: "production",
     lastCommit: "2026-03-07",
   },
