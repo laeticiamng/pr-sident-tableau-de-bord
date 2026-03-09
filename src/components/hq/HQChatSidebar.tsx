@@ -114,6 +114,8 @@ type ViewMode = "chat" | "history";
 
 export function HQChatSidebar() {
   const { user } = useAuth();
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
   const [open, setOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const [messages, setMessages] = useState<Msg[]>([]);
