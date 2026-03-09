@@ -199,7 +199,16 @@ export default function AuthPage() {
             </Button>
           </form>
 
-          <div className="mt-8 sm:mt-10 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {t.noAccount}{" "}
+              <Link to="/contact" className="text-accent hover:text-accent/80 underline transition-colors">
+                {t.noAccountLink}
+              </Link>
+            </p>
+          </div>
+
+          <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 text-xs text-muted-foreground">
             <div className="p-1.5 rounded-full bg-success/10">
               <Shield className="h-3 w-3 text-success" />
             </div>

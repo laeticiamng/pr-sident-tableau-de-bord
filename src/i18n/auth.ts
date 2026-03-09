@@ -138,6 +138,8 @@ export const authTranslations = {
     forgotSend: "Senden",
     forgotClose: "Schließen",
     backToHome: "Zurück zur Startseite",
+    noAccount: "Kein Konto?",
+    noAccountLink: "Kontaktieren Sie uns, um unsere Lösungen zu entdecken",
     panelBadge: "Softwareherausgeber",
     panelTitle: "EMOTIONSCARE",
     panelSubtitle: "EMOTIONSCARE SASU — Softwareherausgeber",
