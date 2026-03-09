@@ -313,7 +313,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
-              {showFailedOnly ? "Runs Échoués" : "Historique des Runs"}
+              {showFailedOnly ? t.failedRuns : t.runHistory}
             </CardTitle>
             <div className="flex items-center gap-2">
               {failedRuns > 0 && (
