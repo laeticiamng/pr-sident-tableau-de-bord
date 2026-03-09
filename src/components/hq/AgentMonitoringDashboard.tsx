@@ -129,7 +129,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             <XCircle className="h-5 w-5 text-destructive shrink-0" />
             <div>
               <p className="text-sm font-semibold text-destructive">
-                {failedRuns24h.length} run{failedRuns24h.length > 1 ? "s" : ""} échoué{failedRuns24h.length > 1 ? "s" : ""} dans les 24h
+              {failedRuns24h.length} run{failedRuns24h.length > 1 ? "s" : ""} {t.failedRunsIn24h}
               </p>
               <p className="text-xs text-muted-foreground">
                 {failedRuns24h.map(r => r.run_type.replace(/_/g, " ")).join(", ")}
