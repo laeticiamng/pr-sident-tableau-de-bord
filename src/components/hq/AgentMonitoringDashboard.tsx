@@ -212,7 +212,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold">{activeAgentKeys.length}</p>
               )}
-              <p className="text-xs text-muted-foreground">Agents actifs 24h</p>
+              <p className="text-xs text-muted-foreground">{t.activeAgents24h}</p>
             </div>
           </CardContent>
         </Card>
