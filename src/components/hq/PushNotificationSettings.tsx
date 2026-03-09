@@ -4,34 +4,37 @@ import { Badge } from "@/components/ui/badge";
 import { Bell, BellOff, BellRing, Smartphone, Send, Loader2 } from "lucide-react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 export function PushNotificationSettings() {
   const { isSupported, isSubscribed, permission, isLoading, subscribe, unsubscribe, sendTest } = usePushNotifications();
   const { toast } = useToast();
+  const t = useTranslation(hqCommon);
 
   const handleSubscribe = async () => {
     const success = await subscribe();
     toast({
-      title: success ? "✅ Notifications activées" : "❌ Échec",
+      title: success ? t.pushEnabled : t.pushFailed,
       description: success
-        ? "Vous recevrez les alertes critiques sur cet appareil."
+        ? t.pushEnabledDesc
         : permission === "denied"
-        ? "Les notifications sont bloquées dans les paramètres du navigateur."
-        : "Impossible d'activer les notifications push.",
+        ? t.pushBlockedDesc
+        : t.pushFailedDesc,
       variant: success ? "default" : "destructive",
     });
   };
 
   const handleUnsubscribe = async () => {
     const success = await unsubscribe();
-    if (success) toast({ title: "Notifications désactivées", description: "Cet appareil ne recevra plus d'alertes." });
+    if (success) toast({ title: t.pushDisabled, description: t.pushDisabledDesc });
   };
 
   const handleTest = async () => {
     const success = await sendTest();
     toast({
-      title: success ? "📨 Notification envoyée" : "❌ Échec de l'envoi",
-      description: success ? "Vérifiez vos notifications." : "Erreur lors de l'envoi test.",
+      title: success ? t.pushTestSent : t.pushTestFailed,
+      description: success ? t.pushTestSentDesc : t.pushTestFailedDesc,
       variant: success ? "default" : "destructive",
     });
   };
@@ -42,13 +45,11 @@ export function PushNotificationSettings() {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <BellOff className="h-4 w-4 text-muted-foreground" />
-            Notifications Push
+            {t.pushNotifications}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Les notifications push ne sont pas supportées sur ce navigateur. Utilisez Chrome, Edge ou Safari sur iOS 16.4+.
-          </p>
+          <p className="text-sm text-muted-foreground">{t.pushNotSupported}</p>
         </CardContent>
       </Card>
     );
@@ -61,26 +62,24 @@ export function PushNotificationSettings() {
           <div>
             <CardTitle className="flex items-center gap-2 text-base">
               <BellRing className="h-4 w-4 text-accent" />
-              Notifications Push
+              {t.pushNotifications}
             </CardTitle>
-            <CardDescription className="text-xs">
-              Alertes temps réel sur votre appareil
-            </CardDescription>
+            <CardDescription className="text-xs">{t.pushRealtimeAlerts}</CardDescription>
           </div>
           <Badge variant={isSubscribed ? "default" : "outline"} className="text-[10px]">
             {isSubscribed ? (
-              <><Smartphone className="h-2.5 w-2.5 mr-1" />Actif</>
-            ) : "Inactif"}
+              <><Smartphone className="h-2.5 w-2.5 mr-1" />{t.pushActive}</>
+            ) : t.pushInactive}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="text-xs text-muted-foreground space-y-1">
-          <p>Vous serez alerté(e) quand :</p>
+          <p>{t.pushAlertIntro}</p>
           <ul className="list-disc list-inside space-y-0.5 ml-1">
-            <li>Un <strong>run IA échoue</strong></li>
-            <li>Une <strong>plateforme passe en rouge</strong></li>
-            <li>Une <strong>décision attend depuis +24h</strong></li>
+            <li><strong>{t.pushAlertRunFail}</strong></li>
+            <li><strong>{t.pushAlertPlatformRed}</strong></li>
+            <li><strong>{t.pushAlertDecision24h}</strong></li>
           </ul>
         </div>
 
@@ -89,17 +88,17 @@ export function PushNotificationSettings() {
             <>
               <Button variant="outline" size="sm" onClick={handleUnsubscribe} disabled={isLoading} className="text-xs gap-1.5">
                 {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <BellOff className="h-3 w-3" />}
-                Désactiver
+                {t.pushDisable}
               </Button>
               <Button variant="outline" size="sm" onClick={handleTest} disabled={isLoading} className="text-xs gap-1.5">
                 <Send className="h-3 w-3" />
-                Test
+                {t.pushTest}
               </Button>
             </>
           ) : (
             <Button size="sm" onClick={handleSubscribe} disabled={isLoading} className="text-xs gap-1.5">
               {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Bell className="h-3 w-3" />}
-              Activer les notifications
+              {t.pushEnable}
             </Button>
           )}
         </div>
