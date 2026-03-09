@@ -142,7 +142,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             className="shrink-0 text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
             onClick={() => setShowFailedOnly(!showFailedOnly)}
           >
-            {showFailedOnly ? "Voir tout" : "Voir échecs"}
+            {showFailedOnly ? t.viewAll : t.viewFailures}
           </Button>
         </div>
       )}
