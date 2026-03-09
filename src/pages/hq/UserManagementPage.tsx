@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,8 @@ import { ROLE_LABELS, ROLE_COLORS, type AppRole } from "@/hooks/usePermissions";
 import { useAuth } from "@/hooks/useAuth";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { logger } from "@/lib/logger";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { usersTranslations } from "@/i18n/users";
 
 interface ManagedUser {
   id: string;
@@ -30,12 +32,12 @@ const ASSIGNABLE_ROLES: AppRole[] = ["admin", "finance", "marketing", "support",
 export default function UserManagementPage() {
   const { user: currentUser } = useAuth();
   const queryClient = useQueryClient();
+  const t = useTranslation(usersTranslations);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newRole, setNewRole] = useState<string>("");
 
-  // Fetch users
   const { data: users = [], isLoading, refetch } = useQuery({
     queryKey: ["managed-users"],
     queryFn: async (): Promise<ManagedUser[]> => {
@@ -48,7 +50,6 @@ export default function UserManagementPage() {
     staleTime: 1000 * 60 * 2,
   });
 
-  // Create user mutation
   const createMutation = useMutation({
     mutationFn: async ({ email, password, role }: { email: string; password: string; role: string }) => {
       const { data, error } = await supabase.functions.invoke("manage-users", {
@@ -59,7 +60,7 @@ export default function UserManagementPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Utilisateur créé avec succès");
+      toast.success(t.successCreate);
       setIsCreateOpen(false);
       setNewEmail("");
       setNewPassword("");
@@ -68,11 +69,10 @@ export default function UserManagementPage() {
     },
     onError: (err: Error) => {
       logger.error("[UserManagement] Create error:", err);
-      toast.error("Erreur", { description: err.message });
+      toast.error(t.error, { description: err.message });
     },
   });
 
-  // Delete user mutation
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
       const { data, error } = await supabase.functions.invoke("manage-users", {
@@ -83,15 +83,14 @@ export default function UserManagementPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Utilisateur supprimé");
+      toast.success(t.successDelete);
       queryClient.invalidateQueries({ queryKey: ["managed-users"] });
     },
     onError: (err: Error) => {
-      toast.error("Erreur", { description: err.message });
+      toast.error(t.error, { description: err.message });
     },
   });
 
-  // Update role mutation
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
       const { data, error } = await supabase.functions.invoke("manage-users", {
@@ -102,17 +101,17 @@ export default function UserManagementPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Rôle mis à jour");
+      toast.success(t.successRoleUpdate);
       queryClient.invalidateQueries({ queryKey: ["managed-users"] });
     },
     onError: (err: Error) => {
-      toast.error("Erreur", { description: err.message });
+      toast.error(t.error, { description: err.message });
     },
   });
 
   const handleCreate = () => {
     if (!newEmail || !newPassword || !newRole) {
-      toast.error("Tous les champs sont requis");
+      toast.error(t.fieldsRequired);
       return;
     }
     createMutation.mutate({ email: newEmail, password: newPassword, role: newRole });
@@ -122,12 +121,8 @@ export default function UserManagementPage() {
 
   return (
     <div className="space-y-6">
-      <ExecutiveHeader
-        title="Gestion des Utilisateurs"
-        subtitle="Créez des comptes, assignez des rôles et gérez les accès au HQ"
-      />
+      <ExecutiveHeader title={t.title} subtitle={t.subtitle} />
 
-      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardContent className="pt-6">
@@ -137,7 +132,7 @@ export default function UserManagementPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{users.length}</p>
-                <p className="text-sm text-muted-foreground">Utilisateurs</p>
+                <p className="text-sm text-muted-foreground">{t.totalUsers}</p>
               </div>
             </div>
           </CardContent>
@@ -152,7 +147,7 @@ export default function UserManagementPage() {
                 <p className="text-2xl font-bold">
                   {new Set(users.flatMap(u => u.roles)).size}
                 </p>
-                <p className="text-sm text-muted-foreground">Rôles actifs</p>
+                <p className="text-sm text-muted-foreground">{t.activeRoles}</p>
               </div>
             </div>
           </CardContent>
@@ -171,61 +166,58 @@ export default function UserManagementPage() {
                     return new Date(u.last_sign_in_at).getTime() > dayAgo;
                   }).length}
                 </p>
-                <p className="text-sm text-muted-foreground">Actifs (24h)</p>
+                <p className="text-sm text-muted-foreground">{t.active24h}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Actions */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Comptes utilisateurs</h2>
+        <h2 className="text-lg font-semibold">{t.userAccounts}</h2>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
+            {t.refresh}
           </Button>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
                 <UserPlus className="h-4 w-4 mr-2" />
-                Nouveau compte
+                {t.newAccount}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Créer un compte utilisateur</DialogTitle>
-                <DialogDescription>
-                  Le compte sera immédiatement actif. L'utilisateur pourra se connecter avec ces identifiants.
-                </DialogDescription>
+                <DialogTitle>{t.createTitle}</DialogTitle>
+                <DialogDescription>{t.createDesc}</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t.email}</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="utilisateur@exemple.com"
+                    placeholder={t.emailPlaceholder}
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Mot de passe</Label>
+                  <Label htmlFor="password">{t.password}</Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Min. 8 car., 1 maj., 1 min., 1 chiffre"
+                    placeholder={t.passwordPlaceholder}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">Rôle</Label>
+                  <Label htmlFor="role">{t.role}</Label>
                   <Select value={newRole} onValueChange={setNewRole}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un rôle" />
+                      <SelectValue placeholder={t.selectRole} />
                     </SelectTrigger>
                     <SelectContent>
                       {ASSIGNABLE_ROLES.map((role) => (
@@ -238,10 +230,10 @@ export default function UserManagementPage() {
                 </div>
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Annuler</Button>
+                <Button variant="outline" onClick={() => setIsCreateOpen(false)}>{t.cancel}</Button>
                 <Button onClick={handleCreate} disabled={createMutation.isPending}>
                   {createMutation.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  Créer le compte
+                  {t.createAccount}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -249,7 +241,6 @@ export default function UserManagementPage() {
         </div>
       </div>
 
-      {/* User list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -259,10 +250,8 @@ export default function UserManagementPage() {
           <CardContent className="py-12">
             <div className="text-center space-y-3">
               <Users className="h-10 w-10 mx-auto text-muted-foreground/50" />
-              <p className="text-muted-foreground">Aucun utilisateur créé</p>
-              <p className="text-sm text-muted-foreground/70">
-                Cliquez sur « Nouveau compte » pour inviter un collaborateur.
-              </p>
+              <p className="text-muted-foreground">{t.noUsers}</p>
+              <p className="text-sm text-muted-foreground/70">{t.noUsersHint}</p>
             </div>
           </CardContent>
         </Card>
@@ -280,12 +269,12 @@ export default function UserManagementPage() {
                       <p className="font-medium truncate">{user.email}</p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                         <Calendar className="h-3 w-3" />
-                        <span>Créé le {new Date(user.created_at).toLocaleDateString("fr-FR")}</span>
+                        <span>{t.createdOn} {new Date(user.created_at).toLocaleDateString("fr-FR")}</span>
                         {user.last_sign_in_at && (
                           <>
                             <Separator orientation="vertical" className="h-3" />
                             <Clock className="h-3 w-3" />
-                            <span>Dernière connexion : {new Date(user.last_sign_in_at).toLocaleDateString("fr-FR")}</span>
+                            <span>{t.lastLogin} {new Date(user.last_sign_in_at).toLocaleDateString("fr-FR")}</span>
                           </>
                         )}
                       </div>
@@ -293,7 +282,6 @@ export default function UserManagementPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    {/* Role badges */}
                     <div className="flex gap-1.5">
                       {user.roles.map((role) => (
                         <Badge
@@ -305,13 +293,12 @@ export default function UserManagementPage() {
                       ))}
                     </div>
 
-                    {/* Change role */}
                     <Select
                       value={user.roles[0] || ""}
                       onValueChange={(role) => updateRoleMutation.mutate({ userId: user.id, role })}
                     >
                       <SelectTrigger className="w-[140px]">
-                        <SelectValue placeholder="Changer rôle" />
+                        <SelectValue placeholder={t.changeRole} />
                       </SelectTrigger>
                       <SelectContent>
                         {ASSIGNABLE_ROLES.map((role) => (
@@ -322,7 +309,6 @@ export default function UserManagementPage() {
                       </SelectContent>
                     </Select>
 
-                    {/* Delete */}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
@@ -331,14 +317,13 @@ export default function UserManagementPage() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Supprimer cet utilisateur ?</AlertDialogTitle>
+                          <AlertDialogTitle>{t.deleteTitle}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Le compte <strong>{user.email}</strong> sera définitivement supprimé.
-                            Cette action est irréversible.
+                            {t.deleteAccount} <strong>{user.email}</strong> {t.deleteDesc}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Annuler</AlertDialogCancel>
+                          <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => deleteMutation.mutate(user.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -346,7 +331,7 @@ export default function UserManagementPage() {
                             {deleteMutation.isPending ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                              "Supprimer"
+                              t.delete
                             )}
                           </AlertDialogAction>
                         </AlertDialogFooter>
