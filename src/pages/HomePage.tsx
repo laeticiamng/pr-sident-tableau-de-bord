@@ -21,14 +21,18 @@ import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
 
-function ScrollReveal({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
-  const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
-  return (
-    <div ref={ref} className={cn("transition-all duration-700 ease-out", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8", className)} style={{ transitionDelay: `${delay}ms` }}>
-      {children}
-    </div>
-  );
-}
+import { forwardRef } from "react";
+
+const ScrollReveal = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; delay?: number }>(
+  function ScrollReveal({ children, className, delay = 0 }, _fwdRef) {
+    const { ref, isVisible } = useScrollAnimation<HTMLDivElement>();
+    return (
+      <div ref={ref} className={cn("transition-all duration-700 ease-out", isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8", className)} style={{ transitionDelay: `${delay}ms` }}>
+        {children}
+      </div>
+    );
+  }
+);
 
 export default function HomePage() {
   const geoSchemas = useMemo(() => getHomePageSchemas(), []);
