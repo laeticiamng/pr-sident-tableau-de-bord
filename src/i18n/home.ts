@@ -119,7 +119,7 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Compétence premium, livrée simplement",
           shortDescription: "39 experts IA couvrant 11 départements métier",
-          description: "Votre équipe de 39 experts IA prêts à l'emploi. 2 directeurs et 37 agents spécialisés couvrent 11 départements.",
+          description: "Votre équipe de 39 experts IA prêts à l'emploi couvrant 11 départements.",
         },
         "med-mng": {
           tagline: "Une chanson = Un item médical maîtrisé",
