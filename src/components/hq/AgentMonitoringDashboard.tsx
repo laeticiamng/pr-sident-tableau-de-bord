@@ -226,7 +226,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
                 <p className="text-2xl font-bold">€{totalCostEst.toFixed(2)}</p>
               )}
-              <p className="text-xs text-muted-foreground">Coût IA estimé</p>
+              <p className="text-xs text-muted-foreground">{t.estimatedAICost}</p>
             </div>
           </CardContent>
         </Card>
