@@ -13,8 +13,6 @@ const navLinks = [
   { href: "/plateformes", key: "platforms" as const },
   { href: "/tarifs", key: "pricing" as const },
   { href: "/vision", key: "vision" as const },
-  { href: "/trust", key: "security" as const },
-  { href: "/status", key: "status" as const },
   { href: "/contact", key: "contact" as const },
 ];
 

@@ -64,7 +64,7 @@ export const commonTranslations = {
       vision: "Vision",
       security: "Sicherheit",
       contact: "Kontakt",
-      login: "Kundenbereich",
+      login: "Anmelden",
       openMenu: "Menü öffnen",
       closeMenu: "Menü schließen",
     },
