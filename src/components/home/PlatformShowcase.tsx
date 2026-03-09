@@ -8,13 +8,11 @@ import {
   ArrowRight,
   ChevronRight,
   Heart,
-  Database,
-  GitBranch,
   Sparkles,
-  GitCommit,
-  TestTube2,
   Rocket,
   ExternalLink,
+  CheckCircle,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
