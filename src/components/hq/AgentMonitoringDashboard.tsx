@@ -349,7 +349,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               ) : (
                 <>
                   <Bot className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                  <p className="text-sm">Aucun run exécuté pour le moment</p>
+                  <p className="text-sm">{t.noRunsYet}</p>
                 </>
               )}
             </div>
