@@ -60,7 +60,7 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plateformes",
-      evolutions: "Mises à jour",
+      evolutions: "Fonctionnalités",
       madeInFrance: "Made in France",
       monitoring: "Surveillance",
     },
