@@ -30,6 +30,8 @@ export const authTranslations = {
     forgotSend: "Envoyer",
     forgotClose: "Fermer",
     backToHome: "Retour à l'accueil",
+    noAccount: "Vous n'avez pas de compte ?",
+    noAccountLink: "Contactez-nous pour découvrir nos solutions",
     // Right panel
     panelBadge: "Éditeur de logiciels",
     panelTitle: "EMOTIONSCARE",
