@@ -76,7 +76,7 @@ export default function VisionPage() {
       {/* Stats */}
       <section className="py-16 md:py-24 bg-hero-gradient text-white">
         <div className="container">
-          <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
+          <div className="grid gap-3 sm:gap-4 md:gap-6 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: MANAGED_PLATFORMS.length, suffix: "", label: t.stats.platforms, icon: Layers },
               { value: 39, suffix: "", label: t.stats.aiAgents, icon: Rocket },
@@ -114,7 +114,7 @@ export default function VisionPage() {
             <h2 className="text-headline-1 mb-4">{t.commitments.title}</h2>
             <p className="text-body-lg text-muted-foreground">{t.commitments.subtitle}</p>
           </div>
-          <div className="grid gap-6 md:grid-cols-4">
+          <div className="grid gap-6 grid-cols-2 md:grid-cols-4">
             {t.commitments.items.map((engagement, index) => {
               const Icon = COMMITMENT_ICONS[index];
               const stat = 'stat' in engagement ? engagement.stat : `${testCount}+`;
@@ -141,7 +141,7 @@ export default function VisionPage() {
             <p className="text-body-lg text-muted-foreground">{t.history.subtitle}</p>
           </div>
           <div className="mx-auto max-w-2xl">
-            <div className="relative border-l-2 border-accent/30 pl-8 space-y-12">
+            <div className="relative border-l-2 border-accent/30 pl-4 sm:pl-8 space-y-12">
               {t.history.items.map((item, index) => {
                 const isLast = index === t.history.items.length - 1;
                 return (

@@ -126,7 +126,7 @@ export default function AuditPage() {
             Entrées Récentes
           </CardTitle>
         </CardHeader>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
           {isLoading ? (
             <div className="p-6 space-y-3">
               <Skeleton className="h-12 w-full" />
@@ -138,31 +138,31 @@ export default function AuditPage() {
             <table className="w-full">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Horodatage</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Acteur</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Action</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Ressource</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Détails</th>
+                  <th className="text-left p-2 sm:p-4 text-sm font-medium text-muted-foreground">Horodatage</th>
+                  <th className="text-left p-2 sm:p-4 text-sm font-medium text-muted-foreground">Acteur</th>
+                  <th className="text-left p-2 sm:p-4 text-sm font-medium text-muted-foreground">Action</th>
+                  <th className="text-left p-2 sm:p-4 text-sm font-medium text-muted-foreground">Ressource</th>
+                  <th className="text-left p-2 sm:p-4 text-sm font-medium text-muted-foreground">Détails</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {filteredLogs.map((log) => (
                   <tr key={log.id} className="hover:bg-muted/30">
-                    <td className="p-4 text-sm font-mono">
+                    <td className="p-2 sm:p-4 text-sm font-mono">
                       {new Date(log.created_at).toLocaleString("fr-FR")}
                     </td>
-                    <td className="p-4">
+                    <td className="p-2 sm:p-4">
                       <Badge variant={getActorBadgeVariant(log.actor_type) as "default" | "secondary" | "destructive" | "outline"} className="font-mono text-xs">
                         {log.actor_type === "owner" ? "OWNER" : log.actor_id || log.actor_type.toUpperCase()}
                       </Badge>
                     </td>
-                    <td className="p-4">
+                    <td className="p-2 sm:p-4">
                       <div className="flex items-center gap-2">
                         {getStatusIcon(log.action)}
                         <span className="text-sm font-medium">{log.action}</span>
                       </div>
                     </td>
-                    <td className="p-4 text-sm text-muted-foreground">
+                    <td className="p-2 sm:p-4 text-sm text-muted-foreground">
                       {log.resource_type && (
                         <span>
                           {log.resource_type}
@@ -170,7 +170,7 @@ export default function AuditPage() {
                         </span>
                       )}
                     </td>
-                    <td className="p-4 text-sm text-muted-foreground max-w-xs truncate">
+                    <td className="p-2 sm:p-4 text-sm text-muted-foreground max-w-xs truncate">
                       {log.details ? JSON.stringify(log.details).slice(0, 50) : "—"}
                     </td>
                   </tr>

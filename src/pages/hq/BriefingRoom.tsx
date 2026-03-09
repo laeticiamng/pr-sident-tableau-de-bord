@@ -120,11 +120,11 @@ export default function BriefingRoom() {
   return (
     <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
       {/* En-tête */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary/80 p-4 sm:p-6 md:p-8 text-primary-foreground">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.15),transparent)]" />
         <div className="relative z-10 flex flex-col gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{greeting}, {t.presidentTitle}</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2">{greeting}, {t.presidentTitle}</h1>
             <p className="text-primary-foreground/70 text-lg">
               {platformsLoading ? t.loading : (
                 <>

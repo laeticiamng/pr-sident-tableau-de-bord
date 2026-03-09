@@ -84,7 +84,7 @@ export default function SecuritePage() {
       />
 
       {/* Panic Button & Autopilot */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2">
         <Card className={`card-executive border-2 ${panicMode ? "border-destructive" : "border-destructive/20"}`}>
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
@@ -152,7 +152,7 @@ export default function SecuritePage() {
       <IncidentCounter daysSinceLastIncident={null} />
 
       {/* Security Status */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
             <Shield className={`h-8 w-8 mx-auto mb-3 ${panicMode ? "text-destructive" : autopilotEnabled ? "text-success" : "text-muted-foreground"}`} />

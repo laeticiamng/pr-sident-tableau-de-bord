@@ -41,7 +41,7 @@ export default function EntreprisePage() {
       </div>
 
       {/* Info Grid */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
         {/* Identification */}
         <div className="card-executive p-6">
           <div className="flex items-center gap-3 mb-6">

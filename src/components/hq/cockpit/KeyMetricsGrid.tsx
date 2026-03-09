@@ -59,10 +59,10 @@ export function KeyMetricsGrid() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
           <Card key={i} className="card-executive">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <Skeleton className="h-5 w-5 mb-3" />
               <Skeleton className="h-8 w-24 mb-2" />
               <Skeleton className="h-4 w-16" />
@@ -74,10 +74,10 @@ export function KeyMetricsGrid() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
       {metrics.map((metric) => (
         <Card key={metric.title} className="card-executive">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <metric.icon className={`h-5 w-5 ${metric.color}`} />
               {metric.trend === "up" ? (
@@ -86,7 +86,7 @@ export function KeyMetricsGrid() {
                 <ArrowDownRight className="h-4 w-4 text-destructive" />
               )}
             </div>
-            <div className="text-2xl font-bold">{metric.value}</div>
+            <div className="text-lg sm:text-2xl font-bold">{metric.value}</div>
             <div className="text-sm text-muted-foreground">{metric.title}</div>
             <div className="text-xs text-muted-foreground mt-1">{metric.change}</div>
           </CardContent>

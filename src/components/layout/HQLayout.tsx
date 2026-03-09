@@ -51,8 +51,8 @@ export function HQLayout() {
       {/* Command Palette (accessible via Cmd+K pour utilisateurs avancés) */}
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
 
-      <main className="lg:pl-64 pt-14 lg:pt-0">
-        <div className="p-4 sm:p-6 lg:p-8">
+      <main className="lg:pl-64 pt-14 lg:pt-0 min-w-0 overflow-x-hidden">
+        <div className="p-3 sm:p-4 md:p-6 lg:p-8 pb-20 lg:pb-8">
           {/* Barre supérieure simplifiée — Desktop only */}
           <div className="hidden lg:flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">

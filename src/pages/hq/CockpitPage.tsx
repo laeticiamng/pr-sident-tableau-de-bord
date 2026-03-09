@@ -18,10 +18,10 @@ export default function CockpitPage() {
   if (isEssential) {
     return (
       <div className="space-y-8 animate-fade-in">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-headline-1 mb-2">Cockpit Dirigeant</h1>
-            <p className="text-muted-foreground text-lg">
+            <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Cockpit Dirigeant</h1>
+            <p className="text-muted-foreground text-sm sm:text-lg">
               Vue simplifiée des indicateurs clés
             </p>
           </div>
@@ -54,7 +54,7 @@ export default function CockpitPage() {
       <KeyMetricsGrid />
 
       {/* Control Row */}
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <AutopilotControl />
         <SchedulerPanel />
         <AICostWidget />

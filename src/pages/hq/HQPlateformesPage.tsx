@@ -97,7 +97,7 @@ export default function HQPlateformesPage() {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 md:grid-cols-4">
         <Card className="card-executive">
           <CardContent className="p-6 text-center">
             <div className="text-3xl font-bold text-success mb-1">{platforms?.length || 0}</div>
@@ -193,7 +193,7 @@ export default function HQPlateformesPage() {
                     {(() => {
                       const stats = getPlatformStats(platform.key);
                       return (
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
                           <div className="text-center p-4 rounded-lg bg-muted/50">
                             <Activity className="h-5 w-5 mx-auto mb-2 text-primary" />
                             <div className="text-2xl font-bold">{platform.uptime_percent?.toFixed(1)}%</div>

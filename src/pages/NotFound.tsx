@@ -24,7 +24,7 @@ const NotFound = () => {
           {t.badge}
         </Badge>
 
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
           {t.title}
         </h1>
         
