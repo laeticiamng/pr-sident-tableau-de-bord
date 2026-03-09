@@ -327,7 +327,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                   {failedRuns} {failedRuns > 1 ? t.failuresPlural : t.failures}
                 </Button>
               )}
-              <Badge variant="outline" className="text-xs">{totalRuns} runs</Badge>
+              <Badge variant="outline" className="text-xs">{totalRuns} {t.runs}</Badge>
             </div>
           </div>
         </CardHeader>
