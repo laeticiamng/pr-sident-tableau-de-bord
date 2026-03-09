@@ -274,7 +274,7 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Premium expertise, delivered simply",
           shortDescription: "39 AI experts covering 11 business departments",
-          description: "Your team of 39 ready-to-use AI experts. 2 directors and 37 specialized agents covering 11 departments.",
+          description: "Your team of 39 ready-to-use AI experts covering 11 departments.",
         },
         "med-mng": {
           tagline: "One song = One medical item mastered",
