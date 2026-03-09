@@ -429,7 +429,7 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Premium-Expertise, einfach geliefert",
           shortDescription: "39 KI-Experten für 11 Geschäftsbereiche",
-          description: "Ihr Team aus 39 einsatzbereiten KI-Experten. 2 Direktoren und 37 spezialisierte Agenten für 11 Abteilungen.",
+          description: "Ihr Team aus 39 einsatzbereiten KI-Experten für 11 Abteilungen.",
         },
         "med-mng": {
           tagline: "Ein Song = Ein medizinisches Thema gemeistert",
