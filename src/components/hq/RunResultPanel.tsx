@@ -18,6 +18,8 @@ import {
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface RunResultPanelProps {
   runResult: {
@@ -33,7 +35,6 @@ interface RunResultPanelProps {
   className?: string;
 }
 
-// Mapping run types to friendly names
 const RUN_TYPE_LABELS: Record<string, string> = {
   DAILY_EXECUTIVE_BRIEF: "Brief Exécutif Quotidien",
   CEO_STANDUP_MEETING: "Standup CEO",
@@ -47,6 +48,7 @@ const RUN_TYPE_LABELS: Record<string, string> = {
 export function RunResultPanel({ runResult, onClose, className }: RunResultPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
+  const t = useTranslation(hqCommon);
 
   if (!runResult) return null;
 
@@ -54,10 +56,10 @@ export function RunResultPanel({ runResult, onClose, className }: RunResultPanel
     try {
       await navigator.clipboard.writeText(runResult.executive_summary);
       setCopied(true);
-      toast.success("Résumé copié dans le presse-papiers");
+      toast.success(t.copySuccess);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast.error("Erreur lors de la copie");
+      toast.error(t.copyError);
     }
   };
 
@@ -77,13 +79,9 @@ export function RunResultPanel({ runResult, onClose, className }: RunResultPanel
                 </div>
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-base flex items-center gap-2">
-                    Résultat : {runTypeLabel}
-                    <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" aria-label={isExpanded ? "Réduire" : "Développer"}>
-                      {isExpanded ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
+                    {t.result} : {runTypeLabel}
+                    <Button variant="ghost" size="icon" className="h-6 w-6 ml-auto" aria-label={isExpanded ? t.reduce : t.expand}>
+                      {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                     </Button>
                   </CardTitle>
                   {runResult.completed_at && (
@@ -95,26 +93,12 @@ export function RunResultPanel({ runResult, onClose, className }: RunResultPanel
               </div>
             </CollapsibleTrigger>
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className="gap-1"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4 text-success" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-                <span className="hidden sm:inline">{copied ? "Copié" : "Copier"}</span>
+              <Button variant="ghost" size="sm" onClick={handleCopy} className="gap-1">
+                {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
+                <span className="hidden sm:inline">{copied ? t.copied : t.copy}</span>
               </Button>
               {onClose && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onClose}
-                  className="h-8 w-8"
-                >
+                <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
                   <X className="h-4 w-4" />
                 </Button>
               )}
@@ -124,70 +108,37 @@ export function RunResultPanel({ runResult, onClose, className }: RunResultPanel
 
         <CollapsibleContent>
           <CardContent className="space-y-4">
-            {/* Metadata Row */}
             <div className="flex flex-wrap gap-4 pb-3 border-b">
-              {/* Model Used */}
               {runResult.model_used && (
                 <div className="flex items-center gap-2">
                   <Cpu className="h-4 w-4 text-muted-foreground" />
-                  <Badge variant="subtle" className="font-mono text-xs">
-                    {runResult.model_used}
-                  </Badge>
+                  <Badge variant="subtle" className="font-mono text-xs">{runResult.model_used}</Badge>
                 </div>
               )}
-
-              {/* Data Sources */}
               {runResult.data_sources && runResult.data_sources.length > 0 && (
                 <div className="flex items-center gap-2 flex-wrap">
                   <Link2 className="h-4 w-4 text-muted-foreground" />
                   {runResult.data_sources.map((source, i) => (
-                    <Badge key={i} variant="subtle" className="text-xs">
-                      {source}
-                    </Badge>
+                    <Badge key={i} variant="subtle" className="text-xs">{source}</Badge>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Executive Summary - Markdown */}
             <ScrollArea className="max-h-[400px]">
               <div className="prose prose-sm dark:prose-invert max-w-none">
                 <ReactMarkdown
                   components={{
-                    h1: ({ children }) => (
-                      <h1 className="text-lg font-bold mt-4 mb-2">{children}</h1>
-                    ),
-                    h2: ({ children }) => (
-                      <h2 className="text-base font-semibold mt-3 mb-2">{children}</h2>
-                    ),
-                    h3: ({ children }) => (
-                      <h3 className="text-sm font-semibold mt-2 mb-1">{children}</h3>
-                    ),
-                    p: ({ children }) => (
-                      <p className="text-sm leading-relaxed mb-2">{children}</p>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="list-disc pl-4 space-y-1 text-sm">{children}</ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="list-decimal pl-4 space-y-1 text-sm">{children}</ol>
-                    ),
-                    li: ({ children }) => (
-                      <li className="text-sm">{children}</li>
-                    ),
-                    strong: ({ children }) => (
-                      <strong className="font-semibold text-foreground">{children}</strong>
-                    ),
-                    blockquote: ({ children }) => (
-                      <blockquote className="border-l-2 border-accent pl-3 italic text-muted-foreground">
-                        {children}
-                      </blockquote>
-                    ),
-                    code: ({ children }) => (
-                      <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">
-                        {children}
-                      </code>
-                    ),
+                    h1: ({ children }) => <h1 className="text-lg font-bold mt-4 mb-2">{children}</h1>,
+                    h2: ({ children }) => <h2 className="text-base font-semibold mt-3 mb-2">{children}</h2>,
+                    h3: ({ children }) => <h3 className="text-sm font-semibold mt-2 mb-1">{children}</h3>,
+                    p: ({ children }) => <p className="text-sm leading-relaxed mb-2">{children}</p>,
+                    ul: ({ children }) => <ul className="list-disc pl-4 space-y-1 text-sm">{children}</ul>,
+                    ol: ({ children }) => <ol className="list-decimal pl-4 space-y-1 text-sm">{children}</ol>,
+                    li: ({ children }) => <li className="text-sm">{children}</li>,
+                    strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                    blockquote: ({ children }) => <blockquote className="border-l-2 border-accent pl-3 italic text-muted-foreground">{children}</blockquote>,
+                    code: ({ children }) => <code className="bg-muted px-1.5 py-0.5 rounded text-xs font-mono">{children}</code>,
                   }}
                 >
                   {runResult.executive_summary}

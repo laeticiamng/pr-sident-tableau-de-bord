@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { Run } from "@/hooks/useHQData";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface RunExportButtonProps {
   runs: Run[];
@@ -9,18 +11,18 @@ interface RunExportButtonProps {
 
 export function RunExportButton({ runs }: RunExportButtonProps) {
   const { toast } = useToast();
+  const t = useTranslation(hqCommon);
 
   const handleExport = () => {
     if (!runs || runs.length === 0) {
       toast({
-        title: "Aucune donnée",
-        description: "Aucun run à exporter.",
+        title: t.noRunData,
+        description: t.noRunToExport,
         variant: "destructive",
       });
       return;
     }
 
-    // Build TSV content
     const headers = ["Date", "Type", "Statut", "Plateforme", "Résumé"];
     const rows = runs.map((run) => [
       new Date(run.created_at).toLocaleString("fr-FR"),
@@ -46,15 +48,15 @@ export function RunExportButton({ runs }: RunExportButtonProps) {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Export réussi",
-      description: `${runs.length} runs exportés en TSV.`,
+      title: t.exportSuccess,
+      description: `${runs.length} ${t.runsExported}`,
     });
   };
 
   return (
     <Button variant="outline" size="sm" onClick={handleExport}>
       <Download className="h-4 w-4 mr-2" />
-      Exporter
+      {t.export}
     </Button>
   );
 }

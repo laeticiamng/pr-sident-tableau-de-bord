@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface OKR {
   objective: string;
@@ -23,18 +25,18 @@ export function RoadmapExportButton({
   upcomingReleases = [] 
 }: RoadmapExportButtonProps) {
   const { toast } = useToast();
+  const t = useTranslation(hqCommon);
 
   const handleExport = () => {
     if (okrs.length === 0 && Object.keys(platformFeatures).length === 0) {
       toast({
-        title: "Export impossible",
-        description: "Aucune donnée disponible pour l'export. Connectez une source de données.",
+        title: t.exportImpossible,
+        description: t.noDataForExport,
         variant: "destructive",
       });
       return;
     }
 
-    // Build Markdown content
     const lines: string[] = [
       "# Roadmap Produit EMOTIONSCARE SASU",
       `Exporté le ${new Date().toLocaleDateString("fr-FR")}`,
@@ -91,15 +93,15 @@ export function RoadmapExportButton({
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Export réussi",
-      description: "La roadmap a été exportée en Markdown.",
+      title: t.exportSuccess,
+      description: t.roadmapExported,
     });
   };
 
   return (
     <Button variant="outline" onClick={handleExport}>
       <Download className="h-4 w-4 mr-2" />
-      Exporter Roadmap
+      {t.exportRoadmap}
     </Button>
   );
 }
