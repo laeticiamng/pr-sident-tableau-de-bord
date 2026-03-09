@@ -104,7 +104,7 @@ export const homeTranslations = {
         emotionscare: {
           tagline: "Prendre soin de celles et ceux qui prennent soin",
           shortDescription: "Bien-être émotionnel des soignants et étudiants en médecine",
-          description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé avec Nyvée, musicothérapie, réalité virtuelle et gamification.",
+          description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé, musicothérapie, réalité virtuelle et gamification.",
         },
         nearvity: {
           tagline: "Connecte-toi avec les gens autour de toi",
@@ -119,7 +119,7 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Compétence premium, livrée simplement",
           shortDescription: "39 experts IA couvrant 11 départements métier",
-          description: "Votre équipe de 39 experts IA prêts à l'emploi. 2 directeurs et 37 agents spécialisés couvrent 11 départements.",
+          description: "Votre équipe de 39 experts IA prêts à l'emploi couvrant 11 départements.",
         },
         "med-mng": {
           tagline: "Une chanson = Un item médical maîtrisé",
@@ -274,12 +274,12 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Premium expertise, delivered simply",
           shortDescription: "39 AI experts covering 11 business departments",
-          description: "Your team of 39 ready-to-use AI experts. 2 directors and 37 specialized agents covering 11 departments.",
+          description: "Your team of 39 ready-to-use AI experts covering 11 departments.",
         },
         "med-mng": {
-          tagline: "One song = One medical item mastered",
+          tagline: "One song = One medical concept mastered",
           shortDescription: "Revolutionary medical learning through AI music",
-          description: "Revolutionizing medical learning through music. Each ECN/EDN item becomes an AI-generated song you naturally retain.",
+          description: "Revolutionizing medical learning through music. Each medical concept becomes an AI-generated song you naturally retain.",
         },
         "swift-care-hub": {
           tagline: "From admission to discharge, every second counts",
@@ -429,12 +429,12 @@ export const homeTranslations = {
         "growth-copilot": {
           tagline: "Premium-Expertise, einfach geliefert",
           shortDescription: "39 KI-Experten für 11 Geschäftsbereiche",
-          description: "Ihr Team aus 39 einsatzbereiten KI-Experten. 2 Direktoren und 37 spezialisierte Agenten für 11 Abteilungen.",
+          description: "Ihr Team aus 39 einsatzbereiten KI-Experten für 11 Abteilungen.",
         },
         "med-mng": {
-          tagline: "Ein Song = Ein medizinisches Thema gemeistert",
+          tagline: "Ein Song = Ein medizinisches Konzept gemeistert",
           shortDescription: "Revolutionäres medizinisches Lernen durch KI-Musik",
-          description: "Revolution des medizinischen Lernens durch Musik. Jeder ECN/EDN-Punkt wird zu einem KI-generierten Song.",
+          description: "Revolution des medizinischen Lernens durch Musik. Jedes medizinische Konzept wird zu einem KI-generierten Song.",
         },
         "swift-care-hub": {
           tagline: "Von der Aufnahme bis zur Entlassung zählt jede Sekunde",
