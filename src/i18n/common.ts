@@ -8,7 +8,7 @@ export const commonTranslations = {
       vision: "Vision",
       security: "Sécurité",
       contact: "Contact",
-      login: "Espace client",
+      login: "Connexion",
       openMenu: "Ouvrir le menu",
       closeMenu: "Fermer le menu",
     },
