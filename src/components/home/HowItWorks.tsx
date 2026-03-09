@@ -15,7 +15,7 @@ const translations = {
         description: "Explorez nos 10 solutions et trouvez celle qui répond à votre besoin : santé, éducation, international ou croissance.",
       },
       {
-        icon: UserPlus,
+        icon: MessageCircle,
         title: "Échangez avec notre équipe",
         description: "Contactez-nous pour découvrir la solution adaptée à votre métier. Réponse garantie sous 48h, sans engagement.",
       },
