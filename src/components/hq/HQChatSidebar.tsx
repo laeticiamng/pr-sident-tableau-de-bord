@@ -358,10 +358,10 @@ export function HQChatSidebar() {
             ) : conversations.length === 0 ? (
               <div className="text-center text-muted-foreground mt-12 space-y-2">
                 <MessageCircle className="h-10 w-10 mx-auto text-muted-foreground/30" />
-                <p className="text-sm">Aucune conversation</p>
+                <p className="text-sm">{t.noConversation}</p>
                 <Button variant="outline" size="sm" onClick={newChat}>
                   <Plus className="h-3 w-3 mr-1" />
-                  Démarrer
+                  {t.start}
                 </Button>
               </div>
             ) : (
