@@ -5,7 +5,7 @@ export const MANAGED_PLATFORMS = [
     key: "emotionscare",
     name: "EmotionsCare",
     shortDescription: "Bien-être émotionnel des soignants et étudiants en médecine",
-    description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé avec Nyvée, musicothérapie, réalité virtuelle et gamification. Conçu pour réduire l'épuisement professionnel et renforcer la résilience au quotidien.",
+    description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé, musicothérapie, réalité virtuelle et gamification.",
     tagline: "Prendre soin de celles et ceux qui prennent soin",
     github: "https://github.com/laeticiamng/emotionscare",
     liveUrl: "https://emotionscare.com",
