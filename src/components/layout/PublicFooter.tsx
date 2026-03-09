@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import { Building2, Cookie } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -5,13 +6,13 @@ import { useTranslation } from "@/contexts/LanguageContext";
 import { commonTranslations } from "@/i18n/common";
 import { useCookieConsent } from "@/hooks/useCookieConsent";
 
-export function PublicFooter() {
+export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref) {
   const currentYear = new Date().getFullYear();
   const t = useTranslation(commonTranslations);
   const { reopenBanner } = useCookieConsent();
 
   return (
-    <footer className="border-t bg-secondary/30">
+    <footer ref={ref} className="border-t bg-secondary/30">
       <div className="container py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 grid-cols-2 md:grid-cols-4">
           <div className="col-span-2">
@@ -76,4 +77,4 @@ export function PublicFooter() {
       </div>
     </footer>
   );
-}
+});
