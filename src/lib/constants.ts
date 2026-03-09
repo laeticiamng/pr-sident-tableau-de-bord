@@ -95,7 +95,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://track-triumph-tavern.lovable.app",
     color: "bg-accent",
     stats: { modules: 12, tables: 18, edgeFunctions: 10, branches: 6, commits: 580, tests: 72 },
-    features: ["Soumissions hebdomadaires", "Votes communautaires", "Classements par catégorie", "Hall of Fame", "Feedback IA"],
+    features: ["Soumissions hebdomadaires", "Votes communautaires", "Classements par catégorie", "Hall of Fame", "Analyse IA de vos morceaux"],
     status: "production",
     lastCommit: "2026-02-05",
   },
