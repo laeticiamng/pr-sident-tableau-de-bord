@@ -238,7 +238,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
-              Agents actifs — 24 dernières heures
+              {t.activeAgentsLast24h}
             </CardTitle>
           </CardHeader>
           <CardContent>
