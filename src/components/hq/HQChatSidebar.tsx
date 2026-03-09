@@ -417,7 +417,7 @@ export function HQChatSidebar() {
                     {t.greetingHint}
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center pt-2">
-                    {(t.quickPrompts as string[]).map((q) => (
+                    {(t.quickPrompts as readonly string[]).map((q) => (
                       <Button
                         key={q}
                         variant="outline"
