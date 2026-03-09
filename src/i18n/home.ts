@@ -104,7 +104,7 @@ export const homeTranslations = {
         emotionscare: {
           tagline: "Prendre soin de celles et ceux qui prennent soin",
           shortDescription: "Bien-être émotionnel des soignants et étudiants en médecine",
-          description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé avec Nyvée, musicothérapie, réalité virtuelle et gamification.",
+          description: "Première plateforme française dédiée au bien-être émotionnel des soignants et étudiants en médecine. 37 modules intégrés : scan émotionnel par IA, coaching personnalisé, musicothérapie, réalité virtuelle et gamification.",
         },
         nearvity: {
           tagline: "Connecte-toi avec les gens autour de toi",
