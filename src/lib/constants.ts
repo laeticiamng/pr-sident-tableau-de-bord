@@ -103,7 +103,7 @@ export const MANAGED_PLATFORMS = [
     key: "trust-seal-chain",
     name: "Gouvernance Agents IA",
     shortDescription: "Certification et traçabilité des agents IA",
-    description: "Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance, audit automatisé des décisions algorithmiques, scoring éthique et conformité AI Act européen. Chaque agent est certifié, chaque décision est traçable.",
+    description: "Plateforme de certification et de traçabilité pour les agents IA. Registre de confiance, audit automatisé des décisions algorithmiques, scoring éthique et conformité réglementaire européenne.",
     tagline: "La confiance IA, certifiée et traçable",
     github: "https://github.com/laeticiamng/trust-seal-chain",
     liveUrl: "https://trust-seal-chain.lovable.app",
