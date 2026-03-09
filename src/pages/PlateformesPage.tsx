@@ -107,13 +107,11 @@ export default function PlateformesPage() {
               {t.hero.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms },
-                { value: formatNumber(totals.commits), label: t.stats.evolutions },
-                { value: formatNumber(totals.tests), label: t.stats.tests },
-                { value: `${totals.tables}`, label: t.stats.structures },
-                { value: `${totals.functions}`, label: t.stats.integrations },
+                { value: formatNumber(totals.modules), label: t.labels.modulesLabel },
+                { value: "24/7", label: "Disponibilité" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
