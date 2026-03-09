@@ -137,7 +137,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://vessel-pathway-compass.lovable.app",
     color: "bg-destructive",
     stats: { modules: 6, tables: 10, edgeFunctions: 5, branches: 2, commits: 150, tests: 30 },
-    features: ["Assistant clinique IA", "Jumeau numérique vasculaire", "Registre mondial des résultats", "Certification & CME", "Simulation clinique"],
+    features: ["Assistant clinique IA", "Modélisation vasculaire 3D", "Registre mondial des résultats", "Formation continue", "Simulation clinique"],
     status: "prototype",
     lastCommit: "2026-03-07",
   },
