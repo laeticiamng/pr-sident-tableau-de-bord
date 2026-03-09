@@ -7,13 +7,8 @@ import {
   ExternalLink,
   CheckCircle,
   AlertCircle,
-  Database,
-  Cpu,
-  GitBranch,
-  GitCommit,
   Sparkles,
   Layers,
-  TestTube2,
   Calendar,
   ArrowRight,
   Rocket,
@@ -107,13 +102,11 @@ export default function PlateformesPage() {
               {t.hero.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms },
-                { value: formatNumber(totals.commits), label: t.stats.evolutions },
-                { value: formatNumber(totals.tests), label: t.stats.tests },
-                { value: `${totals.tables}`, label: t.stats.structures },
-                { value: `${totals.functions}`, label: t.stats.integrations },
+                { value: formatNumber(totals.modules), label: t.labels.modulesLabel },
+                { value: "24/7", label: "Disponibilité" },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
@@ -277,14 +270,10 @@ export default function PlateformesPage() {
                     </div>
 
                     <div className={cn(!isEven && "md:order-1")}>
-                      <div className="grid grid-cols-3 md:grid-cols-2 gap-3 md:gap-4">
+                      <div className="grid grid-cols-2 gap-3 md:gap-4">
                         {[
-                          { icon: GitCommit, value: formatNumber(platform.stats.commits), label: t.labels.evolutions },
-                          { icon: Database, value: platform.stats.tables, label: t.labels.structures },
-                          { icon: TestTube2, value: formatNumber(platform.stats.tests), label: t.labels.tests },
-                          { icon: GitBranch, value: platform.stats.branches, label: t.labels.versions },
-                          { icon: Cpu, value: platform.stats.edgeFunctions, label: t.labels.integrations },
                           { icon: Layers, value: platform.stats.modules, label: t.labels.modulesLabel },
+                          { icon: CheckCircle, value: platform.status === "production" ? t.status.production : t.status.prototype, label: "Status" },
                         ].map((stat) => (
                           <div 
                             key={stat.label}
@@ -343,13 +332,11 @@ export default function PlateformesPage() {
               {t.governance.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6 mb-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-12 max-w-3xl mx-auto">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms, icon: Layers },
-                { value: formatNumber(totals.commits), label: t.stats.evolutions, icon: GitCommit },
-                { value: formatNumber(totals.tests), label: t.stats.tests, icon: TestTube2 },
-                { value: `${totals.tables}`, label: t.stats.structures, icon: Database },
-                { value: `${totals.functions}`, label: t.stats.integrations, icon: Cpu },
+                { value: formatNumber(totals.modules), label: t.labels.modulesLabel, icon: Layers },
+                { value: "24/7", label: "Disponibilité", icon: CheckCircle },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}

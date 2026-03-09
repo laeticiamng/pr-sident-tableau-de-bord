@@ -1,4 +1,4 @@
-import { Search, UserPlus, Rocket } from "lucide-react";
+import { Search, MessageCircle, Rocket } from "lucide-react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
@@ -15,9 +15,9 @@ const translations = {
         description: "Explorez nos 10 solutions et trouvez celle qui répond à votre besoin : santé, éducation, international ou croissance.",
       },
       {
-        icon: UserPlus,
-        title: "Créez votre compte",
-        description: "Inscription gratuite en 30 secondes. Aucune carte bancaire requise. Accédez immédiatement à votre espace.",
+        icon: MessageCircle,
+        title: "Échangez avec notre équipe",
+        description: "Contactez-nous pour découvrir la solution adaptée à votre métier. Réponse garantie sous 48h, sans engagement.",
       },
       {
         icon: Rocket,
@@ -37,9 +37,9 @@ const translations = {
         description: "Browse our 10 solutions and find the one that fits your needs: healthcare, education, international or growth.",
       },
       {
-        icon: UserPlus,
-        title: "Create your account",
-        description: "Free sign-up in 30 seconds. No credit card required. Get immediate access to your workspace.",
+        icon: MessageCircle,
+        title: "Talk to our team",
+        description: "Contact us to find the right solution for your profession. Guaranteed response within 48h, no commitment.",
       },
       {
         icon: Rocket,
@@ -59,9 +59,9 @@ const translations = {
         description: "Entdecken Sie unsere 10 Lösungen und finden Sie die passende: Gesundheit, Bildung, International oder Wachstum.",
       },
       {
-        icon: UserPlus,
-        title: "Erstellen Sie Ihr Konto",
-        description: "Kostenlose Registrierung in 30 Sekunden. Keine Kreditkarte erforderlich. Sofortiger Zugang.",
+        icon: MessageCircle,
+        title: "Sprechen Sie mit unserem Team",
+        description: "Kontaktieren Sie uns, um die richtige Lösung für Ihren Beruf zu finden. Antwort innerhalb von 48h garantiert, unverbindlich.",
       },
       {
         icon: Rocket,

@@ -8,13 +8,11 @@ import {
   ArrowRight,
   ChevronRight,
   Heart,
-  Database,
-  GitBranch,
   Sparkles,
-  GitCommit,
-  TestTube2,
   Rocket,
   ExternalLink,
+  CheckCircle,
+  Layers,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
@@ -160,12 +158,10 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
                     {[
-                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: s.evolutions, suffix: "" },
-                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.modules, label: s.modulesLabel, suffix: "" },
-                      { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: s.tests, suffix: "" },
-                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: s.versions, suffix: "" },
+                      { icon: Layers, value: MANAGED_PLATFORMS[0].stats.modules, label: s.modulesLabel, suffix: "" },
+                      { icon: CheckCircle, value: s.production, label: "Status", suffix: "" },
                     ].map((stat) => (
                       <div 
                         key={stat.label}
@@ -258,8 +254,6 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
 
                       <div className="hidden sm:flex items-center gap-2 sm:gap-3 md:gap-4 text-[8px] sm:text-[10px] md:text-xs text-muted-foreground mb-2 sm:mb-3 md:mb-4">
                         <span>{platform.stats.modules} {s.modulesLabel}</span>
-                        <span className="hidden md:inline">•</span>
-                        <span className="hidden md:inline">{platform.stats.tables} {s.structuresLabel}</span>
                       </div>
 
                       <div className="flex items-center gap-1.5 sm:gap-2">

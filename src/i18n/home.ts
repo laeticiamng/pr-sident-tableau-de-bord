@@ -60,14 +60,14 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plateformes",
-      evolutions: "Mises à jour",
+      evolutions: "Fonctionnalités",
       madeInFrance: "Made in France",
       monitoring: "Surveillance",
     },
     cta: {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 10 plateformes innovantes et comment elles transforment leurs secteurs.",
-      button: "Voir les plateformes en détail",
+      button: "Trouvez la solution pour votre métier",
       contactButton: "Demander une démo",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
@@ -79,7 +79,7 @@ export const homeTranslations = {
         { quote: "NEARVITY a rendu l'apprentissage médical beaucoup plus engageant pour nos étudiants.", author: "Directrice pédagogique", org: "Faculté de Médecine" },
         { quote: "System Compass nous a fait gagner des semaines dans nos projets de relocalisation.", author: "Consultant mobilité", org: "Cabinet RH International" },
       ],
-      disclaimer: "* Cas d'usage représentatifs des bénéfices observés par nos utilisateurs.",
+      disclaimer: "Nos plateformes sont en cours de déploiement auprès de premiers utilisateurs.",
     },
     showcase: {
       badge: "Écosystème Premium",
@@ -215,14 +215,14 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Platforms",
-      evolutions: "Updates",
+      evolutions: "Features",
       madeInFrance: "Made in France",
       monitoring: "Uptime",
     },
     cta: {
       title: "Explore the ecosystem",
       subtitle: "Discover our 10 innovative platforms and how they transform their sectors.",
-      button: "View platforms in detail",
+      button: "Find the right solution for you",
       contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
@@ -234,7 +234,7 @@ export const homeTranslations = {
         { quote: "NEARVITY has made medical learning much more engaging for our students.", author: "Academic Director", org: "Medical School" },
         { quote: "System Compass saved us weeks on our relocation projects.", author: "Mobility Consultant", org: "International HR Firm" },
       ],
-      disclaimer: "* Representative use cases reflecting benefits observed by our users.",
+      disclaimer: "Our platforms are currently being rolled out to early users.",
     },
     showcase: {
       badge: "Premium Ecosystem",
@@ -370,14 +370,14 @@ export const homeTranslations = {
     },
     stats: {
       platforms: "Plattformen",
-      evolutions: "Aktualisierungen",
+      evolutions: "Funktionen",
       madeInFrance: "Made in France",
       monitoring: "Verfügbarkeit",
     },
     cta: {
       title: "Das Ökosystem erkunden",
       subtitle: "Entdecken Sie unsere 10 innovativen Plattformen und wie sie ihre Branchen verändern.",
-      button: "Plattformen im Detail ansehen",
+      button: "Finden Sie die richtige Lösung",
       contactButton: "Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
@@ -389,7 +389,7 @@ export const homeTranslations = {
         { quote: "NEARVITY hat das medizinische Lernen für unsere Studierenden viel ansprechender gemacht.", author: "Pädagogische Direktorin", org: "Medizinische Fakultät" },
         { quote: "System Compass hat uns Wochen bei unseren Umzugsprojekten gespart.", author: "Mobilitätsberater", org: "Internationale HR-Firma" },
       ],
-      disclaimer: "* Repräsentative Anwendungsfälle, die von unseren Nutzern beobachtete Vorteile widerspiegeln.",
+      disclaimer: "Unsere Plattformen werden derzeit bei ersten Nutzern eingeführt.",
     },
     showcase: {
       badge: "Premium-Ökosystem",

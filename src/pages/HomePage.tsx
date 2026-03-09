@@ -190,7 +190,7 @@ export default function HomePage() {
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: `${MANAGED_PLATFORMS.length}`, label: t.stats.platforms },
-              { value: `${(MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.commits, 0) / 1000).toFixed(1)}K`, label: t.stats.evolutions },
+              { value: `${MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.modules, 0)}`, label: t.stats.evolutions },
               { value: "100%", label: t.stats.madeInFrance },
               { value: "24/7", label: t.stats.monitoring },
             ].map((stat, index) => (
