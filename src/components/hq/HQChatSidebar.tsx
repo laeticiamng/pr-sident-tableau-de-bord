@@ -298,10 +298,10 @@ export function HQChatSidebar() {
     const d = new Date(dateStr);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    if (diff < 60000) return "À l'instant";
-    if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
-    if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)}h`;
-    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    if (diff < 60000) return t.justNow;
+    if (diff < 3600000) return (t.minutesAgo as string).replace("{n}", String(Math.floor(diff / 60000)));
+    if (diff < 86400000) return (t.hoursAgo as string).replace("{n}", String(Math.floor(diff / 3600000)));
+    return d.toLocaleDateString(language === "de" ? "de-DE" : language === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "short" });
   };
 
   return (
