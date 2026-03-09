@@ -432,9 +432,9 @@ export const homeTranslations = {
           description: "Ihr Team aus 39 einsatzbereiten KI-Experten für 11 Abteilungen.",
         },
         "med-mng": {
-          tagline: "Ein Song = Ein medizinisches Thema gemeistert",
+          tagline: "Ein Song = Ein medizinisches Konzept gemeistert",
           shortDescription: "Revolutionäres medizinisches Lernen durch KI-Musik",
-          description: "Revolution des medizinischen Lernens durch Musik. Jeder ECN/EDN-Punkt wird zu einem KI-generierten Song.",
+          description: "Revolution des medizinischen Lernens durch Musik. Jedes medizinische Konzept wird zu einem KI-generierten Song.",
         },
         "swift-care-hub": {
           tagline: "Von der Aufnahme bis zur Entlassung zählt jede Sekunde",
