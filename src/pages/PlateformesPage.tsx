@@ -275,14 +275,10 @@ export default function PlateformesPage() {
                     </div>
 
                     <div className={cn(!isEven && "md:order-1")}>
-                      <div className="grid grid-cols-3 md:grid-cols-2 gap-3 md:gap-4">
+                      <div className="grid grid-cols-2 gap-3 md:gap-4">
                         {[
-                          { icon: GitCommit, value: formatNumber(platform.stats.commits), label: t.labels.evolutions },
-                          { icon: Database, value: platform.stats.tables, label: t.labels.structures },
-                          { icon: TestTube2, value: formatNumber(platform.stats.tests), label: t.labels.tests },
-                          { icon: GitBranch, value: platform.stats.branches, label: t.labels.versions },
-                          { icon: Cpu, value: platform.stats.edgeFunctions, label: t.labels.integrations },
                           { icon: Layers, value: platform.stats.modules, label: t.labels.modulesLabel },
+                          { icon: CheckCircle, value: platform.status === "production" ? t.status.production : t.status.prototype, label: "Status" },
                         ].map((stat) => (
                           <div 
                             key={stat.label}
