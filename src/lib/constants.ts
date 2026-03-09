@@ -47,7 +47,7 @@ export const MANAGED_PLATFORMS = [
     key: "growth-copilot",
     name: "Growth Copilot",
     shortDescription: "39 experts IA couvrant 11 départements métier",
-    description: "Votre équipe de 39 experts IA prêts à l'emploi. 2 directeurs et 37 agents spécialisés couvrent 11 départements : marketing, ventes, finance, produit, engineering et plus. Chaque tâche est validée, tracée et automatisée. La compétence premium d'une équipe complète, sans la complexité.",
+    description: "Votre équipe de 39 experts IA prêts à l'emploi couvrant 11 départements : marketing, ventes, finance, produit, engineering et plus. Chaque tâche est validée, tracée et automatisée.",
     tagline: "Compétence premium, livrée simplement",
     github: "https://github.com/laeticiamng/growth-copilot",
     liveUrl: "https://www.agent-growth-automator.com",
