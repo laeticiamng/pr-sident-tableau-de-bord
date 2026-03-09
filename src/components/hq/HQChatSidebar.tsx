@@ -278,7 +278,7 @@ export function HQChatSidebar() {
       });
     } catch (e) {
       console.error(e);
-      toast.error("Erreur de connexion au DG IA");
+      toast.error(t.connectionError);
       setIsLoading(false);
     }
   }, [isLoading, messages, currentConversationId, createConversation, persistMessage]);
