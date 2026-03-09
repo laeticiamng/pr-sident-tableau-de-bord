@@ -495,7 +495,7 @@ export function HQChatSidebar() {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Posez votre question..."
+                  placeholder={t.typeMessage}
                   disabled={isLoading}
                   className="flex-1"
                 />
