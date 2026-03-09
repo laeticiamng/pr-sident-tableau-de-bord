@@ -436,7 +436,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                             <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 space-y-2">
                               <p className="text-xs text-destructive font-medium">
                                 {run.platform_key && <span className="mr-1">[{run.platform_key}]</span>}
-                                {run.executive_summary?.replace(/[#*`]/g, "") || "Erreur inconnue lors de l'exécution"}
+                                {run.executive_summary?.replace(/[#*`]/g, "") || t.unknownError}
                               </p>
                               <Button
                                 variant="outline"
