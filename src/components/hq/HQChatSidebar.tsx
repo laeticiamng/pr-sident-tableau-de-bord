@@ -46,7 +46,7 @@ async function streamChat({
 
   if (!resp.ok) {
     const data = await resp.json().catch(() => ({}));
-    onError(data.error || `Erreur ${resp.status}`);
+    onError(data.error || `Error ${resp.status}`);
     return;
   }
 
