@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, FileText, CheckCircle } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface RGPDExportButtonProps {
   className?: string;
@@ -9,18 +11,14 @@ interface RGPDExportButtonProps {
 
 export function RGPDExportButton({ className }: RGPDExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const t = useTranslation(hqCommon);
 
   const handleExport = async () => {
     setIsExporting(true);
 
     try {
-      // Simuler un délai de génération
       await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Générer le contenu du rapport RGPD
       const report = generateRGPDReport();
-
-      // Créer et télécharger le fichier
       const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -31,31 +29,18 @@ export function RGPDExportButton({ className }: RGPDExportButtonProps) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success("Export RGPD généré", {
-        description: "Le registre a été téléchargé avec succès.",
-      });
+      toast.success(t.rgpdExportSuccess, { description: t.rgpdExportSuccessDesc });
     } catch (error) {
-      toast.error("Erreur d'export", {
-        description: "Impossible de générer le registre RGPD.",
-      });
+      toast.error(t.rgpdExportError, { description: t.rgpdExportErrorDesc });
     } finally {
       setIsExporting(false);
     }
   };
 
   return (
-    <Button
-      variant="outline"
-      onClick={handleExport}
-      disabled={isExporting}
-      className={className}
-    >
-      {isExporting ? (
-        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-      ) : (
-        <Download className="h-4 w-4 mr-2" />
-      )}
-      Exporter Registre RGPD
+    <Button variant="outline" onClick={handleExport} disabled={isExporting} className={className}>
+      {isExporting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+      {t.rgpdExport}
     </Button>
   );
 }

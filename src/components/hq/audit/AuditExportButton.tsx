@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, FileText } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface AuditLog {
   id: string;
@@ -21,10 +23,11 @@ interface AuditExportButtonProps {
 
 export function AuditExportButton({ logs, className }: AuditExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const t = useTranslation(hqCommon);
 
   const handleExport = async () => {
     if (!logs || logs.length === 0) {
-      toast.error("Aucun log à exporter");
+      toast.error(t.noLogsToExport);
       return;
     }
 
@@ -57,12 +60,12 @@ export function AuditExportButton({ logs, className }: AuditExportButtonProps) {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success("Export terminé", {
-        description: `${logs.length} entrées exportées.`,
+      toast.success(t.exportDone, {
+        description: `${logs.length} ${t.entriesExported}`,
       });
     } catch (error) {
-      toast.error("Erreur d'export", {
-        description: "Impossible de générer le fichier d'export.",
+      toast.error(t.exportError, {
+        description: t.cannotGenerateExport,
       });
     } finally {
       setIsExporting(false);
@@ -81,7 +84,7 @@ export function AuditExportButton({ logs, className }: AuditExportButtonProps) {
       ) : (
         <Download className="h-4 w-4 mr-2" />
       )}
-      Exporter ({logs?.length || 0})
+      {t.export} ({logs?.length || 0})
     </Button>
   );
 }

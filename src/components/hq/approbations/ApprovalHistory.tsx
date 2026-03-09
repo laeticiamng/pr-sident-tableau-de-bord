@@ -3,9 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
 import { useAuditLogs } from "@/hooks/useHQData";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 export function ApprovalHistory() {
   const { data: allLogs, isLoading, isError } = useAuditLogs(20);
+  const t = useTranslation(hqCommon);
 
   const logs = allLogs?.filter((log) =>
     log.action?.startsWith("action.") || log.action?.startsWith("run.")
@@ -17,7 +20,7 @@ export function ApprovalHistory() {
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <Clock className="h-5 w-5 text-primary" />
-            Historique des Décisions
+            {t.decisionHistory}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -37,23 +40,23 @@ export function ApprovalHistory() {
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
           <Clock className="h-5 w-5 text-primary" />
-          Historique des Décisions
+          {t.decisionHistory}
         </CardTitle>
         <CardDescription>
-          {logs?.length ? `${approvedCount} approuvées • ${rejectedCount} rejetées` : "Aucune décision enregistrée"}
+          {logs?.length ? `${approvedCount} ${t.approvedCount} • ${rejectedCount} ${t.rejectedCount}` : t.noDecisions}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {isError ? (
           <div className="text-center py-8 text-muted-foreground">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="font-medium">Impossible de charger l'historique</p>
+            <p className="font-medium">{t.cannotLoadHistory}</p>
           </div>
         ) : !logs?.length ? (
           <div className="text-center py-8 text-muted-foreground">
             <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p className="font-medium">Aucune décision enregistrée</p>
-            <p className="text-sm mt-1">Les approbations et actions apparaîtront ici</p>
+            <p className="font-medium">{t.noDecisions}</p>
+            <p className="text-sm mt-1">{t.approvalsWillAppear}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -85,7 +88,7 @@ export function ApprovalHistory() {
                     </div>
                   </div>
                   <Badge variant={isRejected ? "destructive" : "success"}>
-                    {isRejected ? "Rejeté" : isApproved ? "Approuvé" : item.action}
+                    {isRejected ? t.rejected : isApproved ? t.approved : item.action}
                   </Badge>
                 </div>
               );

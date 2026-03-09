@@ -23,13 +23,20 @@ import { CampaignPerformance } from "@/components/hq/marketing/CampaignPerforman
 import { PlatformTrafficWidget } from "@/components/hq/marketing/PlatformTrafficWidget";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
+
+const dateFnsLocales = { fr, en: enGB, de } as const;
 
 export default function MarketingPage() {
   const executeRun = useExecuteRun();
   const { data: runs, isLoading, refetch, isFetching } = useRecentRuns(20);
   const [generatingPlan, setGeneratingPlan] = useState(false);
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   const marketingRuns = runs?.filter(r => 
     r.run_type === "MARKETING_WEEK_PLAN" || r.run_type === "COMPETITIVE_ANALYSIS"
@@ -55,15 +62,15 @@ export default function MarketingPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <ExecutiveHeader
-        title="Marketing Command"
-        subtitle="Pilotage marketing centralisé"
-        context="Données générées par l'agent CMO IA. Analyse concurrentielle et plans marketing hebdomadaires."
+        title={t.marketingCommand}
+        subtitle={t.centralizedMarketing}
+        context={t.marketingContext}
         source={{ source: "mock", lastUpdated: new Date(), confidence: "medium" }}
         actions={
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? "animate-spin" : ""}`} />
-            Actualiser
+            {t.refresh}
           </Button>
           <Button
             variant="executive"
@@ -75,7 +82,7 @@ export default function MarketingPage() {
             ) : (
               <Calendar className="h-4 w-4 mr-2" />
             )}
-            Plan Semaine
+            {t.weekPlan}
           </Button>
           <Button
             variant="outline"
@@ -87,13 +94,12 @@ export default function MarketingPage() {
             ) : (
               <Brain className="h-4 w-4 mr-2" />
             )}
-            Analyse Concurrentielle
+            {t.competitiveAnalysis}
           </Button>
         </div>
         }
       />
 
-      {/* Historique des runs marketing */}
       {marketingRuns && marketingRuns.length > 0 && (
         <div className="flex flex-wrap gap-3">
           {marketingRuns.slice(0, 4).map(run => (
@@ -106,32 +112,29 @@ export default function MarketingPage() {
               <span className="font-medium">{run.run_type.replace(/_/g, " ")}</span>
               <span className="text-muted-foreground flex items-center gap-1">
                 <Clock className="h-2.5 w-2.5" />
-                {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale: fr })}
+                {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale })}
               </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* Plan Marketing (données réelles du run IA) */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="card-executive">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-3">
                 <Calendar className="h-5 w-5 text-primary" />
-                Plan Marketing Hebdomadaire
+                {t.weeklyMarketingPlan}
               </CardTitle>
               {latestPlan && (
-                <Badge variant="subtle" className="text-xs">
-                  CMO Agent
-                </Badge>
+                <Badge variant="subtle" className="text-xs">CMO Agent</Badge>
               )}
             </div>
             <CardDescription>
               {latestPlan 
-                ? `Généré ${formatDistanceToNow(new Date(latestPlan.created_at), { addSuffix: true, locale: fr })}`
-                : "Aucun plan généré — cliquez sur 'Plan Semaine'"
+                ? `${t.generatedAgo} ${formatDistanceToNow(new Date(latestPlan.created_at), { addSuffix: true, locale })}`
+                : t.noPlanGenerated
               }
             </CardDescription>
           </CardHeader>
@@ -147,28 +150,22 @@ export default function MarketingPage() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <Megaphone className="h-10 w-10 mx-auto mb-4 opacity-40" />
-                <p className="text-sm mb-3">Aucun plan marketing généré.</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGeneratePlan}
-                  disabled={generatingPlan}
-                >
+                <p className="text-sm mb-3">{t.noMarketingPlan}</p>
+                <Button variant="outline" size="sm" onClick={handleGeneratePlan} disabled={generatingPlan}>
                   <Brain className="h-4 w-4 mr-2" />
-                  Générer avec l'IA
+                  {t.generateWithAI}
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Analyse Concurrentielle */}
         <Card className="card-executive">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-3">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                Analyse Concurrentielle
+                {t.competitiveAnalysis}
               </CardTitle>
               {latestCompetitive && (
                 <Badge variant="subtle" className="text-xs">CSO Agent</Badge>
@@ -176,8 +173,8 @@ export default function MarketingPage() {
             </div>
             <CardDescription>
               {latestCompetitive
-                ? `Générée ${formatDistanceToNow(new Date(latestCompetitive.created_at), { addSuffix: true, locale: fr })}`
-                : "Aucune analyse — lancez 'Analyse Concurrentielle'"
+                ? `${t.generatedAgo} ${formatDistanceToNow(new Date(latestCompetitive.created_at), { addSuffix: true, locale })}`
+                : t.noAnalysis
               }
             </CardDescription>
           </CardHeader>
@@ -193,14 +190,9 @@ export default function MarketingPage() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <Brain className="h-10 w-10 mx-auto mb-4 opacity-40" />
-                <p className="text-sm mb-3">Analyse non disponible.</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleGenerateCompetitive}
-                  disabled={executeRun.isPending}
-                >
-                  Lancer l'analyse
+                <p className="text-sm mb-3">{t.analysisNotAvailable}</p>
+                <Button variant="outline" size="sm" onClick={handleGenerateCompetitive} disabled={executeRun.isPending}>
+                  {t.launchAnalysis}
                 </Button>
               </div>
             )}
@@ -208,19 +200,13 @@ export default function MarketingPage() {
         </Card>
       </div>
 
-      {/* ROI by Channel Chart & Competitive Radar */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ChannelROIChart />
         <CompetitiveRadar />
       </div>
 
-      {/* Campaign Performance - Detailed Analysis */}
       <CampaignPerformance />
-
-      {/* Platform Traffic Widget */}
       <PlatformTrafficWidget />
-
-      {/* Content Calendar - Interactive Component */}
       <ContentCalendar />
 
       <MethodologyDisclosure

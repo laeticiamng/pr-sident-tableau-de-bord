@@ -7,33 +7,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Bot,
-  Brain,
-  Activity,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Loader2,
-  RefreshCw,
-  Zap,
-  Euro,
-  Play,
-  ChevronDown,
-  ChevronUp,
-  AlertCircle,
-  BarChart3,
-  Timer,
+  Bot, Brain, Activity, Clock, CheckCircle, XCircle, Loader2, RefreshCw, Zap, Euro,
+  Play, ChevronDown, ChevronUp, AlertCircle, BarChart3, Timer,
 } from "lucide-react";
-import { useRecentRuns } from "@/hooks/useHQData";
-import { useExecuteRun } from "@/hooks/useHQData";
+import { useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
-
 import { getRunCost, getRunAgent, getRunModel, type RunType } from "@/lib/run-types-registry";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
+
+const dateFnsLocales = { fr, en: enGB, de } as const;
 
 // Palette pour le statut
 const STATUS_CONFIG = {
@@ -67,6 +55,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   const [liveIndicator, setLiveIndicator] = useState(true);
   const [showFailedOnly, setShowFailedOnly] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   // Clignotement du point "live"
   useEffect(() => {
@@ -138,7 +129,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             <XCircle className="h-5 w-5 text-destructive shrink-0" />
             <div>
               <p className="text-sm font-semibold text-destructive">
-                {failedRuns24h.length} run{failedRuns24h.length > 1 ? "s" : ""} échoué{failedRuns24h.length > 1 ? "s" : ""} dans les 24h
+              {failedRuns24h.length} run{failedRuns24h.length > 1 ? "s" : ""} {t.failedRunsIn24h}
               </p>
               <p className="text-xs text-muted-foreground">
                 {failedRuns24h.map(r => r.run_type.replace(/_/g, " ")).join(", ")}
@@ -151,7 +142,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
             className="shrink-0 text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
             onClick={() => setShowFailedOnly(!showFailedOnly)}
           >
-            {showFailedOnly ? "Voir tout" : "Voir échecs"}
+            {showFailedOnly ? t.viewAll : t.viewFailures}
           </Button>
         </div>
       )}
@@ -164,7 +155,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           </div>
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
-              Monitoring Agents IA
+              {t.agentMonitoring}
               <span className={cn(
                 "inline-block w-2 h-2 rounded-full transition-opacity duration-300",
                 liveIndicator ? "bg-success opacity-100" : "bg-success opacity-30"
@@ -172,7 +163,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               <Badge variant="subtle" className="text-xs">Live</Badge>
             </h2>
             <p className="text-sm text-muted-foreground">
-              Surveillance temps réel des agents autonomes
+              {t.realtimeSurveillance}
             </p>
           </div>
         </div>
@@ -193,7 +184,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold">{totalRuns}</p>
               )}
-              <p className="text-xs text-muted-foreground">Runs totaux</p>
+              <p className="text-xs text-muted-foreground">{t.totalRuns}</p>
             </div>
           </CardContent>
         </Card>
@@ -207,7 +198,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold text-success">{successRate}%</p>
               )}
-              <p className="text-xs text-muted-foreground">Taux succès</p>
+              <p className="text-xs text-muted-foreground">{t.successRate}</p>
             </div>
           </CardContent>
         </Card>
@@ -221,7 +212,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold">{activeAgentKeys.length}</p>
               )}
-              <p className="text-xs text-muted-foreground">Agents actifs 24h</p>
+              <p className="text-xs text-muted-foreground">{t.activeAgents24h}</p>
             </div>
           </CardContent>
         </Card>
@@ -235,7 +226,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
                 <p className="text-2xl font-bold">€{totalCostEst.toFixed(2)}</p>
               )}
-              <p className="text-xs text-muted-foreground">Coût IA estimé</p>
+              <p className="text-xs text-muted-foreground">{t.estimatedAICost}</p>
             </div>
           </CardContent>
         </Card>
@@ -247,7 +238,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" />
-              Agents actifs — 24 dernières heures
+              {t.activeAgentsLast24h}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -256,7 +247,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                 {[1, 2, 3].map(i => <Skeleton key={i} className="h-8 w-32" />)}
               </div>
             ) : activeAgentKeys.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aucun agent actif dans les 24 dernières heures</p>
+              <p className="text-sm text-muted-foreground">{t.noActiveAgents}</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {activeAgentKeys.map(rt => {
@@ -284,9 +275,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Play className="h-4 w-4 text-primary" />
-              Lancer un Agent IA
+              {t.launchAIAgent}
             </CardTitle>
-            <CardDescription>Déclenchez un run immédiat</CardDescription>
+            <CardDescription>{t.triggerImmediate}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
@@ -322,7 +313,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-primary" />
-              {showFailedOnly ? "Runs Échoués" : "Historique des Runs"}
+              {showFailedOnly ? t.failedRuns : t.runHistory}
             </CardTitle>
             <div className="flex items-center gap-2">
               {failedRuns > 0 && (
@@ -333,10 +324,10 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                   onClick={() => setShowFailedOnly(!showFailedOnly)}
                 >
                   <XCircle className="h-3 w-3" />
-                  {failedRuns} échec{failedRuns > 1 ? "s" : ""}
+                  {failedRuns} {failedRuns > 1 ? t.failuresPlural : t.failures}
                 </Button>
               )}
-              <Badge variant="outline" className="text-xs">{totalRuns} runs</Badge>
+              <Badge variant="outline" className="text-xs">{totalRuns} {t.runs}</Badge>
             </div>
           </div>
         </CardHeader>
@@ -350,15 +341,15 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {showFailedOnly ? (
                 <>
                   <CheckCircle className="h-8 w-8 mx-auto mb-3 text-success opacity-60" />
-                  <p className="text-sm font-medium text-success">Aucun échec — tout fonctionne ✓</p>
+                  <p className="text-sm font-medium text-success">{t.noFailures}</p>
                   <Button variant="link" size="sm" className="mt-2 text-xs" onClick={() => setShowFailedOnly(false)}>
-                    Voir tous les runs
+                    {t.viewAllRuns}
                   </Button>
                 </>
               ) : (
                 <>
                   <Bot className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                  <p className="text-sm">Aucun run exécuté pour le moment</p>
+                  <p className="text-sm">{t.noRunsYet}</p>
                 </>
               )}
             </div>
@@ -406,7 +397,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
-                                  {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale: fr })}
+                                  {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale })}
                                 </span>
                                 <span className="font-mono text-[10px] opacity-60">{model}</span>
                                 <span className="flex items-center gap-0.5 text-warning">
@@ -445,7 +436,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                             <div className="mb-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20 space-y-2">
                               <p className="text-xs text-destructive font-medium">
                                 {run.platform_key && <span className="mr-1">[{run.platform_key}]</span>}
-                                {run.executive_summary?.replace(/[#*`]/g, "") || "Erreur inconnue lors de l'exécution"}
+                                {run.executive_summary?.replace(/[#*`]/g, "") || t.unknownError}
                               </p>
                               <Button
                                 variant="outline"
@@ -458,7 +449,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                                 }}
                               >
                                 <RefreshCw className="h-3 w-3" />
-                                Relancer
+                                {t.refresh}
                               </Button>
                             </div>
                           )}

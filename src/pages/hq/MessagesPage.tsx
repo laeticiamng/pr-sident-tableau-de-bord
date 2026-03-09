@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow, format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
 import { toast } from "sonner";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import {
@@ -35,6 +35,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
+
+const dateFnsLocales = { fr, en: enGB, de } as const;
 
 interface ContactMessage {
   id: string;
@@ -51,6 +55,9 @@ export default function MessagesPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
 
   const { data: messages, isLoading, refetch } = useQuery({
     queryKey: ["contact-messages"],
@@ -90,7 +97,7 @@ export default function MessagesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
       queryClient.invalidateQueries({ queryKey: ["contact-messages-unread-count"] });
-      toast.success("Tous les messages marqués comme lus");
+      toast.success(t.allMarkedRead);
     },
   });
 
@@ -102,10 +109,10 @@ export default function MessagesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-messages"] });
       queryClient.invalidateQueries({ queryKey: ["contact-messages-unread-count"] });
-      toast.success("Message supprimé");
+      toast.success(t.deleteSuccess);
       setExpandedId(null);
     },
-    onError: () => toast.error("Erreur lors de la suppression"),
+    onError: () => toast.error(t.deleteError),
   });
 
   const handleExpand = useCallback((msg: ContactMessage) => {
@@ -128,12 +135,13 @@ export default function MessagesPage() {
   });
 
   const unreadCount = messages?.filter((m) => !m.read_at).length ?? 0;
+  const count = messages?.length ?? 0;
 
   return (
     <div className="space-y-6">
       <ExecutiveHeader
-        title="Messages de contact"
-        subtitle={`${messages?.length ?? 0} message${(messages?.length ?? 0) > 1 ? "s" : ""}${unreadCount > 0 ? ` · ${unreadCount} non lu${unreadCount > 1 ? "s" : ""}` : ""}`}
+        title={t.contactMessages}
+        subtitle={`${count} ${count > 1 ? t.messagesPlural : t.messages}${unreadCount > 0 ? ` · ${unreadCount} ${unreadCount > 1 ? t.unreadPlural : t.unread}` : ""}`}
         source={{ source: "supabase", lastUpdated: new Date(), confidence: "high" }}
         actions={
           <div className="flex gap-2">
@@ -146,29 +154,27 @@ export default function MessagesPage() {
                 className="gap-2"
               >
                 <CheckCheck className="h-4 w-4" />
-                Tout marquer lu
+                {t.markAllRead}
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
               <RefreshCw className="h-4 w-4" />
-              Actualiser
+              {t.refresh}
             </Button>
           </div>
         }
       />
 
-      {/* Search */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher par nom, email, sujet…"
+          placeholder={t.searchByNameEmailSubject}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10"
         />
       </div>
 
-      {/* Messages list */}
       {isLoading ? (
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -179,8 +185,8 @@ export default function MessagesPage() {
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
             <Inbox className="h-12 w-12 mb-4 opacity-40" />
-            <p className="text-lg font-medium">Aucun message</p>
-            <p className="text-sm">{search ? "Aucun résultat pour cette recherche" : "La boîte de réception est vide"}</p>
+            <p className="text-lg font-medium">{t.noMessage}</p>
+            <p className="text-sm">{search ? t.noResultsForSearch : t.inboxEmpty}</p>
           </CardContent>
         </Card>
       ) : (
@@ -229,7 +235,7 @@ export default function MessagesPage() {
                     <div className="flex items-center gap-2 shrink-0">
                       <Badge variant="outline" className="text-xs whitespace-nowrap">
                         <Clock className="h-3 w-3 mr-1" />
-                        {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true, locale: fr })}
+                        {formatDistanceToNow(new Date(msg.created_at), { addSuffix: true, locale })}
                       </Badge>
                       {isExpanded ? (
                         <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -263,7 +269,7 @@ export default function MessagesPage() {
                       )}
                       <span className="flex items-center gap-1.5">
                         <Clock className="h-4 w-4" />
-                        {format(new Date(msg.created_at), "dd MMM yyyy à HH:mm", { locale: fr })}
+                        {format(new Date(msg.created_at), "dd MMM yyyy", { locale })}
                       </span>
                     </div>
 
@@ -271,7 +277,7 @@ export default function MessagesPage() {
                       <Button variant="outline" size="sm" asChild>
                         <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject)}`}>
                           <Mail className="h-4 w-4 mr-2" />
-                          Répondre
+                          {t.reply}
                         </a>
                       </Button>
 
@@ -279,23 +285,23 @@ export default function MessagesPage() {
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="sm">
                             <Trash2 className="h-4 w-4 mr-2" />
-                            Supprimer
+                            {t.delete}
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
-                            <AlertDialogTitle>Supprimer ce message ?</AlertDialogTitle>
+                            <AlertDialogTitle>{t.deleteConfirmTitle}</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Le message de <strong>{msg.name}</strong> sera définitivement supprimé. Cette action est irréversible.
+                              <strong>{msg.name}</strong> {t.deleteConfirmDesc}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel>Annuler</AlertDialogCancel>
+                            <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() => deleteMutation.mutate(msg.id)}
                               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              Supprimer
+                              {t.delete}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>

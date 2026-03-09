@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -44,12 +46,12 @@ async function streamChat({
 
   if (!resp.ok) {
     const data = await resp.json().catch(() => ({}));
-    onError(data.error || `Erreur ${resp.status}`);
+    onError(data.error || `Error ${resp.status}`);
     return;
   }
 
   if (!resp.body) {
-    onError("Pas de réponse du serveur");
+    onError("No server response");
     return;
   }
 
@@ -112,6 +114,8 @@ type ViewMode = "chat" | "history";
 
 export function HQChatSidebar() {
   const { user } = useAuth();
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
   const [open, setOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -172,7 +176,7 @@ export function HQChatSidebar() {
       setViewMode("chat");
     } catch (e) {
       console.error("Failed to load conversation:", e);
-      toast.error("Impossible de charger la conversation");
+      toast.error(t.loadConversationError);
     }
   }, []);
 
@@ -197,7 +201,7 @@ export function HQChatSidebar() {
       return data as string;
     } catch (e) {
       console.error("Failed to create conversation:", e);
-      toast.error("Impossible de créer la conversation");
+      toast.error(t.createConversationError);
       return null;
     }
   }, []);
@@ -213,7 +217,7 @@ export function HQChatSidebar() {
       }
     } catch (e) {
       console.error("Failed to delete conversation:", e);
-      toast.error("Impossible de supprimer la conversation");
+      toast.error(t.deleteConversationError);
     }
   }, [currentConversationId]);
 
@@ -274,7 +278,7 @@ export function HQChatSidebar() {
       });
     } catch (e) {
       console.error(e);
-      toast.error("Erreur de connexion au DG IA");
+      toast.error(t.connectionError);
       setIsLoading(false);
     }
   }, [isLoading, messages, currentConversationId, createConversation, persistMessage]);
@@ -294,10 +298,10 @@ export function HQChatSidebar() {
     const d = new Date(dateStr);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    if (diff < 60000) return "À l'instant";
-    if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
-    if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)}h`;
-    return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    if (diff < 60000) return t.justNow;
+    if (diff < 3600000) return (t.minutesAgo as string).replace("{n}", String(Math.floor(diff / 60000)));
+    if (diff < 86400000) return (t.hoursAgo as string).replace("{n}", String(Math.floor(diff / 3600000)));
+    return d.toLocaleDateString(language === "de" ? "de-DE" : language === "en" ? "en-GB" : "fr-FR", { day: "numeric", month: "short" });
   };
 
   return (
@@ -307,7 +311,7 @@ export function HQChatSidebar() {
           variant="executive"
           size="icon"
           className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-xl hover:shadow-2xl transition-all"
-          aria-label="Ouvrir le chat DG IA"
+          aria-label={t.openChatAI}
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
@@ -320,7 +324,7 @@ export function HQChatSidebar() {
                 <Button variant="ghost" size="icon" onClick={() => setViewMode("chat")} className="h-8 w-8">
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <SheetTitle className="flex-1 text-center text-sm">Historique</SheetTitle>
+                <SheetTitle className="flex-1 text-center text-sm">{t.history}</SheetTitle>
                 <Button variant="ghost" size="icon" onClick={newChat} className="h-8 w-8">
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -329,13 +333,13 @@ export function HQChatSidebar() {
               <>
                 <SheetTitle className="flex items-center gap-2 text-sm">
                   <Bot className="h-5 w-5 text-primary" />
-                  DG IA — Assistant Présidentiel
+                  {t.aiAssistant}
                 </SheetTitle>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" onClick={() => setViewMode("history")} className="h-8 w-8" title="Historique">
+                  <Button variant="ghost" size="icon" onClick={() => setViewMode("history")} className="h-8 w-8" title={t.history}>
                     <Clock className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={newChat} className="h-8 w-8" title="Nouvelle conversation">
+                  <Button variant="ghost" size="icon" onClick={newChat} className="h-8 w-8" title={t.newConversation}>
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
@@ -354,10 +358,10 @@ export function HQChatSidebar() {
             ) : conversations.length === 0 ? (
               <div className="text-center text-muted-foreground mt-12 space-y-2">
                 <MessageCircle className="h-10 w-10 mx-auto text-muted-foreground/30" />
-                <p className="text-sm">Aucune conversation</p>
+                <p className="text-sm">{t.noConversation}</p>
                 <Button variant="outline" size="sm" onClick={newChat}>
                   <Plus className="h-3 w-3 mr-1" />
-                  Démarrer
+                  {t.start}
                 </Button>
               </div>
             ) : (
@@ -408,12 +412,12 @@ export function HQChatSidebar() {
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground mt-12 space-y-3">
                   <Bot className="h-12 w-12 mx-auto text-primary/30" />
-                  <p className="text-sm font-medium">Bonjour, Madame la Présidente</p>
+                  <p className="text-sm font-medium">{t.greeting}</p>
                   <p className="text-xs max-w-[280px] mx-auto">
-                    Posez vos questions sur l'écosystème, les KPIs, la stratégie ou demandez une analyse.
+                    {t.greetingHint}
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center pt-2">
-                    {["Résumé du jour", "Santé des plateformes", "KPIs financiers"].map((q) => (
+                    {(t.quickPrompts as readonly string[]).map((q) => (
                       <Button
                         key={q}
                         variant="outline"
@@ -491,7 +495,7 @@ export function HQChatSidebar() {
                   ref={inputRef}
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Posez votre question..."
+                  placeholder={t.typeMessage}
                   disabled={isLoading}
                   className="flex-1"
                 />
