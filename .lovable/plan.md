@@ -1,134 +1,147 @@
 
 
-# Audit Complet — EMOTIONSCARE HQ : De "Prototype Avancé" à "Révolutionnaire"
+# AUDIT TECHNIQUE COMPLET — EMOTIONSCARE HQ
 
-## Ce qui existe et fonctionne bien
+## 1. RÉSUMÉ EXÉCUTIF
 
-Le socle est solide : 22+ pages HQ, 12 edge functions, auth sécurisée, notifications realtime, COS (Chief Operating System), Growth OS, briefing IA, approbations présidentielles, veille stratégique, finance Stripe, diagnostics, conformité RGPD, et un design premium bilingue (FR/EN). Le concept de "Siège Social Numérique" pour un Président unique est fort et différenciant.
+**État global** : Prototype avancé avec une architecture solide mais des problèmes critiques de sécurité RLS qui rendent les tables publiques inaccessibles via l'API client. Le backend (Edge Functions) est bien sécurisé avec JWT/RBAC. Le frontend est professionnel, bien internationalisé, avec une bonne couverture SEO.
 
----
+**Verdict go-live : NON EN L'ÉTAT**
 
-## Ce qui manque pour être UNIQUE et RÉVOLUTIONNAIRE
+### 5 P0 (bloquants critiques)
 
-### 1. INTELLIGENCE PROACTIVE — Le HQ ne pense pas encore tout seul
+1. **RLS RESTRICTIVE sans PERMISSIVE** — Toutes les tables publiques (analytics_events, user_roles, role_permissions, contact_messages) n'ont QUE des policies RESTRICTIVE. En PostgreSQL, sans policy PERMISSIVE, tout accès est bloqué. Les user_roles ne sont jamais lisibles via le client Supabase, ce qui signifie que `useUserRoles()` retourne toujours `[]` et ProtectedRoute affiche "Accès non autorisé" même pour l'owner.
+2. **contact_messages : pas d'INSERT pour anon** — Le formulaire de contact passe par l'Edge Function (service_role), donc fonctionne, mais toute tentative d'insert direct échoue silencieusement.
+3. **analytics_events INSERT RESTRICTIVE** — La policy "Anyone can insert analytics events" est RESTRICTIVE avec `true`, ce qui n'a AUCUN effet permissif. Les analytics sont silencieusement rejetées sauf si le service_role est utilisé. Preuve : le réseau montre un POST 201 mais cela fonctionne uniquement parce que le client utilise l'anon key avec la policy mal configurée (le 201 visible est trompeur — à revalider).
+4. **verify_jwt = false sur TOUTES les 15 Edge Functions** — Bien que chaque fonction implémente sa propre vérification JWT en code, le fait que verify_jwt soit désactivé au niveau infra signifie qu'un attaquant peut atteindre le code de la fonction sans token valide. La protection repose uniquement sur le code applicatif, pas sur la couche infra.
+5. **Sidebar HQ hardcodée en français** — Le HQSidebar contient ~30 labels hardcodés en français ("Déconnexion", "Principal", "Tous les services", "Rechercher…", "Opérations", "Business", "Gouvernance", tous les labels de liens). Brise complètement l'i18n pour les utilisateurs EN/DE.
 
-**Problème** : Le système attend que le Président agisse. Il faut cliquer "Demander un brief IA", "Lancer l'analyse", etc. Rien ne se déclenche automatiquement.
+### 5 P1 (très importants)
 
-**Ce qu'il faut** :
-- **Morning Digest automatique** : chaque matin à 8h, un brief IA est généré et attend le Président sur le tableau de bord (scheduled-runs existe mais n'est pas câblé à un vrai cron)
-- **Alertes prédictives** : au lieu de constater "uptime = 92%", le système devrait prédire "UrgenceOS risque de tomber sous 90% d'ici 48h" basé sur les tendances
-- **Suggestions contextuelles** : "Vous n'avez pas consulté la page Finance depuis 12 jours — voici un résumé des changements"
+1. **React ref warnings** — `PublicFooter` et `CookieConsentBanner` ne supportent pas `forwardRef`, causant des warnings console sur chaque page publique.
+2. **UserManagementPage entièrement en français** — ~30 strings hardcodées, pas de traduction.
+3. **Hreflang identique pour toutes les langues** — Toutes les hreflang pointent vers la même URL, ce qui est techniquement correct (pas de routes localisées) mais signale aux moteurs que fr=en=de, potentiellement problématique.
+4. **MobileBriefing court-circuite le BriefingRoom traduit** — Le composant mobile est rendu en remplacement complet, sa couverture i18n n'a pas été vérifiée.
+5. **Pas de Sentry / error monitoring** — ErrorBoundary existe mais aucun reporting externe. Les erreurs en production sont perdues.
 
-### 2. VOIX ET CONVERSATION — L'expérience Président est encore textuelle
+## 2. TABLEAU D'AUDIT
 
-**Problème** : Le "Appeler le DG" simule un appel mais c'est un bouton + texte. Pas de vrai dialogue.
+| Priorité | Domaine | Page / Fonction | Problème | Preuve | Risque | Recommandation | Lovable ? |
+|----------|---------|-----------------|----------|--------|--------|----------------|-----------|
+| P0 | RLS | user_roles, role_permissions | Policies RESTRICTIVE uniquement, pas de PERMISSIVE | Security scan: "MISSING_PERMISSIVE_POLICIES" | Owner bloqué hors du HQ via client-side | Ajouter policies PERMISSIVE pour SELECT/INSERT/UPDATE/DELETE owner | Oui (migration) |
+| P0 | RLS | analytics_events | INSERT RESTRICTIVE avec true = pas d'effet | Security scan | Analytics perdues | Ajouter policy PERMISSIVE INSERT pour anon+authenticated | Oui (migration) |
+| P0 | RLS | contact_messages | Pas de PERMISSIVE INSERT anon | Security scan | Contact form via edge function OK, mais table incohérente | Ajouter PERMISSIVE INSERT anon si nécessaire (edge function bypass via service_role) | Oui (migration) |
+| P0 | Security | config.toml | verify_jwt=false sur 15 fonctions | config.toml visible | Attaquant atteint le code sans JWT | Activer verify_jwt=true sur fonctions qui vérifient déjà le JWT (executive-run, hq-chat, etc.). Garder false uniquement pour contact-form et scheduled-runs | Non (config.toml auto-généré) |
+| P0 | i18n | HQSidebar | ~30 strings FR hardcodées | Code source lignes 40-315 | UX cassée en EN/DE | Créer fichier i18n sidebar.ts | Oui |
+| P1 | Frontend | PublicLayout | ref warnings pour PublicFooter et CookieConsentBanner | Console logs | Pollution console, futur breakage React 19 | Wrap avec forwardRef | Oui |
+| P1 | i18n | UserManagementPage | Entièrement en français | Code source | Pas de multilingue | Extraire vers i18n | Oui |
+| P1 | i18n | UserManagementPage toast messages | "Utilisateur créé avec succès" etc. hardcodé | Code source | Incohérence | Traduire | Oui |
+| P1 | Observability | Global | Pas de Sentry / monitoring externe | Absence de code | Erreurs prod perdues | Intégrer Sentry ou équivalent | Décision produit |
+| P1 | Security | contact-form | ADMIN_EMAIL hardcodé dans le code | Edge function ligne 9 | Pas critique mais rigide | Déplacer vers secret | Décision produit |
+| P2 | Performance | Bundle | recharts en chunk séparé (bien), mais 22+ lazy pages | Code visible | Bundle initial OK via lazy loading | Aucune action | — |
+| P2 | SEO | Hreflang | Même URL pour fr/en/de | usePageMeta | Google peut ignorer | Acceptable sans routes localisées | Non critique |
+| P2 | i18n | Sidebar labels secondaires | "Opérations", "Business", "Gouvernance" hardcodés | HQSidebar.tsx | Incohérence | Traduire | Oui |
+| P2 | Accessibility | Sidebar | "Rechercher…" placeholder pas traduit | HQSidebar.tsx | Mineur | Traduire | Oui |
+| P3 | SEO | Sitemap | lastmod statique 2026-03-07 | sitemap.xml | Crawl budget non optimisé | Automatiser ou mettre à jour manuellement | Oui |
+| P3 | Security | CORS | Access-Control-Allow-Origin: * sur toutes les edge functions | Code source | Acceptable pour SPA publique | Restreindre si domaine custom | Décision produit |
 
-**Ce qu'il faut** :
-- **Chat IA persistant** : un assistant conversationnel dans le HQ (sidebar ou modal) où le Président peut poser des questions en langage naturel ("Quel est le churn ce mois ?", "Compare EmotionsCare et Med MNG")
-- **Historique des conversations** stocké en base pour continuité
-- **Voix** (optionnel mais différenciant) : Text-to-Speech sur les briefs pour écouter au lieu de lire
+## 3. DÉTAIL PAR CATÉGORIE
 
-### 3. DONNÉES VIVANTES — Trop de mock, pas assez de réel
+### Frontend & Rendu
+- **Fonctionne** : HomePage, AuthPage, TarifsPage, ResetPasswordPage — bien structurées, traduites, responsive, loading/error states gérés.
+- **Fonctionne** : Lazy loading sur 22+ pages HQ, ErrorBoundary global, PageLoader fallback.
+- **Cassé** : ref warnings PublicFooter/CookieConsentBanner (P1).
+- **Douteux** : MobileBriefing couverture i18n non confirmée.
 
-**Problème** : Veille stratégique = données hardcodées. Marketing = mock. RH = mock. Seuls Finance (Stripe) et Plateformes (DB) sont réels.
+### Auth & Autorisations
+- **Fonctionne** : Login avec rate limiting (5 tentatives, lockout 60s), password reset flow complet, ProtectedRoute avec vérification de rôles, ModuleGuard RBAC.
+- **Cassé** : Si les policies RESTRICTIVE bloquent la lecture de user_roles via le client, l'owner est bloqué (P0). **CEPENDANT** — il est possible que cela fonctionne malgré les policies RESTRICTIVE si le client envoie le JWT correctement et que la policy "Authenticated users view own roles" s'applique. Le scan de sécurité signale un risque théorique mais le comportement réel doit être confirmé en testant.
+- **Fonctionne** : Signup désactivé (intentionnel), manage-users Edge Function avec protection owner.
 
-**Ce qu'il faut** :
-- **Veille stratégique automatisée** : les sources (Product Hunt, TechCrunch, etc.) sont listées mais jamais scrapées automatiquement. Câbler Firecrawl + IA pour un vrai scan hebdomadaire
-- **Indicateur de provenance** systématique : chaque widget devrait afficher clairement "Données réelles" vs "Données simulées" (le pattern `DataSourceIndicator` existe mais n'est pas utilisé partout)
-- **Pipeline de données** : un système pour que chaque plateforme remonte ses KPIs réels via webhook ou API
+### APIs & Edge Functions
+- **Fonctionne** : 15 Edge Functions déployées, toutes avec CORS correct, auth JWT/RBAC dans le code, error handling sanitisé.
+- **Fonctionne** : executive-run avec 29 templates, intégration GitHub/Perplexity/Lovable AI, persistance en DB.
+- **Fonctionne** : contact-form avec rate limiting IP (5/heure), validation serveur, emails via Resend.
+- **Douteux** : verify_jwt=false partout — la couche infra ne protège pas, seul le code applicatif protège.
+- **Fonctionne** : scheduled-runs vérifie CRON_SECRET (mais il n'est pas configuré d'après les logs).
 
-### 4. MOBILE-FIRST RÉEL — L'app n'est pas utilisable en déplacement
+### Database & RLS
+- **Fonctionne** : Architecture hq schema séparé, fonctions SECURITY DEFINER avec search_path fixé, is_owner() pattern cohérent.
+- **Cassé (P0)** : Toutes les policies sur les 4 tables publiques sont RESTRICTIVE sans PERMISSIVE. C'est le problème le plus critique de l'audit.
+- **Fonctionne** : Les fonctions RPC (get_hq_*, insert_hq_*) contournent les RLS via SECURITY DEFINER, donc le HQ fonctionne probablement malgré les policies RESTRICTIVE sur les tables publiques.
 
-**Problème** : La sidebar HQ à 26 liens secondaires n'est pas optimisée pour le mobile. Le Président devrait pouvoir piloter depuis son téléphone en 30 secondes.
+### Sécurité
+- **Fonctionne** : Pas de secrets exposés côté client (seule l'anon key, ce qui est normal). Pas d'IDOR détectable. Erreurs sanitisées. robots.txt bloque /hq/ et /auth.
+- **Risque** : ADMIN_EMAIL hardcodé dans contact-form (mineur). CORS * (acceptable pour SPA).
+- **Risque** : CRON_SECRET non configuré — scheduled-runs rejette toutes les requêtes.
 
-**Ce qu'il faut** :
-- **Mode "Président Mobile"** : un dashboard ultra-simplifié avec 3 cartes max (Santé écosystème, Décisions en attente, Brief du jour)
-- **PWA** : manifest.json, service worker, installation sur l'écran d'accueil
-- **Gestes tactiles** : swipe pour approuver/rejeter, pull-to-refresh natif
+### Paiement / Billing
+- **Fonctionne** : Stripe KPIs intégrés (lecture seule via Edge Function). Pricing page est informative (pas de checkout intégré — modèle B2B contact-based). Pas de risque de double paiement.
+- **Non confirmé** : Stripe webhook handling — pas de webhook endpoint visible.
 
-### 5. TIMELINE DÉCISIONNELLE — Pas de mémoire stratégique
+### Performance
+- **Fonctionne** : Manual chunks (recharts, radix-ui), lazy loading systématique, staleTime 5min sur queries, PWA avec workbox.
+- **Douteux** : Images de preview (10 JPG) — pas de lazy loading visible sur les images elles-mêmes, mais LazyImage component existe.
 
-**Problème** : L'audit log existe mais c'est un log technique. Il n'y a pas de vue "histoire des décisions stratégiques du Président".
+### SEO
+- **Fonctionne** : Excellent — usePageMeta centralise title/description/canonical/OG/hreflang/JSON-LD. 7 schemas JSON-LD statiques dans index.html. Sitemap complète. robots.txt bien configuré.
+- **Douteux** : Hreflang pointe vers même URL pour toutes les langues (acceptable sans routes localisées).
 
-**Ce qu'il faut** :
-- **Journal Présidentiel** : chronologie des décisions majeures avec contexte, impact mesuré a posteriori, et notes personnelles
-- **Tableau de bord OKR vivant** : les objectifs trimestriels existent (EntreprisePage) mais ne sont pas connectés aux données réelles
-- **Rétrospective automatique** : "Ce trimestre, vous avez approuvé 47 actions, rejeté 12, le MRR a augmenté de 23%"
+### Accessibilité
+- **Fonctionne** : Skip-to-content link, role="main", labels de formulaires, focus visible (Tailwind default).
+- **Douteux** : Navigation clavier dans le sidebar HQ non confirmée.
 
-### 6. SÉCURITÉ DE NIVEAU ENTREPRISE — Manques critiques
+### i18n
+- **Fonctionne** : 18 fichiers i18n, LanguageSwitcher, useTranslation hook, date-fns locales.
+- **Cassé (P0)** : HQSidebar entièrement hardcodé FR.
+- **Cassé (P1)** : UserManagementPage entièrement hardcodé FR.
+- **Non confirmé** : MobileBriefing, MobileHQHeader couverture i18n.
 
-**Problème** :
-- Pas de table `user_roles` séparée (AuthContext ne vérifie aucun rôle)
-- La page Auth affiche "7 Plateformes" au lieu de 8
-- Pas de 2FA / MFA
-- Pas de session timeout configurable
+### Observabilité / Go-Live
+- **Fonctionne** : StatusPage, structured logs (hq.structured_logs), audit logs (hq.audit_logs), analytics_events, cookie consent banner, 5 pages légales complètes.
+- **Manque** : Sentry/monitoring externe (P1). CRON_SECRET non configuré (scheduled-runs inopérant).
+- **Manque** : Pas de health endpoint API dédié (check-api-status existe mais vérifie les API keys, pas la santé du service).
 
-**Ce qu'il faut** :
-- **RBAC avec table `user_roles`** selon les standards de sécurité
-- **MFA obligatoire** pour le Président (TOTP via Supabase Auth)
-- **Session management** : timeout après inactivité, log des sessions actives
+## 4. PLAN D'ACTION PRIORISÉ
 
-### 7. INTER-PLATEFORME — Les 8 plateformes sont isolées
+### P0 — Correctifs immédiats
+1. **Migration RLS** : Ajouter des policies PERMISSIVE sur user_roles, role_permissions, analytics_events, contact_messages pour restaurer l'accès fonctionnel.
+2. **HQSidebar i18n** : Créer `src/i18n/sidebar.ts` et intégrer useTranslation.
+3. **verify_jwt** : Documenter le risque (ne peut pas être modifié dans config.toml auto-généré).
 
-**Problème** : Chaque plateforme est un silo. Pas de vue corrélée.
+### P1 — Correctifs rapides
+4. **forwardRef** : Wrapper PublicFooter et CookieConsentBanner avec forwardRef.
+5. **UserManagementPage i18n** : Extraire les strings.
+6. **CRON_SECRET** : Configurer le secret pour activer scheduled-runs.
 
-**Ce qu'il faut** :
-- **Matrice de corrélation** : "Quand EmotionsCare a un pic d'utilisateurs, Med MNG en bénéficie-t-il ?"
-- **Flux utilisateurs cross-plateforme** : combien d'utilisateurs utilisent 2+ plateformes ?
-- **Score de synergie écosystème** : métrique unique agrégée
+### P2 — Améliorations
+7. Traduire labels secondaires sidebar.
+8. Vérifier MobileBriefing i18n.
+9. Automatiser lastmod sitemap.
 
-### 8. AUTOMATISATION AVANCÉE — L'Autopilot est limité
+### P3 — Polish
+10. Restreindre CORS si domaine custom.
+11. Ajouter health endpoint dédié.
+12. Considérer Sentry.
 
-**Problème** : L'Autopilot existe conceptuellement mais les règles sont simples (risque bas = auto, risque élevé = validation). Pas de workflows personnalisés.
+## 5. IMPLÉMENTATION IMMÉDIATE
 
-**Ce qu'il faut** :
-- **Règles conditionnelles** : "Si le churn dépasse 5% ET que c'est EmotionsCare, envoyer une alerte critique ET lancer une analyse IA automatique"
-- **Playbooks** : scénarios de réaction prédéfinis par type d'incident
-- **Escalation chain** : notification → alerte → pause automatique → rapport d'incident
+Les corrections suivantes sont implémentables immédiatement :
 
-### 9. COHÉRENCE UI — Plusieurs standards coexistent
+1. **Migration SQL** : Ajouter PERMISSIVE policies sur les 4 tables publiques (le plus critique).
+2. **forwardRef** sur PublicFooter et CookieConsentBanner.
+3. **HQSidebar i18n** : Créer fichier i18n et intégrer.
+4. **UserManagementPage i18n partiel** : Au minimum les labels critiques.
 
-**Problème** :
-- `ExecutiveHeader` + `MethodologyDisclosure` (standard HEC) utilisés sur certaines pages (Finance, Cockpit) mais pas toutes
-- Le HQ n'est pas internationalisé (les pages publiques ont i18n, le HQ est 100% français)
-- Certaines pages disent "7 plateformes" au lieu de 8
+**Ne pas implémenter sans décision** :
+- Modification config.toml (auto-généré)
+- CRON_SECRET (nécessite ajout secret)
+- Sentry (décision produit + coût)
+- Restriction CORS (dépend du domaine final)
 
-**Ce qu'il faut** :
-- Appliquer le standard `ExecutiveHeader` + `MethodologyDisclosure` sur TOUTES les pages HQ
-- Mettre à jour toutes les références "7 plateformes" → dynamique depuis `MANAGED_PLATFORMS.length`
-- Uniformiser les états loading/empty/error sur chaque page
+## 6. ÉLÉMENTS RESTANTS APRÈS IMPLÉMENTATION
 
-### 10. CE QUI RENDRAIT LE PRODUIT VRAIMENT RÉVOLUTIONNAIRE
-
-| Feature | Impact | Effort |
-|---------|--------|--------|
-| Chat IA conversationnel persistant | Transforme l'UX de "dashboard" à "assistant" | Moyen |
-| Morning Digest automatique (cron) | Le HQ pense avant le Président | Faible |
-| PWA + mode mobile Président | Pilotage en 30 secondes depuis le téléphone | Moyen |
-| Journal décisionnel avec impact mesuré | Mémoire stratégique unique | Moyen |
-| Corrélation inter-plateformes | Vision écosystème inédite | Élevé |
-| Alertes prédictives (tendances) | Anticipation vs réaction | Élevé |
-| Veille automatisée (Firecrawl cron) | Intelligence concurrentielle vivante | Faible |
-
----
-
-## Plan d'Implémentation Recommandé
-
-**Sprint 1 — Quick Wins (1 semaine)** :
-- Corriger toutes les références "7 plateformes" → dynamique
-- Appliquer `ExecutiveHeader` sur toutes les pages HQ manquantes
-- Ajouter un chat IA simple (sidebar) connecté à l'edge function `executive-run`
-- Configurer le Morning Digest automatique via `scheduled-runs`
-
-**Sprint 2 — Expérience Président (1-2 semaines)** :
-- PWA (manifest + service worker)
-- Mode mobile simplifié
-- Journal décisionnel (nouvelle table + page)
-- MFA via Supabase Auth
-
-**Sprint 3 — Intelligence (2 semaines)** :
-- Veille automatisée avec Firecrawl
-- Alertes prédictives basées sur tendances
-- Matrice de corrélation inter-plateformes
-- Playbooks d'incident
+- **Dépendances externes** : CRON_SECRET à configurer, Sentry à décider, domaine custom à décider pour CORS.
+- **Tests manuels requis** : Confirmer que les policies PERMISSIVE restaurent l'accès owner via le client, tester le flow complet login → HQ → exécution de run.
+- **Prochaines étapes** : Audit de performance Lighthouse, test E2E automatisé, review de toutes les Edge Functions pour couverture d'erreur exhaustive.
 
