@@ -60,8 +60,8 @@ const translations = {
       },
       {
         icon: UserPlus,
-        title: "Erstellen Sie Ihr Konto",
-        description: "Kostenlose Registrierung in 30 Sekunden. Keine Kreditkarte erforderlich. Sofortiger Zugang.",
+        title: "Sprechen Sie mit unserem Team",
+        description: "Kontaktieren Sie uns, um die richtige Lösung für Ihren Beruf zu finden. Antwort innerhalb von 48h garantiert, unverbindlich.",
       },
       {
         icon: Rocket,
