@@ -324,7 +324,7 @@ export function HQChatSidebar() {
                 <Button variant="ghost" size="icon" onClick={() => setViewMode("chat")} className="h-8 w-8">
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
-                <SheetTitle className="flex-1 text-center text-sm">Historique</SheetTitle>
+                <SheetTitle className="flex-1 text-center text-sm">{t.history}</SheetTitle>
                 <Button variant="ghost" size="icon" onClick={newChat} className="h-8 w-8">
                   <Plus className="h-4 w-4" />
                 </Button>
