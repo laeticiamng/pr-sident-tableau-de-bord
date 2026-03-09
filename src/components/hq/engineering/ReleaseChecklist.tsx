@@ -5,25 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Settings, CheckCircle, Clock, AlertTriangle, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 interface ChecklistItem {
   id: string;
-  label: string;
-  description: string;
+  labelKey: string;
   category: "code" | "security" | "quality" | "ops";
   autoCheck?: boolean;
-  isChecked?: boolean;
 }
 
 const RELEASE_CHECKLIST: ChecklistItem[] = [
-  { id: "tests", label: "Tests unitaires passés", description: "Tous les tests doivent être verts", category: "code", autoCheck: true },
-  { id: "review", label: "Code review approuvé", description: "Au moins 1 approbation requise", category: "code" },
-  { id: "docs", label: "Documentation à jour", description: "README et CHANGELOG mis à jour", category: "quality" },
-  { id: "security", label: "Audit sécurité OK", description: "Aucune vulnérabilité critique", category: "security", autoCheck: true },
-  { id: "performance", label: "Performance validée", description: "Temps de chargement < 3s", category: "quality" },
-  { id: "rollback", label: "Rollback plan prêt", description: "Procédure de retour arrière documentée", category: "ops" },
-  { id: "staging", label: "Testé en staging", description: "Validation sur environnement de pré-production", category: "ops" },
-  { id: "changelog", label: "Notes de version", description: "Changements documentés pour les utilisateurs", category: "quality" },
+  { id: "tests", labelKey: "tests", category: "code", autoCheck: true },
+  { id: "review", labelKey: "review", category: "code" },
+  { id: "docs", labelKey: "docs", category: "quality" },
+  { id: "security", labelKey: "security", category: "security", autoCheck: true },
+  { id: "performance", labelKey: "performance", category: "quality" },
+  { id: "rollback", labelKey: "rollback", category: "ops" },
+  { id: "staging", labelKey: "staging", category: "ops" },
+  { id: "changelog", labelKey: "changelog", category: "quality" },
 ];
 
 const categoryColors = {
@@ -31,13 +31,6 @@ const categoryColors = {
   security: "bg-red-500/10 text-red-600",
   quality: "bg-green-500/10 text-green-600",
   ops: "bg-purple-500/10 text-purple-600",
-};
-
-const categoryLabels = {
-  code: "Code",
-  security: "Sécurité",
-  quality: "Qualité",
-  ops: "Ops",
 };
 
 interface ReleaseChecklistProps {
@@ -49,6 +42,9 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
   const [checkedItems, setCheckedItems] = useState<Set<string>>(
     new Set(RELEASE_CHECKLIST.filter(i => i.autoCheck).map(i => i.id))
   );
+  const t = useTranslation(hqCommon);
+  const checklistItems = t.checklistItems as Record<string, { label: string; desc: string }>;
+  const categoryLabels = t.categoryLabels as Record<string, string>;
 
   const toggleItem = (id: string) => {
     const newChecked = new Set(checkedItems);
@@ -69,10 +65,10 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
         <div>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5 text-primary" />
-            Checklist de Release
+            {t.releaseChecklist}
           </CardTitle>
           <CardDescription>
-            Critères de validation avant déploiement
+            {t.validationCriteria}
             {platformKey && <span className="ml-1">({platformKey})</span>}
           </CardDescription>
         </div>
@@ -83,13 +79,12 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
           {allChecked && (
             <Button size="sm" variant="executive" onClick={onDeploy}>
               <Rocket className="h-4 w-4 mr-2" />
-              Déployer
+              {t.deploy}
             </Button>
           )}
         </div>
       </CardHeader>
       <CardContent>
-        {/* Progress bar */}
         <div className="mb-6">
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <div 
@@ -105,6 +100,7 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
         <div className="grid gap-3 md:grid-cols-2">
           {RELEASE_CHECKLIST.map((item) => {
             const isChecked = checkedItems.has(item.id);
+            const itemText = checklistItems[item.labelKey];
             return (
               <div 
                 key={item.id}
@@ -129,16 +125,13 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
                         isChecked && "line-through text-muted-foreground"
                       )}
                     >
-                      {item.label}
+                      {itemText?.label || item.labelKey}
                     </label>
-                    <Badge 
-                      variant="outline" 
-                      className={cn("text-[10px]", categoryColors[item.category])}
-                    >
-                      {categoryLabels[item.category]}
+                    <Badge variant="outline" className={cn("text-[10px]", categoryColors[item.category])}>
+                      {categoryLabels[item.category] || item.category}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                  <p className="text-xs text-muted-foreground">{itemText?.desc || ""}</p>
                 </div>
                 {isChecked ? (
                   <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
@@ -154,7 +147,7 @@ export function ReleaseChecklist({ platformKey, onDeploy }: ReleaseChecklistProp
           <div className="mt-4 p-3 rounded-lg bg-warning/10 border border-warning/30 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-warning" />
             <span className="text-sm">
-              Complétez tous les critères avant de déployer ({RELEASE_CHECKLIST.length - checkedItems.size} restant(s))
+              {t.completeAllCriteria} ({RELEASE_CHECKLIST.length - checkedItems.size} {t.remaining})
             </span>
           </div>
         )}
