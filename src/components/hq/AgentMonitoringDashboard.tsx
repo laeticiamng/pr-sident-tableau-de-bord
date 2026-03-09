@@ -184,7 +184,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {isLoading ? <Skeleton className="h-7 w-10 mb-1" /> : (
                 <p className="text-2xl font-bold">{totalRuns}</p>
               )}
-              <p className="text-xs text-muted-foreground">Runs totaux</p>
+              <p className="text-xs text-muted-foreground">{t.totalRuns}</p>
             </div>
           </CardContent>
         </Card>
