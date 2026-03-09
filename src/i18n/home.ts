@@ -222,7 +222,7 @@ export const homeTranslations = {
     cta: {
       title: "Explore the ecosystem",
       subtitle: "Discover our 10 innovative platforms and how they transform their sectors.",
-      button: "View platforms in detail",
+      button: "Find the right solution for you",
       contactButton: "Request a demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
