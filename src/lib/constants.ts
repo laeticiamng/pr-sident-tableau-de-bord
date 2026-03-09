@@ -81,7 +81,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://flow-pulse-assist.lovable.app",
     color: "bg-destructive",
     stats: { modules: 7, tables: 12, edgeFunctions: 6, branches: 3, commits: 320, tests: 45 },
-    features: ["Board panoramique temps réel", "Pancarte IDE 1 tap", "Tri IOA intelligent", "Dossier patient complet", "Audit trail médical"],
+    features: ["Board panoramique temps réel", "Pancarte soignant 1 tap", "Tri intelligent", "Dossier patient complet", "Traçabilité médicale"],
     status: "prototype",
     lastCommit: "2026-02-05",
   },
