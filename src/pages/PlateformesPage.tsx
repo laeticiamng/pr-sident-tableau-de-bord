@@ -337,13 +337,11 @@ export default function PlateformesPage() {
               {t.governance.subtitle}
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6 mb-12">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-12 max-w-3xl mx-auto">
               {[
                 { value: `${allPlatforms.length}`, label: t.stats.platforms, icon: Layers },
-                { value: formatNumber(totals.commits), label: t.stats.evolutions, icon: GitCommit },
-                { value: formatNumber(totals.tests), label: t.stats.tests, icon: TestTube2 },
-                { value: `${totals.tables}`, label: t.stats.structures, icon: Database },
-                { value: `${totals.functions}`, label: t.stats.integrations, icon: Cpu },
+                { value: formatNumber(totals.modules), label: t.labels.modulesLabel, icon: Layers },
+                { value: "24/7", label: "Disponibilité", icon: CheckCircle },
               ].map((stat, i) => (
                 <div 
                   key={stat.label}
