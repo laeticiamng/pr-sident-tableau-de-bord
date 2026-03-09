@@ -131,7 +131,7 @@ export const MANAGED_PLATFORMS = [
     key: "vascular-atlas",
     name: "Vascular Atlas",
     shortDescription: "Plateforme clinique IA pour la médecine vasculaire",
-    description: "Plateforme clinique augmentée par l'IA pour la médecine vasculaire. Assistant clinique IA, jumeau numérique vasculaire, registre mondial des résultats, certification CME, laboratoire de simulation clinique et réseau d'experts internationaux. Couvre les États-Unis, l'Europe et la Suisse.",
+    description: "Plateforme clinique augmentée par l'IA pour la médecine vasculaire. Assistant clinique IA, modélisation vasculaire 3D, registre mondial des résultats, formation continue et réseau d'experts internationaux.",
     tagline: "L'excellence vasculaire, augmentée par l'IA",
     github: "https://github.com/laeticiamng/vessel-pathway-compass",
     liveUrl: "https://vessel-pathway-compass.lovable.app",
