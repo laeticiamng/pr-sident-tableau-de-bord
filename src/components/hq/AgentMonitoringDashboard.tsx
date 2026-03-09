@@ -449,7 +449,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                                 }}
                               >
                                 <RefreshCw className="h-3 w-3" />
-                                Relancer
+                                {t.refresh}
                               </Button>
                             </div>
                           )}
