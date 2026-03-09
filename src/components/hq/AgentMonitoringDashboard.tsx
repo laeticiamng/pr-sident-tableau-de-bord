@@ -7,33 +7,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Bot,
-  Brain,
-  Activity,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Loader2,
-  RefreshCw,
-  Zap,
-  Euro,
-  Play,
-  ChevronDown,
-  ChevronUp,
-  AlertCircle,
-  BarChart3,
-  Timer,
+  Bot, Brain, Activity, Clock, CheckCircle, XCircle, Loader2, RefreshCw, Zap, Euro,
+  Play, ChevronDown, ChevronUp, AlertCircle, BarChart3, Timer,
 } from "lucide-react";
-import { useRecentRuns } from "@/hooks/useHQData";
-import { useExecuteRun } from "@/hooks/useHQData";
+import { useRecentRuns, useExecuteRun } from "@/hooks/useHQData";
 import { useRunQueue } from "@/hooks/useRunQueue";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enGB, de } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
-
 import { getRunCost, getRunAgent, getRunModel, type RunType } from "@/lib/run-types-registry";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
+
+const dateFnsLocales = { fr, en: enGB, de } as const;
 
 // Palette pour le statut
 const STATUS_CONFIG = {
