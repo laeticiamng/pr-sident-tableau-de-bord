@@ -275,9 +275,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Play className="h-4 w-4 text-primary" />
-              Lancer un Agent IA
+              {t.launchAIAgent}
             </CardTitle>
-            <CardDescription>Déclenchez un run immédiat</CardDescription>
+            <CardDescription>{t.triggerImmediate}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
