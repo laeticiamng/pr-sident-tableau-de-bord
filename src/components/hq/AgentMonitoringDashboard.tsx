@@ -341,9 +341,9 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
               {showFailedOnly ? (
                 <>
                   <CheckCircle className="h-8 w-8 mx-auto mb-3 text-success opacity-60" />
-                  <p className="text-sm font-medium text-success">Aucun échec — tout fonctionne ✓</p>
+                  <p className="text-sm font-medium text-success">{t.noFailures}</p>
                   <Button variant="link" size="sm" className="mt-2 text-xs" onClick={() => setShowFailedOnly(false)}>
-                    Voir tous les runs
+                    {t.viewAllRuns}
                   </Button>
                 </>
               ) : (
