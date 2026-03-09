@@ -247,7 +247,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                 {[1, 2, 3].map(i => <Skeleton key={i} className="h-8 w-32" />)}
               </div>
             ) : activeAgentKeys.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aucun agent actif dans les 24 dernières heures</p>
+              <p className="text-sm text-muted-foreground">{t.noActiveAgents}</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {activeAgentKeys.map(rt => {
