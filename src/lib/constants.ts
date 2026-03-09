@@ -67,7 +67,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://medmng.com",
     color: "bg-destructive",
     stats: { modules: 15, tables: 50, edgeFunctions: 30, branches: 238, commits: 4522, tests: 156 },
-    features: ["Copilote médical IA", "Génération musicale IA", "Écoute en continu", "Recherche médicale IA", "Disponible hors connexion"],
+    features: ["Assistant médical IA", "Génération musicale IA", "Écoute en continu", "Recherche médicale IA", "Disponible hors connexion"],
     status: "production",
     lastCommit: "2026-02-05",
   },
