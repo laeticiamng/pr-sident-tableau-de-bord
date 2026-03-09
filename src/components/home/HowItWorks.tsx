@@ -59,7 +59,7 @@ const translations = {
         description: "Entdecken Sie unsere 10 Lösungen und finden Sie die passende: Gesundheit, Bildung, International oder Wachstum.",
       },
       {
-        icon: UserPlus,
+        icon: MessageCircle,
         title: "Sprechen Sie mit unserem Team",
         description: "Kontaktieren Sie uns, um die richtige Lösung für Ihren Beruf zu finden. Antwort innerhalb von 48h garantiert, unverbindlich.",
       },
