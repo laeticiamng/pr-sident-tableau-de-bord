@@ -11,7 +11,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://emotionscare.com",
     color: "bg-status-green",
     stats: { modules: 37, tables: 723, edgeFunctions: 261, branches: 635, commits: 7723, tests: 294 },
-    features: ["Scan émotionnel IA", "Coach IA Nyvée", "Musicothérapie Suno", "Dashboard B2B RH", "Gamification XP"],
+    features: ["Scan émotionnel IA", "Coach personnalisé IA", "Musicothérapie intégrée", "Dashboard bien-être RH", "Progression & récompenses"],
     status: "production",
     lastCommit: "2026-02-05",
   },
