@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
+import { hqCommon } from "@/i18n/hq-common";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
