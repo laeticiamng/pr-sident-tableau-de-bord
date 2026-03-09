@@ -155,7 +155,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
           </div>
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
-              Monitoring Agents IA
+              {t.agentMonitoring}
               <span className={cn(
                 "inline-block w-2 h-2 rounded-full transition-opacity duration-300",
                 liveIndicator ? "bg-success opacity-100" : "bg-success opacity-30"
