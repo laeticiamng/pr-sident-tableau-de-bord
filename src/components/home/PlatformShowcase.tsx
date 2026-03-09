@@ -158,12 +158,10 @@ export const PlatformShowcase = forwardRef<HTMLElement, React.HTMLAttributes<HTM
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
+                  <div className="grid grid-cols-2 md:grid-cols-2 gap-1.5 sm:gap-2 md:gap-3 lg:gap-4 mt-3 sm:mt-4 md:mt-0">
                     {[
-                      { icon: GitCommit, value: MANAGED_PLATFORMS[0].stats.commits > 1000 ? `${(MANAGED_PLATFORMS[0].stats.commits / 1000).toFixed(1)}K` : MANAGED_PLATFORMS[0].stats.commits, label: s.evolutions, suffix: "" },
-                      { icon: Database, value: MANAGED_PLATFORMS[0].stats.modules, label: s.modulesLabel, suffix: "" },
-                      { icon: TestTube2, value: MANAGED_PLATFORMS[0].stats.tests, label: s.tests, suffix: "" },
-                      { icon: GitBranch, value: MANAGED_PLATFORMS[0].stats.branches, label: s.versions, suffix: "" },
+                      { icon: Layers, value: MANAGED_PLATFORMS[0].stats.modules, label: s.modulesLabel, suffix: "" },
+                      { icon: CheckCircle, value: s.production, label: "Status", suffix: "" },
                     ].map((stat) => (
                       <div 
                         key={stat.label}
