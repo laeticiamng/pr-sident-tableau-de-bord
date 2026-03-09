@@ -333,7 +333,7 @@ export function HQChatSidebar() {
               <>
                 <SheetTitle className="flex items-center gap-2 text-sm">
                   <Bot className="h-5 w-5 text-primary" />
-                  DG IA — Assistant Présidentiel
+                  {t.aiAssistant}
                 </SheetTitle>
                 <div className="flex items-center gap-1">
                   <Button variant="ghost" size="icon" onClick={() => setViewMode("history")} className="h-8 w-8" title="Historique">
