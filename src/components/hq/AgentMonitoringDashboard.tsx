@@ -55,6 +55,15 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
   const [liveIndicator, setLiveIndicator] = useState(true);
   const [showFailedOnly, setShowFailedOnly] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const t = useTranslation(hqCommon);
+  const { language } = useLanguage();
+  const locale = dateFnsLocales[language] || fr;
+  const executeRun = useExecuteRun();
+  const { enqueue, queue } = useRunQueue();
+  const [expandedRun, setExpandedRun] = useState<string | null>(null);
+  const [liveIndicator, setLiveIndicator] = useState(true);
+  const [showFailedOnly, setShowFailedOnly] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Clignotement du point "live"
   useEffect(() => {
