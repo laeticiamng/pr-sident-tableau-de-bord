@@ -109,7 +109,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://trust-seal-chain.lovable.app",
     color: "bg-platform-governance",
     stats: { modules: 8, tables: 20, edgeFunctions: 12, branches: 3, commits: 450, tests: 85 },
-    features: ["Trust Seal certification", "Audit trail IA", "Scoring éthique", "Conformité AI Act", "Registre agents"],
+    features: ["Certification de confiance", "Traçabilité des décisions IA", "Scoring éthique", "Conformité réglementaire", "Registre des agents"],
     status: "prototype",
     lastCommit: "2026-03-01",
   },
