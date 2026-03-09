@@ -201,7 +201,7 @@ export function HQChatSidebar() {
       return data as string;
     } catch (e) {
       console.error("Failed to create conversation:", e);
-      toast.error("Impossible de créer la conversation");
+      toast.error(t.createConversationError);
       return null;
     }
   }, []);
