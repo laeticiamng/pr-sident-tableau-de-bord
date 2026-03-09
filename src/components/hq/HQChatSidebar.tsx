@@ -51,7 +51,7 @@ async function streamChat({
   }
 
   if (!resp.body) {
-    onError("Pas de réponse du serveur");
+    onError("No server response");
     return;
   }
 
