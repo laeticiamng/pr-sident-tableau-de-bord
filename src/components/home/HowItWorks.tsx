@@ -38,8 +38,8 @@ const translations = {
       },
       {
         icon: UserPlus,
-        title: "Create your account",
-        description: "Free sign-up in 30 seconds. No credit card required. Get immediate access to your workspace.",
+        title: "Talk to our team",
+        description: "Contact us to find the right solution for your profession. Guaranteed response within 48h, no commitment.",
       },
       {
         icon: Rocket,
