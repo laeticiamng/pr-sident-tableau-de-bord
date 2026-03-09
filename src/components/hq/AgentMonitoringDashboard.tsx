@@ -397,7 +397,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
-                                  {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale: fr })}
+                                  {formatDistanceToNow(new Date(run.created_at), { addSuffix: true, locale })}
                                 </span>
                                 <span className="font-mono text-[10px] opacity-60">{model}</span>
                                 <span className="flex items-center gap-0.5 text-warning">
