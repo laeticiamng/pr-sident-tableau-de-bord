@@ -412,12 +412,12 @@ export function HQChatSidebar() {
               {messages.length === 0 && (
                 <div className="text-center text-muted-foreground mt-12 space-y-3">
                   <Bot className="h-12 w-12 mx-auto text-primary/30" />
-                  <p className="text-sm font-medium">Bonjour, Madame la Présidente</p>
+                  <p className="text-sm font-medium">{t.greeting}</p>
                   <p className="text-xs max-w-[280px] mx-auto">
-                    Posez vos questions sur l'écosystème, les KPIs, la stratégie ou demandez une analyse.
+                    {t.greetingHint}
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center pt-2">
-                    {["Résumé du jour", "Santé des plateformes", "KPIs financiers"].map((q) => (
+                    {(t.quickPrompts as string[]).map((q) => (
                       <Button
                         key={q}
                         variant="outline"
