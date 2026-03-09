@@ -75,7 +75,7 @@ export const MANAGED_PLATFORMS = [
     key: "swift-care-hub",
     name: "UrgenceOS",
     shortDescription: "Le système d'exploitation des urgences hospitalières",
-    description: "Application temps réel qui digitalise l'ensemble du parcours patient aux urgences — de l'admission à la sortie. Board panoramique par zone, dossier patient avec timeline médicale, pancarte IDE en 1 tap, tri IOA intelligent et interfaces adaptées à chaque profil soignant. De 6-8 clics à un seul tap pour chaque administration médicamenteuse.",
+    description: "Application temps réel qui digitalise l'ensemble du parcours patient aux urgences — de l'admission à la sortie. Board panoramique par zone, dossier patient avec timeline médicale, pancarte soignant en 1 tap, tri intelligent.",
     tagline: "De l'admission à la sortie, chaque seconde compte",
     github: "https://github.com/laeticiamng/swift-care-hub",
     liveUrl: "https://flow-pulse-assist.lovable.app",
