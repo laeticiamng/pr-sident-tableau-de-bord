@@ -67,7 +67,7 @@ export const homeTranslations = {
     cta: {
       title: "Explorez l'écosystème",
       subtitle: "Découvrez nos 10 plateformes innovantes et comment elles transforment leurs secteurs.",
-      button: "Voir les plateformes en détail",
+      button: "Trouvez la solution pour votre métier",
       contactButton: "Demander une démo",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
