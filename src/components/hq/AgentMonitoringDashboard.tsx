@@ -324,7 +324,7 @@ export function AgentMonitoringDashboard({ className, compact = false }: AgentMo
                   onClick={() => setShowFailedOnly(!showFailedOnly)}
                 >
                   <XCircle className="h-3 w-3" />
-                  {failedRuns} échec{failedRuns > 1 ? "s" : ""}
+                  {failedRuns} {failedRuns > 1 ? t.failuresPlural : t.failures}
                 </Button>
               )}
               <Badge variant="outline" className="text-xs">{totalRuns} runs</Badge>
