@@ -25,7 +25,7 @@ export const MANAGED_PLATFORMS = [
     liveUrl: "https://nearvity.lovable.app",
     color: "bg-status-amber",
     stats: { modules: 10, tables: 15, edgeFunctions: 8, branches: 4, commits: 847, tests: 42 },
-    features: ["Radar temps réel", "3 états de signal", "Sessions binôme", "Ghost mode", "Export GDPR"],
+    features: ["Radar temps réel", "Statuts de disponibilité", "Sessions binôme", "Mode discret", "Conformité RGPD"],
     status: "prototype",
     lastCommit: "2026-01-27",
   },
