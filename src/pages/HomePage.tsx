@@ -120,6 +120,9 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
+            <p className="mt-5 text-sm text-white/50 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+              {t.hero.socialProof}
+            </p>
           </div>
         </div>
       </section>

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink } from "lucide-react";
+import { Mail, MapPin, Building2, Clock, Loader2, Linkedin, ExternalLink, CalendarDays, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -189,6 +189,31 @@ export default function ContactPage() {
                   <h3 className="font-semibold mb-1">{t.info.hours}</h3>
                   <p className="text-muted-foreground text-sm">{t.info.hoursDetail}<br />{t.info.hoursResponse}</p>
                 </div>
+              </div>
+
+              {/* Demo scheduling */}
+              <div className="rounded-2xl border border-accent/20 bg-accent/5 p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <CalendarDays className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-semibold text-lg">{t.info.demoTitle}</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">{t.info.demoDescription}</p>
+                <ul className="space-y-2 mb-5">
+                  {t.info.demoFeatures.map((feature, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-success shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/contact?subject=Planifier%20une%20démo">
+                  <Button variant="executive" size="default" className="w-full">
+                    <CalendarDays className="h-4 w-4 mr-2" />
+                    {t.info.demoButton}
+                  </Button>
+                </Link>
               </div>
 
               <div className="mt-4 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-transparent border border-border/60 h-52 flex flex-col items-center justify-center relative overflow-hidden">

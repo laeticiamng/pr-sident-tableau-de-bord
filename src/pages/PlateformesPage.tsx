@@ -13,6 +13,7 @@ import {
   ArrowRight,
   Rocket,
   Users,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useSearchParams } from "react-router-dom";
@@ -315,7 +316,7 @@ export default function PlateformesPage() {
                       </div>
 
                       <div className="flex flex-wrap gap-3">
-                        <Button 
+                        <Button
                           size="default"
                           className={cn("group/btn", platformBgAccents[platform.key], "hover:opacity-90 text-white")}
                           asChild
@@ -324,6 +325,12 @@ export default function PlateformesPage() {
                             <ExternalLink className="h-4 w-4 mr-2" />
                             {t.labels.visitSite}
                           </a>
+                        </Button>
+                        <Button variant="outline" size="default" asChild>
+                          <Link to={`/contact?subject=${encodeURIComponent(`Démo ${platform.name}`)}`}>
+                            <MessageCircle className="h-4 w-4 mr-2" />
+                            {t.labels.requestDemo}
+                          </Link>
                         </Button>
                       </div>
                     </div>

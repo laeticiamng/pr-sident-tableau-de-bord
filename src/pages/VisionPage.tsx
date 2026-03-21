@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers } from "lucide-react";
+import { Target, Lightbulb, Heart, TrendingUp, Shield, Users, Award, Rocket, Layers, ArrowRight } from "lucide-react";
 import { AnimatedCounter } from "@/components/hq/AnimatedCounter";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { getVisionPageSchemas } from "@/lib/geo-schemas";
@@ -153,6 +155,29 @@ export default function VisionPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 md:py-28 bg-hero-gradient text-white">
+        <div className="container">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">{t.cta.title}</h2>
+            <p className="text-lg text-white/80 mb-10">{t.cta.subtitle}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/plateformes">
+                <Button variant="hero" size="lg" className="group w-full sm:w-auto">
+                  {t.cta.buttonPrimary}
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white">
+                  {t.cta.buttonSecondary}
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Building2, Cookie, ArrowRight } from "lucide-react";
+import { Building2, Cookie, ArrowRight, Mail, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { commonTranslations } from "@/i18n/common";
@@ -11,6 +12,8 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
   const currentYear = new Date().getFullYear();
   const t = useTranslation(commonTranslations);
   const { reopenBanner } = useCookieConsent();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterDone, setNewsletterDone] = useState(false);
 
   return (
     <footer ref={ref} className="border-t bg-secondary/30">
@@ -69,7 +72,43 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+        {/* Newsletter signup */}
+        <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h4 className="text-sm font-semibold flex items-center gap-2">
+                <Mail className="h-4 w-4 text-accent" />
+                {t.footer.newsletterTitle}
+              </h4>
+              <p className="text-xs text-muted-foreground mt-1">{t.footer.newsletterSubtitle}</p>
+            </div>
+            {newsletterDone ? (
+              <div className="flex items-center gap-2 text-sm text-success font-medium">
+                <CheckCircle className="h-4 w-4" />
+                {t.footer.newsletterSuccess}
+              </div>
+            ) : (
+              <form
+                onSubmit={(e) => { e.preventDefault(); if (newsletterEmail) setNewsletterDone(true); }}
+                className="flex gap-2 w-full sm:w-auto"
+              >
+                <Input
+                  type="email"
+                  required
+                  placeholder={t.footer.newsletterPlaceholder}
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  className="h-9 text-sm w-full sm:w-56"
+                />
+                <Button type="submit" variant="executive" size="sm">
+                  {t.footer.newsletterButton}
+                </Button>
+              </form>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm font-medium text-foreground">{t.footer.ctaTitle}</p>
           <Link to="/plateformes">
             <Button variant="executive" size="sm" className="group">

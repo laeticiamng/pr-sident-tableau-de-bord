@@ -3,6 +3,8 @@ export const homeFaqTranslations = {
     label: "Questions fréquentes",
     title: "Tout savoir sur EMOTIONSCARE",
     subtitle: "Réponses aux questions que vous vous posez avant de commencer.",
+    ctaText: "Encore des questions ?",
+    ctaButton: "Contactez-nous",
     items: [
       {
         question: "Est-ce gratuit pour commencer ?",
@@ -30,6 +32,8 @@ export const homeFaqTranslations = {
     label: "Frequently Asked Questions",
     title: "Everything about EMOTIONSCARE",
     subtitle: "Answers to the questions you have before getting started.",
+    ctaText: "Still have questions?",
+    ctaButton: "Contact us",
     items: [
       {
         question: "Is it free to get started?",
@@ -57,6 +61,8 @@ export const homeFaqTranslations = {
     label: "Häufig gestellte Fragen",
     title: "Alles über EMOTIONSCARE",
     subtitle: "Antworten auf die Fragen, die Sie vor dem Start haben.",
+    ctaText: "Noch Fragen?",
+    ctaButton: "Kontaktieren Sie uns",
     items: [
       {
         question: "Ist der Einstieg kostenlos?",

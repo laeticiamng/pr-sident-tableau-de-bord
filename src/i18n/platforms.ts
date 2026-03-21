@@ -31,6 +31,7 @@ export const platformsTranslations = {
     labels: {
       modules: "modules",
       visitSite: "Visiter le site",
+      requestDemo: "Demander une démo",
       evolutions: "Évolutions",
       structures: "Structures",
       tests: "Tests",
@@ -131,6 +132,7 @@ export const platformsTranslations = {
     labels: {
       modules: "modules",
       visitSite: "Visit website",
+      requestDemo: "Request a demo",
       evolutions: "Evolutions",
       structures: "Structures",
       tests: "Tests",
@@ -231,6 +233,7 @@ export const platformsTranslations = {
     labels: {
       modules: "Module",
       visitSite: "Webseite besuchen",
+      requestDemo: "Demo anfordern",
       evolutions: "Entwicklungen",
       structures: "Strukturen",
       tests: "Tests",

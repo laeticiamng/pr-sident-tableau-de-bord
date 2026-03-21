@@ -40,6 +40,12 @@ export const visionTranslations = {
         { title: "Performance", stat: "99.9%", description: "Disponibilité visée" },
       ],
     },
+    cta: {
+      title: "Rejoignez l'aventure",
+      subtitle: "Découvrez nos plateformes et comment elles peuvent transformer votre quotidien.",
+      buttonPrimary: "Explorer nos plateformes",
+      buttonSecondary: "Nous contacter",
+    },
     history: {
       title: "Notre Histoire",
       subtitle: "Une aventure entrepreneuriale ambitieuse.",
@@ -93,6 +99,12 @@ export const visionTranslations = {
         { title: "Performance", stat: "99.9%", description: "Target availability" },
       ],
     },
+    cta: {
+      title: "Join the journey",
+      subtitle: "Discover our platforms and how they can transform your daily life.",
+      buttonPrimary: "Explore our platforms",
+      buttonSecondary: "Contact us",
+    },
     history: {
       title: "Our Story",
       subtitle: "An ambitious entrepreneurial journey.",
@@ -145,6 +157,12 @@ export const visionTranslations = {
         { title: "Qualität", description: "Automatisierte Tests" },
         { title: "Leistung", stat: "99.9%", description: "Angestrebte Verfügbarkeit" },
       ],
+    },
+    cta: {
+      title: "Werden Sie Teil der Reise",
+      subtitle: "Entdecken Sie unsere Plattformen und wie sie Ihren Alltag verändern können.",
+      buttonPrimary: "Unsere Plattformen entdecken",
+      buttonSecondary: "Kontaktieren Sie uns",
     },
     history: {
       title: "Unsere Geschichte",

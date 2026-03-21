@@ -6,8 +6,9 @@ export const homeTranslations = {
       title: "Quelle est votre mission ?",
       subtitle: "10 plateformes conçues en France. Trouvez celle qui vous correspond.",
       description: "",
-      cta: "Explorer nos solutions",
-      ctaContact: "Échanger avec notre équipe",
+      cta: "Commencer gratuitement",
+      ctaContact: "Planifier une démo",
+      socialProof: "Déjà utilisé par des soignants, étudiants et entrepreneurs en France",
       audienceLabel: "Vous êtes...",
       audiences: {
         caregiver: { label: "Soignant", description: "Bien-être, urgences, médecine vasculaire" },
@@ -74,8 +75,8 @@ export const homeTranslations = {
     cta: {
       title: "Trouvez la plateforme qui vous correspond",
       subtitle: "Découvrez nos 10 plateformes innovantes et comment elles transforment leurs secteurs.",
-      button: "Trouvez la solution pour votre métier",
-      contactButton: "Échanger avec notre équipe",
+      button: "Essayer gratuitement",
+      contactButton: "Demander une démo personnalisée",
       footer: "Utilisé par des professionnels de santé, des étudiants et des entrepreneurs",
     },
     credibility: {
@@ -165,8 +166,9 @@ export const homeTranslations = {
       title: "What's your mission?",
       subtitle: "10 platforms built in France. Find the one that fits you.",
       description: "",
-      cta: "Explore our solutions",
-      ctaContact: "Talk to our team",
+      cta: "Get started for free",
+      ctaContact: "Schedule a demo",
+      socialProof: "Already used by caregivers, students and entrepreneurs in France",
       audienceLabel: "You are...",
       audiences: {
         caregiver: { label: "Caregiver", description: "Wellbeing, emergency care, vascular medicine" },
@@ -233,8 +235,8 @@ export const homeTranslations = {
     cta: {
       title: "Find the platform that fits you",
       subtitle: "Discover our 10 innovative platforms and how they transform their sectors.",
-      button: "Find the right solution for you",
-      contactButton: "Talk to our team",
+      button: "Try it free",
+      contactButton: "Request a personalized demo",
       footer: "Used by healthcare professionals, students and entrepreneurs",
     },
     credibility: {
@@ -324,8 +326,9 @@ export const homeTranslations = {
       title: "Was ist Ihre Mission?",
       subtitle: "10 Plattformen aus Frankreich. Finden Sie die passende.",
       description: "",
-      cta: "Unsere Lösungen entdecken",
-      ctaContact: "Mit unserem Team sprechen",
+      cta: "Kostenlos starten",
+      ctaContact: "Demo vereinbaren",
+      socialProof: "Bereits genutzt von Pflegekräften, Studierenden und Unternehmern in Frankreich",
       audienceLabel: "Sie sind...",
       audiences: {
         caregiver: { label: "Pflegekraft", description: "Wohlbefinden, Notaufnahme, Gefäßmedizin" },
@@ -392,8 +395,8 @@ export const homeTranslations = {
     cta: {
       title: "Finden Sie die passende Plattform",
       subtitle: "Entdecken Sie unsere 10 innovativen Plattformen und wie sie ihre Branchen verändern.",
-      button: "Finden Sie die richtige Lösung",
-      contactButton: "Mit unserem Team sprechen",
+      button: "Kostenlos testen",
+      contactButton: "Persönliche Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
     credibility: {
