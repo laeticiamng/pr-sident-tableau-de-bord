@@ -254,7 +254,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
           paris_hour: parisHour,
           paris_day: parisDay,
         },
-      }).catch((e: any) => console.error("[AI Scheduler] Log error:", e.message));
+      }).then(undefined, (e: any) => console.error("[AI Scheduler] Log error:", e.message));
 
       // Exécuter les jobs décidés par l'IA
       const executionResults = [];
