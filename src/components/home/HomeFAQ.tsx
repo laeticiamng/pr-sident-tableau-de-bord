@@ -4,6 +4,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeFaqTranslations } from "@/i18n/home-faq";
 
@@ -38,6 +41,16 @@ export function HomeFAQ() {
               </AccordionItem>
             ))}
           </Accordion>
+
+          <div className="mt-10 text-center pt-8 border-t">
+            <p className="text-muted-foreground mb-4">{t.ctaText}</p>
+            <Link to="/contact">
+              <Button variant="outline" size="default" className="group">
+                {t.ctaButton}
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

@@ -1,4 +1,6 @@
-import { Search, MessageCircle, Rocket } from "lucide-react";
+import { Search, MessageCircle, Rocket, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
@@ -8,6 +10,8 @@ const translations = {
     label: "Comment ça marche",
     title: "Trois étapes",
     titleAccent: "pour commencer",
+    cta: "Commencer gratuitement",
+    ctaSub: "Sans carte bancaire · En 30 secondes",
     steps: [
       {
         icon: Search,
@@ -16,8 +20,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Échangez avec notre équipe",
-        description: "Contactez-nous pour découvrir la solution adaptée à votre métier. Réponse garantie sous 48h, sans engagement.",
+        title: "Testez gratuitement",
+        description: "Créez votre compte en 30 secondes, sans carte bancaire. Besoin d'aide ? Notre équipe répond sous 48h.",
       },
       {
         icon: Rocket,
@@ -30,6 +34,8 @@ const translations = {
     label: "How it works",
     title: "Three steps",
     titleAccent: "to get started",
+    cta: "Get started for free",
+    ctaSub: "No credit card · 30 seconds",
     steps: [
       {
         icon: Search,
@@ -38,8 +44,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Talk to our team",
-        description: "Contact us to find the right solution for your profession. Guaranteed response within 48h, no commitment.",
+        title: "Try it for free",
+        description: "Create your account in 30 seconds, no credit card required. Need help? Our team responds within 48h.",
       },
       {
         icon: Rocket,
@@ -52,6 +58,8 @@ const translations = {
     label: "So funktioniert's",
     title: "Drei Schritte",
     titleAccent: "zum Start",
+    cta: "Kostenlos starten",
+    ctaSub: "Keine Kreditkarte · In 30 Sekunden",
     steps: [
       {
         icon: Search,
@@ -60,8 +68,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Sprechen Sie mit unserem Team",
-        description: "Kontaktieren Sie uns, um die richtige Lösung für Ihren Beruf zu finden. Antwort innerhalb von 48h garantiert, unverbindlich.",
+        title: "Kostenlos testen",
+        description: "Erstellen Sie Ihr Konto in 30 Sekunden, ohne Kreditkarte. Brauchen Sie Hilfe? Unser Team antwortet innerhalb von 48h.",
       },
       {
         icon: Rocket,
@@ -122,6 +130,16 @@ export function HowItWorks() {
             {t.steps.map((step, i) => (
               <StepCard key={i} step={step} index={i} />
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link to="/plateformes">
+              <Button variant="executive" size="lg" className="group">
+                {t.cta}
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+            <p className="mt-3 text-xs text-muted-foreground">{t.ctaSub}</p>
           </div>
         </div>
       </div>

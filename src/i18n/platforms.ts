@@ -17,6 +17,11 @@ export const platformsTranslations = {
       all: "Toutes",
       production: "Production",
       prototype: "Prototype",
+      byAudience: "Par métier",
+      caregiver: "Soignant",
+      student: "Étudiant",
+      expat: "Expatrié",
+      entrepreneur: "Entrepreneur",
     },
     status: {
       production: "Production",
@@ -26,6 +31,7 @@ export const platformsTranslations = {
     labels: {
       modules: "modules",
       visitSite: "Visiter le site",
+      requestDemo: "Demander une démo",
       evolutions: "Évolutions",
       structures: "Structures",
       tests: "Tests",
@@ -112,6 +118,11 @@ export const platformsTranslations = {
       all: "All",
       production: "Production",
       prototype: "Prototype",
+      byAudience: "By audience",
+      caregiver: "Caregiver",
+      student: "Student",
+      expat: "Expat",
+      entrepreneur: "Entrepreneur",
     },
     status: {
       production: "Production",
@@ -121,6 +132,7 @@ export const platformsTranslations = {
     labels: {
       modules: "modules",
       visitSite: "Visit website",
+      requestDemo: "Request a demo",
       evolutions: "Evolutions",
       structures: "Structures",
       tests: "Tests",
@@ -207,6 +219,11 @@ export const platformsTranslations = {
       all: "Alle",
       production: "Produktion",
       prototype: "Prototyp",
+      byAudience: "Nach Zielgruppe",
+      caregiver: "Pflegekraft",
+      student: "Studierende(r)",
+      expat: "Auswanderer",
+      entrepreneur: "Unternehmer(in)",
     },
     status: {
       production: "Produktion",
@@ -216,6 +233,7 @@ export const platformsTranslations = {
     labels: {
       modules: "Module",
       visitSite: "Webseite besuchen",
+      requestDemo: "Demo anfordern",
       evolutions: "Entwicklungen",
       structures: "Strukturen",
       tests: "Tests",

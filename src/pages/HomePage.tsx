@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Sparkles,
   Building2,
-  Quote,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
@@ -34,22 +33,31 @@ const ScrollReveal = forwardRef<HTMLDivElement, { children: React.ReactNode; cla
   }
 );
 
+const audienceMap = [
+  { key: "caregiver" as const, href: "/plateformes?audience=soignant", iconPlatform: "emotionscare" },
+  { key: "student" as const, href: "/plateformes?audience=etudiant", iconPlatform: "med-mng" },
+  { key: "expat" as const, href: "/plateformes?audience=expatrie", iconPlatform: "system-compass" },
+  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", iconPlatform: "growth-copilot" },
+] as const;
+
 export default function HomePage() {
   const geoSchemas = useMemo(() => getHomePageSchemas(), []);
   const t = useTranslation(homeTranslations);
 
   usePageMeta({
     title: t.hero.badge,
-    description: t.hero.description,
+    description: t.hero.subtitle,
     canonicalPath: "/",
     jsonLd: geoSchemas,
     ogImageAlt: "EMOTIONSCARE — " + t.hero.badge,
   });
 
+  const productionCount = MANAGED_PLATFORMS.filter(p => p.status === "production").length;
+
   return (
     <div className="flex flex-col">
       {/* HERO */}
-      <section aria-label="Presentation EMOTIONSCARE" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section aria-label="Presentation EMOTIONSCARE" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-hero-gradient" aria-hidden="true" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.2),transparent)]" aria-hidden="true" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" aria-hidden="true" />
@@ -70,12 +78,34 @@ export default function HomePage() {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 animate-slide-up">
               {t.hero.title}
             </h1>
-            <p className="text-xl sm:text-2xl md:text-3xl text-white/90 mb-4 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
+            <p className="text-xl sm:text-2xl md:text-3xl text-white/90 mb-10 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
               {t.hero.subtitle}
             </p>
-            <p className="text-base sm:text-lg md:text-xl text-white/70 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: "0.15s" }}>
-              {t.hero.description}
-            </p>
+
+            {/* Audience segmentation cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.15s" }}>
+              {audienceMap.map((audience) => {
+                const cfg = getPlatformConfig(audience.iconPlatform);
+                const Icon = cfg.icon;
+                return (
+                  <Link key={audience.key} to={audience.href}>
+                    <Card className="group border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-accent/40 transition-all duration-300 cursor-pointer h-full">
+                      <CardContent className="p-4 sm:p-5 text-center">
+                        <div className="mx-auto mb-3 p-2.5 rounded-xl bg-white/10 w-fit transition-transform group-hover:scale-110">
+                          <Icon className="h-5 w-5 text-accent" />
+                        </div>
+                        <h3 className="text-sm sm:text-base font-semibold text-white mb-1">
+                          {t.hero.audiences[audience.key].label}
+                        </h3>
+                        <p className="text-[11px] sm:text-xs text-white/60 leading-relaxed">
+                          {t.hero.audiences[audience.key].description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up" style={{ animationDelay: "0.2s" }}>
               <Link to="/plateformes" className="w-full sm:w-auto">
@@ -90,12 +120,9 @@ export default function HomePage() {
                 </Button>
               </Link>
             </div>
-
-            <div className="hidden sm:block mt-20 animate-bounce">
-              <div className="w-6 h-10 mx-auto border-2 border-white/30 rounded-full flex items-start justify-center p-1">
-                <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
-              </div>
-            </div>
+            <p className="mt-5 text-sm text-white/50 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+              {t.hero.socialProof}
+            </p>
           </div>
         </div>
       </section>
@@ -155,31 +182,24 @@ export default function HomePage() {
 
       <HomeFAQ />
 
-      {/* SOCIAL PROOF */}
-      <section className="py-20 md:py-28 bg-secondary/30">
+      {/* CREDIBILITY BADGES */}
+      <section className="py-10 md:py-14 bg-secondary/30">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-6xl">
-            <ScrollReveal className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl font-semibold mb-4">{t.socialProof.title}</h2>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto">{t.socialProof.subtitle}</p>
-            </ScrollReveal>
-            <div className="grid gap-6 md:grid-cols-3">
-              {t.socialProof.items.map((item, index) => (
-                <ScrollReveal key={index} delay={index * 100}>
-                  <Card className="h-full border-border/60">
-                    <CardContent className="p-6 flex flex-col gap-4">
-                      <Quote className="h-6 w-6 text-accent/40" />
-                      <p className="text-foreground italic leading-relaxed">"{item.quote}"</p>
-                      <div className="mt-auto pt-4 border-t border-border/40">
-                        <p className="text-sm font-medium">{item.author}</p>
-                        <p className="text-xs text-muted-foreground">{item.org}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </ScrollReveal>
+          <div className="mx-auto max-w-5xl">
+            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8">
+              {[
+                t.credibility.madeInFrance,
+                t.credibility.rgpd,
+                t.credibility.encryption,
+                t.credibility.siren,
+                t.credibility.platformsInProduction.replace("{count}", String(productionCount)),
+              ].map((label) => (
+                <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                  <span>{label}</span>
+                </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-6">{t.socialProof.disclaimer}</p>
           </div>
         </div>
       </section>
@@ -189,7 +209,7 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: `${MANAGED_PLATFORMS.length}`, label: t.stats.platforms },
+              { value: `${productionCount}`, label: t.stats.platforms },
               { value: `${MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.modules, 0)}`, label: t.stats.evolutions },
               { value: "100%", label: t.stats.madeInFrance },
               { value: "24/7", label: t.stats.monitoring },

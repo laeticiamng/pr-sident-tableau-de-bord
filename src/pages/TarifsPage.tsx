@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,13 +9,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowRight, CreditCard, Users, HelpCircle } from "lucide-react";
+import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { pricingTranslations } from "@/i18n/pricing";
+import { cn } from "@/lib/utils";
+
+function applyAnnualDiscount(price: string): string {
+  return price.replace(/(\d+(?:[.,]\d+)?)\s*€/g, (_, num) => {
+    const val = parseFloat(num.replace(",", "."));
+    const annual = Math.round(val * 0.8 * 100) / 100;
+    const formatted = annual % 1 === 0 ? String(annual) : annual.toFixed(2).replace(".", ",");
+    return `${formatted} €`;
+  });
+}
 
 export default function TarifsPage() {
   const t = useTranslation(pricingTranslations);
+  const [isAnnual, setIsAnnual] = useState(false);
 
   usePageMeta({
     title: t.title,
@@ -59,6 +71,32 @@ export default function TarifsPage() {
         </div>
       </section>
 
+      {/* Billing toggle */}
+      <section className="py-8">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-3">
+            <span className={cn("text-sm font-medium", !isAnnual ? "text-foreground" : "text-muted-foreground")}>{t.billingMonthly}</span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className={cn(
+                "relative inline-flex h-7 w-12 items-center rounded-full transition-colors",
+                isAnnual ? "bg-accent" : "bg-border"
+              )}
+              aria-label="Toggle annual billing"
+            >
+              <span className={cn(
+                "inline-block h-5 w-5 rounded-full bg-white shadow transition-transform",
+                isAnnual ? "translate-x-6" : "translate-x-1"
+              )} />
+            </button>
+            <span className={cn("text-sm font-medium", isAnnual ? "text-foreground" : "text-muted-foreground")}>{t.billingAnnual}</span>
+            {isAnnual && (
+              <Badge variant="gold" className="text-xs">{t.annualSave}</Badge>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* En bref */}
       <section className="py-12 md:py-16">
         <div className="container px-4 sm:px-6 lg:px-8">
@@ -94,7 +132,7 @@ export default function TarifsPage() {
                       </div>
                       <div className="flex flex-col sm:items-end gap-1">
                         <span className="text-sm font-semibold text-accent">
-                          {(item as any).price}
+                          {isAnnual ? applyAnnualDiscount((item as any).price) : (item as any).price}
                         </span>
                         <Badge variant="outline" className="w-fit text-xs">
                           {item.model}
@@ -129,6 +167,30 @@ export default function TarifsPage() {
                 </AccordionItem>
               ))}
             </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST BAR */}
+      <section className="py-8 bg-secondary/30">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="h-4 w-4 text-success" />
+              <span>RGPD</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4 text-success" />
+              <span>AES-256</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Flag className="h-4 w-4 text-accent" />
+              <span>Made in France</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <span>Stripe</span>
+            </div>
           </div>
         </div>
       </section>

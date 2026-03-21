@@ -45,6 +45,10 @@ export const contactTranslations = {
       hoursResponse: "Réponse sous 24-48h ouvrées",
       mapCity: "Amiens, Hauts-de-France",
       mapRegion: "Préfecture de la Somme",
+      demoTitle: "Planifier une démo",
+      demoDescription: "Vous préférez voir nos plateformes en action ? Réservez un créneau de 30 minutes avec notre équipe.",
+      demoButton: "Réserver un créneau",
+      demoFeatures: ["Démonstration personnalisée", "Questions/réponses en direct", "30 min · Sans engagement"],
     },
   },
   en: {
@@ -93,6 +97,10 @@ export const contactTranslations = {
       hoursResponse: "Response within 24-48 business hours",
       mapCity: "Amiens, Hauts-de-France",
       mapRegion: "Somme Prefecture",
+      demoTitle: "Schedule a demo",
+      demoDescription: "Prefer to see our platforms in action? Book a 30-minute slot with our team.",
+      demoButton: "Book a slot",
+      demoFeatures: ["Personalized demonstration", "Live Q&A", "30 min · No commitment"],
     },
   },
   de: {
@@ -141,6 +149,10 @@ export const contactTranslations = {
       hoursResponse: "Antwort innerhalb 24-48 Geschäftsstunden",
       mapCity: "Amiens, Hauts-de-France",
       mapRegion: "Präfektur Somme",
+      demoTitle: "Demo vereinbaren",
+      demoDescription: "Möchten Sie unsere Plattformen in Aktion sehen? Buchen Sie einen 30-Minuten-Slot mit unserem Team.",
+      demoButton: "Termin buchen",
+      demoFeatures: ["Personalisierte Demonstration", "Live-Fragen", "30 Min. · Unverbindlich"],
     },
   },
 } as const;
