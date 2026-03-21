@@ -202,7 +202,7 @@ export default function AuthPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               {t.noAccount}{" "}
-              <Link to="/contact" className="text-accent hover:text-accent/80 underline transition-colors">
+              <Link to="/plateformes" className="text-accent hover:text-accent/80 underline transition-colors">
                 {t.noAccountLink}
               </Link>
             </p>

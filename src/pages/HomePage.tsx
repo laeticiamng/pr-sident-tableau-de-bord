@@ -34,10 +34,10 @@ const ScrollReveal = forwardRef<HTMLDivElement, { children: React.ReactNode; cla
 );
 
 const audienceMap = [
-  { key: "caregiver" as const, href: "/plateformes", iconPlatform: "emotionscare" },
-  { key: "student" as const, href: "/plateformes", iconPlatform: "med-mng" },
-  { key: "expat" as const, href: "/plateformes", iconPlatform: "system-compass" },
-  { key: "entrepreneur" as const, href: "/plateformes", iconPlatform: "growth-copilot" },
+  { key: "caregiver" as const, href: "/plateformes?audience=soignant", iconPlatform: "emotionscare" },
+  { key: "student" as const, href: "/plateformes?audience=etudiant", iconPlatform: "med-mng" },
+  { key: "expat" as const, href: "/plateformes?audience=expatrie", iconPlatform: "system-compass" },
+  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", iconPlatform: "growth-copilot" },
 ] as const;
 
 export default function HomePage() {
@@ -206,7 +206,7 @@ export default function HomePage() {
         <div className="container px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
-              { value: `${MANAGED_PLATFORMS.length}`, label: t.stats.platforms },
+              { value: `${productionCount}`, label: t.stats.platforms },
               { value: `${MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.modules, 0)}`, label: t.stats.evolutions },
               { value: "100%", label: t.stats.madeInFrance },
               { value: "24/7", label: t.stats.monitoring },

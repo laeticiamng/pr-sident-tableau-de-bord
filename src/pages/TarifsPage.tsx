@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowRight, CreditCard, Users, HelpCircle } from "lucide-react";
+import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { pricingTranslations } from "@/i18n/pricing";
@@ -129,6 +129,30 @@ export default function TarifsPage() {
                 </AccordionItem>
               ))}
             </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST BAR */}
+      <section className="py-8 bg-secondary/30">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="h-4 w-4 text-success" />
+              <span>RGPD</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4 text-success" />
+              <span>AES-256</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Flag className="h-4 w-4 text-accent" />
+              <span>Made in France</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <CreditCard className="h-4 w-4 text-muted-foreground" />
+              <span>Stripe</span>
+            </div>
           </div>
         </div>
       </section>

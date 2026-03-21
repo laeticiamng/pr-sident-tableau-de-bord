@@ -66,10 +66,10 @@ export const homeTranslations = {
       ],
     },
     stats: {
-      platforms: "Plateformes",
-      evolutions: "Fonctionnalités",
-      madeInFrance: "Made in France",
-      monitoring: "Surveillance",
+      platforms: "Plateformes en production",
+      evolutions: "Modules intégrés",
+      madeInFrance: "Hébergé en Europe",
+      monitoring: "Disponibilité",
     },
     cta: {
       title: "Trouvez la plateforme qui vous correspond",
@@ -225,9 +225,9 @@ export const homeTranslations = {
       ],
     },
     stats: {
-      platforms: "Platforms",
-      evolutions: "Features",
-      madeInFrance: "Made in France",
+      platforms: "Platforms in production",
+      evolutions: "Integrated modules",
+      madeInFrance: "Hosted in Europe",
       monitoring: "Uptime",
     },
     cta: {
@@ -384,9 +384,9 @@ export const homeTranslations = {
       ],
     },
     stats: {
-      platforms: "Plattformen",
-      evolutions: "Funktionen",
-      madeInFrance: "Made in France",
+      platforms: "Plattformen in Produktion",
+      evolutions: "Integrierte Module",
+      madeInFrance: "In Europa gehostet",
       monitoring: "Verfügbarkeit",
     },
     cta: {

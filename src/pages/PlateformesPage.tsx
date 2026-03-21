@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { MANAGED_PLATFORMS } from "@/lib/constants";
 import { PLATFORM_ICONS, PLATFORM_ACCENTS, PLATFORM_BG_ACCENTS, PLATFORM_GRADIENTS, PLATFORM_BORDERS } from "@/lib/platformConfig";
 import { Badge } from "@/components/ui/badge";
@@ -12,14 +12,32 @@ import {
   Calendar,
   ArrowRight,
   Rocket,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getPlateformesPageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { platformsTranslations } from "@/i18n/platforms";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+const AUDIENCE_PLATFORMS: Record<string, string[]> = {
+  soignant: ["emotionscare", "swift-care-hub", "vascular-atlas"],
+  etudiant: ["med-mng", "nearvity", "studybeats"],
+  expatrie: ["system-compass"],
+  entrepreneur: ["growth-copilot", "trust-seal-chain"],
+};
+
+const AUDIENCE_FILTER_KEYS = ["soignant", "etudiant", "expatrie", "entrepreneur"] as const;
+type AudienceKey = typeof AUDIENCE_FILTER_KEYS[number];
+
+const AUDIENCE_TO_I18N: Record<AudienceKey, "caregiver" | "student" | "expat" | "entrepreneur"> = {
+  soignant: "caregiver",
+  etudiant: "student",
+  expatrie: "expat",
+  entrepreneur: "entrepreneur",
+};
 
 const platformIcons = PLATFORM_ICONS;
 const platformAccents = PLATFORM_ACCENTS;
@@ -30,11 +48,38 @@ const platformBorders = PLATFORM_BORDERS;
 export default function PlateformesPage() {
   const [hoveredPlatform, setHoveredPlatform] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "production" | "prototype">("all");
+  const [audienceFilter, setAudienceFilter] = useState<AudienceKey | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
   const t = useTranslation(platformsTranslations);
   const { language } = useLanguage();
   const pt = t.platforms as Record<string, { tagline: string; description: string; features: readonly string[] }>;
 
   const geoSchemas = useMemo(() => getPlateformesPageSchemas(), []);
+
+  // Read audience from URL query param on mount
+  useEffect(() => {
+    const audience = searchParams.get("audience") as AudienceKey | null;
+    if (audience && AUDIENCE_FILTER_KEYS.includes(audience)) {
+      setAudienceFilter(audience);
+      setStatusFilter("all");
+    }
+  }, [searchParams]);
+
+  const handleAudienceFilter = (key: AudienceKey | null) => {
+    setAudienceFilter(key);
+    if (key) {
+      setStatusFilter("all");
+      setSearchParams({ audience: key });
+    } else {
+      setSearchParams({});
+    }
+  };
+
+  const handleStatusFilter = (filter: "all" | "production" | "prototype") => {
+    setStatusFilter(filter);
+    setAudienceFilter(null);
+    setSearchParams({});
+  };
 
   usePageMeta({
     title: t.hero.title + " " + t.hero.titleAccent,
@@ -51,9 +96,11 @@ export default function PlateformesPage() {
   };
 
   const allPlatforms = MANAGED_PLATFORMS;
-  const platforms = statusFilter === "all"
-    ? allPlatforms
-    : allPlatforms.filter(p => p.status === statusFilter);
+  const platforms = audienceFilter
+    ? allPlatforms.filter(p => AUDIENCE_PLATFORMS[audienceFilter]?.includes(p.key))
+    : statusFilter === "all"
+      ? allPlatforms
+      : allPlatforms.filter(p => p.status === statusFilter);
 
   const prodCount = allPlatforms.filter(p => p.status === "production").length;
   const protoCount = allPlatforms.filter(p => p.status === "prototype").length;
@@ -125,44 +172,56 @@ export default function PlateformesPage() {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden sm:block">
-          <div className="w-6 h-10 border-2 border-primary-foreground/30 rounded-full flex items-start justify-center p-1">
-            <div className="w-1.5 h-3 bg-accent rounded-full animate-pulse" />
-          </div>
-        </div>
       </section>
 
-      {/* STATUS FILTER */}
+      {/* FILTERS */}
       <section className="py-6 bg-background border-b">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-3">
             <Button
-              variant={statusFilter === "all" ? "default" : "outline"}
+              variant={statusFilter === "all" && !audienceFilter ? "default" : "outline"}
               size="sm"
-              onClick={() => setStatusFilter("all")}
+              onClick={() => handleStatusFilter("all")}
               className="gap-2"
             >
               <Layers className="h-4 w-4" />
               {t.filter.all} ({allPlatforms.length})
             </Button>
             <Button
-              variant={statusFilter === "production" ? "default" : "outline"}
+              variant={statusFilter === "production" && !audienceFilter ? "default" : "outline"}
               size="sm"
-              onClick={() => setStatusFilter("production")}
+              onClick={() => handleStatusFilter("production")}
               className="gap-2"
             >
               <CheckCircle className="h-4 w-4 text-success" />
               {t.filter.production} ({prodCount})
             </Button>
             <Button
-              variant={statusFilter === "prototype" ? "default" : "outline"}
+              variant={statusFilter === "prototype" && !audienceFilter ? "default" : "outline"}
               size="sm"
-              onClick={() => setStatusFilter("prototype")}
+              onClick={() => handleStatusFilter("prototype")}
               className="gap-2"
             >
               <AlertCircle className="h-4 w-4 text-warning" />
               {t.filter.prototype} ({protoCount})
             </Button>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="text-xs text-muted-foreground font-medium mr-1">
+              <Users className="h-3.5 w-3.5 inline mr-1" />
+              {t.filter.byAudience} :
+            </span>
+            {AUDIENCE_FILTER_KEYS.map((key) => (
+              <Button
+                key={key}
+                variant={audienceFilter === key ? "default" : "ghost"}
+                size="sm"
+                onClick={() => handleAudienceFilter(audienceFilter === key ? null : key)}
+                className="h-7 text-xs px-3"
+              >
+                {t.filter[AUDIENCE_TO_I18N[key]]}
+              </Button>
+            ))}
           </div>
         </div>
       </section>
