@@ -1,3 +1,4 @@
+import laeticiaPhoto from "@/assets/laeticia-motongane.jpg";
 import { Badge } from "@/components/ui/badge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { Building2, FileText, MapPin, Calendar, User, CreditCard } from "lucide-react";
