@@ -1,10 +1,15 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { timingSafeEqual } from "https://deno.land/std@0.168.0/crypto/timing_safe_equal.ts";
+import { corsHeaders } from "../_shared/cors.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+/** Timing-safe string comparison to prevent timing attacks */
+function safeCompare(a: string, b: string): boolean {
+  const encoder = new TextEncoder();
+  const aBuf = encoder.encode(a);
+  const bBuf = encoder.encode(b);
+  if (aBuf.length !== bBuf.length) return false;
+  return timingSafeEqual(aBuf, bBuf);
+}
 
 // ── VAPID key management ──────────────────────────────────────────────
 // Auto-generate VAPID keys on first use via Web Crypto API (no npm dependency)
@@ -168,7 +173,7 @@ Deno.serve(async (req: Request) => {
       // Allow internal calls (from other edge functions) with service role
       const body = await req.json();
       const internalKey = req.headers.get("x-internal-key");
-      if (internalKey !== serviceKey) {
+      if (!internalKey || !safeCompare(internalKey, serviceKey)) {
         return new Response(JSON.stringify({ error: "Non autorisé" }), {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -217,6 +222,32 @@ async function handleSendPush(
   body: { title: string; message: string; urgency?: string; url?: string; type?: string },
   headers: Record<string, string>
 ) {
+  // Input validation
+  if (!body.title || typeof body.title !== "string" || body.title.length > 200) {
+    return new Response(
+      JSON.stringify({ error: "Titre requis (max 200 caractères)" }),
+      { status: 400, headers: { ...headers, "Content-Type": "application/json" } }
+    );
+  }
+  if (!body.message || typeof body.message !== "string" || body.message.length > 2000) {
+    return new Response(
+      JSON.stringify({ error: "Message requis (max 2000 caractères)" }),
+      { status: 400, headers: { ...headers, "Content-Type": "application/json" } }
+    );
+  }
+  if (body.urgency && !["low", "medium", "high", "critical"].includes(body.urgency)) {
+    return new Response(
+      JSON.stringify({ error: "Urgence invalide (low, medium, high, critical)" }),
+      { status: 400, headers: { ...headers, "Content-Type": "application/json" } }
+    );
+  }
+  if (body.url && (typeof body.url !== "string" || body.url.length > 500)) {
+    return new Response(
+      JSON.stringify({ error: "URL invalide (max 500 caractères)" }),
+      { status: 400, headers: { ...headers, "Content-Type": "application/json" } }
+    );
+  }
+
   const vapidKeys = await getOrCreateVapidKeys(supabaseAdmin);
 
   // Get all active subscriptions

@@ -1,9 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 // Model router configuration
 const MODEL_CONFIG = {
@@ -619,6 +616,10 @@ Deno.serve(async (req) => {
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================
+
+    // Rate limit: 30 requests per 5 minutes per user
+    const rl = checkRateLimit(`executive-run:${userId}`, { maxRequests: 30, windowMs: 5 * 60 * 1000 });
+    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
     const { run_type, platform_key, context_data } = await req.json();
 

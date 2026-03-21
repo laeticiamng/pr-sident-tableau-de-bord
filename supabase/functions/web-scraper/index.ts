@@ -1,9 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 interface ScrapeRequest {
   url: string;
@@ -80,6 +77,10 @@ Deno.serve(async (req) => {
     // ============================================
     // END AUTHENTICATION CHECK
     // ============================================
+
+    // Rate limit: 15 requests per 5 minutes per user
+    const rl = checkRateLimit(`web-scraper:${userId}`, { maxRequests: 15, windowMs: 5 * 60 * 1000 });
+    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
     if (!FIRECRAWL_API_KEY) {
       console.error("[Web Scraper] FIRECRAWL_API_KEY not configured");
