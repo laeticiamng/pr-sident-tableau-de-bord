@@ -1,6 +1,7 @@
 import { forwardRef } from "react";
 import { Link } from "react-router-dom";
-import { Building2, Cookie } from "lucide-react";
+import { Building2, Cookie, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { commonTranslations } from "@/i18n/common";
@@ -68,7 +69,17 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
           </div>
         </div>
 
-        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">
+        <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm font-medium text-foreground">{t.footer.ctaTitle}</p>
+          <Link to="/plateformes">
+            <Button variant="executive" size="sm" className="group">
+              {t.footer.ctaButton}
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
+        </div>
+
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <p>© {currentYear} EMOTIONSCARE SASU. {t.footer.allRights}</p>
             <p>SIREN : 944 505 445 | RCS Amiens</p>

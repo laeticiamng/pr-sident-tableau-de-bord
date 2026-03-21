@@ -16,8 +16,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Échangez avec notre équipe",
-        description: "Contactez-nous pour découvrir la solution adaptée à votre métier. Réponse garantie sous 48h, sans engagement.",
+        title: "Testez gratuitement",
+        description: "Créez votre compte en 30 secondes, sans carte bancaire. Besoin d'aide ? Notre équipe répond sous 48h.",
       },
       {
         icon: Rocket,
@@ -38,8 +38,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Talk to our team",
-        description: "Contact us to find the right solution for your profession. Guaranteed response within 48h, no commitment.",
+        title: "Try it for free",
+        description: "Create your account in 30 seconds, no credit card required. Need help? Our team responds within 48h.",
       },
       {
         icon: Rocket,
@@ -60,8 +60,8 @@ const translations = {
       },
       {
         icon: MessageCircle,
-        title: "Sprechen Sie mit unserem Team",
-        description: "Kontaktieren Sie uns, um die richtige Lösung für Ihren Beruf zu finden. Antwort innerhalb von 48h garantiert, unverbindlich.",
+        title: "Kostenlos testen",
+        description: "Erstellen Sie Ihr Konto in 30 Sekunden, ohne Kreditkarte. Brauchen Sie Hilfe? Unser Team antwortet innerhalb von 48h.",
       },
       {
         icon: Rocket,
