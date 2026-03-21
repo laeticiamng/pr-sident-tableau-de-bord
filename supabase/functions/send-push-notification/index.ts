@@ -213,7 +213,7 @@ Deno.serve(async (req: Request) => {
 });
 
 async function handleSendPush(
-  supabaseAdmin: ReturnType<typeof createClient>,
+  supabaseAdmin: any,
   body: { title: string; message: string; urgency?: string; url?: string; type?: string },
   headers: Record<string, string>
 ) {
