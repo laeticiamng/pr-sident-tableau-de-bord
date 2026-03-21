@@ -282,7 +282,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
               p_source: "autopilot",
               p_message: "autopilot.skip_duplicate",
               p_metadata: { job_key: job.key, run_type: job.runType, reason: "already_running", running_minutes: Math.round(runningMinutes) },
-            }).catch(() => {});
+            }).then(undefined, () => {});
             executionResults.push({ job: job.key, success: false, error: "Already running (anti-double)" });
             continue;
           } else {
