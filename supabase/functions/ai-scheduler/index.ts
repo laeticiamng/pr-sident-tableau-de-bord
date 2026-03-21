@@ -254,7 +254,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
           paris_hour: parisHour,
           paris_day: parisDay,
         },
-      }).catch((e: any) => console.error("[AI Scheduler] Log error:", e.message));
+      }).then(undefined, (e: any) => console.error("[AI Scheduler] Log error:", e.message));
 
       // Exécuter les jobs décidés par l'IA
       const executionResults = [];
@@ -282,7 +282,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
               p_source: "autopilot",
               p_message: "autopilot.skip_duplicate",
               p_metadata: { job_key: job.key, run_type: job.runType, reason: "already_running", running_minutes: Math.round(runningMinutes) },
-            }).catch(() => {});
+            }).then(undefined, () => {});
             executionResults.push({ job: job.key, success: false, error: "Already running (anti-double)" });
             continue;
           } else {
@@ -293,7 +293,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
               p_source: "autopilot",
               p_message: "autopilot.stuck_run_override",
               p_metadata: { job_key: job.key, run_type: job.runType, stuck_run_id: runningRun.id, running_minutes: Math.round(runningMinutes) },
-            }).catch(() => {});
+            }).then(undefined, () => {});
           }
         }
 
