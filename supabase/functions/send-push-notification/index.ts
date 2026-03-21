@@ -9,11 +9,11 @@ const corsHeaders = {
 // ── VAPID key management ──────────────────────────────────────────────
 // Auto-generate VAPID keys on first use via Web Crypto API (no npm dependency)
 
-async function getOrCreateVapidKeys(supabaseAdmin: ReturnType<typeof createClient>) {
+async function getOrCreateVapidKeys(supabaseAdmin: any) {
   // Try to load from system_config
   const { data: existing } = await supabaseAdmin.rpc("get_hq_system_config", {
     config_key: "vapid_keys",
-  });
+  }) as { data: any };
 
   if (existing?.publicKey && existing?.privateKey) {
     return existing as { publicKey: string; privateKey: string; subject: string };

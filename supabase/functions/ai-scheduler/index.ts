@@ -293,7 +293,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown:
               p_source: "autopilot",
               p_message: "autopilot.stuck_run_override",
               p_metadata: { job_key: job.key, run_type: job.runType, stuck_run_id: runningRun.id, running_minutes: Math.round(runningMinutes) },
-            }).catch(() => {});
+            }).then(undefined, () => {});
           }
         }
 

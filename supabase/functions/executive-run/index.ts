@@ -32,6 +32,7 @@ const RUN_TEMPLATES: Record<string, {
   useGitHub?: boolean;
   usePerplexity?: boolean;
   useFirecrawl?: boolean;
+  useStripe?: boolean;
 }> = {
   DAILY_EXECUTIVE_BRIEF: {
     systemPrompt: `Tu es le Directeur Général (CEO Agent) d'EMOTIONSCARE SASU, éditeur de logiciels applicatifs français de premier plan.
