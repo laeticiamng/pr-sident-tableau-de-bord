@@ -110,9 +110,12 @@ export default function EntreprisePage() {
             <h3 className="text-lg font-semibold">Direction</h3>
           </div>
           <dl className="space-y-4">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
               <dt className="text-muted-foreground">Président(e)</dt>
-              <dd className="font-medium">{COMPANY_PROFILE.president}</dd>
+              <dd className="font-medium flex items-center gap-3">
+                <img src={laeticiaPhoto} alt={COMPANY_PROFILE.president} className="h-8 w-8 rounded-full object-cover" />
+                {COMPANY_PROFILE.president}
+              </dd>
             </div>
             <div className="flex justify-between items-center">
               <dt className="text-muted-foreground">Capital social</dt>
