@@ -1,10 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+const MAX_MESSAGES = 50;
+const MAX_MESSAGE_LENGTH = 8000;
+const MAX_TOTAL_LENGTH = 100_000;
 
 const SYSTEM_PROMPT = `Tu es le Directeur Général IA d'EMOTIONSCARE SASU, assistant personnel de la Présidente.
 
@@ -36,9 +41,57 @@ serve(async (req) => {
   }
 
   try {
+    // ── Authentication ──────────────────────────────────────────────
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Authorization requise" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    const supabaseAuth = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Token invalide ou expiré" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+
+    // Verify owner role
+    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    const { data: hasOwnerRole, error: roleError } = await supabaseAdmin.rpc("has_role", {
+      _user_id: userId,
+      _role: "owner",
+    });
+
+    if (roleError || !hasOwnerRole) {
+      return new Response(
+        JSON.stringify({ error: "Permissions insuffisantes" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ── Input validation ────────────────────────────────────────────
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+      console.error("[hq-chat] LOVABLE_API_KEY is not configured");
+      return new Response(
+        JSON.stringify({ error: "Service IA non configuré" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const { messages } = await req.json();
@@ -50,6 +103,45 @@ serve(async (req) => {
       );
     }
 
+    if (messages.length > MAX_MESSAGES) {
+      return new Response(
+        JSON.stringify({ error: `Nombre de messages limité à ${MAX_MESSAGES}` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate individual messages and total content length
+    let totalLength = 0;
+    for (const msg of messages) {
+      if (!msg || typeof msg.role !== "string" || typeof msg.content !== "string") {
+        return new Response(
+          JSON.stringify({ error: "Chaque message doit avoir un role et un content valides" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (!["user", "assistant", "system"].includes(msg.role)) {
+        return new Response(
+          JSON.stringify({ error: "Rôle de message invalide" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (msg.content.length > MAX_MESSAGE_LENGTH) {
+        return new Response(
+          JSON.stringify({ error: `Message trop long (max ${MAX_MESSAGE_LENGTH} caractères)` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      totalLength += msg.content.length;
+    }
+
+    if (totalLength > MAX_TOTAL_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: "Volume total des messages trop important" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ── AI Gateway call ─────────────────────────────────────────────
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -80,7 +172,7 @@ serve(async (req) => {
         );
       }
       const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+      console.error("[hq-chat] AI gateway error:", response.status, t);
       return new Response(
         JSON.stringify({ error: "Service IA temporairement indisponible" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -91,9 +183,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    console.error("hq-chat error:", e);
+    console.error("[hq-chat] error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Erreur inconnue" }),
+      JSON.stringify({ error: "Service temporairement indisponible" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
