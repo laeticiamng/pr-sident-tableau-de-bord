@@ -1,11 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 8000;
@@ -83,6 +79,10 @@ serve(async (req) => {
         { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    // Rate limit: 30 requests per 5 minutes per user
+    const rl = checkRateLimit(`hq-chat:${userId}`, { maxRequests: 30, windowMs: 5 * 60 * 1000 });
+    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
     // ── Input validation ────────────────────────────────────────────
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { timingSafeEqual } from "https://deno.land/std@0.168.0/crypto/timing_safe_equal.ts";
+import { corsHeaders } from "../_shared/cors.ts";
 
 /** Timing-safe string comparison to prevent timing attacks */
 function safeCompare(a: string, b: string): boolean {
@@ -9,12 +10,6 @@ function safeCompare(a: string, b: string): boolean {
   if (aBuf.length !== bBuf.length) return false;
   return timingSafeEqual(aBuf, bBuf);
 }
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
 
 // ── VAPID key management ──────────────────────────────────────────────
 // Auto-generate VAPID keys on first use via Web Crypto API (no npm dependency)

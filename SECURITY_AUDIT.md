@@ -1,7 +1,7 @@
 # Audit Technique Sécurité — EMOTIONSCARE HQ
 
 **Date** : 2026-03-21
-**Périmètre** : Authentification, autorisation, edge functions, RLS, validation, headers
+**Périmètre** : Authentification, autorisation, edge functions, RLS, validation, headers, CORS, rate limiting, XSS
 
 ---
 
@@ -9,18 +9,18 @@
 
 L'architecture de sécurité repose sur 9 couches de défense en profondeur : authentification Supabase Auth (JWT), contexte session (AuthContext), gardes de route (ProtectedRoute), gardes de module (ModuleGuard), RLS PostgreSQL, validation d'autorisation dans les edge functions, validation d'entrée (Zod), sanitisation XSS, et rate limiting.
 
-**Vulnérabilités corrigées dans ce commit** : 6
-**Vulnérabilités restantes (recommandations)** : 4
+**Vulnérabilités corrigées** : 10 (6 critiques/hautes + 4 recommandations implémentées)
+**Vulnérabilités résiduelles** : 0 bloquante, 2 notes informatives
 
 ---
 
-## Vulnérabilités corrigées
+## Vulnérabilités corrigées — Round 1 (critiques)
 
 ### 1. CRITIQUE — hq-chat : absence totale d'authentification
 
 **Fichier** : `supabase/functions/hq-chat/index.ts`
 **Risque** : N'importe quel utilisateur internet pouvait appeler l'endpoint et consommer les crédits IA (LOVABLE_API_KEY) sans authentification.
-**Correction** : Ajout de la validation Bearer token + JWT claims + vérification du rôle `owner` via RPC `has_role()`, aligné sur le pattern des autres edge functions (executive-run, intelligence-search, etc.).
+**Correction** : Ajout de la validation Bearer token + JWT claims + vérification du rôle `owner` via RPC `has_role()`, aligné sur le pattern des autres edge functions.
 
 ### 2. CRITIQUE — hq-chat : absence de validation des entrées
 
@@ -41,7 +41,7 @@ L'architecture de sécurité repose sur 9 couches de défense en profondeur : au
 ### 4. HAUTE — send-push-notification : attaque par timing
 
 **Fichier** : `supabase/functions/send-push-notification/index.ts`
-**Risque** : La comparaison `cronSecret !== expectedSecret` (ligne 171) utilisait une comparaison directe de chaînes, vulnérable aux attaques par timing pour deviner le secret caractère par caractère.
+**Risque** : La comparaison `cronSecret !== expectedSecret` utilisait une comparaison directe de chaînes, vulnérable aux attaques par timing.
 **Correction** : Utilisation de `timingSafeEqual` de la bibliothèque standard Deno pour une comparaison en temps constant.
 
 ### 5. HAUTE — Absence de Content Security Policy (CSP)
@@ -66,57 +66,129 @@ L'architecture de sécurité repose sur 9 couches de défense en profondeur : au
 
 ---
 
-## Recommandations restantes (non bloquantes)
+## Recommandations implémentées — Round 2
 
-### R1. CORS wildcard (`Access-Control-Allow-Origin: *`)
+### R1. CORS centralisé et configurable (17 edge functions)
 
-**Impact** : Moyen
-**Fichiers** : Tous les 17 edge functions
-**Contexte** : Standard Supabase, mitigé par l'authentification JWT sur la plupart des endpoints. La seule exception est `contact-form` (intentionnellement public) et le GET de `send-push-notification` (clé publique VAPID).
-**Recommandation** : Restreindre l'origine au domaine de production quand possible.
+**Impact** : Moyen → Corrigé
+**Fichiers** : `supabase/functions/_shared/cors.ts` + 17 edge functions
+**Avant** : Chaque fonction définissait `"Access-Control-Allow-Origin": "*"` localement, sans possibilité de restriction.
+**Après** : Module partagé `_shared/cors.ts` avec :
+- Variable d'environnement `ALLOWED_ORIGIN` pour restreindre en production
+- Support multi-origines (séparées par virgule) avec validation de l'en-tête `Origin`
+- Fallback `*` pour le développement local
+- Ajout de `Access-Control-Allow-Methods: GET, POST, OPTIONS`
+- Code dédupliqué : 1 définition au lieu de 17
 
-### R2. Rate limiting côté serveur incomplet
+### R2. Rate limiting serveur sur les edge functions coûteuses
 
-**Impact** : Moyen
-**Contexte** : `contact-form` implémente un rate limiting serveur exemplaire. Le login a un rate limiting côté client (5 tentatives / 60s). Les autres edge functions n'ont pas de rate limiting.
-**Recommandation** : Implémenter un rate limiting par user_id sur les edge functions coûteuses (intelligence-search, executive-run, hq-chat).
+**Impact** : Moyen → Corrigé
+**Fichiers** : `supabase/functions/_shared/rate-limit.ts` + 5 edge functions
+**Avant** : Seul `contact-form` avait un rate limiting serveur. Les fonctions coûteuses (IA, scraping) n'avaient aucune limite.
+**Après** : Module partagé `_shared/rate-limit.ts` avec :
+- Store en mémoire par isolat Deno avec nettoyage automatique
+- Configuration par fonction (maxRequests, windowMs)
+- Réponse 429 avec en-tête `Retry-After`
 
-### R3. Secrets Supabase dans l'historique git
+Limites appliquées :
 
-**Impact** : Faible (clés anon/publishable uniquement — protégées par RLS)
-**Contexte** : Le fichier `.env` contenant les clés Supabase publiques a été commité dans l'historique git. Ces clés sont conçues pour être publiques et protégées par RLS, donc le risque est limité.
-**Correction partielle** : `.env` ajouté au `.gitignore` pour empêcher les futurs commits.
-**Recommandation** : Considérer la rotation des clés et l'utilisation de variables d'environnement CI/CD.
+| Fonction | Limite | Fenêtre | Raison |
+|----------|--------|---------|--------|
+| `hq-chat` | 30 req | 5 min | Crédits IA (Lovable gateway) |
+| `executive-run` | 30 req | 5 min | Crédits IA (multiples modèles) |
+| `intelligence-search` | 20 req | 5 min | Quota Perplexity API |
+| `web-scraper` | 15 req | 5 min | Quota Firecrawl API |
+| `platform-analysis` | 10 req | 5 min | Analyse lourde + crédits IA |
 
-### R4. localStorage pour les tokens de session
+### R3. Suppression du .env du tracking git
 
-**Impact** : Faible (standard Supabase)
-**Contexte** : Supabase Auth stocke les JWT dans localStorage par défaut. Vulnérable aux attaques XSS, mais mitigé par la CSP ajoutée et la sanitisation HTML existante.
-**Recommandation** : Surveiller et maintenir la couverture XSS (sanitizeHtml, sanitizeForDisplay dans validation.ts).
+**Impact** : Faible → Corrigé
+**Fichiers** : `.gitignore`, `.env`
+**Avant** : Le fichier `.env` (contenant les clés Supabase publiques) était suivi par git et commité dans l'historique.
+**Après** :
+- `.env` ajouté au `.gitignore` (+ `.env.local`, `.env.production`, `.env.staging`)
+- `.env` retiré du tracking git via `git rm --cached`
+- Les clés exposées sont des clés anon/publishable (protégées par RLS), risque limité
+- **Note** : Les clés restent dans l'historique git. En cas de doute, rotation recommandée via le dashboard Supabase.
+
+### R4. Couverture XSS — Audit complet
+
+**Impact** : Faible → Vérifié (aucun correctif nécessaire)
+**Résultat de l'audit** :
+- `sanitizeHtml()` est utilisé systématiquement sur le formulaire de contact (ContactPage.tsx)
+- Un seul `dangerouslySetInnerHTML` trouvé (chart.tsx, CSS variables internes — sûr)
+- Les paramètres URL sont validés contre des whitelists (PlateformesPage, HQPlateformesPage)
+- React assure l'échappement automatique du contenu texte dans le JSX
+- **Conclusion** : Aucune vulnérabilité XSS détectée
 
 ---
 
-## Architecture de sécurité — Vue d'ensemble
+## Modules partagés créés
+
+### `supabase/functions/_shared/cors.ts`
+Configuration CORS centralisée et configurable par variable d'environnement.
+
+### `supabase/functions/_shared/auth.ts`
+Helper d'authentification réutilisable avec :
+- `validateAuth(req, role?)` : valide le Bearer token, extrait les claims, vérifie le rôle
+- `isAuthError(result)` : type guard pour distinguer AuthResult d'AuthError
+- `authErrorResponse(error, cors)` : construit la réponse HTTP d'erreur
+
+### `supabase/functions/_shared/rate-limit.ts`
+Rate limiting serveur par isolat Deno avec :
+- `checkRateLimit(key, config)` : vérifie les limites par clé unique
+- `rateLimitResponse(result, cors)` : construit la réponse 429 avec Retry-After
+- Nettoyage automatique des entrées expirées
+
+---
+
+## Architecture de sécurité — Vue d'ensemble finale
 
 ```
 Utilisateur
   │
-  ├─ [1] Authentification (Supabase Auth / JWT)
+  ├─ [1] Authentification (Supabase Auth / JWT + auto-refresh)
   ├─ [2] Contexte session (AuthContext + useAuth hook)
   ├─ [3] Garde de route (ProtectedRoute → /hq/*)
   ├─ [4] Garde de module (ModuleGuard → permissions RBAC)
   ├─ [5] Validation d'entrée (Zod schemas + sanitizeHtml)
-  ├─ [6] Edge Functions (Bearer token + has_role RPC)
+  ├─ [6] Edge Functions (Bearer token + has_role RPC + rate limiting)
   ├─ [7] RLS PostgreSQL (row-level security deny-by-default)
-  ├─ [8] Rate limiting (client + serveur contact-form)
-  └─ [9] CSP + Security Headers (XSS, clickjacking, MIME)
+  ├─ [8] Rate limiting (client login + serveur edge functions)
+  ├─ [9] CSP + Security Headers (XSS, clickjacking, MIME, referrer)
+  └─ [10] CORS centralisé (configurable par ALLOWED_ORIGIN)
 ```
 
-## Fichiers clés modifiés
+## Notes résiduelles (informatives, non bloquantes)
+
+1. **localStorage pour les JWT** : Standard Supabase, mitigé par CSP + sanitisation XSS. Pas de modification nécessaire.
+2. **Clés anon dans l'historique git** : Clés publiques protégées par RLS. Rotation recommandée si le repo devient public.
+
+---
+
+## Fichiers modifiés
 
 | Fichier | Changement |
 |---------|-----------|
-| `supabase/functions/hq-chat/index.ts` | Auth + validation + erreurs |
-| `supabase/functions/send-push-notification/index.ts` | Timing-safe + validation |
+| `supabase/functions/_shared/cors.ts` | Nouveau — CORS centralisé configurable |
+| `supabase/functions/_shared/auth.ts` | Nouveau — Helper d'authentification partagé |
+| `supabase/functions/_shared/rate-limit.ts` | Nouveau — Rate limiting serveur |
+| `supabase/functions/hq-chat/index.ts` | Auth + validation + rate limit + erreurs |
+| `supabase/functions/send-push-notification/index.ts` | Timing-safe + validation + CORS partagé |
+| `supabase/functions/intelligence-search/index.ts` | CORS partagé + rate limit (20/5min) |
+| `supabase/functions/web-scraper/index.ts` | CORS partagé + rate limit (15/5min) |
+| `supabase/functions/executive-run/index.ts` | CORS partagé + rate limit (30/5min) |
+| `supabase/functions/platform-analysis/index.ts` | CORS partagé + rate limit (10/5min) |
+| `supabase/functions/ai-scheduler/index.ts` | CORS partagé |
+| `supabase/functions/check-api-status/index.ts` | CORS partagé |
+| `supabase/functions/check-push-triggers/index.ts` | CORS partagé |
+| `supabase/functions/contact-form/index.ts` | CORS partagé |
+| `supabase/functions/github-sync/index.ts` | CORS partagé |
+| `supabase/functions/growth-analytics/index.ts` | CORS partagé |
+| `supabase/functions/journal-impact/index.ts` | CORS partagé |
+| `supabase/functions/manage-users/index.ts` | CORS partagé |
+| `supabase/functions/platform-monitor/index.ts` | CORS partagé |
+| `supabase/functions/scheduled-runs/index.ts` | CORS partagé |
+| `supabase/functions/stripe-kpis/index.ts` | CORS partagé |
 | `index.html` | CSP + security headers |
 | `.gitignore` | Protection .env |

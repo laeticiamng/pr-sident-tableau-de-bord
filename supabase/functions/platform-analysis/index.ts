@@ -1,9 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import { corsHeaders } from "../_shared/cors.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 // Les 5 plateformes managées avec leurs URLs
 const PLATFORMS = [
@@ -299,6 +296,10 @@ Deno.serve(async (req) => {
 
     // owner role verified
     // ============================================
+
+    // Rate limit: 10 requests per 5 minutes per user
+    const rl = checkRateLimit(`platform-analysis:${userId}`, { maxRequests: 10, windowMs: 5 * 60 * 1000 });
+    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
     const { platform_key, analysis_type = "full" }: AnalysisRequest = await req.json();
 
