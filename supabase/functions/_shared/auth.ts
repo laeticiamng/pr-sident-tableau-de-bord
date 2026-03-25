@@ -9,8 +9,8 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 export interface AuthResult {
   userId: string;
-  supabaseAdmin: ReturnType<typeof createClient>;
-  supabaseAuth: ReturnType<typeof createClient>;
+  supabaseAdmin: any;
+  supabaseAuth: any;
 }
 
 export interface AuthError {
