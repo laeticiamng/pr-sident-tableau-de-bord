@@ -218,7 +218,7 @@ export default function HomePage() {
       </section>
 
       {/* STATS */}
-      <section className="py-16 md:py-24 bg-hero-gradient text-white">
+      <section className="relative overflow-hidden py-16 md:py-24 bg-hero-gradient text-white">
         <video
           className="absolute inset-0 h-full w-full object-cover opacity-25"
           autoPlay
