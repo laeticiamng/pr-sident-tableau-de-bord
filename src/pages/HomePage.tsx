@@ -19,6 +19,8 @@ import { getPlatformConfig } from "@/lib/platformConfig";
 import { getHomePageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeTranslations } from "@/i18n/home";
+import heroAmbientVideo from "@/assets/videos/hero-ambient-45s.mp4";
+import dataAmbientVideo from "@/assets/videos/data-ambient-45s.mp4";
 
 import { forwardRef } from "react";
 
@@ -58,6 +60,17 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* HERO */}
       <section aria-label="Presentation EMOTIONSCARE" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <video
+          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        >
+          <source src={heroAmbientVideo} type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-hero-gradient" aria-hidden="true" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,hsl(38_92%_50%/0.2),transparent)]" aria-hidden="true" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_80%_at_80%_50%,hsl(0_0%_100%/0.1),transparent)]" aria-hidden="true" />
@@ -206,8 +219,20 @@ export default function HomePage() {
 
       {/* STATS */}
       <section className="py-16 md:py-24 bg-hero-gradient text-white">
+        <video
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+        >
+          <source src={dataAmbientVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-hero-gradient/70" aria-hidden="true" />
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
+          <div className="relative z-10 grid gap-8 grid-cols-2 md:grid-cols-4 text-center">
             {[
               { value: `${productionCount}`, label: t.stats.platforms },
               { value: `${MANAGED_PLATFORMS.reduce((acc, p) => acc + p.stats.modules, 0)}`, label: t.stats.evolutions },
