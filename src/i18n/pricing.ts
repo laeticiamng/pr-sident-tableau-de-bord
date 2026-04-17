@@ -6,6 +6,7 @@ export const pricingTranslations = {
     billingMonthly: "Mensuel",
     billingAnnual: "Annuel",
     annualSave: "Économisez 20%",
+    indicativeNotice: "Tarifs indicatifs — chaque déploiement fait l'objet d'un devis personnalisé. Aucun paiement automatique en ligne pour le moment.",
     summary: {
       title: "En bref",
       text: "La plupart de nos plateformes sont gratuites pour commencer — aucune carte bancaire requise. Les fonctionnalités premium sont accessibles dès 4,90 €/mois. Les établissements de santé et les entreprises bénéficient de tarifs sur mesure.",
