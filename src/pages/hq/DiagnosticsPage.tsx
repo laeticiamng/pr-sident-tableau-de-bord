@@ -28,6 +28,7 @@ import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotificationHistory";
 import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget";
+import { SLOWidget } from "@/components/hq/diagnostics/SLOWidget";
 
 interface HealthCheck {
   name: string;
@@ -443,6 +444,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* SLO & Error Budget (Horizon 3) */}
+      <SLOWidget />
 
       {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
       <ReliabilityWidget />
