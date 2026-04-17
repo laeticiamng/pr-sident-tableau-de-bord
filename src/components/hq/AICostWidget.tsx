@@ -30,6 +30,11 @@ interface AICostWidgetProps {
 
 export function AICostWidget({ className, compact = false }: AICostWidgetProps) {
   const { data: runs } = useRecentRuns(500);
+  const { data: budget } = useAIBudget();
+
+  // Budget mensuel : provient de la RPC (config DB), avec fallback constant
+  const MONTHLY_BUDGET = budget?.monthly_target_eur ?? DEFAULT_MONTHLY_BUDGET;
+  const ALERT_THRESHOLD_PCT = budget?.alert_threshold_pct ?? 80;
   
   // Calculer les coûts estimés
   const today = new Date();
