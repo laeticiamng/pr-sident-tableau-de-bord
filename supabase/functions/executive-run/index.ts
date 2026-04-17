@@ -804,12 +804,21 @@ _Ce message est généré automatiquement par le circuit-breaker, aucune charge 
     const durationMs = Date.now() - startTime;
     console.log(`[Executive Run] Completed in ${durationMs}ms with sources: ${runResult.data_sources.join(", ")}`);
 
-    // Log run completion
+    // Log run completion (avec info breaker)
     const { error: completeLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
-      p_level: "info",
+      p_level: aiResult.fallback_used ? "warn" : "info",
       p_source: "executive-run",
-      p_message: `run.completed`,
-      p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id, cost_estimate: costEstimate },
+      p_message: aiResult.fallback_used ? "run.completed.fallback" : "run.completed",
+      p_metadata: {
+        run_type,
+        platform_key,
+        model: aiResult.model,
+        duration_ms: durationMs,
+        run_id: runResult.run_id,
+        cost_estimate: aiResult.fallback_used ? 0 : costEstimate,
+        breaker_state: aiResult.breaker_state,
+        breaker_snapshot: breakerSnap,
+      },
     });
     if (completeLogErr) console.error("[Executive Run] Log insert error:", completeLogErr.message);
 
@@ -818,14 +827,16 @@ _Ce message est généré automatiquement par le circuit-breaker, aucune charge 
       p_run_type: run_type,
       p_platform_key: platform_key || null,
       p_owner_requested: true,
-      p_status: "completed",
+      p_status: aiResult.fallback_used ? "failed" : "completed",
       p_executive_summary: executiveSummary.substring(0, 10000),
       p_detailed_appendix: {
-        model_used: model,
+        model_used: aiResult.model,
         data_sources: runResult.data_sources,
         duration_ms: durationMs,
-        cost_estimate: costEstimate,
+        cost_estimate: aiResult.fallback_used ? 0 : costEstimate,
         steps: template.steps,
+        fallback_used: aiResult.fallback_used,
+        breaker_state: aiResult.breaker_state,
       },
     });
     if (persistErr) {
