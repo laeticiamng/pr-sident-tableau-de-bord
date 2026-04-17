@@ -45,10 +45,10 @@ const ScrollReveal = forwardRef<HTMLDivElement, { children: React.ReactNode; cla
 );
 
 const audienceMap = [
-  { key: "caregiver" as const, href: "/plateformes?audience=soignant", iconPlatform: "emotionscare" },
-  { key: "student" as const, href: "/plateformes?audience=etudiant", iconPlatform: "med-mng" },
-  { key: "expat" as const, href: "/plateformes?audience=expatrie", iconPlatform: "system-compass" },
-  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", iconPlatform: "growth-copilot" },
+  { key: "caregiver" as const, href: "/plateformes?audience=soignant", icon: Heart },
+  { key: "student" as const, href: "/plateformes?audience=etudiant", icon: GraduationCap },
+  { key: "expat" as const, href: "/plateformes?audience=expatrie", icon: Plane },
+  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", icon: Rocket },
 ] as const;
 
 export default function HomePage() {
