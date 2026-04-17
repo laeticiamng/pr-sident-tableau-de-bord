@@ -8,9 +8,49 @@ import { corsHeaders } from "../_shared/cors.ts";
  * 2. Platforms in red (status = 'red' or 'down')
  * 3. Pending decisions older than 24h
  */
+// Constant-time comparison to prevent timing attacks on CRON_SECRET
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return result === 0;
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Auth: must be called by pg_cron with X-Cron-Secret OR by an authenticated owner
+  const cronSecret = Deno.env.get("CRON_SECRET");
+  const providedSecret = req.headers.get("x-cron-secret") ?? "";
+  const isCron = !!cronSecret && timingSafeEqual(providedSecret, cronSecret);
+
+  if (!isCron) {
+    // Fallback: require valid Owner JWT
+    const authHeader = req.headers.get("Authorization") ?? "";
+    if (!authHeader.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(authHeader.replace("Bearer ", ""));
+    if (claimsErr || !claims?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { data: isOwner } = await userClient.rpc("is_owner");
+    if (!isOwner) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
   }
 
   try {

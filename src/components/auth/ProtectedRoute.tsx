@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRoles } from "@/hooks/usePermissions";
 import { Loader2, ShieldAlert } from "lucide-react";
@@ -18,6 +18,7 @@ function getTexts() {
 export function ProtectedRoute() {
   const { user, loading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const { data: roles, isLoading: rolesLoading } = useUserRoles();
 
   if (loading || rolesLoading) {
@@ -44,7 +45,7 @@ export function ProtectedRoute() {
           </div>
           <h1 className="text-xl font-semibold">{t.unauthorized}</h1>
           <p className="text-muted-foreground text-sm">{t.noRole}</p>
-          <Button variant="outline" onClick={() => window.location.href = "/"}>
+          <Button variant="outline" onClick={() => navigate("/")}>
             {t.backHome}
           </Button>
         </div>
