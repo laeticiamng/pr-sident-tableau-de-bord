@@ -6,6 +6,7 @@ export const pricingTranslations = {
     billingMonthly: "Mensuel",
     billingAnnual: "Annuel",
     annualSave: "Économisez 20%",
+    indicativeNotice: "Tarifs indicatifs — chaque déploiement fait l'objet d'un devis personnalisé. Aucun paiement automatique en ligne pour le moment.",
     summary: {
       title: "En bref",
       text: "La plupart de nos plateformes sont gratuites pour commencer — aucune carte bancaire requise. Les fonctionnalités premium sont accessibles dès 4,90 €/mois. Les établissements de santé et les entreprises bénéficient de tarifs sur mesure.",
@@ -54,6 +55,7 @@ export const pricingTranslations = {
     billingMonthly: "Monthly",
     billingAnnual: "Annual",
     annualSave: "Save 20%",
+    indicativeNotice: "Indicative pricing — every deployment receives a personalized quote. No automatic online payment available yet.",
     summary: {
       title: "In brief",
       text: "Most of our platforms are free to get started — no credit card required. Premium features start at €4.90/month. Healthcare facilities and businesses get custom pricing.",
@@ -102,6 +104,7 @@ export const pricingTranslations = {
     billingMonthly: "Monatlich",
     billingAnnual: "Jährlich",
     annualSave: "20% sparen",
+    indicativeNotice: "Richtpreise — jede Bereitstellung erhält ein individuelles Angebot. Aktuell keine automatische Online-Zahlung verfügbar.",
     summary: {
       title: "Auf einen Blick",
       text: "Die meisten unserer Plattformen sind kostenlos nutzbar — keine Kreditkarte erforderlich. Premium-Funktionen ab 4,90 €/Monat. Gesundheitseinrichtungen und Unternehmen erhalten individuelle Angebote.",

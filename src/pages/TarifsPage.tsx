@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag } from "lucide-react";
+import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag, Info } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { pricingTranslations } from "@/i18n/pricing";
@@ -93,6 +93,24 @@ export default function TarifsPage() {
             {isAnnual && (
               <Badge variant="gold" className="text-xs">{t.annualSave}</Badge>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Indicative pricing notice */}
+      <section className="py-6">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <Card className="border-accent/30 bg-accent/5">
+              <CardContent className="p-4 sm:p-5 flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-accent/10 shrink-0">
+                  <Info className="h-4 w-4 text-accent" />
+                </div>
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  {t.indicativeNotice}
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>

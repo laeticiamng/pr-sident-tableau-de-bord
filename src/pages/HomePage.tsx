@@ -7,6 +7,15 @@ import {
   ArrowRight,
   Sparkles,
   Building2,
+  Heart,
+  GraduationCap,
+  Plane,
+  Rocket,
+  Shield,
+  Lock,
+  Flag,
+  FileCheck,
+  Layers,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
@@ -36,10 +45,10 @@ const ScrollReveal = forwardRef<HTMLDivElement, { children: React.ReactNode; cla
 );
 
 const audienceMap = [
-  { key: "caregiver" as const, href: "/plateformes?audience=soignant", iconPlatform: "emotionscare" },
-  { key: "student" as const, href: "/plateformes?audience=etudiant", iconPlatform: "med-mng" },
-  { key: "expat" as const, href: "/plateformes?audience=expatrie", iconPlatform: "system-compass" },
-  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", iconPlatform: "growth-copilot" },
+  { key: "caregiver" as const, href: "/plateformes?audience=soignant", icon: Heart },
+  { key: "student" as const, href: "/plateformes?audience=etudiant", icon: GraduationCap },
+  { key: "expat" as const, href: "/plateformes?audience=expatrie", icon: Plane },
+  { key: "entrepreneur" as const, href: "/plateformes?audience=entrepreneur", icon: Rocket },
 ] as const;
 
 export default function HomePage() {
@@ -98,8 +107,7 @@ export default function HomePage() {
             {/* Audience segmentation cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.15s" }}>
               {audienceMap.map((audience) => {
-                const cfg = getPlatformConfig(audience.iconPlatform);
-                const Icon = cfg.icon;
+                const Icon = audience.icon;
                 return (
                   <Link key={audience.key} to={audience.href}>
                     <Card className="group border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-accent/40 transition-all duration-300 cursor-pointer h-full">
@@ -195,21 +203,28 @@ export default function HomePage() {
 
       <HomeFAQ />
 
-      {/* CREDIBILITY BADGES */}
-      <section className="py-10 md:py-14 bg-secondary/30">
+      {/* CREDIBILITY BADGES — Premium */}
+      <section className="py-12 md:py-16 bg-secondary/30 border-y border-border/50">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
               {[
-                t.credibility.madeInFrance,
-                t.credibility.rgpd,
-                t.credibility.encryption,
-                t.credibility.siren,
-                t.credibility.platformsInProduction.replace("{count}", String(productionCount)),
-              ].map((label) => (
-                <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  <span>{label}</span>
+                { icon: Flag, label: t.credibility.madeInFrance, color: "text-accent", bg: "bg-accent/10" },
+                { icon: Shield, label: t.credibility.rgpd, color: "text-success", bg: "bg-success/10" },
+                { icon: Lock, label: t.credibility.encryption, color: "text-success", bg: "bg-success/10" },
+                { icon: FileCheck, label: t.credibility.siren, color: "text-primary", bg: "bg-primary/10" },
+                { icon: Layers, label: t.credibility.platformsInProduction.replace("{count}", String(productionCount)), color: "text-accent", bg: "bg-accent/10" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-background/60 backdrop-blur-sm border border-border/40 hover:border-accent/30 hover:shadow-md transition-all duration-300"
+                >
+                  <div className={cn("p-2 rounded-lg shrink-0", item.bg)}>
+                    <item.icon className={cn("h-4 w-4 sm:h-5 sm:w-5", item.color)} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-foreground/90 text-center sm:text-left leading-tight">
+                    {item.label}
+                  </span>
                 </div>
               ))}
             </div>
