@@ -97,6 +97,24 @@ export default function TarifsPage() {
         </div>
       </section>
 
+      {/* Indicative pricing notice */}
+      <section className="py-6">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl">
+            <Card className="border-accent/30 bg-accent/5">
+              <CardContent className="p-4 sm:p-5 flex items-start gap-3">
+                <div className="p-2 rounded-lg bg-accent/10 shrink-0">
+                  <Info className="h-4 w-4 text-accent" />
+                </div>
+                <p className="text-sm text-foreground/80 leading-relaxed">
+                  {t.indicativeNotice}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* En bref */}
       <section className="py-12 md:py-16">
         <div className="container px-4 sm:px-6 lg:px-8">
