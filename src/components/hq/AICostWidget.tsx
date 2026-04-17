@@ -3,14 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Zap, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
 import { useRecentRuns } from "@/hooks/useHQData";
+import { useAIBudget } from "@/hooks/hq/useAIBudget";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 import { getRunCost } from "@/lib/run-types-registry";
 
-// Limites de budget
+// Limites de budget par défaut (fallback si RPC indisponible)
 const DAILY_BUDGET = 15; // €
-const MONTHLY_BUDGET = 350; // €
+const DEFAULT_MONTHLY_BUDGET = 200; // € — aligné sur hq.system_config.ai_budget
 
 const PLATFORM_COLORS = [
   "hsl(var(--primary))",
