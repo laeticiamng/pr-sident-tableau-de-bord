@@ -71,3 +71,40 @@ export function useRunDurationMetrics() {
     refetchInterval: 1000 * 60 * 5,
   });
 }
+
+export interface SLOTarget {
+  key: string;
+  name: string;
+  target_pct: number;
+  current_pct: number;
+  budget_remaining_pct?: number;
+  is_compliant: boolean;
+  current_value_ms?: number;
+  threshold_ms?: number;
+  total_runs?: number;
+  success_runs?: number;
+  recent_runs_24h?: number;
+}
+
+export interface SLOStatus {
+  window_days: number;
+  computed_at: string;
+  slos: SLOTarget[];
+}
+
+/** Hook : statut SLO avec error budget consommé (4 SLO standards SaaS). */
+export function useSLOStatus() {
+  return useQuery({
+    queryKey: ["hq", "slo_status"],
+    queryFn: async (): Promise<SLOStatus | null> => {
+      const { data, error } = await (supabase.rpc as any)("get_hq_slo_status");
+      if (error) {
+        logger.error("[useSLOStatus] RPC error:", (error as Error).message);
+        return null;
+      }
+      return (data as unknown as SLOStatus) || null;
+    },
+    staleTime: 1000 * 60 * 2,
+    refetchInterval: 1000 * 60 * 5,
+  });
+}
