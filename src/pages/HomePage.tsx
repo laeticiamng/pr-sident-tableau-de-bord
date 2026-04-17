@@ -203,21 +203,28 @@ export default function HomePage() {
 
       <HomeFAQ />
 
-      {/* CREDIBILITY BADGES */}
-      <section className="py-10 md:py-14 bg-secondary/30">
+      {/* CREDIBILITY BADGES — Premium */}
+      <section className="py-12 md:py-16 bg-secondary/30 border-y border-border/50">
         <div className="container px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-5xl">
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
               {[
-                t.credibility.madeInFrance,
-                t.credibility.rgpd,
-                t.credibility.encryption,
-                t.credibility.siren,
-                t.credibility.platformsInProduction.replace("{count}", String(productionCount)),
-              ].map((label) => (
-                <div key={label} className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-                  <span>{label}</span>
+                { icon: Flag, label: t.credibility.madeInFrance, color: "text-accent", bg: "bg-accent/10" },
+                { icon: Shield, label: t.credibility.rgpd, color: "text-success", bg: "bg-success/10" },
+                { icon: Lock, label: t.credibility.encryption, color: "text-success", bg: "bg-success/10" },
+                { icon: FileCheck, label: t.credibility.siren, color: "text-primary", bg: "bg-primary/10" },
+                { icon: Layers, label: t.credibility.platformsInProduction.replace("{count}", String(productionCount)), color: "text-accent", bg: "bg-accent/10" },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex flex-col sm:flex-row items-center sm:items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-background/60 backdrop-blur-sm border border-border/40 hover:border-accent/30 hover:shadow-md transition-all duration-300"
+                >
+                  <div className={cn("p-2 rounded-lg shrink-0", item.bg)}>
+                    <item.icon className={cn("h-4 w-4 sm:h-5 sm:w-5", item.color)} />
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-foreground/90 text-center sm:text-left leading-tight">
+                    {item.label}
+                  </span>
                 </div>
               ))}
             </div>
