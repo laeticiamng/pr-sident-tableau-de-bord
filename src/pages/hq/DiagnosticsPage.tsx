@@ -444,6 +444,9 @@ export default function DiagnosticsPage() {
         </CardContent>
       </Card>
 
+      {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
+      <ReliabilityWidget />
+
       {/* Push Notification History */}
       <PushNotificationHistory />
 
