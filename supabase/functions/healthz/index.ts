@@ -3,6 +3,7 @@
 // Retourne : statut DB, statut breaker AI Gateway, version, timestamp.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { getBreakerSnapshot } from "../_shared/circuit-breaker.ts";
+import { checkDbRateLimit, dbRateLimitResponse, getClientIp } from "../_shared/rate-limit-db.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,6 +17,17 @@ const STARTED_AT = Date.now();
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  // Rate-limit IP : 60 req/min/IP pour empêcher scraping/DoS
+  const ip = getClientIp(req);
+  const rl = await checkDbRateLimit({
+    bucketKey: `healthz:${ip}`,
+    maxRequests: 60,
+    windowSeconds: 60,
+  });
+  if (!rl.allowed) {
+    return dbRateLimitResponse(rl, corsHeaders);
   }
 
   const checks: Record<string, { ok: boolean; latency_ms?: number; detail?: string }> = {};
