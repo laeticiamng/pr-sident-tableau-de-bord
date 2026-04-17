@@ -22,7 +22,7 @@ export function useDLQEntries(limit = 50) {
   return useQuery({
     queryKey: ["hq", "dlq_entries", limit],
     queryFn: async (): Promise<DLQEntry[]> => {
-      const { data, error } = await supabase.rpc("get_hq_dlq_entries" as never, {
+      const { data, error } = await (supabase.rpc as any)("get_hq_dlq_entries", {
         limit_count: limit,
       });
       if (error) {
@@ -58,8 +58,8 @@ export function useRunDurationMetrics() {
   return useQuery({
     queryKey: ["hq", "run_duration_metrics"],
     queryFn: async (): Promise<RunDurationMetrics | null> => {
-      const { data, error } = await supabase.rpc(
-        "get_hq_run_duration_metrics" as never
+      const { data, error } = await (supabase.rpc as any)(
+        "get_hq_run_duration_metrics"
       );
       if (error) {
         logger.error("[useRunDurationMetrics] RPC error:", (error as Error).message);
