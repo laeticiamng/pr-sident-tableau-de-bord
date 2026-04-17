@@ -275,6 +275,7 @@ export type Database = {
           status: string
         }[]
       }
+      get_hq_governance_dashboard: { Args: never; Returns: Json }
       get_hq_journal_entries: {
         Args: { limit_count?: number }
         Returns: {
@@ -382,7 +383,9 @@ export type Database = {
         }[]
       }
       get_hq_run_duration_metrics: { Args: never; Returns: Json }
+      get_hq_slo_status: { Args: never; Returns: Json }
       get_hq_system_config: { Args: { config_key: string }; Returns: Json }
+      get_hq_top_run_costs: { Args: { p_window_days?: number }; Returns: Json }
       get_user_permissions: {
         Args: { _user_id: string }
         Returns: {
