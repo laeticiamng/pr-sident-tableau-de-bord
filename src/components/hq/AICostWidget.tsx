@@ -59,9 +59,9 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
     return isFinite(v) ? v : 0;
   })();
   
-  const isNearDailyLimit = dailyPercent >= 80;
+  const isNearDailyLimit = dailyPercent >= ALERT_THRESHOLD_PCT;
   const isOverDailyLimit = dailyPercent >= 100;
-  const isNearMonthlyLimit = monthlyPercent >= 80;
+  const isNearMonthlyLimit = monthlyPercent >= ALERT_THRESHOLD_PCT;
   
   const runsToday = runs?.filter(r => new Date(r.created_at) >= today).length || 0;
   const runsThisMonth = runs?.filter(r => new Date(r.created_at) >= startOfMonth).length || 0;
