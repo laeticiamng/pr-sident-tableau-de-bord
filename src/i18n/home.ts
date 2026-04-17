@@ -395,7 +395,7 @@ export const homeTranslations = {
     cta: {
       title: "Finden Sie die passende Plattform",
       subtitle: "Entdecken Sie unsere 10 innovativen Plattformen und wie sie ihre Branchen verändern.",
-      button: "Kostenlos testen",
+      button: "Alle 10 Plattformen ansehen",
       contactButton: "Persönliche Demo anfordern",
       footer: "Genutzt von Gesundheitsfachleuten, Studenten und Unternehmern",
     },
