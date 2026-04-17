@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag } from "lucide-react";
+import { ArrowRight, CreditCard, Users, HelpCircle, Shield, Lock, Flag, Info } from "lucide-react";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { pricingTranslations } from "@/i18n/pricing";
