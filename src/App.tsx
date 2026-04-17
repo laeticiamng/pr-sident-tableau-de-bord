@@ -75,6 +75,7 @@ const AgentsMonitoringPage = lazy(() => import("@/pages/hq/AgentsMonitoringPage"
 const MessagesPage = lazy(() => import("@/pages/hq/MessagesPage"));
 const JournalPage = lazy(() => import("@/pages/hq/JournalPage"));
 const UserManagementPage = lazy(() => import("@/pages/hq/UserManagementPage"));
+const GovernancePage = lazy(() => import("@/pages/hq/GovernancePage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -159,6 +160,7 @@ const App = () => (
                     <Route path="/hq/messages" element={<MessagesPage />} />
                     <Route path="/hq/journal" element={<JournalPage />} />
                     <Route path="/hq/utilisateurs" element={<UserManagementPage />} />
+                    <Route path="/hq/governance" element={<GovernancePage />} />
                   </Route>
                 </Route>
 
