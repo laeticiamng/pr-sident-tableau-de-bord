@@ -158,3 +158,21 @@ ALTER EXTENSION pgcrypto SET SCHEMA public;
 - Ajouter un nouveau runbook : créer une section `## 🆕 RB-XXX` ici, puis ajouter l'entrée dans `get_hq_governance_dashboard()` (champ `runbooks`).
 - Tester chaque procédure trimestriellement (game day).
 - Mesurer le MTTR cible : **< 15 min** pour les RB-001/002/004, **< 60 min** pour RB-003.
+
+---
+
+## 🛡️ RB-007 — Audit sécurité 2026-04 (P0/P1 résolus)
+
+### Vulnérabilités corrigées (migration `20260417_audit_p0_p1`)
+
+| ID | Sévérité | Problème | Correctif |
+|----|----------|----------|-----------|
+| REALTIME_DATA_LEAK | P0 | `contact_messages` (PII) diffusé via Realtime à tout authentifié | Table retirée de `supabase_realtime` |
+| MISSING_INSERT_POLICY | P0 | `contact_messages` sans policy INSERT explicite | Policy `Deny client inserts` (anon+authenticated → false) — seul service_role insère via edge `contact-form` |
+| MISSING_RLS_PROTECTION | P1 | `has_org_access(_user_id, _org_id)` permettait sondage croisé | Fonction réécrite : ignore le paramètre, utilise `auth.uid()` |
+| ANALYTICS_OPEN_INSERT | P1 | `analytics_events` acceptait n'importe quel payload anon | Policy avec validation longueur des champs |
+
+### Validation
+- `SELECT * FROM pg_publication_tables WHERE tablename='contact_messages';` → 0 ligne
+- `SELECT pg_get_function_result('public.has_org_access(uuid,uuid)'::regprocedure);` → STABLE
+- Test : envoi d'un message via `/contact` → entry visible dans `/hq/messages`
