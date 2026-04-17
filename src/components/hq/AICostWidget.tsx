@@ -3,14 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Zap, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
 import { useRecentRuns } from "@/hooks/useHQData";
+import { useAIBudget } from "@/hooks/hq/useAIBudget";
 import { cn } from "@/lib/utils";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 import { getRunCost } from "@/lib/run-types-registry";
 
-// Limites de budget
+// Limites de budget par défaut (fallback si RPC indisponible)
 const DAILY_BUDGET = 15; // €
-const MONTHLY_BUDGET = 350; // €
+const DEFAULT_MONTHLY_BUDGET = 200; // € — aligné sur hq.system_config.ai_budget
 
 const PLATFORM_COLORS = [
   "hsl(var(--primary))",
@@ -29,6 +30,11 @@ interface AICostWidgetProps {
 
 export function AICostWidget({ className, compact = false }: AICostWidgetProps) {
   const { data: runs } = useRecentRuns(500);
+  const { data: budget } = useAIBudget();
+
+  // Budget mensuel : provient de la RPC (config DB), avec fallback constant
+  const MONTHLY_BUDGET = budget?.monthly_target_eur ?? DEFAULT_MONTHLY_BUDGET;
+  const ALERT_THRESHOLD_PCT = budget?.alert_threshold_pct ?? 80;
   
   // Calculer les coûts estimés
   const today = new Date();
@@ -53,9 +59,9 @@ export function AICostWidget({ className, compact = false }: AICostWidgetProps) 
     return isFinite(v) ? v : 0;
   })();
   
-  const isNearDailyLimit = dailyPercent >= 80;
+  const isNearDailyLimit = dailyPercent >= ALERT_THRESHOLD_PCT;
   const isOverDailyLimit = dailyPercent >= 100;
-  const isNearMonthlyLimit = monthlyPercent >= 80;
+  const isNearMonthlyLimit = monthlyPercent >= ALERT_THRESHOLD_PCT;
   
   const runsToday = runs?.filter(r => new Date(r.created_at) >= today).length || 0;
   const runsThisMonth = runs?.filter(r => new Date(r.created_at) >= startOfMonth).length || 0;
