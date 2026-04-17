@@ -199,6 +199,7 @@ export type Database = {
           updated_at: string
         }[]
       }
+      get_hq_ai_budget_status: { Args: never; Returns: Json }
       get_hq_audit_logs: {
         Args: { limit_count?: number }
         Returns: {

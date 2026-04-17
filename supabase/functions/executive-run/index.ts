@@ -1,6 +1,12 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limit.ts";
+import { getRunCostEstimate } from "../_shared/run-cost-estimates.ts";
+import {
+  callAIGatewayOrFallback,
+  BreakerOpenError,
+  getBreakerSnapshot,
+} from "../_shared/ai-gateway.ts";
 
 // Model router configuration
 const MODEL_CONFIG = {
@@ -645,20 +651,7 @@ Deno.serve(async (req) => {
     const model = MODEL_CONFIG[template.model];
     const startTime = Date.now();
 
-    // Cost estimate map (mirrors run-types-registry.ts)
-    const COST_ESTIMATES: Record<string, number> = {
-      DAILY_EXECUTIVE_BRIEF: 0.10, CEO_STANDUP_MEETING: 0.05, PLATFORM_STATUS_REVIEW: 0.02,
-      SECURITY_AUDIT_RLS: 0.18, RELEASE_GATE_CHECK: 0.12, DEPLOY_TO_PRODUCTION: 0.15,
-      RLS_POLICY_UPDATE: 0.20, COMPETITIVE_ANALYSIS: 0.25, QUALITY_AUDIT: 0.15,
-      ADS_PERFORMANCE_REVIEW: 0.10, GROWTH_STRATEGY_REVIEW: 0.22, OKR_QUARTERLY_REVIEW: 0.08,
-      COMPLIANCE_RGPD_CHECK: 0.16, SEO_AUDIT: 0.20, CONTENT_CALENDAR_PLAN: 0.06,
-      REVENUE_FORECAST: 0.14, LEAD_SCORING_UPDATE: 0.07, FINANCIAL_REPORT: 0.12,
-      RGPD_AUDIT: 0.16, VULNERABILITY_SCAN: 0.18, ROADMAP_UPDATE: 0.08,
-      CODE_REVIEW: 0.12, DEPLOYMENT_CHECK: 0.06, DATA_INSIGHTS_REPORT: 0.14,
-      AGENT_PERFORMANCE_REVIEW: 0.08, TECH_WATCH_REPORT: 0.10, MARKETING_WEEK_PLAN: 0.04,
-      MASS_EMAIL_CAMPAIGN: 0.15, PRICING_CHANGE: 0.20,
-    };
-    const costEstimate = COST_ESTIMATES[run_type] ?? 0.05;
+    const costEstimate = getRunCostEstimate(run_type);
 
     // Log run start
     const { error: startLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
@@ -740,46 +733,54 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
 
     console.log(`[Executive Run] Calling AI model: ${model}`);
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: template.systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 3000,
-      }),
-    });
+    // Fallback gracieux si circuit-breaker OPEN : message d'indisponibilité plutôt qu'erreur 500
+    const fallbackMessage = `⚠️ **Service IA temporairement indisponible**
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error(`[Executive Run] AI Gateway error: ${aiResponse.status}`, errorText);
-      
-      if (aiResponse.status === 429) {
+Le moteur d'IA exécutif est en mode dégradé suite à des défaillances répétées du gateway. Le circuit-breaker est actif pour préserver la stabilité du système.
+
+**Run demandé** : ${run_type}${platform_key ? `\n**Plateforme** : ${platform_key}` : ""}
+**Action recommandée** : Réessayez dans 1 à 2 minutes. Si le problème persiste, consultez le panneau Diagnostics.
+
+_Ce message est généré automatiquement par le circuit-breaker, aucune charge IA n'a été facturée._`;
+
+    let aiResult;
+    try {
+      aiResult = await callAIGatewayOrFallback(
+        {
+          apiKey: LOVABLE_API_KEY,
+          model,
+          messages: [
+            { role: "system", content: template.systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.7,
+          maxTokens: 3000,
+        },
+        fallbackMessage
+      );
+    } catch (gatewayErr) {
+      const status = (gatewayErr as Error & { status?: number }).status;
+      if (status === 429) {
         return new Response(
           JSON.stringify({ error: "Limite de requêtes atteinte. Réessayez dans quelques instants." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (aiResponse.status === 402) {
+      if (status === 402) {
         return new Response(
           JSON.stringify({ error: "Crédits IA insuffisants. Contactez l'administrateur." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      throw new Error(`AI Gateway error: ${aiResponse.status}`);
+      throw gatewayErr;
     }
 
-    const aiData = await aiResponse.json();
-    const executiveSummary = aiData.choices?.[0]?.message?.content || "Rapport non généré";
+    const executiveSummary = aiResult.content || "Rapport non généré";
+    const breakerSnap = getBreakerSnapshot("ai-gateway:lovable");
 
-    console.log(`[Executive Run] AI response: ${executiveSummary.length} chars`);
+    console.log(
+      `[Executive Run] AI response: ${executiveSummary.length} chars (fallback=${aiResult.fallback_used}, breaker=${aiResult.breaker_state})`
+    );
 
     const runResult = {
       success: true,
@@ -788,12 +789,14 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
       platform_key,
       executive_summary: executiveSummary,
       steps: template.steps,
-      model_used: model,
+      model_used: aiResult.model,
+      fallback_used: aiResult.fallback_used,
+      breaker_state: aiResult.breaker_state,
       data_sources: [
         template.useGitHub ? "GitHub API" : null,
         template.usePerplexity ? "Perplexity AI" : null,
         template.useFirecrawl ? "Firecrawl" : null,
-        "Lovable AI Gateway",
+        aiResult.fallback_used ? "Fallback (breaker OPEN)" : "Lovable AI Gateway",
       ].filter(Boolean),
       completed_at: new Date().toISOString(),
     };
@@ -801,12 +804,21 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
     const durationMs = Date.now() - startTime;
     console.log(`[Executive Run] Completed in ${durationMs}ms with sources: ${runResult.data_sources.join(", ")}`);
 
-    // Log run completion
+    // Log run completion (avec info breaker)
     const { error: completeLogErr } = await supabaseAdmin.rpc("insert_hq_log", {
-      p_level: "info",
+      p_level: aiResult.fallback_used ? "warn" : "info",
       p_source: "executive-run",
-      p_message: `run.completed`,
-      p_metadata: { run_type, platform_key, model, duration_ms: durationMs, run_id: runResult.run_id, cost_estimate: costEstimate },
+      p_message: aiResult.fallback_used ? "run.completed.fallback" : "run.completed",
+      p_metadata: {
+        run_type,
+        platform_key,
+        model: aiResult.model,
+        duration_ms: durationMs,
+        run_id: runResult.run_id,
+        cost_estimate: aiResult.fallback_used ? 0 : costEstimate,
+        breaker_state: aiResult.breaker_state,
+        breaker_snapshot: breakerSnap,
+      },
     });
     if (completeLogErr) console.error("[Executive Run] Log insert error:", completeLogErr.message);
 
@@ -815,14 +827,16 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
       p_run_type: run_type,
       p_platform_key: platform_key || null,
       p_owner_requested: true,
-      p_status: "completed",
+      p_status: aiResult.fallback_used ? "failed" : "completed",
       p_executive_summary: executiveSummary.substring(0, 10000),
       p_detailed_appendix: {
-        model_used: model,
+        model_used: aiResult.model,
         data_sources: runResult.data_sources,
         duration_ms: durationMs,
-        cost_estimate: costEstimate,
+        cost_estimate: aiResult.fallback_used ? 0 : costEstimate,
         steps: template.steps,
+        fallback_used: aiResult.fallback_used,
+        breaker_state: aiResult.breaker_state,
       },
     });
     if (persistErr) {
