@@ -86,6 +86,95 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          plan: string
+          settings: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          plan?: string
+          settings?: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          plan?: string
+          settings?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rate_limit_buckets: {
+        Row: {
+          bucket_key: string
+          count: number
+          created_at: string
+          expires_at: string
+          id: string
+          window_start: string
+        }
+        Insert: {
+          bucket_key: string
+          count?: number
+          created_at?: string
+          expires_at: string
+          id?: string
+          window_start?: string
+        }
+        Update: {
+          bucket_key?: string
+          count?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       role_permissions: {
         Row: {
           action: string
@@ -144,6 +233,14 @@ export type Database = {
         Args: { p_action_id: string; p_decision: string; p_reason?: string }
         Returns: boolean
       }
+      check_ip_rate_limit: {
+        Args: {
+          p_bucket_key: string
+          p_max_requests?: number
+          p_window_seconds?: number
+        }
+        Returns: Json
+      }
       create_hq_conversation: { Args: { p_title?: string }; Returns: string }
       create_hq_journal_entry: {
         Args: {
@@ -155,6 +252,7 @@ export type Database = {
         }
         Returns: string
       }
+      current_user_org_id: { Args: never; Returns: string }
       delete_hq_conversation: {
         Args: { p_conversation_id: string }
         Returns: boolean
@@ -393,6 +491,10 @@ export type Database = {
           resource: string
         }[]
       }
+      has_org_access: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
       has_permission: {
         Args: { _action: string; _resource: string; _user_id: string }
         Returns: boolean
@@ -431,6 +533,7 @@ export type Database = {
         Returns: boolean
       }
       purge_old_hq_logs: { Args: { retention_days?: number }; Returns: number }
+      purge_rate_limit_buckets: { Args: never; Returns: number }
       remove_push_subscription: {
         Args: { p_endpoint: string }
         Returns: boolean
