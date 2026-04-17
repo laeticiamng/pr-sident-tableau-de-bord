@@ -27,6 +27,7 @@ import { SystemAlerts } from "@/components/hq/diagnostics/SystemAlerts";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotificationHistory";
+import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget";
 
 interface HealthCheck {
   name: string;
@@ -442,6 +443,9 @@ export default function DiagnosticsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
+      <ReliabilityWidget />
 
       {/* Push Notification History */}
       <PushNotificationHistory />

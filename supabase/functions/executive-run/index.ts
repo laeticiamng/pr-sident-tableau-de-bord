@@ -845,6 +845,28 @@ _Ce message est généré automatiquement par le circuit-breaker, aucune charge 
       runResult.run_id = persistedRunId;
     }
 
+    // Horizon 2 — Enqueue DLQ si fallback (LLM indisponible / breaker OPEN)
+    // Skip si on est déjà dans un retry DLQ (X-DLQ-Retry header) pour éviter les boucles
+    const isDLQRetry = req.headers.get("X-DLQ-Retry") !== null;
+    if (aiResult.fallback_used && persistedRunId && !isDLQRetry) {
+      try {
+        const SUPABASE_URL2 = Deno.env.get("SUPABASE_URL");
+        const SVC_KEY2 = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (SUPABASE_URL2 && SVC_KEY2) {
+          const dlqAdmin = createClient(SUPABASE_URL2, SVC_KEY2);
+          await dlqAdmin.rpc("enqueue_dlq_run", {
+            p_original_run_id: persistedRunId,
+            p_run_type: run_type,
+            p_platform_key: platform_key || null,
+            p_payload: { breaker_state: aiResult.breaker_state },
+            p_failure_reason: `LLM unavailable (breaker: ${aiResult.breaker_state})`,
+          });
+        }
+      } catch (dlqErr) {
+        console.error("[Executive Run] DLQ enqueue failed (non-blocking):", dlqErr);
+      }
+    }
+
     return new Response(
       JSON.stringify(runResult),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }

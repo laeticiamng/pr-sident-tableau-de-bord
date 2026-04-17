@@ -160,6 +160,16 @@ export type Database = {
         Returns: boolean
       }
       delete_hq_journal_entry: { Args: { p_id: string }; Returns: boolean }
+      enqueue_dlq_run: {
+        Args: {
+          p_failure_reason?: string
+          p_original_run_id: string
+          p_payload?: Json
+          p_platform_key?: string
+          p_run_type: string
+        }
+        Returns: string
+      }
       get_active_push_subscriptions: {
         Args: never
         Returns: {
@@ -183,6 +193,21 @@ export type Database = {
           status_reason: string
           updated_at: string
           uptime_percent: number
+        }[]
+      }
+      get_dlq_pending: {
+        Args: { limit_count?: number }
+        Returns: {
+          attempts: number
+          created_at: string
+          failure_reason: string
+          id: string
+          max_attempts: number
+          next_retry_at: string
+          original_run_id: string
+          payload: Json
+          platform_key: string
+          run_type: string
         }[]
       }
       get_hq_agents: {
@@ -231,6 +256,23 @@ export type Database = {
           last_message: string
           title: string
           updated_at: string
+        }[]
+      }
+      get_hq_dlq_entries: {
+        Args: { limit_count?: number }
+        Returns: {
+          attempts: number
+          created_at: string
+          failure_reason: string
+          id: string
+          last_error: string
+          max_attempts: number
+          next_retry_at: string
+          original_run_id: string
+          platform_key: string
+          resolved_at: string
+          run_type: string
+          status: string
         }[]
       }
       get_hq_journal_entries: {
@@ -339,6 +381,7 @@ export type Database = {
           status: string
         }[]
       }
+      get_hq_run_duration_metrics: { Args: never; Returns: Json }
       get_hq_system_config: { Args: { config_key: string }; Returns: Json }
       get_user_permissions: {
         Args: { _user_id: string }
@@ -380,6 +423,10 @@ export type Database = {
         Returns: string
       }
       is_owner: { Args: never; Returns: boolean }
+      mark_dlq_attempt: {
+        Args: { p_dlq_id: string; p_error?: string; p_outcome: string }
+        Returns: boolean
+      }
       purge_old_hq_logs: { Args: { retention_days?: number }; Returns: number }
       remove_push_subscription: {
         Args: { p_endpoint: string }
