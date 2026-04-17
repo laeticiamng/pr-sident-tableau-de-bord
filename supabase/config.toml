@@ -44,3 +44,12 @@ verify_jwt = false
 
 [functions.journal-impact]
 verify_jwt = false
+
+[functions.retry-dlq-runs]
+verify_jwt = false
+
+[functions.healthz]
+verify_jwt = false
+
+[functions.check-ai-budget]
+verify_jwt = false
