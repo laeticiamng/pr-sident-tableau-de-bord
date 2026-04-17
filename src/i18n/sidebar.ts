@@ -29,6 +29,7 @@ export const sidebarTranslations = {
     compliance: "Conformité RGPD",
     auditLog: "Audit Log",
     enterprise: "Entreprise",
+    governanceHub: "Gouvernance H3",
   },
   en: {
     main: "Main",
@@ -60,6 +61,7 @@ export const sidebarTranslations = {
     compliance: "GDPR Compliance",
     auditLog: "Audit Log",
     enterprise: "Enterprise",
+    governanceHub: "Governance H3",
   },
   de: {
     main: "Hauptmenü",
@@ -91,5 +93,6 @@ export const sidebarTranslations = {
     compliance: "DSGVO-Konformität",
     auditLog: "Audit-Log",
     enterprise: "Unternehmen",
+    governanceHub: "Governance H3",
   },
 };

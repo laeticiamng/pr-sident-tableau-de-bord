@@ -6,8 +6,13 @@
 [![React](https://img.shields.io/badge/React-18.3-61dafb)](https://reactjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e)](https://supabase.com/)
-[![Edge Functions](https://img.shields.io/badge/Edge_Functions-9_deployed-blue)](https://supabase.com/docs/guides/functions)
+[![Edge Functions](https://img.shields.io/badge/Edge_Functions-16_deployed-blue)](https://supabase.com/docs/guides/functions)
+[![E2E Tests](https://img.shields.io/badge/E2E-Playwright_12_specs-45ba4b)](.github/workflows/e2e.yml)
+[![Lint & Typecheck](https://img.shields.io/badge/CI-Lint_%2B_Typecheck-brightgreen)](.github/workflows/lint-typecheck.yml)
+[![Audit Score](https://img.shields.io/badge/Audit-9.3%2F10_(H3)-success)]()
 [![Status](https://img.shields.io/badge/Status-Beta_Privée-orange)]()
+
+> **GitHub Secrets requis pour CI** : `PLAYWRIGHT_HQ_EMAIL`, `PLAYWRIGHT_HQ_PASSWORD`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`
 
 ---
 
