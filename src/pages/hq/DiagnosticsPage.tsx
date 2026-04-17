@@ -27,6 +27,7 @@ import { SystemAlerts } from "@/components/hq/diagnostics/SystemAlerts";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotificationHistory";
+import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget";
 
 interface HealthCheck {
   name: string;
