@@ -733,46 +733,54 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
 
     console.log(`[Executive Run] Calling AI model: ${model}`);
 
-    const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: "system", content: template.systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 3000,
-      }),
-    });
+    // Fallback gracieux si circuit-breaker OPEN : message d'indisponibilité plutôt qu'erreur 500
+    const fallbackMessage = `⚠️ **Service IA temporairement indisponible**
 
-    if (!aiResponse.ok) {
-      const errorText = await aiResponse.text();
-      console.error(`[Executive Run] AI Gateway error: ${aiResponse.status}`, errorText);
-      
-      if (aiResponse.status === 429) {
+Le moteur d'IA exécutif est en mode dégradé suite à des défaillances répétées du gateway. Le circuit-breaker est actif pour préserver la stabilité du système.
+
+**Run demandé** : ${run_type}${platform_key ? `\n**Plateforme** : ${platform_key}` : ""}
+**Action recommandée** : Réessayez dans 1 à 2 minutes. Si le problème persiste, consultez le panneau Diagnostics.
+
+_Ce message est généré automatiquement par le circuit-breaker, aucune charge IA n'a été facturée._`;
+
+    let aiResult;
+    try {
+      aiResult = await callAIGatewayOrFallback(
+        {
+          apiKey: LOVABLE_API_KEY,
+          model,
+          messages: [
+            { role: "system", content: template.systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+          temperature: 0.7,
+          maxTokens: 3000,
+        },
+        fallbackMessage
+      );
+    } catch (gatewayErr) {
+      const status = (gatewayErr as Error & { status?: number }).status;
+      if (status === 429) {
         return new Response(
           JSON.stringify({ error: "Limite de requêtes atteinte. Réessayez dans quelques instants." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (aiResponse.status === 402) {
+      if (status === 402) {
         return new Response(
           JSON.stringify({ error: "Crédits IA insuffisants. Contactez l'administrateur." }),
           { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      throw new Error(`AI Gateway error: ${aiResponse.status}`);
+      throw gatewayErr;
     }
 
-    const aiData = await aiResponse.json();
-    const executiveSummary = aiData.choices?.[0]?.message?.content || "Rapport non généré";
+    const executiveSummary = aiResult.content || "Rapport non généré";
+    const breakerSnap = getBreakerSnapshot("ai-gateway:lovable");
 
-    console.log(`[Executive Run] AI response: ${executiveSummary.length} chars`);
+    console.log(
+      `[Executive Run] AI response: ${executiveSummary.length} chars (fallback=${aiResult.fallback_used}, breaker=${aiResult.breaker_state})`
+    );
 
     const runResult = {
       success: true,
@@ -781,12 +789,14 @@ Génère le rapport demandé en français avec les données RÉELLES fournies ci
       platform_key,
       executive_summary: executiveSummary,
       steps: template.steps,
-      model_used: model,
+      model_used: aiResult.model,
+      fallback_used: aiResult.fallback_used,
+      breaker_state: aiResult.breaker_state,
       data_sources: [
         template.useGitHub ? "GitHub API" : null,
         template.usePerplexity ? "Perplexity AI" : null,
         template.useFirecrawl ? "Firecrawl" : null,
-        "Lovable AI Gateway",
+        aiResult.fallback_used ? "Fallback (breaker OPEN)" : "Lovable AI Gateway",
       ].filter(Boolean),
       completed_at: new Date().toISOString(),
     };
