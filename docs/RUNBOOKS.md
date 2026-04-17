@@ -86,8 +86,75 @@ WHERE key = 'ai_budget';
 
 ---
 
+## 🚦 RB-004 — Rate-limit IP saturé (Horizon 4)
+
+### Symptôme
+- Réponses HTTP 429 massives sur une edge function publique
+- Table `public.rate_limit_buckets` avec un `bucket_key` répété (>100 entrées dans la dernière heure)
+
+### Diagnostic
+```sql
+SELECT bucket_key, SUM(count) AS hits, MAX(window_start) AS last_hit
+FROM public.rate_limit_buckets
+WHERE window_start > now() - interval '1 hour'
+GROUP BY bucket_key
+ORDER BY hits DESC LIMIT 20;
+```
+
+### Remédiation
+| Cause | Action |
+|-------|--------|
+| Bot/scraper malveillant | Bloquer l'IP au niveau Cloudflare/WAF |
+| Pic légitime (campagne) | Augmenter temporairement `p_max_requests` dans le code de la fonction |
+| Faux positif (NAT entreprise) | Étendre la fenêtre `p_window_seconds` à 3600s |
+
+### Validation
+- Aucun nouveau bucket créé pour la `bucket_key` incriminée
+- Logs structured_logs `source=rate-limit` retournent à la normale
+
+---
+
+## 🏢 RB-005 — Déplacer une organisation (Horizon 4 / préparation H5)
+
+### Contexte
+Les tables `organizations` et `organization_members` sont en place mais non utilisées en production (mode hybride). Toutes les RPCs HQ utilisent encore `is_owner()`.
+
+### Quand activer ?
+- Quand un 2ème owner est ajouté ET nécessite une isolation de données
+- Avant la commercialisation multi-clients
+
+### Procédure (à exécuter en H5)
+1. Backfill `organization_id` sur toutes les tables HQ avec l'org par défaut
+2. Migrer chaque RPC HQ pour ajouter le filtre `organization_id = current_user_org_id()`
+3. Renforcer les RLS : remplacer `is_owner()` par `has_org_access(auth.uid(), organization_id)`
+4. Tests E2E complets sur 2 organisations distinctes
+
+---
+
+## 🔧 RB-006 — Migration extensions Postgres (Horizon 4)
+
+### État actuel (post-H4)
+| Extension | Schéma | Migrable ? |
+|-----------|--------|------------|
+| `pgcrypto` | `extensions` | ✅ Migré |
+| `pg_cron` | `cron` (natif) | ❌ Bloqué Supabase |
+| `pg_net` | `net` (natif) | ❌ Bloqué Supabase |
+| `pg_graphql` | `graphql` | ❌ Bloqué Supabase |
+
+### Pourquoi pg_cron / pg_net ne sont pas dans `extensions` ?
+- Supabase ne supporte pas leur déplacement (jobs actifs + dépendances internes)
+- Le warning du linter est **info-only** : aucun impact sécurité réel
+- Documenté ici pour traçabilité audit Big4
+
+### Si rollback nécessaire
+```sql
+ALTER EXTENSION pgcrypto SET SCHEMA public;
+```
+
+---
+
 ## 📚 Maintenance des runbooks
 
 - Ajouter un nouveau runbook : créer une section `## 🆕 RB-XXX` ici, puis ajouter l'entrée dans `get_hq_governance_dashboard()` (champ `runbooks`).
 - Tester chaque procédure trimestriellement (game day).
-- Mesurer le MTTR cible : **< 15 min** pour les RB-001/002, **< 60 min** pour RB-003.
+- Mesurer le MTTR cible : **< 15 min** pour les RB-001/002/004, **< 60 min** pour RB-003.
