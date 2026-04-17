@@ -22,13 +22,14 @@ export function useAIBudget() {
   return useQuery({
     queryKey: ["hq", "ai_budget_status"],
     queryFn: async (): Promise<AIBudgetStatus | null> => {
-      // @ts-expect-error - RPC ajoutée par migration H1, types regénérés au prochain build
-      const { data, error } = await supabase.rpc("get_hq_ai_budget_status");
+      const { data, error } = await supabase.rpc(
+        "get_hq_ai_budget_status" as never
+      );
       if (error) {
-        logger.error("[useAIBudget] RPC error:", error.message);
+        logger.error("[useAIBudget] RPC error:", (error as Error).message);
         return null;
       }
-      return data as AIBudgetStatus | null;
+      return (data as unknown) as AIBudgetStatus | null;
     },
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 5,
