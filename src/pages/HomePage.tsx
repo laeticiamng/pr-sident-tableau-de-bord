@@ -107,8 +107,7 @@ export default function HomePage() {
             {/* Audience segmentation cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.15s" }}>
               {audienceMap.map((audience) => {
-                const cfg = getPlatformConfig(audience.iconPlatform);
-                const Icon = cfg.icon;
+                const Icon = audience.icon;
                 return (
                   <Link key={audience.key} to={audience.href}>
                     <Card className="group border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-accent/40 transition-all duration-300 cursor-pointer h-full">
