@@ -177,13 +177,17 @@ Aucun finding bloquant. Améliorations marginales :
 
 ## 3. Roadmap de durcissement (3 horizons)
 
-### 🔥 Horizon 0 — Sécurité critique (semaine S+0)
-**Effort** : 1 jour · **Risque** : faible · **ROI** : élimination CVE potentielle
+### 🔥 Horizon 0 — Sécurité critique ✅ EXÉCUTÉ (2026-04-17)
+**Effort réel** : 30 min · **Statut** : ✅ Terminé
 
-- [ ] **H0.1** Migration `DROP POLICY permissive_*` sur user_roles + role_permissions (6 policies)
-- [ ] **H0.2** Migration `REVOKE UPDATE, DELETE ON hq.audit_logs` (immuabilité forensique)
-- [ ] **H0.3** Activer `password_hibp_enabled` via configure_auth
-- [ ] **H0.4** Test régression : tentative INSERT user_roles depuis client auth non-owner → doit échouer 403
+- [x] **H0.1** ✅ `DROP POLICY permissive_*` sur user_roles + role_permissions + contact_messages + analytics_events doublon (10 policies au total)
+- [x] **H0.2** ✅ `REVOKE UPDATE, DELETE ON hq.audit_logs` + 2 politiques RESTRICTIVE (immuabilité forensique double couche)
+- [x] **H0.3** ✅ `password_hibp_enabled = true` activé via configure_auth
+- [ ] **H0.4** Test régression : à valider end-to-end (tentative INSERT user_roles depuis client auth non-owner → 403 attendu)
+
+**Findings résiduels documentés** (acceptés) :
+- `analytics_anon_insert` (INFO) — INSERT anonyme intentionnel pour tracking public
+- `extension_in_public` (INFO) — config Supabase par défaut, pas d'impact opérationnel
 
 ### 📊 Horizon 1 — Robustesse moteur (semaines S+1 à S+2)
 **Effort** : 5 jours · **Risque** : moyen · **ROI** : -50% incidents production
