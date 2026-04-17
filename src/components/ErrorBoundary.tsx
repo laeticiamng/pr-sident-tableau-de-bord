@@ -55,7 +55,8 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private handleGoHome = () => {
-    window.location.href = "/";
+    // Full reload intentionnel : ErrorBoundary catastrophique → reset complet du tree React + state
+    window.location.assign("/");
   };
 
   public render() {
