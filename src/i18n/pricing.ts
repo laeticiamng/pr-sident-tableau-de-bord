@@ -55,6 +55,7 @@ export const pricingTranslations = {
     billingMonthly: "Monthly",
     billingAnnual: "Annual",
     annualSave: "Save 20%",
+    indicativeNotice: "Indicative pricing — every deployment receives a personalized quote. No automatic online payment available yet.",
     summary: {
       title: "In brief",
       text: "Most of our platforms are free to get started — no credit card required. Premium features start at €4.90/month. Healthcare facilities and businesses get custom pricing.",
