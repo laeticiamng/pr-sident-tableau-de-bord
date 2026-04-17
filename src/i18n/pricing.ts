@@ -104,6 +104,7 @@ export const pricingTranslations = {
     billingMonthly: "Monatlich",
     billingAnnual: "Jährlich",
     annualSave: "20% sparen",
+    indicativeNotice: "Richtpreise — jede Bereitstellung erhält ein individuelles Angebot. Aktuell keine automatische Online-Zahlung verfügbar.",
     summary: {
       title: "Auf einen Blick",
       text: "Die meisten unserer Plattformen sind kostenlos nutzbar — keine Kreditkarte erforderlich. Premium-Funktionen ab 4,90 €/Monat. Gesundheitseinrichtungen und Unternehmen erhalten individuelle Angebote.",
