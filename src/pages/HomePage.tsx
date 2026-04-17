@@ -7,6 +7,15 @@ import {
   ArrowRight,
   Sparkles,
   Building2,
+  Heart,
+  GraduationCap,
+  Plane,
+  Rocket,
+  Shield,
+  Lock,
+  Flag,
+  FileCheck,
+  Layers,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
