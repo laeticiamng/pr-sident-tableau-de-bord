@@ -20,6 +20,7 @@ import {
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { HomeFAQ } from "@/components/home/HomeFAQ";
+import { HomeArchitecture } from "@/components/home/HomeArchitecture";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
@@ -198,6 +199,8 @@ export default function HomePage() {
       </section>
 
       <HowItWorks />
+
+      <HomeArchitecture />
 
       <PlatformShowcase />
 
