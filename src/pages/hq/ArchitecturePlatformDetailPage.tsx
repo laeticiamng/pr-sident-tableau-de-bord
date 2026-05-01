@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,6 +50,10 @@ import {
   History,
   Paperclip,
   MessageSquare,
+  Upload,
+  FileText,
+  X,
+  Loader2,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -122,6 +127,7 @@ export default function ArchitecturePlatformDetailPage() {
   const createEntry = useCreateJournalEntry();
   const { data: journalEntries = [] } = useJournalEntries();
   const [requested, setRequested] = useState<Set<string>>(new Set());
+  const { toast } = useToast();
 
   // Dialog d'approbation avec commentaire + pièce jointe optionnels
   const [dialogState, setDialogState] = useState<{
@@ -129,25 +135,103 @@ export default function ArchitecturePlatformDetailPage() {
     action: ProposedAction;
   } | null>(null);
   const [comment, setComment] = useState("");
-  const [attachmentUrl, setAttachmentUrl] = useState("");
-  const [attachmentLabel, setAttachmentLabel] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  /** Pré-remplit le commentaire à partir du contexte (plateforme · couche · risque · effort). */
+  const buildPrefillComment = (layerKey: string, action: ProposedAction) => {
+    const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
+    const layerTitle = layer?.title ?? layerKey;
+    const v = profile.layers[layerKey as keyof typeof profile.layers];
+    const stateLabel = v === "applied" ? "appliqué" : v === "partial" ? "partiel" : "à faire";
+    const riskLabel =
+      action.risk === "critical"
+        ? "critique"
+        : action.risk === "high"
+          ? "élevé"
+          : action.risk === "medium"
+            ? "moyen"
+            : "faible";
+    return [
+      `Contexte : ${profile.name} — couche « ${layerTitle} » actuellement ${stateLabel}.`,
+      `Action : ${action.title}.`,
+      `Risque : ${riskLabel} · effort estimé : ~${action.effortHours} h.`,
+      "",
+      "Justification : ",
+      "Impact attendu : ",
+      "Plan de rollback : ",
+    ].join("\n");
+  };
 
   const openApprovalDialog = (layerKey: string, action: ProposedAction) => {
-    setComment("");
-    setAttachmentUrl("");
-    setAttachmentLabel("");
+    setComment(buildPrefillComment(layerKey, action));
+    setFile(null);
     setDialogState({ layerKey, action });
   };
 
-  const submitApproval = () => {
+  /** Upload du fichier dans le bucket privé `architecture-approvals`, puis génère un lien signé 7 jours. */
+  const uploadAttachment = async (
+    f: File,
+    requestId: string,
+  ): Promise<{ path: string; signedUrl: string; sizeBytes: number; mime: string } | null> => {
+    if (f.size > 50 * 1024 * 1024) {
+      toast({
+        title: "Fichier trop volumineux",
+        description: "Taille maximale : 50 Mo.",
+        variant: "destructive",
+      });
+      return null;
+    }
+    const safeName = f.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+    const path = `${profile.key}/${requestId}/${Date.now()}-${safeName}`;
+    const { error: upErr } = await supabase.storage
+      .from("architecture-approvals")
+      .upload(path, f, { contentType: f.type || "application/octet-stream", upsert: false });
+    if (upErr) {
+      logger.error("[Architecture] Upload failed:", upErr);
+      toast({
+        title: "Échec de l'upload",
+        description: upErr.message,
+        variant: "destructive",
+      });
+      return null;
+    }
+    const { data: signed, error: signErr } = await supabase.storage
+      .from("architecture-approvals")
+      .createSignedUrl(path, 60 * 60 * 24 * 7); // 7 jours
+    if (signErr || !signed) {
+      logger.error("[Architecture] Signed URL failed:", signErr);
+      toast({
+        title: "Lien sécurisé indisponible",
+        description: "Le fichier est stocké mais le lien n'a pas pu être généré.",
+        variant: "destructive",
+      });
+      return null;
+    }
+    return {
+      path,
+      signedUrl: signed.signedUrl,
+      sizeBytes: f.size,
+      mime: f.type || "application/octet-stream",
+    };
+  };
+
+  const submitApproval = async () => {
     if (!dialogState) return;
     const { layerKey, action } = dialogState;
     const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
     const requestId = `${profile.key}::${layerKey}::${action.id}`;
     const title = `Demande d'approbation — ${profile.name} · ${action.title}`;
     const trimmedComment = comment.trim();
-    const trimmedUrl = attachmentUrl.trim();
-    const trimmedLabel = attachmentLabel.trim() || trimmedUrl;
+
+    let attachment: { path: string; signedUrl: string; sizeBytes: number; mime: string } | null = null;
+    if (file) {
+      setUploading(true);
+      attachment = await uploadAttachment(file, requestId);
+      setUploading(false);
+      if (!attachment) return; // toast déjà émis
+    }
+
     const lines = [
       `Plateforme : **${profile.name}** (${profile.key})`,
       `Couche : ${layer?.title ?? layerKey}`,
@@ -161,8 +245,13 @@ export default function ArchitecturePlatformDetailPage() {
     if (trimmedComment) {
       lines.push("", "**Commentaire du demandeur :**", trimmedComment);
     }
-    if (trimmedUrl) {
-      lines.push("", `**Pièce jointe :** [${trimmedLabel}](${trimmedUrl})`);
+    if (attachment && file) {
+      const sizeKb = Math.round(attachment.sizeBytes / 1024);
+      lines.push(
+        "",
+        `**Pièce jointe :** [${file.name}](${attachment.signedUrl}) (${sizeKb} Ko, ${attachment.mime})`,
+        `_Lien sécurisé valable 7 jours · chemin : \`${attachment.path}\`_`,
+      );
     }
     const content = lines.join("\n");
     const tags = [
@@ -174,7 +263,7 @@ export default function ArchitecturePlatformDetailPage() {
       `risk:${action.risk}`,
     ];
     if (trimmedComment) tags.push("has-comment");
-    if (trimmedUrl) tags.push("has-attachment");
+    if (attachment) tags.push("has-attachment");
     createEntry.mutate(
       {
         title,
@@ -203,7 +292,7 @@ export default function ArchitecturePlatformDetailPage() {
                   actionId: action.id,
                   requestId,
                   hasComment: Boolean(trimmedComment),
-                  hasAttachment: Boolean(trimmedUrl),
+                  hasAttachment: Boolean(attachment),
                 },
               },
             })
@@ -699,32 +788,66 @@ export default function ArchitecturePlatformDetailPage() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="approval-attachment-url" className="flex items-center gap-2">
-                <Paperclip className="h-3.5 w-3.5" /> Lien vers un document (optionnel)
+              <Label htmlFor="approval-attachment-file" className="flex items-center gap-2">
+                <Paperclip className="h-3.5 w-3.5" /> Pièce jointe (optionnel)
               </Label>
+              {file ? (
+                <div className="flex items-center gap-3 p-3 rounded-md border border-border bg-accent/10">
+                  <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{file.name}</p>
+                    <p className="text-[11px] text-muted-foreground tabular-nums">
+                      {(file.size / 1024).toFixed(1)} Ko · {file.type || "type inconnu"}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFile(null)}
+                    aria-label="Retirer la pièce jointe"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="approval-attachment-file"
+                  className="flex items-center justify-center gap-2 p-4 rounded-md border border-dashed border-border bg-accent/5 cursor-pointer hover:bg-accent/15 transition-colors"
+                >
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Cliquer pour sélectionner un fichier
+                  </span>
+                </label>
+              )}
               <Input
-                id="approval-attachment-url"
-                type="url"
-                placeholder="https://… (Drive, Notion, GitHub…)"
-                value={attachmentUrl}
-                onChange={(e) => setAttachmentUrl(e.target.value.slice(0, 1024))}
+                id="approval-attachment-file"
+                type="file"
+                className="hidden"
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.md,.csv,.json,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setFile(f);
+                  e.target.value = ""; // reset pour pouvoir re-sélectionner le même fichier
+                }}
               />
-              <Input
-                id="approval-attachment-label"
-                type="text"
-                placeholder="Libellé affiché (optionnel)"
-                value={attachmentLabel}
-                onChange={(e) => setAttachmentLabel(e.target.value.slice(0, 200))}
-              />
+              <p className="text-[11px] text-muted-foreground">
+                Stockage privé · lien sécurisé valable 7 jours · max 50 Mo (PDF, images, Office, texte).
+              </p>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogState(null)}>
               Annuler
             </Button>
-            <Button onClick={submitApproval} disabled={createEntry.isPending}>
-              <Send className="h-3.5 w-3.5 mr-1" />
-              {createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
+            <Button onClick={submitApproval} disabled={createEntry.isPending || uploading}>
+              {uploading || createEntry.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+              ) : (
+                <Send className="h-3.5 w-3.5 mr-1" />
+              )}
+              {uploading ? "Upload…" : createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
             </Button>
           </DialogFooter>
         </DialogContent>
