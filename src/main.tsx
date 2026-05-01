@@ -6,7 +6,10 @@ import { SupabaseBootGuard } from "@/components/SupabaseBootGuard";
 import { collectBootDiagnostics, logBootIssues } from "@/lib/supabaseBoot";
 import { installGlobalErrorListeners, logClientError } from "@/lib/clientErrorLogger";
 
-const BUILD_VERSION = import.meta.env.MODE;
+const BUILD_VERSION =
+  (typeof window !== "undefined" &&
+    (window as unknown as { __APP_BUILD__?: string }).__APP_BUILD__) ||
+  import.meta.env.MODE;
 
 if (typeof window !== "undefined") {
   try {
