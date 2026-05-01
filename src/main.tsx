@@ -13,13 +13,9 @@ try {
   // noop : le diagnostic ne doit jamais bloquer le boot.
 }
 
-/**
- * Désinscrire tout Service Worker en preview / iframe Lovable :
- * un SW PWA (cache HTML) installé sur l'app publiée provoque un écran noir
- * persistant lorsque la page est rendue dans l'iframe d'édition. Voir
- * mem://style/pwa-blocking-iframe.
- */
-if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+function shouldEnablePwaServiceWorker(): boolean {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return false;
+
   const isInIframe = (() => {
     try { return window.self !== window.top; } catch { return true; }
   })();
@@ -29,7 +25,16 @@ if (typeof window !== "undefined" && "serviceWorker" in navigator) {
     host.includes("lovableproject.com") ||
     host.endsWith("lovable.dev");
 
-  if (isInIframe || isPreviewHost) {
+  return !isInIframe && !isPreviewHost;
+}
+
+/**
+ * Désinscrire tout Service Worker en preview / iframe Lovable :
+ * un SW PWA (cache HTML) installé sur l'app publiée provoque un écran noir
+ * persistant lorsque la page est rendue dans l'iframe d'édition.
+ */
+if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  if (!shouldEnablePwaServiceWorker()) {
     navigator.serviceWorker.getRegistrations?.()
       .then((regs) => Promise.all(regs.map((r) => r.unregister().catch(() => false))))
       .then(async () => {
@@ -40,6 +45,12 @@ if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       })
       .catch(() => { /* noop */ });
   }
+}
+
+if (shouldEnablePwaServiceWorker()) {
+  import("virtual:pwa-register").then(({ registerSW }) => {
+    registerSW({ immediate: true });
+  }).catch(() => { /* PWA best-effort only */ });
 }
 
 // Listeners globaux pour journaliser chunks/SW/promise rejections.

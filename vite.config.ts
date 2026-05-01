@@ -55,13 +55,24 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     VitePWA({
+      filename: "ec-pwa-sw.js",
       registerType: "autoUpdate",
+      devOptions: {
+        enabled: false,
+      },
       includeAssets: ["favicon.ico", "pwa-icon-192.png", "pwa-icon-512.png"],
       workbox: {
-        navigateFallbackDenylist: [/^\/~oauth/],
+        cleanupOutdatedCaches: true,
+        navigateFallbackDenylist: [/^\/~oauth/, /^\/sw\.js$/, /^\/service-worker\.js$/],
         importScripts: ["/sw-push.js"],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        globIgnores: ["**/sw.js", "**/service-worker.js"],
         runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === "navigate",
+            handler: "NetworkFirst",
+            options: { cacheName: "html", networkTimeoutSeconds: 3 },
+          },
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
             handler: "NetworkFirst",
