@@ -426,6 +426,45 @@
 
   <body>
     <div id="root"></div>
+    <!-- Boot fallback : visible uniquement si React n'a pas monté <App /> au bout
+         de 8 secondes (écran noir silencieux dû à un chunk JS, un SW corrompu,
+         un blocage cookie tiers, etc.). Le script suivant ne s'exécute pas si
+         JS est désactivé : c'est <noscript /> qui prend alors le relais. -->
+    <div id="boot-fallback" style="display:none;position:fixed;inset:0;z-index:99999;background:#0a0a0a;color:#f5f5f5;font-family:system-ui,sans-serif;align-items:center;justify-content:center;padding:24px;">
+      <div style="max-width:480px;text-align:center;">
+        <div style="font-size:42px;margin-bottom:12px;">⚠️</div>
+        <h1 style="font-size:20px;margin:0 0 8px;font-weight:600;">Le chargement a échoué</h1>
+        <p style="font-size:14px;line-height:1.5;color:#a3a3a3;margin:0 0 20px;">Une ressource n'a pas pu être chargée (cache obsolète, extension qui bloque ou réseau instable).</p>
+        <button id="boot-fallback-reload" type="button" style="background:#f59e0b;color:#0a0a0a;border:0;border-radius:9999px;padding:10px 24px;font-weight:600;font-size:14px;cursor:pointer;">Recharger la page</button>
+        <p style="font-size:11px;color:#737373;margin:16px 0 0;">Si le problème persiste : <a href="/contact" style="color:#f59e0b;">contactez-nous</a>.</p>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var TIMEOUT = 8000;
+        var t = setTimeout(function () {
+          var root = document.getElementById("root");
+          if (root && root.childElementCount === 0) {
+            var f = document.getElementById("boot-fallback");
+            if (f) f.style.display = "flex";
+          }
+        }, TIMEOUT);
+        // Annule le fallback dès qu'un noeud est ajouté à #root.
+        var root = document.getElementById("root");
+        if (root && "MutationObserver" in window) {
+          var obs = new MutationObserver(function () {
+            if (root.childElementCount > 0) { clearTimeout(t); obs.disconnect(); }
+          });
+          obs.observe(root, { childList: true });
+        }
+        var btn = document.getElementById("boot-fallback-reload");
+        if (btn) btn.addEventListener("click", function () {
+          // Hard reload + cache bypass
+          try { sessionStorage.removeItem("vite-preload-reloaded"); } catch (e) {}
+          window.location.reload();
+        });
+      })();
+    </script>
     <noscript>
       <div style="max-width:800px;margin:40px auto;padding:20px;font-family:system-ui,sans-serif;">
         <h1>EMOTIONSCARE — Éditeur français de 10 logiciels innovants</h1>
