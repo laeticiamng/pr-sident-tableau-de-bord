@@ -164,6 +164,7 @@ export const homeTranslations = {
     hero: {
       badge: "Software Publisher",
       madeIn: "🇫🇷 Made in France",
+      ariaLabel: "EMOTIONSCARE introduction",
       title: "10 software products built in France to solve real problems",
       subtitle: "Caregiver wellbeing, medical learning, expatriation, AI-driven growth. Find the platform that changes your daily life.",
       description: "",
