@@ -158,6 +158,16 @@ export const COMPANY_PROFILE = {
   president: "Motongane Laeticia",
   linkedinPresident: "https://www.linkedin.com/in/laeticiamotongane/",
   linkedinCompany: "https://www.linkedin.com/company/emotionscare/",
+  // Identité professionnelle vérifiée — registre officiel suisse MedReg
+  // (Confédération suisse — Plateforme des professions de la santé).
+  // Preuve publique d'inscription au registre des médecins, vérifiable
+  // par n'importe qui via le numéro GLN (Global Location Number).
+  presidentMedRegName: "Moto-Ngane Laëticia Jeanne-Inès",
+  presidentMedRegProfession: "Médecin",
+  presidentMedRegGLN: "7601009569944",
+  presidentMedRegRegistry: "MedReg — Confédération suisse",
+  presidentMedRegUrl:
+    "https://www.healthregs.admin.ch/MedReg/Search/Person/7601009569944",
 } as const;
 
 export type PlatformKey = typeof MANAGED_PLATFORMS[number]["key"];
