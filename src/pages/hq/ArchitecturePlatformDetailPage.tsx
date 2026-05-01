@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,14 @@ import {
   getCoverageScore,
   getAuditActionsForPlatform,
   getGaps,
+  getProposedActionsForLayer,
+  type ProposedAction,
   type AuditActionStatus,
 } from "@/data/systemArchitecture";
 import { useRecentRuns } from "@/hooks/hq/useRuns";
 import { useDLQEntries } from "@/hooks/hq/useReliability";
+import { useCreateJournalEntry } from "@/hooks/useJournal";
+import { useAuth } from "@/hooks/useAuth";
 import {
   ArrowLeft,
   Layers,
@@ -27,6 +31,8 @@ import {
   AlertTriangle,
   Circle,
   AlertOctagon,
+  Send,
+  CheckCheck,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -94,6 +100,39 @@ export default function ArchitecturePlatformDetailPage() {
   // Données live runs / DLQ → filtrées sur la plateforme courante
   const { data: recentRuns = [], isLoading: runsLoading } = useRecentRuns(50);
   const { data: dlqEntries = [], isLoading: dlqLoading } = useDLQEntries(50);
+
+  // Demande d'approbation Présidente — persistée dans le journal stratégique
+  const { user } = useAuth();
+  const createEntry = useCreateJournalEntry();
+  const [requested, setRequested] = useState<Set<string>>(new Set());
+  const requestApproval = (layerKey: string, action: ProposedAction) => {
+    const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
+    const requestId = `${profile.key}::${layerKey}::${action.id}`;
+    const title = `Demande d'approbation — ${profile.name} · ${action.title}`;
+    const content = [
+      `Plateforme : **${profile.name}** (${profile.key})`,
+      `Couche : ${layer?.title ?? layerKey}`,
+      `Action proposée : ${action.title}`,
+      `Description : ${action.description}`,
+      `Risque : ${action.risk}`,
+      `Effort estimé : ${action.effortHours} h`,
+      `Demandeur : ${user?.email ?? "—"}`,
+      `Référence : ${requestId}`,
+    ].join("\n");
+    createEntry.mutate(
+      {
+        title,
+        content,
+        entry_type: "decision",
+        tags: ["architecture", "approval-request", String(profile.key), layerKey, `risk:${action.risk}`],
+      },
+      {
+        onSuccess: () => {
+          setRequested((prev) => new Set(prev).add(requestId));
+        },
+      },
+    );
+  };
 
   const platformRuns = useMemo(
     () => recentRuns.filter((r) => r.platform_key === platformKey).slice(0, 10),
@@ -168,21 +207,96 @@ export default function ArchitecturePlatformDetailPage() {
             ✅ Aucune couche restante — pattern complet pour {profile.name}.
           </div>
         ) : (
-          <div className="card-executive divide-y divide-border">
+          <div className="space-y-4">
             {gaps.map((layer) => {
               const v = profile.layers[layer.key];
               const Icon = LAYER_ICONS[layer.key] ?? Layers;
+              const proposed = getProposedActionsForLayer(layer.key);
               return (
-                <div key={layer.key} className="p-4 flex items-start gap-3">
-                  <StatusIcon value={v} />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium text-sm">{layer.title}</span>
-                      <StatusBadge value={v} />
+                <div key={layer.key} className="card-executive p-5">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-start gap-3">
+                      <StatusIcon value={v} />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium text-sm">{layer.title}</span>
+                          <StatusBadge value={v} />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">{layer.patternHQ}</p>
+                      </div>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">{layer.patternHQ}</p>
                   </div>
+
+                  {proposed.length === 0 ? (
+                    <p className="text-xs text-muted-foreground italic">
+                      Aucune action standard — à spécifier au cas par cas.
+                    </p>
+                  ) : (
+                    <div className="border-t border-border pt-3 space-y-2">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                        Actions proposées
+                      </div>
+                      {proposed.map((action) => {
+                        const reqId = `${profile.key}::${layer.key}::${action.id}`;
+                        const isRequested = requested.has(reqId);
+                        const isPending = createEntry.isPending;
+                        return (
+                          <div
+                            key={action.id}
+                            className="flex items-start gap-3 p-3 rounded-md bg-accent/10 border border-border"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-sm font-medium">{action.title}</span>
+                                <Badge
+                                  variant={
+                                    action.risk === "critical" || action.risk === "high"
+                                      ? "destructive"
+                                      : action.risk === "medium"
+                                        ? "warning"
+                                        : "subtle"
+                                  }
+                                >
+                                  Risque {action.risk}
+                                </Badge>
+                                <span className="text-[11px] text-muted-foreground tabular-nums">
+                                  ~{action.effortHours} h
+                                </span>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {action.description}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant={isRequested ? "outline" : "default"}
+                              onClick={() => requestApproval(layer.key, action)}
+                              disabled={isRequested || isPending}
+                              className="flex-shrink-0"
+                            >
+                              {isRequested ? (
+                                <>
+                                  <CheckCheck className="h-3.5 w-3.5 mr-1" /> Demande envoyée
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="h-3.5 w-3.5 mr-1" /> Demander l'approbation
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                      <p className="text-[11px] text-muted-foreground pt-1">
+                        Les demandes sont consignées dans le{" "}
+                        <Link to="/hq/journal" className="underline hover:text-foreground">
+                          Journal stratégique
+                        </Link>{" "}
+                        avec tag <code className="font-mono">approval-request</code>.
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}
