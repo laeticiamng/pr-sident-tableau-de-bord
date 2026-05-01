@@ -8,6 +8,7 @@ import { StrategicGoals } from "@/components/hq/entreprise/StrategicGoals";
 import { PlatformCompletionRoadmap } from "@/components/hq/entreprise/PlatformCompletionRoadmap";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
+import { PresidentCredentials } from "@/components/PresidentCredentials";
 
 export default function EntreprisePage() {
   return (
@@ -127,6 +128,23 @@ export default function EntreprisePage() {
           </dl>
         </div>
       </div>
+
+      {/* Identité professionnelle de la Présidente — preuve publique */}
+      <section aria-labelledby="president-identity-heading" className="space-y-3">
+        <div>
+          <h3
+            id="president-identity-heading"
+            className="text-lg font-semibold mb-1"
+          >
+            Identité professionnelle
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Preuve publique vérifiable, utilisable dans les relations
+            investisseurs, partenariats et documents officiels.
+          </p>
+        </div>
+        <PresidentCredentials variant="panel" />
+      </section>
 
       {/* Company KPIs & Quarterly Objectives */}
       <div className="grid gap-6 lg:grid-cols-2">
