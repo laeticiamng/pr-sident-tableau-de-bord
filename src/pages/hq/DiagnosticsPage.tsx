@@ -29,6 +29,7 @@ import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotificationHistory";
 import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget";
 import { SLOWidget } from "@/components/hq/diagnostics/SLOWidget";
+import { SupabaseConfigWidget } from "@/components/hq/diagnostics/SupabaseConfigWidget";
 
 interface HealthCheck {
   name: string;
@@ -447,6 +448,9 @@ export default function DiagnosticsPage() {
 
       {/* SLO & Error Budget (Horizon 3) */}
       <SLOWidget />
+
+      {/* Configuration boot Supabase (variables env, ping, session ID) */}
+      <SupabaseConfigWidget />
 
       {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
       <ReliabilityWidget />
