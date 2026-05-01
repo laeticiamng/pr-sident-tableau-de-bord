@@ -93,6 +93,7 @@ export const contactTranslations = {
       headquarters: "Headquarters",
       email: "Email",
       findUs: "Find us",
+      presidentPhotoAlt: "Motongane Laeticia — President of EMOTIONSCARE",
       hours: "Hours",
       hoursDetail: "Mon - Fri: 9:00 AM - 6:00 PM",
       hoursResponse: "Response within 24-48 business hours",
