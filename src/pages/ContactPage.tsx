@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getContactSchema, sanitizeHtml } from "@/lib/validation";
+import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
