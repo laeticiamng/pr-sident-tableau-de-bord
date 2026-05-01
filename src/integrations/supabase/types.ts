@@ -50,6 +50,45 @@ export type Database = {
         }
         Relationships: []
       }
+      client_error_logs: {
+        Row: {
+          build_version: string | null
+          created_at: string
+          error_type: string
+          has_service_worker: boolean | null
+          id: string
+          in_iframe: boolean | null
+          message: string
+          page_path: string | null
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          build_version?: string | null
+          created_at?: string
+          error_type: string
+          has_service_worker?: boolean | null
+          id?: string
+          in_iframe?: boolean | null
+          message: string
+          page_path?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          build_version?: string | null
+          created_at?: string
+          error_type?: string
+          has_service_worker?: boolean | null
+          id?: string
+          in_iframe?: boolean | null
+          message?: string
+          page_path?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
