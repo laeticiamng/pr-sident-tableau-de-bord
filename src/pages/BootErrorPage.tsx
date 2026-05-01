@@ -1,30 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, RefreshCw, Activity, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
- * Page d'erreur "chargement impossible" — affichée quand le boot React
- * a échoué (chunk JS manquant, Service Worker corrompu, hors-ligne, etc.).
- * Atteignable manuellement depuis le fallback HTML statique de index.html
- * via le lien "Diagnostics".
+ * Page d'erreur publique "chargement impossible" — affichée quand le boot
+ * React a échoué (chunk JS manquant, Service Worker corrompu, hors-ligne).
+ *
+ * SÉCURITÉ : cette page est PUBLIQUE (atteignable sans authentification),
+ * donc elle n'expose AUCUNE donnée interne :
+ *  - pas de version build / mode d'environnement,
+ *  - pas d'état Service Worker / cache / scope,
+ *  - pas d'user-agent ni d'URL technique,
+ *  - pas de message d'erreur réseau ou console,
+ *  - pas de session / utilisateur.
+ * Les seuls leviers offerts sont génériques : recharger la page, vider le
+ * cache navigateur local (action côté client uniquement), et un lien vers
+ * Diagnostics HQ — qui, lui, est protégé par authentification.
  */
 export default function BootErrorPage() {
   const [clearing, setClearing] = useState(false);
-  const [details, setDetails] = useState<{ build: string; sw: boolean; online: boolean }>({
-    build: "unknown",
-    sw: false,
-    online: true,
-  });
-
-  useEffect(() => {
-    setDetails({
-      build: import.meta.env.MODE,
-      sw: Boolean(navigator.serviceWorker?.controller),
-      online: navigator.onLine,
-    });
-  }, []);
 
   const hardReload = () => {
     try { sessionStorage.clear(); } catch { /* noop */ }
@@ -60,11 +56,10 @@ export default function BootErrorPage() {
           </div>
         </CardHeader>
         <CardContent className="space-y-5">
-          <ul className="text-sm space-y-1.5 text-muted-foreground">
-            <li>Build : <code className="text-foreground">{details.build}</code></li>
-            <li>Service Worker actif : <code className="text-foreground">{details.sw ? "oui" : "non"}</code></li>
-            <li>Connexion : <code className="text-foreground">{details.online ? "en ligne" : "hors ligne"}</code></li>
-          </ul>
+          <p className="text-sm text-muted-foreground">
+            Pour résoudre ce problème, deux actions suffisent généralement :
+            recharger la page, ou vider le cache local de votre navigateur.
+          </p>
 
           <div className="flex flex-col sm:flex-row gap-2">
             <Button onClick={hardReload} className="flex-1">
@@ -79,10 +74,13 @@ export default function BootErrorPage() {
 
           <div className="pt-3 border-t text-sm text-muted-foreground">
             <p className="mb-2">
-              Si le problème persiste, ouvrez les Diagnostics HQ pour partager un rapport
-              détaillé avec l'équipe.
+              Si le problème persiste, l'équipe technique peut consulter un
+              rapport détaillé depuis Diagnostics HQ (accès réservé).
             </p>
-            <Link to="/hq/diagnostics" className="inline-flex items-center gap-2 text-accent hover:underline">
+            <Link
+              to="/hq/diagnostics"
+              className="inline-flex items-center gap-2 text-accent hover:underline"
+            >
               <Activity className="h-4 w-4" aria-hidden />
               Ouvrir Diagnostics HQ
             </Link>
