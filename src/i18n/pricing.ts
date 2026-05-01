@@ -106,6 +106,7 @@ export const pricingTranslations = {
     billingMonthly: "Monatlich",
     billingAnnual: "Jährlich",
     annualSave: "20% sparen",
+    toggleBillingAria: "Zwischen monatlicher und jährlicher Abrechnung umschalten",
     indicativeNotice: "Richtpreise — jede Bereitstellung erhält ein individuelles Angebot. Aktuell keine automatische Online-Zahlung verfügbar.",
     summary: {
       title: "Auf einen Blick",
