@@ -476,7 +476,7 @@
         } catch (e) {}
         var showFallback = function () {
           var root = document.getElementById("root");
-          if (root && root.childElementCount === 0) {
+          if (root && root.childElementCount === 0 && !window.__REACT_MOUNTED__) {
             var f = document.getElementById("boot-fallback");
             if (f) f.style.display = "flex";
           }
@@ -495,7 +495,12 @@
         var root = document.getElementById("root");
         if (root && "MutationObserver" in window) {
           var obs = new MutationObserver(function () {
-            if (root.childElementCount > 0) { clearTimeout(t); obs.disconnect(); }
+            if (root.childElementCount > 0) {
+              clearTimeout(t);
+              var f = document.getElementById("boot-fallback");
+              if (f) f.style.display = "none";
+              obs.disconnect();
+            }
           });
           obs.observe(root, { childList: true });
         }
