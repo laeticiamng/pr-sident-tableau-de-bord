@@ -34,6 +34,19 @@ export const medregTranslations: Record<Language, {
   success: {
     openedTitle: string;
   };
+  /** Strings used by the full PresidentCredentials card (`variant="panel"`). */
+  panel: {
+    title: string;
+    description: (profession: string) => string;
+    fieldName: string;
+    fieldProfession: string;
+    fieldGLN: string;
+    fieldRegistry: string;
+    verifyCta: string;
+    inlineAriaLabel: (name: string) => string;
+    /** Friendly label injected as the action label in error toasts. */
+    registryLabel: string;
+  };
 }> = {
   fr: {
     badgeLabel: "Présidente vérifiée",
@@ -67,6 +80,19 @@ export const medregTranslations: Record<Language, {
     },
     success: {
       openedTitle: "Registre MedReg ouvert dans un nouvel onglet",
+    },
+    panel: {
+      title: "Identité professionnelle vérifiée",
+      description: (profession) =>
+        `La Présidente d'EMOTIONSCARE SASU est inscrite au registre officiel des professions de santé de la Confédération suisse (MedReg) en tant que ${profession}. Cette inscription est publique et vérifiable par n'importe qui via son numéro GLN.`,
+      fieldName: "Nom officiel",
+      fieldProfession: "Profession",
+      fieldGLN: "Numéro GLN",
+      fieldRegistry: "Registre",
+      verifyCta: "Vérifier sur le registre officiel",
+      inlineAriaLabel: (name) =>
+        `Vérifier l'inscription officielle de ${name} sur le registre MedReg`,
+      registryLabel: "le registre MedReg",
     },
   },
   en: {
@@ -102,6 +128,19 @@ export const medregTranslations: Record<Language, {
     success: {
       openedTitle: "MedReg registry opened in a new tab",
     },
+    panel: {
+      title: "Verified professional identity",
+      description: (profession) =>
+        `The President of EMOTIONSCARE SASU is listed on the official health professions registry of the Swiss Confederation (MedReg) as a ${profession}. This registration is public and can be verified by anyone via her GLN number.`,
+      fieldName: "Official name",
+      fieldProfession: "Profession",
+      fieldGLN: "GLN number",
+      fieldRegistry: "Registry",
+      verifyCta: "Verify on the official registry",
+      inlineAriaLabel: (name) =>
+        `Verify the official registration of ${name} on the MedReg registry`,
+      registryLabel: "the MedReg registry",
+    },
   },
   de: {
     badgeLabel: "Verifizierte Präsidentin",
@@ -135,6 +174,19 @@ export const medregTranslations: Record<Language, {
     },
     success: {
       openedTitle: "MedReg-Register in neuem Tab geöffnet",
+    },
+    panel: {
+      title: "Verifizierte berufliche Identität",
+      description: (profession) =>
+        `Die Präsidentin von EMOTIONSCARE SASU ist im offiziellen Register der Gesundheitsberufe der Schweizerischen Eidgenossenschaft (MedReg) als ${profession} eingetragen. Diese Eintragung ist öffentlich und kann von jedem über ihre GLN-Nummer überprüft werden.`,
+      fieldName: "Offizieller Name",
+      fieldProfession: "Beruf",
+      fieldGLN: "GLN-Nummer",
+      fieldRegistry: "Register",
+      verifyCta: "Im offiziellen Register überprüfen",
+      inlineAriaLabel: (name) =>
+        `Offizielle Eintragung von ${name} im MedReg-Register überprüfen`,
+      registryLabel: "das MedReg-Register",
     },
   },
 };
