@@ -27,11 +27,16 @@ export const PresidentCredentials = ({
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    openExternalLink(
-      COMPANY_PROFILE.presidentMedRegUrl,
-      t.panel.registryLabel,
-      t.errors,
-    );
+    openExternalLink(COMPANY_PROFILE.presidentMedRegUrl, t.panel.registryLabel, {
+      invalidUrlTitle: t.errors.invalidUrlTitle,
+      invalidUrlDescription: t.errors.invalidUrlDescription(t.panel.registryLabel),
+      insecureProtocolTitle: t.errors.insecureProtocolTitle,
+      insecureProtocolDescription: t.errors.insecureProtocolDescription,
+      blockedTitle: t.errors.blockedTitle,
+      blockedDescription: t.errors.blockedDescription,
+      genericTitle: t.errors.genericTitle,
+      genericDescription: t.errors.genericDescription,
+    });
   };
 
   if (variant === "inline") {
