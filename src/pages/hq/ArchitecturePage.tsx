@@ -26,6 +26,8 @@ import {
   ArrowRight,
   Filter,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -108,6 +110,22 @@ export default function ArchitecturePage() {
       .filter((a) => keys.includes(String(a.platformKey)))
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }, [visible]);
+
+  // Pagination journal d'audit
+  const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [page, setPage] = useState<number>(1);
+  const totalPages = Math.max(1, Math.ceil(visibleAudit.length / pageSize));
+  // Reset à la page 1 quand le filtre/pageSize change
+  const filterSig = `${selected.size}|${[...selected].sort().join(",")}|${pageSize}`;
+  useMemo(() => {
+    setPage(1);
+    return filterSig;
+  }, [filterSig]);
+  const safePage = Math.min(page, totalPages);
+  const pageStart = (safePage - 1) * pageSize;
+  const pageEnd = pageStart + pageSize;
+  const pageRows = visibleAudit.slice(pageStart, pageEnd);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -292,7 +310,7 @@ export default function ArchitecturePage() {
               </tr>
             </thead>
             <tbody>
-              {visibleAudit.map((a) => {
+              {pageRows.map((a) => {
                 const layer = ARCHITECTURE_LAYERS.find((l) => l.key === a.layerKey);
                 const platform = allSorted.find((p) => String(p.key) === String(a.platformKey));
                 return (
@@ -322,7 +340,7 @@ export default function ArchitecturePage() {
                   </tr>
                 );
               })}
-              {visibleAudit.length === 0 && (
+              {pageRows.length === 0 && (
                 <tr>
                   <td colSpan={6} className="p-6 text-center text-sm text-muted-foreground">
                     Aucune action enregistrée pour cette sélection.
@@ -331,6 +349,60 @@ export default function ArchitecturePage() {
               )}
             </tbody>
           </table>
+
+          {/* Barre de pagination */}
+          {visibleAudit.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-3 py-3 border-t border-border text-xs">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span>Lignes par page :</span>
+                {PAGE_SIZE_OPTIONS.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setPageSize(n)}
+                    className={
+                      "px-2 py-1 rounded border transition-colors " +
+                      (pageSize === n
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border hover:bg-accent/40")
+                    }
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-muted-foreground tabular-nums">
+                  {visibleAudit.length === 0
+                    ? "0"
+                    : `${pageStart + 1}–${Math.min(pageEnd, visibleAudit.length)} sur ${visibleAudit.length}`}
+                </span>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage <= 1}
+                    aria-label="Page précédente"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </Button>
+                  <span className="px-2 tabular-nums">
+                    {safePage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={safePage >= totalPages}
+                    aria-label="Page suivante"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
