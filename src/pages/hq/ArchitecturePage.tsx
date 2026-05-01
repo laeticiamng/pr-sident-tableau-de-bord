@@ -1,14 +1,32 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import {
   ARCHITECTURE_LAYERS,
   PLATFORM_ARCHITECTURE,
+  ARCHITECTURE_AUDIT_LOG,
   getCoverageScore,
   type PlatformArchitectureProfile,
+  type AuditActionStatus,
 } from "@/data/systemArchitecture";
-import { Layers, ShieldCheck, Database, Cloud, Workflow, Bot, Activity, CheckCircle2, AlertTriangle, Circle } from "lucide-react";
+import {
+  Layers,
+  ShieldCheck,
+  Database,
+  Cloud,
+  Workflow,
+  Bot,
+  Activity,
+  CheckCircle2,
+  AlertTriangle,
+  Circle,
+  ArrowRight,
+  Filter,
+  X,
+} from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   schema: Database,
@@ -34,14 +52,62 @@ function GlobalStatusBadge({ status }: { status: PlatformArchitectureProfile["st
   return <Badge variant="destructive">À démarrer</Badge>;
 }
 
+function AuditStatusBadge({ status }: { status: AuditActionStatus }) {
+  switch (status) {
+    case "done":
+      return <Badge variant="success">Fait</Badge>;
+    case "in_progress":
+      return <Badge variant="warning">En cours</Badge>;
+    case "blocked":
+      return <Badge variant="destructive">Bloqué</Badge>;
+    case "planned":
+    default:
+      return <Badge variant="subtle">Planifié</Badge>;
+  }
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function ArchitecturePage() {
-  const sorted = useMemo(
+  const allSorted = useMemo(
     () => [...PLATFORM_ARCHITECTURE].sort((a, b) => getCoverageScore(b) - getCoverageScore(a)),
     [],
   );
-  const globalCoverage = Math.round(
-    sorted.reduce((s, p) => s + getCoverageScore(p), 0) / sorted.length,
+
+  // Filtre multi-plateformes (vide = toutes)
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const togglePlatform = (key: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const clearFilter = () => setSelected(new Set());
+
+  const visible = useMemo(
+    () => (selected.size === 0 ? allSorted : allSorted.filter((p) => selected.has(String(p.key)))),
+    [allSorted, selected],
   );
+
+  const globalCoverage = Math.round(
+    visible.reduce((s, p) => s + getCoverageScore(p), 0) / Math.max(1, visible.length),
+  );
+
+  const visibleAudit = useMemo(() => {
+    const keys = visible.map((p) => String(p.key));
+    return [...ARCHITECTURE_AUDIT_LOG]
+      .filter((a) => keys.includes(String(a.platformKey)))
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  }, [visible]);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -56,26 +122,64 @@ export default function ArchitecturePage() {
         }}
       />
 
+      {/* Filtre plateformes */}
+      <div className="card-executive p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            Filtrer les plateformes
+            <span className="text-xs text-muted-foreground font-normal">
+              ({selected.size === 0 ? "toutes" : `${selected.size} sélectionnée${selected.size > 1 ? "s" : ""}`})
+            </span>
+          </div>
+          {selected.size > 0 && (
+            <Button variant="ghost" size="sm" onClick={clearFilter}>
+              <X className="h-3.5 w-3.5 mr-1" /> Réinitialiser
+            </Button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {allSorted.map((p) => {
+            const isOn = selected.has(String(p.key));
+            return (
+              <button
+                key={String(p.key)}
+                type="button"
+                onClick={() => togglePlatform(String(p.key))}
+                className={
+                  "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors " +
+                  (isOn
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-foreground border-border hover:bg-accent/40")
+                }
+              >
+                {p.name}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* KPI couverture globale */}
       <div className="card-executive p-6 flex items-center justify-between">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-            Couverture globale du pattern
+            {selected.size === 0 ? "Couverture globale du pattern" : "Couverture (sélection)"}
           </h2>
           <p className="text-4xl font-bold mt-2">{globalCoverage}%</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Moyenne pondérée des 7 couches sur les {sorted.length} plateformes
+            Moyenne pondérée des 7 couches sur les {visible.length} plateforme{visible.length > 1 ? "s" : ""}
           </p>
         </div>
         <div className="text-right space-y-1">
           <div className="text-xs text-muted-foreground">
-            ✅ {sorted.filter((p) => p.status === "applied").length} complètes
+            ✅ {visible.filter((p) => p.status === "applied").length} complètes
           </div>
           <div className="text-xs text-muted-foreground">
-            🟡 {sorted.filter((p) => p.status === "partial").length} en cours
+            🟡 {visible.filter((p) => p.status === "partial").length} en cours
           </div>
           <div className="text-xs text-muted-foreground">
-            🔴 {sorted.filter((p) => p.status === "todo").length} à démarrer
+            🔴 {visible.filter((p) => p.status === "todo").length} à démarrer
           </div>
         </div>
       </div>
@@ -122,10 +226,11 @@ export default function ArchitecturePage() {
                     {l.title.split(". ")[0]}
                   </th>
                 ))}
+                <th className="p-2"></th>
               </tr>
             </thead>
             <tbody>
-              {sorted.map((p) => (
+              {visible.map((p) => (
                 <tr key={p.key} className="border-b border-border last:border-0 hover:bg-accent/20">
                   <td className="p-4">
                     <div className="font-medium">{p.name}</div>
@@ -144,8 +249,86 @@ export default function ArchitecturePage() {
                       </div>
                     </td>
                   ))}
+                  <td className="p-2 text-right">
+                    <Button asChild variant="ghost" size="sm">
+                      <Link to={`/hq/architecture/${p.key}`} aria-label={`Détail ${p.name}`}>
+                        Détail <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </Link>
+                    </Button>
+                  </td>
                 </tr>
               ))}
+              {visible.length === 0 && (
+                <tr>
+                  <td colSpan={ARCHITECTURE_LAYERS.length + 4} className="p-6 text-center text-sm text-muted-foreground">
+                    Aucune plateforme ne correspond au filtre actuel.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Tableau d'audit des actions */}
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="text-lg font-semibold">Journal d'audit des actions</h2>
+          <span className="text-xs text-muted-foreground">
+            {visibleAudit.length} action{visibleAudit.length > 1 ? "s" : ""} ·{" "}
+            {selected.size === 0 ? "toutes plateformes" : `${selected.size} sélectionnée${selected.size > 1 ? "s" : ""}`}
+          </span>
+        </div>
+        <div className="card-executive overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-xs uppercase tracking-wider text-muted-foreground">
+                <th className="text-left p-3">Horodatage</th>
+                <th className="text-left p-3">Plateforme</th>
+                <th className="text-left p-3">Couche</th>
+                <th className="text-left p-3">Action</th>
+                <th className="text-left p-3">Statut</th>
+                <th className="text-left p-3">Acteur</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleAudit.map((a) => {
+                const layer = ARCHITECTURE_LAYERS.find((l) => l.key === a.layerKey);
+                const platform = allSorted.find((p) => String(p.key) === String(a.platformKey));
+                return (
+                  <tr key={a.id} className="border-b border-border last:border-0 hover:bg-accent/20">
+                    <td className="p-3 text-xs font-mono tabular-nums text-muted-foreground whitespace-nowrap">
+                      {formatDate(a.timestamp)}
+                    </td>
+                    <td className="p-3 font-medium whitespace-nowrap">
+                      <Link
+                        to={`/hq/architecture/${a.platformKey}`}
+                        className="hover:underline"
+                      >
+                        {platform?.name ?? String(a.platformKey)}
+                      </Link>
+                    </td>
+                    <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
+                      {layer?.title ?? a.layerKey}
+                    </td>
+                    <td className="p-3">
+                      <div>{a.action}</div>
+                      {a.notes && (
+                        <div className="text-xs text-muted-foreground mt-0.5">{a.notes}</div>
+                      )}
+                    </td>
+                    <td className="p-3"><AuditStatusBadge status={a.status} /></td>
+                    <td className="p-3 text-xs text-muted-foreground">{a.actor}</td>
+                  </tr>
+                );
+              })}
+              {visibleAudit.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="p-6 text-center text-sm text-muted-foreground">
+                    Aucune action enregistrée pour cette sélection.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -159,6 +342,12 @@ export default function ArchitecturePage() {
             type: "manual",
             reliability: "verified",
             description: "Source de vérité versionnée dans le repo. Mise à jour requise à chaque évolution du pattern (TS + docs/SYSTEM_ARCHITECTURE.md simultanément).",
+          },
+          {
+            name: "Journal d'audit ARCHITECTURE_AUDIT_LOG",
+            type: "manual",
+            reliability: "verified",
+            description: "Actions horodatées d'industrialisation par plateforme et par couche. À compléter à chaque évolution réelle.",
           },
         ]}
         calculations={[

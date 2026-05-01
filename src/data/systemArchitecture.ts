@@ -276,3 +276,253 @@ export function getCoverageScore(profile: PlatformArchitectureProfile): number {
   }
   return Math.round((score / total) * 100);
 }
+
+/* -------------------------------------------------------------------------- */
+/*                       Journal d'audit du pattern                            */
+/* -------------------------------------------------------------------------- */
+
+export type AuditActionStatus = "done" | "in_progress" | "blocked" | "planned";
+export type AuditActionImpact = "applied" | "partial" | "todo";
+
+export interface ArchitectureAuditAction {
+  id: string;
+  /** ISO date — horodatage de l'action */
+  timestamp: string;
+  platformKey: PlatformArchitectureProfile["key"];
+  layerKey: ArchitectureLayer["key"];
+  action: string;
+  status: AuditActionStatus;
+  /** Statut de la couche après l'action */
+  resultingStatus: AuditActionImpact;
+  actor: string;
+  notes?: string;
+}
+
+/**
+ * Journal des actions d'industrialisation du pattern HQ par plateforme.
+ * Source de vérité versionnée — à compléter à chaque évolution réelle.
+ * Ordre antéchronologique recommandé à l'usage (le tri se fait côté UI).
+ */
+export const ARCHITECTURE_AUDIT_LOG: ArchitectureAuditAction[] = [
+  // --- EmotionsCare (référence) ---
+  {
+    id: "ec-runs-dlq-2026-03-12",
+    timestamp: "2026-03-12T09:30:00Z",
+    platformKey: "emotionscare",
+    layerKey: "runs",
+    action: "Activation DLQ + retry exponentiel (1→5→30 min)",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+    notes: "Horizon 2 reliability — 12 specs Playwright en place.",
+  },
+  {
+    id: "ec-obs-2026-03-15",
+    timestamp: "2026-03-15T14:00:00Z",
+    platformKey: "emotionscare",
+    layerKey: "observability",
+    action: "Déploiement /healthz public + p95 RPC",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  // --- Med MNG ---
+  {
+    id: "med-rpc-2026-03-20",
+    timestamp: "2026-03-20T10:15:00Z",
+    platformKey: "med-mng",
+    layerKey: "rpc",
+    action: "Audit RPC `get_*` jobs musique — 6/14 manquantes",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+    notes: "Reste à ajouter get_mng_generation_jobs + get_mng_track_status.",
+  },
+  {
+    id: "med-runs-2026-03-22",
+    timestamp: "2026-03-22T11:45:00Z",
+    platformKey: "med-mng",
+    layerKey: "runs",
+    action: "Câblage initial run-engine génération musicale",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Autopilot",
+  },
+  {
+    id: "med-autopilot-2026-04",
+    timestamp: "2026-04-02T08:00:00Z",
+    platformKey: "med-mng",
+    layerKey: "autopilot",
+    action: "Planification activation autopilot pg_cron",
+    status: "planned",
+    resultingStatus: "todo",
+    actor: "Présidente",
+  },
+  // --- System Compass ---
+  {
+    id: "sc-edge-2026-03-18",
+    timestamp: "2026-03-18T16:20:00Z",
+    platformKey: "system-compass",
+    layerKey: "edge",
+    action: "Sécurisation Edge Functions analyse pays (JWT + Zod)",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  {
+    id: "sc-runs-2026-04-01",
+    timestamp: "2026-04-01T09:00:00Z",
+    platformKey: "system-compass",
+    layerKey: "runs",
+    action: "Définition registre run_type dédié (3 templates)",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+  },
+  // --- Growth Copilot ---
+  {
+    id: "gc-full-2026-02-28",
+    timestamp: "2026-02-28T18:00:00Z",
+    platformKey: "growth-copilot",
+    layerKey: "autopilot",
+    action: "Mise en service workforce 39 agents IA — pattern complet",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  {
+    id: "gc-obs-2026-03-25",
+    timestamp: "2026-03-25T12:00:00Z",
+    platformKey: "growth-copilot",
+    layerKey: "observability",
+    action: "Branchement growth-analytics proxy + alertes seuils",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  // --- NEARVITY ---
+  {
+    id: "nv-rls-2026-03-10",
+    timestamp: "2026-03-10T10:00:00Z",
+    platformKey: "nearvity",
+    layerKey: "rls",
+    action: "RLS hardening v3 (suppression USING true)",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  {
+    id: "nv-runs-2026-04-05",
+    timestamp: "2026-04-05T09:30:00Z",
+    platformKey: "nearvity",
+    layerKey: "runs",
+    action: "Spécification run-engine modération à industrialiser",
+    status: "planned",
+    resultingStatus: "todo",
+    actor: "Présidente",
+  },
+  // --- UrgenceOS ---
+  {
+    id: "uo-rpc-2026-03-30",
+    timestamp: "2026-03-30T07:45:00Z",
+    platformKey: "swift-care-hub",
+    layerKey: "rpc",
+    action: "Plan P1 : RPC strictes + audit immuable multi-zones",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+    notes: "Critique métier — alerting rouge à câbler.",
+  },
+  {
+    id: "uo-obs-2026-04-08",
+    timestamp: "2026-04-08T15:00:00Z",
+    platformKey: "swift-care-hub",
+    layerKey: "observability",
+    action: "Spec alerting rouge multi-zones",
+    status: "blocked",
+    resultingStatus: "partial",
+    actor: "Présidente",
+    notes: "Bloqué : attente validation cellule qualité hospitalière.",
+  },
+  // --- Track Triumph ---
+  {
+    id: "tt-rpc-2026-03-05",
+    timestamp: "2026-03-05T13:00:00Z",
+    platformKey: "track-triumph-tavern",
+    layerKey: "rpc",
+    action: "Validation manuelle des concours sensibles via RPC dédiée",
+    status: "done",
+    resultingStatus: "applied",
+    actor: "Présidente",
+  },
+  {
+    id: "tt-runs-2026-04-10",
+    timestamp: "2026-04-10T11:00:00Z",
+    platformKey: "track-triumph-tavern",
+    layerKey: "runs",
+    action: "DLQ + SLO à brancher sur worker votes",
+    status: "planned",
+    resultingStatus: "partial",
+    actor: "Présidente",
+  },
+  // --- Trust Seal Chain ---
+  {
+    id: "tsc-edge-2026-04-03",
+    timestamp: "2026-04-03T09:15:00Z",
+    platformKey: "trust-seal-chain",
+    layerKey: "edge",
+    action: "Câblage run engine certification AI Act",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+  },
+  // --- StudyBeats ---
+  {
+    id: "sb-rls-2026-04-12",
+    timestamp: "2026-04-12T10:30:00Z",
+    platformKey: "studybeats",
+    layerKey: "rls",
+    action: "RLS partielle — durcissement avant ouverture payante",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+  },
+  // --- Vascular Atlas ---
+  {
+    id: "va-rls-2026-04-15",
+    timestamp: "2026-04-15T08:00:00Z",
+    platformKey: "vascular-atlas",
+    layerKey: "rls",
+    action: "Renforcement RGPD/RLS prioritaire avant tout volume",
+    status: "in_progress",
+    resultingStatus: "partial",
+    actor: "Présidente",
+    notes: "Prototype clinique — gel des écritures externes en attendant.",
+  },
+  {
+    id: "va-rpc-2026-04-20",
+    timestamp: "2026-04-20T09:00:00Z",
+    platformKey: "vascular-atlas",
+    layerKey: "rpc",
+    action: "RPC `get_va_*` à concevoir (lectures cliniques)",
+    status: "planned",
+    resultingStatus: "todo",
+    actor: "Présidente",
+  },
+];
+
+export function getAuditActionsForPlatform(
+  platformKey: PlatformArchitectureProfile["key"],
+): ArchitectureAuditAction[] {
+  return ARCHITECTURE_AUDIT_LOG
+    .filter((a) => a.platformKey === platformKey)
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+/** Liste des couches encore à industrialiser pour une plateforme (status partial/todo). */
+export function getGaps(profile: PlatformArchitectureProfile): ArchitectureLayer[] {
+  return ARCHITECTURE_LAYERS.filter((l) => {
+    const v = profile.layers[l.key];
+    return v === "partial" || v === "todo" || v === undefined;
+  });
+}
