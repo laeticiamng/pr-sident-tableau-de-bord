@@ -30,6 +30,7 @@ export const sidebarTranslations = {
     auditLog: "Audit Log",
     enterprise: "Entreprise",
     governanceHub: "Gouvernance H3",
+    architecture: "Architecture",
   },
   en: {
     main: "Main",
@@ -62,6 +63,7 @@ export const sidebarTranslations = {
     auditLog: "Audit Log",
     enterprise: "Enterprise",
     governanceHub: "Governance H3",
+    architecture: "Architecture",
   },
   de: {
     main: "Hauptmenü",
@@ -94,5 +96,6 @@ export const sidebarTranslations = {
     auditLog: "Audit-Log",
     enterprise: "Unternehmen",
     governanceHub: "Governance H3",
+    architecture: "Architektur",
   },
 };

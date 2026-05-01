@@ -30,6 +30,7 @@ import {
   Search,
   Users,
   Landmark,
+  Network,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
@@ -81,6 +82,7 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
       label: t.governance,
       items: [
         { href: "/hq/governance", label: t.governanceHub, icon: Landmark },
+        { href: "/hq/architecture", label: t.architecture, icon: Network },
         { href: "/hq/securite", label: t.security, icon: Shield },
         { href: "/hq/conformite", label: t.compliance, icon: Scale },
         { href: "/hq/audit", label: t.auditLog, icon: FileText },
