@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getContactSchema, sanitizeHtml } from "@/lib/validation";
 import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
+import { HeroVerifiedSlot } from "@/components/HeroVerifiedSlot";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,6 +75,7 @@ export default function ContactPage() {
             <Badge variant="gold" className="mb-6">{t.hero.badge}</Badge>
             <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">{t.hero.title}</h1>
             <p className="text-body-lg text-white/80">{t.hero.subtitle}</p>
+            <HeroVerifiedSlot tone="dark" />
           </div>
         </div>
       </section>
