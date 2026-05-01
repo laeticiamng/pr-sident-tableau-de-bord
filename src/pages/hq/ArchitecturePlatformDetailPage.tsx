@@ -297,6 +297,10 @@ export default function ArchitecturePlatformDetailPage() {
                         const reqId = `${profile.key}::${layer.key}::${action.id}`;
                         const isRequested = requested.has(reqId);
                         const isPending = createEntry.isPending;
+                        const layerEntries = approvalsByLayer.get(layer.key) ?? [];
+                        const actionEntries = layerEntries.filter((e) =>
+                          (e.tags ?? []).includes(`action:${action.id}`),
+                        );
                         return (
                           <div
                             key={action.id}
@@ -319,10 +323,47 @@ export default function ArchitecturePlatformDetailPage() {
                                 <span className="text-[11px] text-muted-foreground tabular-nums">
                                   ~{action.effortHours} h
                                 </span>
+                                {actionEntries.length > 0 && (
+                                  <Link
+                                    to={`/hq/journal?tag=action:${action.id}`}
+                                    className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                                    aria-label={`Voir l'historique d'approbation de ${action.title}`}
+                                  >
+                                    <History className="h-3 w-3" />
+                                    {actionEntries.length} demande{actionEntries.length > 1 ? "s" : ""}
+                                  </Link>
+                                )}
                               </div>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {action.description}
                               </p>
+                              {actionEntries.length > 0 && (
+                                <ul className="mt-2 space-y-1 border-t border-border/60 pt-2">
+                                  {actionEntries.slice(0, 3).map((e) => (
+                                    <li
+                                      key={e.id}
+                                      className="flex items-center gap-2 text-[11px] text-muted-foreground"
+                                    >
+                                      <span className="font-mono tabular-nums">
+                                        {formatDate(e.created_at)}
+                                      </span>
+                                      <span aria-hidden>•</span>
+                                      {e.impact_measured ? (
+                                        <Badge variant="success">Décidée</Badge>
+                                      ) : (
+                                        <Badge variant="warning">En attente</Badge>
+                                      )}
+                                      <Link
+                                        to={`/hq/journal#${e.id}`}
+                                        className="hover:underline truncate"
+                                        title={e.title}
+                                      >
+                                        {e.title}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                             <Button
                               size="sm"
