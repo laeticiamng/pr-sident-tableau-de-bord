@@ -12,6 +12,7 @@ import { useTranslation } from "@/contexts/LanguageContext";
 import { trustTranslations } from "@/i18n/trust";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PresidentCredentials } from "@/components/PresidentCredentials";
+import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
 
 const SECURITY_ICONS = [Lock, Shield, Server, Eye, FileCheck, Lock];
 
@@ -53,7 +54,7 @@ export default function TrustPage() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">{t.hero.title}</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t.hero.subtitle}</p>
           <div className="mt-6 flex justify-center">
-            <PresidentCredentials variant="inline" />
+            <VerifiedPresidentBadge size="sm" tone="light" showGLN={false} />
           </div>
         </div>
       </section>

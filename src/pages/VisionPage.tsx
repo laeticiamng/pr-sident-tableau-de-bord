@@ -46,7 +46,7 @@ export default function VisionPage() {
             </h1>
             <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed">{t.hero.description}</p>
             <div className="mt-6 flex justify-center">
-              <VerifiedPresidentBadge size="md" tone="dark" />
+              <VerifiedPresidentBadge size="sm" tone="dark" showGLN={false} />
             </div>
           </div>
         </div>
