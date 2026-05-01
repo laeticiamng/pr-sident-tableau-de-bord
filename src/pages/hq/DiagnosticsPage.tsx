@@ -30,6 +30,7 @@ import { PushNotificationHistory } from "@/components/hq/diagnostics/PushNotific
 import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget";
 import { SLOWidget } from "@/components/hq/diagnostics/SLOWidget";
 import { SupabaseConfigWidget } from "@/components/hq/diagnostics/SupabaseConfigWidget";
+import { ClientErrorsWidget } from "@/components/hq/diagnostics/ClientErrorsWidget";
 
 interface HealthCheck {
   name: string;
@@ -451,6 +452,9 @@ export default function DiagnosticsPage() {
 
       {/* Configuration boot Supabase (variables env, ping, session ID) */}
       <SupabaseConfigWidget />
+
+      {/* Journal des erreurs côté client (chunks JS, Service Worker, écran noir) */}
+      <ClientErrorsWidget />
 
       {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
       <ReliabilityWidget />
