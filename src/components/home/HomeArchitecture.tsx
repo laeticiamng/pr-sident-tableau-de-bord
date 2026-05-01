@@ -80,11 +80,12 @@ const Reveal = forwardRef<HTMLDivElement, { children: React.ReactNode; className
   },
 );
 
-export function HomeArchitecture() {
+export const HomeArchitecture = forwardRef<HTMLElement>(function HomeArchitecture(_props, ref) {
   const t = useTranslation(translations);
 
   return (
     <section
+      ref={ref}
       aria-label="Méthode d'architecture EMOTIONSCARE"
       className="relative py-20 md:py-28 bg-background overflow-hidden"
     >
@@ -145,4 +146,4 @@ export function HomeArchitecture() {
       </div>
     </section>
   );
-}
+});

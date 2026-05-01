@@ -78,6 +78,7 @@ const UserManagementPage = lazy(() => import("@/pages/hq/UserManagementPage"));
 const GovernancePage = lazy(() => import("@/pages/hq/GovernancePage"));
 const ArchitecturePage = lazy(() => import("@/pages/hq/ArchitecturePage"));
 const ArchitecturePlatformDetailPage = lazy(() => import("@/pages/hq/ArchitecturePlatformDetailPage"));
+const BootErrorPage = lazy(() => import("@/pages/BootErrorPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -123,6 +124,7 @@ const App = () => (
                 {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/boot-error" element={<BootErrorPage />} />
 
                 {/* Protected HQ Routes */}
                 <Route element={<ProtectedRoute />}>

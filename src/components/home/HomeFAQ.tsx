@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -10,11 +11,11 @@ import { ArrowRight } from "lucide-react";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { homeFaqTranslations } from "@/i18n/home-faq";
 
-export function HomeFAQ() {
+export const HomeFAQ = forwardRef<HTMLElement>(function HomeFAQ(_props, ref) {
   const t = useTranslation(homeFaqTranslations);
 
   return (
-    <section className="py-20 md:py-28 bg-background">
+    <section ref={ref} className="py-20 md:py-28 bg-background">
       <div className="container px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">
           <div className="text-center mb-12">
@@ -55,4 +56,4 @@ export function HomeFAQ() {
       </div>
     </section>
   );
-}
+});
