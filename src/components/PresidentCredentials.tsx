@@ -2,6 +2,8 @@ import { ExternalLink, BadgeCheck, Stethoscope } from "lucide-react";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { openExternalLink } from "@/lib/openExternalLink";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { medregTranslations } from "@/i18n/medreg";
 
 interface PresidentCredentialsProps {
   /** Variante visuelle. `panel` = carte large, `inline` = bandeau compact. */
@@ -21,11 +23,14 @@ export const PresidentCredentials = ({
   variant = "panel",
   className = "",
 }: PresidentCredentialsProps) => {
+  const t = useTranslation(medregTranslations);
+
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     openExternalLink(
       COMPANY_PROFILE.presidentMedRegUrl,
-      "le registre MedReg",
+      t.panel.registryLabel,
+      t.errors,
     );
   };
 
@@ -40,16 +45,16 @@ export const PresidentCredentials = ({
           "inline-flex max-w-full items-center gap-1.5 sm:gap-2 rounded-full border border-success/30 bg-success/5 px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-medium text-success hover:bg-success/10 transition-colors",
           className,
         )}
-        aria-label={`Vérifier l'inscription officielle de ${COMPANY_PROFILE.presidentMedRegName} sur le registre MedReg`}
+        aria-label={t.panel.inlineAriaLabel(COMPANY_PROFILE.presidentMedRegName)}
       >
         <BadgeCheck className="h-3.5 w-3.5 shrink-0" />
         <span className="truncate">
           <span className="sm:hidden">
-            Présidente vérifiée · MedReg
+            {t.badgeLabel} · MedReg
           </span>
           <span className="hidden sm:inline">
-            Présidente vérifiée — {COMPANY_PROFILE.presidentMedRegProfession} ·
-            GLN {COMPANY_PROFILE.presidentMedRegGLN}
+            {t.badgeLabel} — {COMPANY_PROFILE.presidentMedRegProfession} ·
+            {" "}{t.glnPrefix} {COMPANY_PROFILE.presidentMedRegGLN}
           </span>
         </span>
         <ExternalLink className="h-3 w-3 shrink-0 opacity-70" />
@@ -72,20 +77,16 @@ export const PresidentCredentials = ({
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <BadgeCheck className="h-4 w-4 text-success" />
             <h3 className="font-semibold text-base">
-              Identité professionnelle vérifiée
+              {t.panel.title}
             </h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-            La Présidente d'EMOTIONSCARE SASU est inscrite au registre
-            officiel des professions de santé de la Confédération suisse
-            (MedReg) en tant que {COMPANY_PROFILE.presidentMedRegProfession}.
-            Cette inscription est publique et vérifiable par n'importe qui via
-            son numéro GLN.
+            {t.panel.description(COMPANY_PROFILE.presidentMedRegProfession)}
           </p>
           <dl className="grid gap-3 grid-cols-1 sm:grid-cols-2 text-sm mb-4">
             <div className="min-w-0">
               <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                Nom officiel
+                {t.panel.fieldName}
               </dt>
               <dd className="font-medium break-words">
                 {COMPANY_PROFILE.presidentMedRegName}
@@ -93,7 +94,7 @@ export const PresidentCredentials = ({
             </div>
             <div className="min-w-0">
               <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                Profession
+                {t.panel.fieldProfession}
               </dt>
               <dd className="font-medium">
                 {COMPANY_PROFILE.presidentMedRegProfession}
@@ -101,7 +102,7 @@ export const PresidentCredentials = ({
             </div>
             <div className="min-w-0">
               <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                Numéro GLN
+                {t.panel.fieldGLN}
               </dt>
               <dd className="font-mono text-sm break-all">
                 {COMPANY_PROFILE.presidentMedRegGLN}
@@ -109,7 +110,7 @@ export const PresidentCredentials = ({
             </div>
             <div className="min-w-0">
               <dt className="text-xs uppercase tracking-wide text-muted-foreground">
-                Registre
+                {t.panel.fieldRegistry}
               </dt>
               <dd className="font-medium break-words">
                 {COMPANY_PROFILE.presidentMedRegRegistry}
@@ -123,7 +124,7 @@ export const PresidentCredentials = ({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
           >
-            Vérifier sur le registre officiel
+            {t.panel.verifyCta}
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
