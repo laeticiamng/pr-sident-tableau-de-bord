@@ -526,3 +526,155 @@ export function getGaps(profile: PlatformArchitectureProfile): ArchitectureLayer
     return v === "partial" || v === "todo" || v === undefined;
   });
 }
+
+/* -------------------------------------------------------------------------- */
+/*                    Actions proposées par couche (gaps)                      */
+/* -------------------------------------------------------------------------- */
+
+export interface ProposedAction {
+  id: string;
+  title: string;
+  description: string;
+  /** Niveau de risque pour le journal d'approbation. */
+  risk: "low" | "medium" | "high" | "critical";
+  /** Effort indicatif (h-personne). */
+  effortHours: number;
+}
+
+/**
+ * Catalogue d'actions concrètes pour fermer chaque type de gap.
+ * Source de vérité versionnée. Affiché par la page détail plateforme,
+ * et utilisé pour générer une demande d'approbation Présidente.
+ */
+export const PROPOSED_ACTIONS_BY_LAYER: Record<string, ProposedAction[]> = {
+  schema: [
+    {
+      id: "schema-isolate",
+      title: "Isoler le schéma applicatif (préfixe dédié)",
+      description: "Migrer les tables métier dans un schéma dédié non exposé via PostgREST direct.",
+      risk: "medium",
+      effortHours: 6,
+    },
+    {
+      id: "schema-views",
+      title: "Créer des vues lecture-seule cross-platform",
+      description: "Vues `SECURITY DEFINER` filtrées par `is_owner()` pour les besoins HQ.",
+      risk: "low",
+      effortHours: 3,
+    },
+  ],
+  rls: [
+    {
+      id: "rls-purge-using-true",
+      title: "Purger les policies USING true",
+      description: "Remplacer toute policy permissive par `is_owner()` ou `has_org_access()`.",
+      risk: "high",
+      effortHours: 4,
+    },
+    {
+      id: "rls-deny-anon",
+      title: "Ajouter DENY explicite anon sur tables sensibles",
+      description: "Policy SELECT/INSERT/UPDATE/DELETE roles=anon avec USING/WITH CHECK = false.",
+      risk: "high",
+      effortHours: 2,
+    },
+  ],
+  rpc: [
+    {
+      id: "rpc-getters",
+      title: "Industrialiser les RPC `get_*` SECURITY DEFINER",
+      description: "Une RPC par lecture métier critique avec `is_owner()` en première instruction.",
+      risk: "medium",
+      effortHours: 8,
+    },
+    {
+      id: "rpc-search-path",
+      title: "Figer search_path sur toutes les RPC",
+      description: "`SET search_path = public, <schema>` pour éviter l'injection par schéma.",
+      risk: "medium",
+      effortHours: 2,
+    },
+  ],
+  edge: [
+    {
+      id: "edge-auth",
+      title: "Imposer JWT + RBAC sur Edge Functions",
+      description: "Utiliser `_shared/auth.ts` ; renvoyer 401/403 explicitement ; sanitizer les erreurs.",
+      risk: "high",
+      effortHours: 5,
+    },
+    {
+      id: "edge-zod",
+      title: "Validation d'entrée Zod stricte",
+      description: "Schéma de body et query params, retour 400 avec messages clairs.",
+      risk: "low",
+      effortHours: 3,
+    },
+    {
+      id: "edge-rate-limit",
+      title: "Brancher `rate-limit-db` partagé",
+      description: "Limite DB persistante par IP / user_id sur les endpoints sensibles.",
+      risk: "medium",
+      effortHours: 3,
+    },
+  ],
+  runs: [
+    {
+      id: "runs-registry",
+      title: "Définir le registre `run_type` dédié",
+      description: "Templates typés par plateforme dans `run-types-registry.ts`.",
+      risk: "low",
+      effortHours: 4,
+    },
+    {
+      id: "runs-dlq",
+      title: "Activer DLQ + retry exponentiel (1→5→30 min)",
+      description: "Table `runs_dlq`, worker `retry-dlq-runs`, anti-duplication.",
+      risk: "medium",
+      effortHours: 6,
+    },
+  ],
+  autopilot: [
+    {
+      id: "autopilot-cron",
+      title: "Activer pg_cron + `ai-scheduler`",
+      description: "Planification autonome avec X-Cron-Secret et garde 10 min anti-duplication.",
+      risk: "medium",
+      effortHours: 4,
+    },
+    {
+      id: "autopilot-override",
+      title: "Override stuck-run 15 min",
+      description: "Détection des runs bloqués > 15 min et reprise sécurisée.",
+      risk: "low",
+      effortHours: 2,
+    },
+  ],
+  observability: [
+    {
+      id: "obs-healthz",
+      title: "Exposer /healthz public",
+      description: "Endpoint Edge sans auth retournant statut DB + breaker AI.",
+      risk: "low",
+      effortHours: 2,
+    },
+    {
+      id: "obs-p95",
+      title: "Calcul p95 + SLO via RPC",
+      description: "`get_hq_run_duration_metrics` + `get_hq_slo_status` sur fenêtre 7 jours.",
+      risk: "low",
+      effortHours: 4,
+    },
+    {
+      id: "obs-audit-immutable",
+      title: "Audit log immuable + alerting",
+      description: "Table append-only et règles d'alerte sur erreurs critiques.",
+      risk: "high",
+      effortHours: 5,
+    },
+  ],
+};
+
+export function getProposedActionsForLayer(layerKey: string): ProposedAction[] {
+  return PROPOSED_ACTIONS_BY_LAYER[layerKey] ?? [];
+}
