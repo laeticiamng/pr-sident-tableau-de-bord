@@ -16,8 +16,10 @@ import {
 } from "@/data/systemArchitecture";
 import { useRecentRuns } from "@/hooks/hq/useRuns";
 import { useDLQEntries } from "@/hooks/hq/useReliability";
-import { useCreateJournalEntry } from "@/hooks/useJournal";
+import { useCreateJournalEntry, useJournalEntries, type JournalEntry } from "@/hooks/useJournal";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import {
   ArrowLeft,
   Layers,
@@ -33,6 +35,7 @@ import {
   AlertOctagon,
   Send,
   CheckCheck,
+  History,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -104,6 +107,7 @@ export default function ArchitecturePlatformDetailPage() {
   // Demande d'approbation Présidente — persistée dans le journal stratégique
   const { user } = useAuth();
   const createEntry = useCreateJournalEntry();
+  const { data: journalEntries = [] } = useJournalEntries();
   const [requested, setRequested] = useState<Set<string>>(new Set());
   const requestApproval = (layerKey: string, action: ProposedAction) => {
     const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
@@ -124,15 +128,67 @@ export default function ArchitecturePlatformDetailPage() {
         title,
         content,
         entry_type: "decision",
-        tags: ["architecture", "approval-request", String(profile.key), layerKey, `risk:${action.risk}`],
+        tags: [
+          "architecture",
+          "approval-request",
+          String(profile.key),
+          layerKey,
+          `action:${action.id}`,
+          `risk:${action.risk}`,
+        ],
       },
       {
         onSuccess: () => {
           setRequested((prev) => new Set(prev).add(requestId));
+          // Notifie la Présidente — best-effort, on n'interrompt pas le flux UI
+          const urgency =
+            action.risk === "critical" || action.risk === "high" ? "high" : "medium";
+          supabase.functions
+            .invoke("send-push-notification", {
+              body: {
+                title: `🛂 Approbation requise — ${profile.name}`,
+                message: `${layer?.title ?? layerKey} · ${action.title} (risque ${action.risk}, ~${action.effortHours} h)`,
+                urgency,
+                type: "architecture_approval",
+                url: `/hq/architecture/${profile.key}`,
+                data: {
+                  platformKey: String(profile.key),
+                  layerKey,
+                  actionId: action.id,
+                  requestId,
+                },
+              },
+            })
+            .catch((err) => {
+              logger.warn("[Architecture] Push notification failed (non-blocking):", err);
+            });
         },
       },
     );
   };
+
+  /** Historique des demandes d'approbation (journal) indexées par couche pour cette plateforme. */
+  const approvalsByLayer = useMemo(() => {
+    const map = new Map<string, JournalEntry[]>();
+    for (const entry of journalEntries) {
+      const tags = entry.tags ?? [];
+      if (!tags.includes("approval-request")) continue;
+      if (!tags.includes(String(profile.key))) continue;
+      const layerTag = tags.find((t) => ARCHITECTURE_LAYERS.some((l) => l.key === t));
+      if (!layerTag) continue;
+      const list = map.get(layerTag) ?? [];
+      list.push(entry);
+      map.set(layerTag, list);
+    }
+    // Tri antéchronologique
+    for (const [k, list] of map) {
+      map.set(
+        k,
+        [...list].sort((a, b) => b.created_at.localeCompare(a.created_at)),
+      );
+    }
+    return map;
+  }, [journalEntries, profile.key]);
 
   const platformRuns = useMemo(
     () => recentRuns.filter((r) => r.platform_key === platformKey).slice(0, 10),
