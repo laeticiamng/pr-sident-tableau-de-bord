@@ -3,6 +3,7 @@ export const homeTranslations = {
     hero: {
       badge: "Éditeur de logiciels",
       madeIn: "🇫🇷 Made in France",
+      ariaLabel: "Présentation EMOTIONSCARE",
       title: "10 logiciels conçus en France pour résoudre un vrai problème",
       subtitle: "Bien-être des soignants, apprentissage médical, expatriation, croissance IA. Trouvez la plateforme qui change votre quotidien.",
       description: "",
