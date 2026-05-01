@@ -325,6 +325,7 @@ export const homeTranslations = {
     hero: {
       badge: "Softwareherausgeber",
       madeIn: "🇫🇷 Made in France",
+      ariaLabel: "EMOTIONSCARE-Vorstellung",
       title: "10 in Frankreich entwickelte Softwarelösungen für echte Probleme",
       subtitle: "Wohlbefinden im Gesundheitswesen, medizinisches Lernen, Auswanderung, KI-Wachstum. Finden Sie die Plattform, die Ihren Alltag verändert.",
       description: "",
