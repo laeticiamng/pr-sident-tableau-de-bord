@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import {
@@ -28,6 +29,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Search,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -111,19 +113,51 @@ export default function ArchitecturePage() {
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }, [visible]);
 
+  // Recherche journal d'audit : couche, statut, mots-clés
+  const [layerFilter, setLayerFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [keywords, setKeywords] = useState<string>("");
+  const filteredAudit = useMemo(() => {
+    const q = keywords.trim().toLowerCase();
+    return visibleAudit.filter((a) => {
+      if (layerFilter !== "all" && a.layerKey !== layerFilter) return false;
+      if (statusFilter !== "all" && a.status !== statusFilter) return false;
+      if (q.length > 0) {
+        const platform = allSorted.find((p) => String(p.key) === String(a.platformKey));
+        const hay = [
+          a.action,
+          a.notes ?? "",
+          a.actor,
+          platform?.name ?? "",
+          String(a.platformKey),
+          a.layerKey,
+        ]
+          .join(" \u2022 ")
+          .toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [visibleAudit, layerFilter, statusFilter, keywords, allSorted]);
+  const resetSearch = () => {
+    setLayerFilter("all");
+    setStatusFilter("all");
+    setKeywords("");
+  };
+
   // Pagination journal d'audit
   const PAGE_SIZE_OPTIONS = [10, 25, 50] as const;
   const [pageSize, setPageSize] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
-  const totalPages = Math.max(1, Math.ceil(visibleAudit.length / pageSize));
-  // Reset à la page 1 quand le filtre ou la taille de page change
+  const totalPages = Math.max(1, Math.ceil(filteredAudit.length / pageSize));
+  // Reset à la page 1 quand un filtre, la recherche ou la taille de page change
   useEffect(() => {
     setPage(1);
-  }, [pageSize, selected]);
+  }, [pageSize, selected, layerFilter, statusFilter, keywords]);
   const safePage = Math.min(page, totalPages);
   const pageStart = (safePage - 1) * pageSize;
   const pageEnd = pageStart + pageSize;
-  const pageRows = visibleAudit.slice(pageStart, pageEnd);
+  const pageRows = filteredAudit.slice(pageStart, pageEnd);
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -291,10 +325,60 @@ export default function ArchitecturePage() {
         <div className="flex items-baseline justify-between mb-4">
           <h2 className="text-lg font-semibold">Journal d'audit des actions</h2>
           <span className="text-xs text-muted-foreground">
-            {visibleAudit.length} action{visibleAudit.length > 1 ? "s" : ""} ·{" "}
+            {filteredAudit.length} / {visibleAudit.length} action{visibleAudit.length > 1 ? "s" : ""} ·{" "}
             {selected.size === 0 ? "toutes plateformes" : `${selected.size} sélectionnée${selected.size > 1 ? "s" : ""}`}
           </span>
         </div>
+
+        {/* Barre de recherche multi-critères */}
+        <div className="card-executive p-3 mb-3">
+          <div className="grid gap-2 md:grid-cols-[1fr_auto_auto_auto]">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+              <Input
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+                placeholder="Rechercher (action, notes, plateforme, acteur…)"
+                className="pl-9 h-9 text-sm"
+                aria-label="Recherche mots-clés"
+              />
+            </div>
+            <select
+              value={layerFilter}
+              onChange={(e) => setLayerFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-2 text-xs"
+              aria-label="Filtrer par couche"
+            >
+              <option value="all">Toutes les couches</option>
+              {ARCHITECTURE_LAYERS.map((l) => (
+                <option key={l.key} value={l.key}>
+                  {l.title}
+                </option>
+              ))}
+            </select>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-9 rounded-md border border-input bg-background px-2 text-xs"
+              aria-label="Filtrer par statut"
+            >
+              <option value="all">Tous statuts</option>
+              <option value="done">Fait</option>
+              <option value="in_progress">En cours</option>
+              <option value="blocked">Bloqué</option>
+              <option value="planned">Planifié</option>
+            </select>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetSearch}
+              disabled={layerFilter === "all" && statusFilter === "all" && keywords === ""}
+            >
+              <X className="h-3.5 w-3.5 mr-1" /> Effacer
+            </Button>
+          </div>
+        </div>
+
         <div className="card-executive overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -349,7 +433,7 @@ export default function ArchitecturePage() {
           </table>
 
           {/* Barre de pagination */}
-          {visibleAudit.length > 0 && (
+          {filteredAudit.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-3 py-3 border-t border-border text-xs">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <span>Lignes par page :</span>
@@ -371,9 +455,9 @@ export default function ArchitecturePage() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-muted-foreground tabular-nums">
-                  {visibleAudit.length === 0
+                  {filteredAudit.length === 0
                     ? "0"
-                    : `${pageStart + 1}–${Math.min(pageEnd, visibleAudit.length)} sur ${visibleAudit.length}`}
+                    : `${pageStart + 1}–${Math.min(pageEnd, filteredAudit.length)} sur ${filteredAudit.length}`}
                 </span>
                 <div className="flex items-center gap-1">
                   <Button

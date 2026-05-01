@@ -16,8 +16,10 @@ import {
 } from "@/data/systemArchitecture";
 import { useRecentRuns } from "@/hooks/hq/useRuns";
 import { useDLQEntries } from "@/hooks/hq/useReliability";
-import { useCreateJournalEntry } from "@/hooks/useJournal";
+import { useCreateJournalEntry, useJournalEntries, type JournalEntry } from "@/hooks/useJournal";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 import {
   ArrowLeft,
   Layers,
@@ -33,6 +35,7 @@ import {
   AlertOctagon,
   Send,
   CheckCheck,
+  History,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -104,6 +107,7 @@ export default function ArchitecturePlatformDetailPage() {
   // Demande d'approbation Présidente — persistée dans le journal stratégique
   const { user } = useAuth();
   const createEntry = useCreateJournalEntry();
+  const { data: journalEntries = [] } = useJournalEntries();
   const [requested, setRequested] = useState<Set<string>>(new Set());
   const requestApproval = (layerKey: string, action: ProposedAction) => {
     const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
@@ -124,15 +128,67 @@ export default function ArchitecturePlatformDetailPage() {
         title,
         content,
         entry_type: "decision",
-        tags: ["architecture", "approval-request", String(profile.key), layerKey, `risk:${action.risk}`],
+        tags: [
+          "architecture",
+          "approval-request",
+          String(profile.key),
+          layerKey,
+          `action:${action.id}`,
+          `risk:${action.risk}`,
+        ],
       },
       {
         onSuccess: () => {
           setRequested((prev) => new Set(prev).add(requestId));
+          // Notifie la Présidente — best-effort, on n'interrompt pas le flux UI
+          const urgency =
+            action.risk === "critical" || action.risk === "high" ? "high" : "medium";
+          supabase.functions
+            .invoke("send-push-notification", {
+              body: {
+                title: `🛂 Approbation requise — ${profile.name}`,
+                message: `${layer?.title ?? layerKey} · ${action.title} (risque ${action.risk}, ~${action.effortHours} h)`,
+                urgency,
+                type: "architecture_approval",
+                url: `/hq/architecture/${profile.key}`,
+                data: {
+                  platformKey: String(profile.key),
+                  layerKey,
+                  actionId: action.id,
+                  requestId,
+                },
+              },
+            })
+            .catch((err) => {
+              logger.warn("[Architecture] Push notification failed (non-blocking):", err);
+            });
         },
       },
     );
   };
+
+  /** Historique des demandes d'approbation (journal) indexées par couche pour cette plateforme. */
+  const approvalsByLayer = useMemo(() => {
+    const map = new Map<string, JournalEntry[]>();
+    for (const entry of journalEntries) {
+      const tags = entry.tags ?? [];
+      if (!tags.includes("approval-request")) continue;
+      if (!tags.includes(String(profile.key))) continue;
+      const layerTag = tags.find((t) => ARCHITECTURE_LAYERS.some((l) => l.key === t));
+      if (!layerTag) continue;
+      const list = map.get(layerTag) ?? [];
+      list.push(entry);
+      map.set(layerTag, list);
+    }
+    // Tri antéchronologique
+    for (const [k, list] of map) {
+      map.set(
+        k,
+        [...list].sort((a, b) => b.created_at.localeCompare(a.created_at)),
+      );
+    }
+    return map;
+  }, [journalEntries, profile.key]);
 
   const platformRuns = useMemo(
     () => recentRuns.filter((r) => r.platform_key === platformKey).slice(0, 10),
@@ -241,6 +297,10 @@ export default function ArchitecturePlatformDetailPage() {
                         const reqId = `${profile.key}::${layer.key}::${action.id}`;
                         const isRequested = requested.has(reqId);
                         const isPending = createEntry.isPending;
+                        const layerEntries = approvalsByLayer.get(layer.key) ?? [];
+                        const actionEntries = layerEntries.filter((e) =>
+                          (e.tags ?? []).includes(`action:${action.id}`),
+                        );
                         return (
                           <div
                             key={action.id}
@@ -263,10 +323,47 @@ export default function ArchitecturePlatformDetailPage() {
                                 <span className="text-[11px] text-muted-foreground tabular-nums">
                                   ~{action.effortHours} h
                                 </span>
+                                {actionEntries.length > 0 && (
+                                  <Link
+                                    to={`/hq/journal?tag=action:${action.id}`}
+                                    className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline"
+                                    aria-label={`Voir l'historique d'approbation de ${action.title}`}
+                                  >
+                                    <History className="h-3 w-3" />
+                                    {actionEntries.length} demande{actionEntries.length > 1 ? "s" : ""}
+                                  </Link>
+                                )}
                               </div>
                               <p className="text-xs text-muted-foreground mt-1">
                                 {action.description}
                               </p>
+                              {actionEntries.length > 0 && (
+                                <ul className="mt-2 space-y-1 border-t border-border/60 pt-2">
+                                  {actionEntries.slice(0, 3).map((e) => (
+                                    <li
+                                      key={e.id}
+                                      className="flex items-center gap-2 text-[11px] text-muted-foreground"
+                                    >
+                                      <span className="font-mono tabular-nums">
+                                        {formatDate(e.created_at)}
+                                      </span>
+                                      <span aria-hidden>•</span>
+                                      {e.impact_measured ? (
+                                        <Badge variant="success">Décidée</Badge>
+                                      ) : (
+                                        <Badge variant="warning">En attente</Badge>
+                                      )}
+                                      <Link
+                                        to={`/hq/journal#${e.id}`}
+                                        className="hover:underline truncate"
+                                        title={e.title}
+                                      >
+                                        {e.title}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
                             </div>
                             <Button
                               size="sm"
