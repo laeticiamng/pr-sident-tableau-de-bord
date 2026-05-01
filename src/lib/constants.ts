@@ -166,8 +166,11 @@ export const COMPANY_PROFILE = {
   presidentMedRegProfession: "Médecin",
   presidentMedRegGLN: "7601009569944",
   presidentMedRegRegistry: "MedReg — Confédération suisse",
-  presidentMedRegUrl:
-    "https://www.healthregs.admin.ch/MedReg/Search/Person/7601009569944",
+  // URL officielle du portail public suisse MedReg (plateforme des
+  // professions de la santé). On pointe vers la racine plutôt que vers une
+  // route profonde car le moteur interne est un SPA — la recherche par GLN
+  // se fait depuis la page d'accueil.
+  presidentMedRegUrl: "https://www.medregbm.admin.ch/",
 } as const;
 
 export type PlatformKey = typeof MANAGED_PLATFORMS[number]["key"];
