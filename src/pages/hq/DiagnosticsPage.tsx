@@ -31,6 +31,7 @@ import { ReliabilityWidget } from "@/components/hq/diagnostics/ReliabilityWidget
 import { SLOWidget } from "@/components/hq/diagnostics/SLOWidget";
 import { SupabaseConfigWidget } from "@/components/hq/diagnostics/SupabaseConfigWidget";
 import { ClientErrorsWidget } from "@/components/hq/diagnostics/ClientErrorsWidget";
+import { DiagnosticsReportWidget } from "@/components/hq/diagnostics/DiagnosticsReportWidget";
 
 interface HealthCheck {
   name: string;
@@ -455,6 +456,9 @@ export default function DiagnosticsPage() {
 
       {/* Journal des erreurs côté client (chunks JS, Service Worker, écran noir) */}
       <ClientErrorsWidget />
+
+      {/* Rapport Diagnostics complet (build, SW, PWA, console, réseau) — envoi après consentement */}
+      <DiagnosticsReportWidget />
 
       {/* Fiabilité : DLQ + p95 runs (Horizon 2) */}
       <ReliabilityWidget />
