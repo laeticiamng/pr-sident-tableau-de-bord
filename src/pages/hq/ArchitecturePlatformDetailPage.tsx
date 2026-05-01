@@ -671,6 +671,64 @@ export default function ArchitecturePlatformDetailPage() {
         ]}
         dataQuality="high"
       />
+
+      <Dialog open={!!dialogState} onOpenChange={(open) => !open && setDialogState(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Demande d'approbation</DialogTitle>
+            <DialogDescription>
+              {dialogState
+                ? `${profile.name} · ${dialogState.action.title} (risque ${dialogState.action.risk}, ~${dialogState.action.effortHours} h)`
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="approval-comment" className="flex items-center gap-2">
+                <MessageSquare className="h-3.5 w-3.5" /> Commentaire (optionnel)
+              </Label>
+              <Textarea
+                id="approval-comment"
+                placeholder="Contexte, justification, contraintes…"
+                value={comment}
+                onChange={(e) => setComment(e.target.value.slice(0, 2000))}
+                rows={4}
+              />
+              <p className="text-[11px] text-muted-foreground tabular-nums text-right">
+                {comment.length}/2000
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="approval-attachment-url" className="flex items-center gap-2">
+                <Paperclip className="h-3.5 w-3.5" /> Lien vers un document (optionnel)
+              </Label>
+              <Input
+                id="approval-attachment-url"
+                type="url"
+                placeholder="https://… (Drive, Notion, GitHub…)"
+                value={attachmentUrl}
+                onChange={(e) => setAttachmentUrl(e.target.value.slice(0, 1024))}
+              />
+              <Input
+                id="approval-attachment-label"
+                type="text"
+                placeholder="Libellé affiché (optionnel)"
+                value={attachmentLabel}
+                onChange={(e) => setAttachmentLabel(e.target.value.slice(0, 200))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogState(null)}>
+              Annuler
+            </Button>
+            <Button onClick={submitApproval} disabled={createEntry.isPending}>
+              <Send className="h-3.5 w-3.5 mr-1" />
+              {createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
