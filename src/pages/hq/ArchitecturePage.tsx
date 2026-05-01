@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -116,12 +116,10 @@ export default function ArchitecturePage() {
   const [pageSize, setPageSize] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const totalPages = Math.max(1, Math.ceil(visibleAudit.length / pageSize));
-  // Reset à la page 1 quand le filtre/pageSize change
-  const filterSig = `${selected.size}|${[...selected].sort().join(",")}|${pageSize}`;
-  useMemo(() => {
+  // Reset à la page 1 quand le filtre ou la taille de page change
+  useEffect(() => {
     setPage(1);
-    return filterSig;
-  }, [filterSig]);
+  }, [pageSize, selected]);
   const safePage = Math.min(page, totalPages);
   const pageStart = (safePage - 1) * pageSize;
   const pageEnd = pageStart + pageSize;
