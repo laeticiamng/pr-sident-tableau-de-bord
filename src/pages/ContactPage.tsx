@@ -180,6 +180,9 @@ export default function ContactPage() {
                   <a href={COMPANY_PROFILE.linkedinCompany} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-muted-foreground hover:text-accent hover:underline text-sm mt-1">
                     <span>EMOTIONSCARE SASU</span><ExternalLink className="h-3 w-3" />
                   </a>
+                  <div className="mt-2">
+                    <VerifiedPresidentBadge size="sm" tone="light" showGLN={false} />
+                  </div>
                 </div>
               </div>
 
