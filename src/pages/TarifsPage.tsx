@@ -82,7 +82,7 @@ export default function TarifsPage() {
                 "relative inline-flex h-7 w-12 items-center rounded-full transition-colors",
                 isAnnual ? "bg-accent" : "bg-border"
               )}
-              aria-label="Toggle annual billing"
+              aria-label={t.toggleBillingAria}
             >
               <span className={cn(
                 "inline-block h-5 w-5 rounded-full bg-white shadow transition-transform",
