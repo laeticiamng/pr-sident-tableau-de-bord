@@ -788,32 +788,66 @@ export default function ArchitecturePlatformDetailPage() {
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="approval-attachment-url" className="flex items-center gap-2">
-                <Paperclip className="h-3.5 w-3.5" /> Lien vers un document (optionnel)
+              <Label htmlFor="approval-attachment-file" className="flex items-center gap-2">
+                <Paperclip className="h-3.5 w-3.5" /> Pièce jointe (optionnel)
               </Label>
+              {file ? (
+                <div className="flex items-center gap-3 p-3 rounded-md border border-border bg-accent/10">
+                  <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{file.name}</p>
+                    <p className="text-[11px] text-muted-foreground tabular-nums">
+                      {(file.size / 1024).toFixed(1)} Ko · {file.type || "type inconnu"}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setFile(null)}
+                    aria-label="Retirer la pièce jointe"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="approval-attachment-file"
+                  className="flex items-center justify-center gap-2 p-4 rounded-md border border-dashed border-border bg-accent/5 cursor-pointer hover:bg-accent/15 transition-colors"
+                >
+                  <Upload className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">
+                    Cliquer pour sélectionner un fichier
+                  </span>
+                </label>
+              )}
               <Input
-                id="approval-attachment-url"
-                type="url"
-                placeholder="https://… (Drive, Notion, GitHub…)"
-                value={attachmentUrl}
-                onChange={(e) => setAttachmentUrl(e.target.value.slice(0, 1024))}
+                id="approval-attachment-file"
+                type="file"
+                className="hidden"
+                accept=".pdf,.png,.jpg,.jpeg,.webp,.gif,.txt,.md,.csv,.json,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) setFile(f);
+                  e.target.value = ""; // reset pour pouvoir re-sélectionner le même fichier
+                }}
               />
-              <Input
-                id="approval-attachment-label"
-                type="text"
-                placeholder="Libellé affiché (optionnel)"
-                value={attachmentLabel}
-                onChange={(e) => setAttachmentLabel(e.target.value.slice(0, 200))}
-              />
+              <p className="text-[11px] text-muted-foreground">
+                Stockage privé · lien sécurisé valable 7 jours · max 50 Mo (PDF, images, Office, texte).
+              </p>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogState(null)}>
               Annuler
             </Button>
-            <Button onClick={submitApproval} disabled={createEntry.isPending}>
-              <Send className="h-3.5 w-3.5 mr-1" />
-              {createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
+            <Button onClick={submitApproval} disabled={createEntry.isPending || uploading}>
+              {uploading || createEntry.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+              ) : (
+                <Send className="h-3.5 w-3.5 mr-1" />
+              )}
+              {uploading ? "Upload…" : createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
             </Button>
           </DialogFooter>
         </DialogContent>
