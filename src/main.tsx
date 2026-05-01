@@ -22,6 +22,11 @@ if (typeof window !== "undefined") {
     (window as unknown as { __APP_BUILD__?: string }).__APP_BUILD__ = BUILD_VERSION;
     document.documentElement.setAttribute("data-app-build", BUILD_VERSION);
     document.getElementById("root")?.setAttribute("data-build", BUILD_VERSION);
+    const buildNode = document.getElementById("app-build");
+    if (buildNode) {
+      buildNode.setAttribute("data-build", BUILD_VERSION);
+      buildNode.textContent = BUILD_VERSION;
+    }
   } catch { /* noop */ }
 }
 
