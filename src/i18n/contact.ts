@@ -146,6 +146,7 @@ export const contactTranslations = {
       headquarters: "Hauptsitz",
       email: "E-Mail",
       findUs: "Finden Sie uns",
+      presidentPhotoAlt: "Motongane Laeticia — Präsidentin von EMOTIONSCARE",
       hours: "Öffnungszeiten",
       hoursDetail: "Mo - Fr: 9:00 - 18:00 Uhr",
       hoursResponse: "Antwort innerhalb 24-48 Geschäftsstunden",
