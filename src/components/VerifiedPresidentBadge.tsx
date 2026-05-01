@@ -1,13 +1,31 @@
-import type { MouseEvent } from "react";
-import { BadgeCheck, ExternalLink } from "lucide-react";
+import { useState, type MouseEvent } from "react";
+import { BadgeCheck, ExternalLink, Loader2, AlertCircle } from "lucide-react";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { openExternalLink } from "@/lib/openExternalLink";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/contexts/LanguageContext";
+import { medregTranslations } from "@/i18n/medreg";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 type Size = "sm" | "md" | "lg";
 type Tone = "light" | "dark";
+
+/**
+ * États visuels du badge :
+ * - `ready`        : URL valide, prêt à être cliqué (Empty/idle).
+ * - `loading`      : feedback bref pendant l'ouverture du registre.
+ * - `success`      : feedback bref confirmant l'ouverture (auto-reset).
+ * - `error`        : dernière tentative échouée (popup bloqué, etc.).
+ * - `unavailable`  : URL constante invalide / non-HTTPS — bouton désactivé visuellement.
+ */
+export type VerifiedBadgeState =
+  | "ready"
+  | "loading"
+  | "success"
+  | "error"
+  | "unavailable";
 
 interface VerifiedPresidentBadgeProps {
   size?: Size;
@@ -16,6 +34,8 @@ interface VerifiedPresidentBadgeProps {
   /** Si false, n'affiche que le label court (utile en mobile dense). */
   showGLN?: boolean;
   className?: string;
+  /** Notifie le parent (ex : HeroVerifiedSlot) des changements d'état. */
+  onStateChange?: (state: VerifiedBadgeState) => void;
 }
 
 const SIZE_CLASSES: Record<Size, { wrap: string; icon: string; text: string }> = {
@@ -29,23 +49,36 @@ const TONE_CLASSES: Record<Tone, string> = {
   dark: "border-white/30 bg-white/10 text-white hover:bg-white/15 backdrop-blur-sm",
 };
 
+const ERROR_TONE_CLASSES: Record<Tone, string> = {
+  light: "border-destructive/40 bg-destructive/5 text-destructive hover:bg-destructive/10",
+  dark: "border-white/30 bg-white/5 text-white/80 hover:bg-white/10 backdrop-blur-sm",
+};
+
+const UNAVAILABLE_TONE_CLASSES: Record<Tone, string> = {
+  light: "border-muted-foreground/30 bg-muted/40 text-muted-foreground cursor-not-allowed",
+  dark: "border-white/15 bg-white/5 text-white/60 backdrop-blur-sm cursor-not-allowed",
+};
+
 /**
  * Badge compact « Présidente vérifiée » pour les pages publiques.
- * Pointe vers le registre public suisse MedReg avec gestion d'erreurs
- * (URL invalide, popup bloqué).
+ * Pointe vers le registre public suisse MedReg avec :
+ * - i18n centralisé (FR/EN/DE) via `medregTranslations`,
+ * - états Loading / Success / Error / Unavailable,
+ * - audit log analytics pour chaque tentative d'ouverture.
  */
 export const VerifiedPresidentBadge = ({
   size = "md",
   tone = "light",
   showGLN = true,
   className,
+  onStateChange,
 }: VerifiedPresidentBadgeProps) => {
   const sz = SIZE_CLASSES[size];
+  const t = useTranslation(medregTranslations);
+  const { trackEvent } = useAnalytics();
 
-  // Pré-validation de l'URL au render. Si elle est invalide ou non-HTTPS,
-  // le badge reste affiché à l'identique (cohérence visuelle sur toutes les
-  // vues), mais le clic informe l'utilisateur en français au lieu d'ouvrir
-  // un onglet cassé.
+  // Pré-validation de l'URL au render — détermine si l'état initial est
+  // `ready` ou `unavailable`.
   const rawUrl = COMPANY_PROFILE.presidentMedRegUrl;
   let safeUrl: string | null = null;
   try {
@@ -57,18 +90,91 @@ export const VerifiedPresidentBadge = ({
     safeUrl = null;
   }
 
+  const initialState: VerifiedBadgeState = safeUrl ? "ready" : "unavailable";
+  const [state, setState] = useState<VerifiedBadgeState>(initialState);
+
+  const updateState = (next: VerifiedBadgeState) => {
+    setState(next);
+    onStateChange?.(next);
+  };
+
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
     if (!safeUrl) {
-      toast.error("Registre MedReg indisponible", {
-        description:
-          "Le lien officiel est temporairement invalide. Vous pouvez vérifier le GLN " +
-          `${COMPANY_PROFILE.presidentMedRegGLN} sur https://www.healthregs.admin.ch.`,
+      // URL constante invalide — pas de tentative d'ouverture, on informe.
+      toast.error(t.errors.unavailableTitle, {
+        description: t.errors.unavailableDescription(
+          COMPANY_PROFILE.presidentMedRegGLN,
+        ),
       });
+      void trackEvent({
+        eventType: "cta_click",
+        eventName: "medreg_link_click",
+        eventData: {
+          status: "failed",
+          reason: "unavailable_url",
+          gln: COMPANY_PROFILE.presidentMedRegGLN,
+        },
+      });
+      updateState("unavailable");
       return;
     }
-    openExternalLink(safeUrl, "le registre MedReg");
+
+    updateState("loading");
+
+    const result = openExternalLink(safeUrl, "MedReg", {
+      invalidUrlTitle: t.errors.invalidUrlTitle,
+      invalidUrlDescription: t.errors.invalidUrlDescription("MedReg"),
+      insecureProtocolTitle: t.errors.insecureProtocolTitle,
+      insecureProtocolDescription: t.errors.insecureProtocolDescription,
+      blockedTitle: t.errors.blockedTitle,
+      blockedDescription: t.errors.blockedDescription,
+      genericTitle: t.errors.genericTitle,
+      genericDescription: t.errors.genericDescription,
+    });
+
+    void trackEvent({
+      eventType: "cta_click",
+      eventName: "medreg_link_click",
+      eventData: {
+        status: result.ok ? "success" : "failed",
+        reason: result.reason ?? result.status,
+        gln: COMPANY_PROFILE.presidentMedRegGLN,
+      },
+    });
+
+    if (result.ok) {
+      updateState("success");
+      // Auto-reset à `ready` après 2s pour rester réutilisable.
+      window.setTimeout(() => updateState("ready"), 2000);
+    } else {
+      updateState("error");
+      window.setTimeout(() => updateState("ready"), 4000);
+    }
   };
+
+  const isDisabled = state === "unavailable";
+  const toneClass =
+    state === "unavailable"
+      ? UNAVAILABLE_TONE_CLASSES[tone]
+      : state === "error"
+        ? ERROR_TONE_CLASSES[tone]
+        : TONE_CLASSES[tone];
+
+  const Icon =
+    state === "loading"
+      ? Loader2
+      : state === "unavailable" || state === "error"
+        ? AlertCircle
+        : BadgeCheck;
+
+  const label =
+    state === "loading"
+      ? t.loadingLabel
+      : state === "unavailable"
+        ? t.unavailableLabel
+        : t.badgeLabel;
 
   return (
     <Tooltip>
@@ -78,31 +184,46 @@ export const VerifiedPresidentBadge = ({
           onClick={handleClick}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Présidente vérifiée — ${COMPANY_PROFILE.presidentMedRegProfession} inscrite au registre MedReg sous le GLN ${COMPANY_PROFILE.presidentMedRegGLN}. Ouvrir le registre officiel.`}
+          aria-label={t.ariaLabel(
+            COMPANY_PROFILE.presidentMedRegProfession,
+            COMPANY_PROFILE.presidentMedRegGLN,
+          )}
+          aria-disabled={isDisabled}
+          aria-busy={state === "loading"}
+          data-state={state}
           className={cn(
             "inline-flex max-w-full items-center rounded-full border font-medium transition-colors",
             sz.wrap,
             sz.text,
-            TONE_CLASSES[tone],
+            toneClass,
             className,
           )}
         >
-          <BadgeCheck className={cn("shrink-0", sz.icon)} />
+          <Icon
+            className={cn(
+              "shrink-0",
+              sz.icon,
+              state === "loading" && "animate-spin",
+            )}
+          />
           <span className="truncate">
-            Présidente vérifiée
-            {showGLN && (
+            {label}
+            {showGLN && state !== "loading" && state !== "unavailable" && (
               <span className="hidden sm:inline opacity-90">
-                {" "}· GLN {COMPANY_PROFILE.presidentMedRegGLN}
+                {" "}· {t.glnPrefix} {COMPANY_PROFILE.presidentMedRegGLN}
               </span>
             )}
           </span>
-          <ExternalLink className={cn("shrink-0 opacity-70", sz.icon)} />
+          {state !== "loading" && state !== "unavailable" && (
+            <ExternalLink className={cn("shrink-0 opacity-70", sz.icon)} />
+          )}
         </a>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-xs text-xs">
-        Inscription officielle de {COMPANY_PROFILE.presidentMedRegName} au
-        registre suisse {COMPANY_PROFILE.presidentMedRegRegistry}. Cliquez pour
-        vérifier sur le portail public.
+        {t.tooltipBody(
+          COMPANY_PROFILE.presidentMedRegName,
+          COMPANY_PROFILE.presidentMedRegRegistry,
+        )}
       </TooltipContent>
     </Tooltip>
   );

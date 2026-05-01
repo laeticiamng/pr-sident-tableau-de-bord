@@ -21,7 +21,7 @@ import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { HomeArchitecture } from "@/components/home/HomeArchitecture";
-import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
+import { HeroVerifiedSlot } from "@/components/HeroVerifiedSlot";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
@@ -97,7 +97,6 @@ export default function HomePage() {
               <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium text-white/80 border-white/20 backdrop-blur-sm">
                 {t.hero.madeIn}
               </Badge>
-              <VerifiedPresidentBadge size="sm" tone="dark" showGLN={false} />
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 animate-slide-up">
@@ -106,6 +105,7 @@ export default function HomePage() {
             <p className="text-xl sm:text-2xl md:text-3xl text-white/90 mb-10 max-w-3xl mx-auto animate-slide-up font-light" style={{ animationDelay: "0.1s" }}>
               {t.hero.subtitle}
             </p>
+            <HeroVerifiedSlot tone="dark" />
 
             {/* Audience segmentation cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-10 animate-slide-up" style={{ animationDelay: "0.15s" }}>
