@@ -77,6 +77,7 @@ const JournalPage = lazy(() => import("@/pages/hq/JournalPage"));
 const UserManagementPage = lazy(() => import("@/pages/hq/UserManagementPage"));
 const GovernancePage = lazy(() => import("@/pages/hq/GovernancePage"));
 const ArchitecturePage = lazy(() => import("@/pages/hq/ArchitecturePage"));
+const ArchitecturePlatformDetailPage = lazy(() => import("@/pages/hq/ArchitecturePlatformDetailPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -163,6 +164,7 @@ const App = () => (
                     <Route path="/hq/utilisateurs" element={<UserManagementPage />} />
                     <Route path="/hq/governance" element={<GovernancePage />} />
                     <Route path="/hq/architecture" element={<ArchitecturePage />} />
+                    <Route path="/hq/architecture/:platformKey" element={<ArchitecturePlatformDetailPage />} />
                   </Route>
                 </Route>
 
