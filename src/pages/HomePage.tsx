@@ -70,7 +70,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* HERO */}
-      <section aria-label="Presentation EMOTIONSCARE" className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      <section aria-label={t.hero.ariaLabel} className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         <video
           className="absolute inset-0 h-full w-full object-cover opacity-30"
           autoPlay

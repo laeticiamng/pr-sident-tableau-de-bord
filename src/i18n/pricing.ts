@@ -6,6 +6,7 @@ export const pricingTranslations = {
     billingMonthly: "Mensuel",
     billingAnnual: "Annuel",
     annualSave: "Économisez 20%",
+    toggleBillingAria: "Basculer entre facturation mensuelle et annuelle",
     indicativeNotice: "Tarifs indicatifs — chaque déploiement fait l'objet d'un devis personnalisé. Aucun paiement automatique en ligne pour le moment.",
     summary: {
       title: "En bref",
@@ -55,6 +56,7 @@ export const pricingTranslations = {
     billingMonthly: "Monthly",
     billingAnnual: "Annual",
     annualSave: "Save 20%",
+    toggleBillingAria: "Toggle between monthly and annual billing",
     indicativeNotice: "Indicative pricing — every deployment receives a personalized quote. No automatic online payment available yet.",
     summary: {
       title: "In brief",
@@ -104,6 +106,7 @@ export const pricingTranslations = {
     billingMonthly: "Monatlich",
     billingAnnual: "Jährlich",
     annualSave: "20% sparen",
+    toggleBillingAria: "Zwischen monatlicher und jährlicher Abrechnung umschalten",
     indicativeNotice: "Richtpreise — jede Bereitstellung erhält ein individuelles Angebot. Aktuell keine automatische Online-Zahlung verfügbar.",
     summary: {
       title: "Auf einen Blick",
