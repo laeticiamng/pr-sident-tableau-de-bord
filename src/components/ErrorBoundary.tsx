@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logClientError } from "@/lib/clientErrorLogger";
 
 const errorTexts = {
   fr: { title: "Une erreur est survenue", desc: "L'application a rencontré un problème inattendu. Veuillez réessayer ou retourner à l'accueil.", retry: "Réessayer", home: "Accueil", support: "Si le problème persiste, contactez le support technique." },
@@ -38,6 +39,11 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ errorInfo });
+
+    void logClientError(
+      "react_render",
+      `${error.message || "React render error"} ${errorInfo.componentStack || ""}`.slice(0, 1000),
+    );
 
     // Only log in development to avoid leaking stack traces in production
     if (import.meta.env.DEV) {
