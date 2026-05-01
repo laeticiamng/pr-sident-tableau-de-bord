@@ -2,6 +2,17 @@ import { useMemo, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import {
@@ -36,6 +47,8 @@ import {
   Send,
   CheckCheck,
   History,
+  Paperclip,
+  MessageSquare,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -109,11 +122,33 @@ export default function ArchitecturePlatformDetailPage() {
   const createEntry = useCreateJournalEntry();
   const { data: journalEntries = [] } = useJournalEntries();
   const [requested, setRequested] = useState<Set<string>>(new Set());
-  const requestApproval = (layerKey: string, action: ProposedAction) => {
+
+  // Dialog d'approbation avec commentaire + pièce jointe optionnels
+  const [dialogState, setDialogState] = useState<{
+    layerKey: string;
+    action: ProposedAction;
+  } | null>(null);
+  const [comment, setComment] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [attachmentLabel, setAttachmentLabel] = useState("");
+
+  const openApprovalDialog = (layerKey: string, action: ProposedAction) => {
+    setComment("");
+    setAttachmentUrl("");
+    setAttachmentLabel("");
+    setDialogState({ layerKey, action });
+  };
+
+  const submitApproval = () => {
+    if (!dialogState) return;
+    const { layerKey, action } = dialogState;
     const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
     const requestId = `${profile.key}::${layerKey}::${action.id}`;
     const title = `Demande d'approbation — ${profile.name} · ${action.title}`;
-    const content = [
+    const trimmedComment = comment.trim();
+    const trimmedUrl = attachmentUrl.trim();
+    const trimmedLabel = attachmentLabel.trim() || trimmedUrl;
+    const lines = [
       `Plateforme : **${profile.name}** (${profile.key})`,
       `Couche : ${layer?.title ?? layerKey}`,
       `Action proposée : ${action.title}`,
@@ -122,24 +157,35 @@ export default function ArchitecturePlatformDetailPage() {
       `Effort estimé : ${action.effortHours} h`,
       `Demandeur : ${user?.email ?? "—"}`,
       `Référence : ${requestId}`,
-    ].join("\n");
+    ];
+    if (trimmedComment) {
+      lines.push("", "**Commentaire du demandeur :**", trimmedComment);
+    }
+    if (trimmedUrl) {
+      lines.push("", `**Pièce jointe :** [${trimmedLabel}](${trimmedUrl})`);
+    }
+    const content = lines.join("\n");
+    const tags = [
+      "architecture",
+      "approval-request",
+      String(profile.key),
+      layerKey,
+      `action:${action.id}`,
+      `risk:${action.risk}`,
+    ];
+    if (trimmedComment) tags.push("has-comment");
+    if (trimmedUrl) tags.push("has-attachment");
     createEntry.mutate(
       {
         title,
         content,
         entry_type: "decision",
-        tags: [
-          "architecture",
-          "approval-request",
-          String(profile.key),
-          layerKey,
-          `action:${action.id}`,
-          `risk:${action.risk}`,
-        ],
+        tags,
       },
       {
         onSuccess: () => {
           setRequested((prev) => new Set(prev).add(requestId));
+          setDialogState(null);
           // Notifie la Présidente — best-effort, on n'interrompt pas le flux UI
           const urgency =
             action.risk === "critical" || action.risk === "high" ? "high" : "medium";
@@ -156,6 +202,8 @@ export default function ArchitecturePlatformDetailPage() {
                   layerKey,
                   actionId: action.id,
                   requestId,
+                  hasComment: Boolean(trimmedComment),
+                  hasAttachment: Boolean(trimmedUrl),
                 },
               },
             })
@@ -353,13 +401,25 @@ export default function ArchitecturePlatformDetailPage() {
                                       ) : (
                                         <Badge variant="warning">En attente</Badge>
                                       )}
-                                      <Link
-                                        to={`/hq/journal#${e.id}`}
-                                        className="hover:underline truncate"
-                                        title={e.title}
-                                      >
-                                        {e.title}
-                                      </Link>
+                                       <Link
+                                         to={`/hq/journal#${e.id}`}
+                                         className="hover:underline truncate"
+                                         title={e.title}
+                                       >
+                                         {e.title}
+                                       </Link>
+                                       {(e.tags ?? []).includes("has-comment") && (
+                                         <MessageSquare
+                                           className="h-3 w-3 text-muted-foreground"
+                                           aria-label="Commentaire joint"
+                                         />
+                                       )}
+                                       {(e.tags ?? []).includes("has-attachment") && (
+                                         <Paperclip
+                                           className="h-3 w-3 text-muted-foreground"
+                                           aria-label="Pièce jointe"
+                                         />
+                                       )}
                                     </li>
                                   ))}
                                 </ul>
@@ -368,7 +428,7 @@ export default function ArchitecturePlatformDetailPage() {
                             <Button
                               size="sm"
                               variant={isRequested ? "outline" : "default"}
-                              onClick={() => requestApproval(layer.key, action)}
+                              onClick={() => openApprovalDialog(layer.key, action)}
                               disabled={isRequested || isPending}
                               className="flex-shrink-0"
                             >
@@ -611,6 +671,64 @@ export default function ArchitecturePlatformDetailPage() {
         ]}
         dataQuality="high"
       />
+
+      <Dialog open={!!dialogState} onOpenChange={(open) => !open && setDialogState(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Demande d'approbation</DialogTitle>
+            <DialogDescription>
+              {dialogState
+                ? `${profile.name} · ${dialogState.action.title} (risque ${dialogState.action.risk}, ~${dialogState.action.effortHours} h)`
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="approval-comment" className="flex items-center gap-2">
+                <MessageSquare className="h-3.5 w-3.5" /> Commentaire (optionnel)
+              </Label>
+              <Textarea
+                id="approval-comment"
+                placeholder="Contexte, justification, contraintes…"
+                value={comment}
+                onChange={(e) => setComment(e.target.value.slice(0, 2000))}
+                rows={4}
+              />
+              <p className="text-[11px] text-muted-foreground tabular-nums text-right">
+                {comment.length}/2000
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="approval-attachment-url" className="flex items-center gap-2">
+                <Paperclip className="h-3.5 w-3.5" /> Lien vers un document (optionnel)
+              </Label>
+              <Input
+                id="approval-attachment-url"
+                type="url"
+                placeholder="https://… (Drive, Notion, GitHub…)"
+                value={attachmentUrl}
+                onChange={(e) => setAttachmentUrl(e.target.value.slice(0, 1024))}
+              />
+              <Input
+                id="approval-attachment-label"
+                type="text"
+                placeholder="Libellé affiché (optionnel)"
+                value={attachmentLabel}
+                onChange={(e) => setAttachmentLabel(e.target.value.slice(0, 200))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogState(null)}>
+              Annuler
+            </Button>
+            <Button onClick={submitApproval} disabled={createEntry.isPending}>
+              <Send className="h-3.5 w-3.5 mr-1" />
+              {createEntry.isPending ? "Envoi…" : "Envoyer la demande"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
