@@ -153,24 +153,22 @@ export default function ArchitecturePage() {
 
       <MethodologyDisclosure
         title="Méthodologie"
-        items={[
+        sources={[
           {
-            label: "Source de vérité",
-            value: "src/data/systemArchitecture.ts (registre versionné dans le repo)",
-          },
-          {
-            label: "Documentation détaillée",
-            value: "docs/SYSTEM_ARCHITECTURE.md — procédure d'application sur nouvelle plateforme",
-          },
-          {
-            label: "Mise à jour",
-            value: "Toute évolution du pattern doit modifier le registre TS et le doc Markdown simultanément",
-          },
-          {
-            label: "Audit",
-            value: "Couverture recalculée à chaque rendu — score = applied(1) + partial(0.5) / 7 couches",
+            name: "Registre TS systemArchitecture.ts",
+            type: "manual",
+            reliability: "verified",
+            description: "Source de vérité versionnée dans le repo. Mise à jour requise à chaque évolution du pattern (TS + docs/SYSTEM_ARCHITECTURE.md simultanément).",
           },
         ]}
+        calculations={[
+          {
+            metric: "Couverture par plateforme",
+            formula: "Σ(applied=1, partial=0.5) / 7 couches × 100",
+            assumptions: ["Pondération uniforme des 7 couches", "Recalculée à chaque rendu"],
+          },
+        ]}
+        dataQuality="high"
       />
     </div>
   );
