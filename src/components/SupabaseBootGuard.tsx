@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { forwardRef, useEffect, useState, type ReactNode } from "react";
 import {
   collectBootDiagnostics,
   logBootIssues,
@@ -11,7 +11,7 @@ import {
  * invalide, affiche un écran de diagnostic owner-friendly au lieu d'un
  * écran noir. Sinon rend simplement les enfants.
  */
-export const SupabaseBootGuard = ({ children }: { children: ReactNode }) => {
+export const SupabaseBootGuard = forwardRef<HTMLDivElement, { children: ReactNode }>(function SupabaseBootGuard({ children }, ref) {
   const [diag] = useState<BootDiagnostics>(() => collectBootDiagnostics());
   const [ping, setPing] = useState<{
     ok: boolean;
@@ -26,7 +26,7 @@ export const SupabaseBootGuard = ({ children }: { children: ReactNode }) => {
 
   // Si la config est OK, on n'affiche rien : le bug-screen est silencieux.
   if (diag.issues.length === 0) {
-    return <>{children}</>;
+    return <div ref={ref} className="contents">{children}</div>;
   }
 
   const runPing = async () => {
@@ -196,6 +196,6 @@ export const SupabaseBootGuard = ({ children }: { children: ReactNode }) => {
       </div>
     </div>
   );
-};
+});
 
 export default SupabaseBootGuard;
