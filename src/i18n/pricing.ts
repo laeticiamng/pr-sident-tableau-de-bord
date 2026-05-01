@@ -56,6 +56,7 @@ export const pricingTranslations = {
     billingMonthly: "Monthly",
     billingAnnual: "Annual",
     annualSave: "Save 20%",
+    toggleBillingAria: "Toggle between monthly and annual billing",
     indicativeNotice: "Indicative pricing — every deployment receives a personalized quote. No automatic online payment available yet.",
     summary: {
       title: "In brief",
