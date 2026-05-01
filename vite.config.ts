@@ -4,6 +4,17 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Fallback constants for Lovable Cloud (Supabase) — publishable values only.
+// Le fichier .env (généré par Lovable Cloud) est listé dans .gitignore et donc
+// absent du build publié, ce qui produit "supabaseUrl is required" et un
+// écran noir en production. On injecte ici les mêmes valeurs en dur, qui sont
+// publiques par conception (URL + clé anon publishable). Toute donnée reste
+// protégée par les RLS Supabase.
+const SUPABASE_URL_FALLBACK = "https://hjoylhxakijxpihwrqny.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY_FALLBACK =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhqb3lsaHhha2lqeHBpaHdycW55Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAxMDczNDcsImV4cCI6MjA4NTY4MzM0N30.cwEcWxi3zsFX9182t_2oufUYxNsVA-Z1OEFJbt5VHYM";
+const SUPABASE_PROJECT_ID_FALLBACK = "hjoylhxakijxpihwrqny";
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -12,6 +23,21 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+  },
+  define: {
+    // Garantit que les variables Supabase soient présentes même si .env est
+    // absent du contexte de build (ex. build de publication Lovable). Les
+    // valeurs réelles de import.meta.env (issues de .env) ont la priorité ;
+    // ces constantes ne servent que de filet de sécurité.
+    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+      process.env.VITE_SUPABASE_URL || SUPABASE_URL_FALLBACK,
+    ),
+    "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+      process.env.VITE_SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY_FALLBACK,
+    ),
+    "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
+      process.env.VITE_SUPABASE_PROJECT_ID || SUPABASE_PROJECT_ID_FALLBACK,
+    ),
   },
   plugins: [
     react(),
