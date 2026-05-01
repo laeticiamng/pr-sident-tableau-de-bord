@@ -401,13 +401,25 @@ export default function ArchitecturePlatformDetailPage() {
                                       ) : (
                                         <Badge variant="warning">En attente</Badge>
                                       )}
-                                      <Link
-                                        to={`/hq/journal#${e.id}`}
-                                        className="hover:underline truncate"
-                                        title={e.title}
-                                      >
-                                        {e.title}
-                                      </Link>
+                                       <Link
+                                         to={`/hq/journal#${e.id}`}
+                                         className="hover:underline truncate"
+                                         title={e.title}
+                                       >
+                                         {e.title}
+                                       </Link>
+                                       {(e.tags ?? []).includes("has-comment") && (
+                                         <MessageSquare
+                                           className="h-3 w-3 text-muted-foreground"
+                                           aria-label="Commentaire joint"
+                                         />
+                                       )}
+                                       {(e.tags ?? []).includes("has-attachment") && (
+                                         <Paperclip
+                                           className="h-3 w-3 text-muted-foreground"
+                                           aria-label="Pièce jointe"
+                                         />
+                                       )}
                                     </li>
                                   ))}
                                 </ul>
@@ -416,7 +428,7 @@ export default function ArchitecturePlatformDetailPage() {
                             <Button
                               size="sm"
                               variant={isRequested ? "outline" : "default"}
-                              onClick={() => requestApproval(layer.key, action)}
+                              onClick={() => openApprovalDialog(layer.key, action)}
                               disabled={isRequested || isPending}
                               className="flex-shrink-0"
                             >
