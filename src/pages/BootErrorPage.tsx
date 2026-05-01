@@ -47,7 +47,7 @@ export default function BootErrorPage() {
               <AlertTriangle className="h-6 w-6 text-destructive" aria-hidden />
             </div>
             <div>
-              <CardTitle>Chargement impossible</CardTitle>
+              <CardTitle>Le chargement de l’application a échoué.</CardTitle>
               <CardDescription>
                 L'application n'a pas pu démarrer. Cela arrive généralement après une mise à jour
                 ou si votre cache navigateur contient une version périmée.
@@ -64,11 +64,11 @@ export default function BootErrorPage() {
           <div className="flex flex-col sm:flex-row gap-2">
             <Button onClick={hardReload} className="flex-1">
               <RefreshCw className="h-4 w-4 mr-2" aria-hidden />
-              Recharger la page
+              Recharger
             </Button>
             <Button onClick={wipeAndReload} variant="outline" disabled={clearing} className="flex-1">
               <Trash2 className="h-4 w-4 mr-2" aria-hidden />
-              {clearing ? "Nettoyage…" : "Vider le cache"}
+              {clearing ? "Nettoyage…" : "Vider le cache et recharger"}
             </Button>
           </div>
 

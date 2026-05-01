@@ -21,6 +21,7 @@ interface NetworkSnapshot {
   duration_ms: number | null;
   ts: string;
   source: "fetch" | "performance";
+  resource_type?: string;
 }
 
 interface DiagnosticsReport {
@@ -173,21 +174,22 @@ function safeMethod(input: unknown, init?: RequestInit): string {
         for (const entry of list.getEntries()) {
           try {
             const e = entry as PerformanceResourceTiming;
-            // Ne capture que les requêtes XHR/fetch en erreur potentielle
-            // (responseStatus dispo dans les nav modernes).
+            // Capture les erreurs réseau applicatives et ressources statiques
+            // (JS/CSS/chunks) même si fetch est blindé par une extension.
             const status = (e as PerformanceResourceTiming & { responseStatus?: number }).responseStatus ?? null;
+            const initiator = e.initiatorType || "resource";
             const isError =
               (status !== null && status >= 400) ||
-              (status === null && e.transferSize === 0 && e.duration === 0);
+              (status === null && e.transferSize === 0 && ["script", "link", "css", "fetch", "xmlhttprequest"].includes(initiator));
             if (!isError) continue;
-            if (e.initiatorType !== "fetch" && e.initiatorType !== "xmlhttprequest") continue;
             pushNetwork({
               url: String(e.name).slice(0, 300),
-              method: "?",
+              method: initiator === "fetch" || initiator === "xmlhttprequest" ? "?" : "GET",
               status,
               duration_ms: Math.round(e.duration),
               ts: new Date(performance.timeOrigin + e.startTime).toISOString(),
               source: "performance",
+              resource_type: initiator,
             });
           } catch { /* noop */ }
         }
@@ -228,7 +230,7 @@ async function buildReport(consentState: { given: boolean; given_at: string | nu
 
   return {
     generated_at: new Date().toISOString(),
-    build_version: import.meta.env.MODE,
+    build_version: (window as unknown as { __APP_BUILD__?: string }).__APP_BUILD__ ?? import.meta.env.MODE,
     app_mode: import.meta.env.MODE,
     url: window.location.href.slice(0, 500),
     user_agent: navigator.userAgent.slice(0, 500),

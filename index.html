@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0a0a0a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
     <!-- Security headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ai.gateway.lovable.dev; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-    <meta http-equiv="X-Frame-Options" content="DENY" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="apple-mobile-web-app-title" content="HQ" />
     <link rel="apple-touch-icon" href="/pwa-icon-192.png" />
@@ -425,47 +425,94 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root" data-build="dev"></div>
+    <div id="app-build" data-build="dev" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">dev</div>
     <!-- Boot fallback : visible uniquement si React n'a pas monté <App /> au bout
-         de 8 secondes (écran noir silencieux dû à un chunk JS, un SW corrompu,
-         un blocage cookie tiers, etc.). Le script suivant ne s'exécute pas si
-         JS est désactivé : c'est <noscript /> qui prend alors le relais. -->
-    <div id="boot-fallback" style="display:none;position:fixed;inset:0;z-index:99999;background:#0a0a0a;color:#f5f5f5;font-family:system-ui,sans-serif;align-items:center;justify-content:center;padding:24px;">
-      <div style="max-width:480px;text-align:center;">
-        <div style="font-size:42px;margin-bottom:12px;">⚠️</div>
-        <h1 style="font-size:20px;margin:0 0 8px;font-weight:600;">Le chargement a échoué</h1>
-        <p style="font-size:14px;line-height:1.5;color:#a3a3a3;margin:0 0 20px;">Une ressource n'a pas pu être chargée (cache obsolète, extension qui bloque ou réseau instable).</p>
-        <button id="boot-fallback-reload" type="button" style="background:#f59e0b;color:#0a0a0a;border:0;border-radius:9999px;padding:10px 24px;font-weight:600;font-size:14px;cursor:pointer;">Recharger la page</button>
-        <div style="margin-top:14px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:12px;">
-          <a href="/boot-error" style="color:#f59e0b;text-decoration:underline;">Page de diagnostic</a>
-          <a href="/hq/diagnostics" style="color:#f59e0b;text-decoration:underline;">Diagnostics HQ</a>
-          <a href="/contact" style="color:#a3a3a3;">Contact</a>
+         de 4 secondes. Public et volontairement générique : aucune donnée interne. -->
+    <div id="boot-fallback" role="alert" aria-live="assertive" style="display:none;position:fixed;inset:0;z-index:99999;background:#0a0a0a;color:#f5f5f5;font-family:system-ui,-apple-system,Segoe UI,sans-serif;align-items:center;justify-content:center;padding:24px;">
+      <div style="max-width:560px;width:100%;text-align:center;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:16px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.35);">
+        <div style="font-size:40px;margin-bottom:12px;" aria-hidden="true">⚠️</div>
+        <h1 style="font-size:22px;margin:0 0 8px;font-weight:700;letter-spacing:0;">Le chargement de l’application a échoué.</h1>
+        <p style="font-size:14px;line-height:1.55;color:#c7c7c7;margin:0 0 22px;">Votre navigateur peut conserver une ancienne version. Rechargez la page ou videz le cache local.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button id="boot-fallback-reload" type="button" style="background:#f5f5f5;color:#0a0a0a;border:0;border-radius:8px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer;">Recharger</button>
+          <button id="boot-fallback-wipe" type="button" style="background:transparent;color:#f5f5f5;border:1px solid rgba(255,255,255,.28);border-radius:8px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer;">Vider le cache et recharger</button>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:13px;">
+          <a href="/boot-error" style="color:#f5f5f5;text-decoration:underline;text-underline-offset:3px;">/boot-error</a>
+          <a href="/hq/diagnostics" style="color:#f5f5f5;text-decoration:underline;text-underline-offset:3px;">Diagnostics HQ</a>
         </div>
       </div>
     </div>
     <script>
       (function () {
-        var TIMEOUT = 8000;
-        var t = setTimeout(function () {
+        var build = "dev";
+        try {
+          var script = document.querySelector('script[type="module"][src*="/assets/index-"]');
+          var match = script && script.getAttribute("src") && script.getAttribute("src").match(/index-([A-Za-z0-9_-]+)\.js/);
+          build = match ? match[1] : "dev";
+          window.__APP_BUILD__ = build;
+          document.documentElement.setAttribute("data-app-build", build);
+          document.getElementById("root")?.setAttribute("data-build", build);
+          var buildNode = document.getElementById("app-build");
+          if (buildNode) { buildNode.setAttribute("data-build", build); buildNode.textContent = build; }
+        } catch (e) {}
+        var cleanup = async function () {
+          try {
+            if ("serviceWorker" in navigator) {
+              var regs = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(regs.map(function (r) { return r.unregister().catch(function () { return false; }); }));
+            }
+          } catch (e) {}
+          try {
+            if ("caches" in window) {
+              var keys = await caches.keys();
+              await Promise.all(keys.map(function (k) { return caches.delete(k).catch(function () { return false; }); }));
+            }
+          } catch (e) {}
+        };
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) cleanup();
+        } catch (e) {}
+        var showFallback = function () {
           var root = document.getElementById("root");
-          if (root && root.childElementCount === 0) {
+          if (root && root.childElementCount === 0 && !window.__REACT_MOUNTED__) {
             var f = document.getElementById("boot-fallback");
             if (f) f.style.display = "flex";
           }
+        };
+        var TIMEOUT = 4000;
+        var t = setTimeout(function () {
+          showFallback();
         }, TIMEOUT);
+        window.addEventListener("error", function (event) {
+          var target = event && event.target;
+          var tag = target && target.tagName;
+          if (tag === "SCRIPT" || tag === "LINK") showFallback();
+        }, true);
+        window.addEventListener("unhandledrejection", function () { setTimeout(showFallback, 0); });
         // Annule le fallback dès qu'un noeud est ajouté à #root.
         var root = document.getElementById("root");
         if (root && "MutationObserver" in window) {
           var obs = new MutationObserver(function () {
-            if (root.childElementCount > 0) { clearTimeout(t); obs.disconnect(); }
+            if (root.childElementCount > 0) {
+              clearTimeout(t);
+              var f = document.getElementById("boot-fallback");
+              if (f) f.style.display = "none";
+              obs.disconnect();
+            }
           });
           obs.observe(root, { childList: true });
         }
         var btn = document.getElementById("boot-fallback-reload");
         if (btn) btn.addEventListener("click", function () {
-          // Hard reload + cache bypass
           try { sessionStorage.removeItem("vite-preload-reloaded"); } catch (e) {}
-          window.location.reload();
+          window.location.replace("/?reload=" + Date.now());
+        });
+        var wipe = document.getElementById("boot-fallback-wipe");
+        if (wipe) wipe.addEventListener("click", function () {
+          try { sessionStorage.removeItem("vite-preload-reloaded"); } catch (e) {}
+          cleanup().finally(function () { window.location.replace("/?cache-clean=" + Date.now()); });
         });
       })();
     </script>

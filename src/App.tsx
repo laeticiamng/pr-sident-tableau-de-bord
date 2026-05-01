@@ -12,6 +12,7 @@ import { NetworkStatusProvider } from "@/components/NetworkStatusProvider";
 import { PageLoader } from "@/components/ui/skeleton-loader";
 import { AnalyticsProvider } from "@/components/AnalyticsProvider";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ProductionBootGuard } from "@/components/ProductionBootGuard";
 
 // Layouts - loaded immediately (needed for structure)
 import { PublicLayout } from "@/components/layout/PublicLayout";
@@ -92,6 +93,7 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <ErrorBoundary>
+    <ProductionBootGuard>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
@@ -189,6 +191,7 @@ const App = () => (
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </ProductionBootGuard>
   </ErrorBoundary>
 );
 

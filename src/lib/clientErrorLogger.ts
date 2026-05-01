@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { hasAnalyticsConsent } from "@/hooks/useCookieConsent";
 
 /**
  * Journal d'erreurs côté client (chunks JS, Service Worker, écran noir,
@@ -61,6 +62,8 @@ export async function logClientError(
   message: string,
 ): Promise<void> {
   try {
+    if (!hasAnalyticsConsent()) return;
+
     const safeMessage = String(message ?? "").slice(0, 1000);
     if (!safeMessage) return;
 
