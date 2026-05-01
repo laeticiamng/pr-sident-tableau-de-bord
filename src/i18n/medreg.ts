@@ -13,6 +13,12 @@ export const medregTranslations: Record<Language, {
   tooltipBody: (name: string, registry: string) => string;
   loadingLabel: string;
   unavailableLabel: string;
+  liveAnnouncements: {
+    loading: string;
+    success: string;
+    error: string;
+    unavailable: string;
+  };
   errors: {
     invalidUrlTitle: string;
     invalidUrlDescription: (label?: string) => string;
@@ -39,6 +45,12 @@ export const medregTranslations: Record<Language, {
       `Inscription officielle de ${name} au registre suisse ${registry}. Cliquez pour vérifier sur le portail public.`,
     loadingLabel: "Ouverture du registre…",
     unavailableLabel: "Registre indisponible",
+    liveAnnouncements: {
+      loading: "Ouverture du registre MedReg en cours…",
+      success: "Registre MedReg ouvert dans un nouvel onglet.",
+      error: "Échec de l'ouverture du registre MedReg.",
+      unavailable: "Le lien du registre MedReg est indisponible.",
+    },
     errors: {
       invalidUrlTitle: "Lien invalide",
       invalidUrlDescription: (label) =>
@@ -67,6 +79,12 @@ export const medregTranslations: Record<Language, {
       `Official registration of ${name} on the Swiss ${registry} registry. Click to verify on the public portal.`,
     loadingLabel: "Opening registry…",
     unavailableLabel: "Registry unavailable",
+    liveAnnouncements: {
+      loading: "Opening the MedReg registry…",
+      success: "MedReg registry opened in a new tab.",
+      error: "Failed to open the MedReg registry.",
+      unavailable: "The MedReg registry link is unavailable.",
+    },
     errors: {
       invalidUrlTitle: "Invalid link",
       invalidUrlDescription: (label) =>
@@ -95,6 +113,12 @@ export const medregTranslations: Record<Language, {
       `Offizielle Eintragung von ${name} im Schweizer ${registry}-Register. Klicken zur Überprüfung auf dem öffentlichen Portal.`,
     loadingLabel: "Register wird geöffnet…",
     unavailableLabel: "Register nicht verfügbar",
+    liveAnnouncements: {
+      loading: "MedReg-Register wird geöffnet…",
+      success: "MedReg-Register in neuem Tab geöffnet.",
+      error: "Öffnen des MedReg-Registers fehlgeschlagen.",
+      unavailable: "Der MedReg-Register-Link ist nicht verfügbar.",
+    },
     errors: {
       invalidUrlTitle: "Ungültiger Link",
       invalidUrlDescription: (label) =>

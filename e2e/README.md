@@ -41,3 +41,11 @@ npx playwright test e2e/public-home.spec.ts
 
 ### Infrastructure (1)
 12. `infra-healthz` — `/functions/v1/healthz` retourne 200 + JSON valide
+
+### Qualité visuelle & A11y (3)
+13. `public-verified-badge` — Slot canonique du badge MedReg : alignement, spacing, non-chevauchement (4 pages × 5 viewports)
+14. `public-verified-badge-a11y` — Rôles, aria-label, aria-describedby, aria-busy et région `role="status"` `aria-live` du badge
+15. `public-visual-snapshots` — Diff visuel fullpage Home/Vision/Trust/Contact aux largeurs 320 / 768 / 1280 / 1920 px
+
+> Première exécution : générer les baselines avec
+> `npx playwright test public-visual-snapshots --update-snapshots`.
