@@ -174,7 +174,7 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <img src={laeticiaPhoto} alt="Motongane Laeticia — Présidente EMOTIONSCARE" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                <img src={laeticiaPhoto} alt={t.info.presidentPhotoAlt} className="h-12 w-12 shrink-0 rounded-xl object-cover" />
                 <div>
                   <h3 className="font-semibold mb-1">{t.info.findUs}</h3>
                   <a href={COMPANY_PROFILE.linkedinPresident} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-accent hover:underline">
