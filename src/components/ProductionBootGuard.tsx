@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { forwardRef, useEffect, useState, type ReactNode } from "react";
 import { AlertTriangle, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -23,7 +23,7 @@ function currentBuildVersion() {
   }
 }
 
-export function ProductionBootGuard({ children }: { children: ReactNode }) {
+export const ProductionBootGuard = forwardRef<HTMLDivElement, { children: ReactNode }>(function ProductionBootGuard({ children }, ref) {
   const [legacyWorker, setLegacyWorker] = useState(false);
   const [cleaning, setCleaning] = useState(false);
 
@@ -60,7 +60,7 @@ export function ProductionBootGuard({ children }: { children: ReactNode }) {
   };
 
   return (
-    <>
+    <div ref={ref} className="contents">
       {children}
       {legacyWorker && (
         <div className="fixed inset-x-3 bottom-3 z-[120] mx-auto max-w-xl">
@@ -83,8 +83,8 @@ export function ProductionBootGuard({ children }: { children: ReactNode }) {
           </Alert>
         </div>
       )}
-    </>
+    </div>
   );
-}
+});
 
 export default ProductionBootGuard;
