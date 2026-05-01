@@ -21,6 +21,7 @@ import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { HomeArchitecture } from "@/components/home/HomeArchitecture";
+import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { cn } from "@/lib/utils";
@@ -96,6 +97,7 @@ export default function HomePage() {
               <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium text-white/80 border-white/20 backdrop-blur-sm">
                 {t.hero.madeIn}
               </Badge>
+              <VerifiedPresidentBadge size="sm" tone="dark" showGLN={false} />
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 animate-slide-up">

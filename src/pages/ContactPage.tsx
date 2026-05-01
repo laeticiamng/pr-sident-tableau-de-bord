@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePageMeta } from "@/hooks/usePageMeta";
 import { getContactSchema, sanitizeHtml } from "@/lib/validation";
+import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -180,6 +181,9 @@ export default function ContactPage() {
                   <a href={COMPANY_PROFILE.linkedinCompany} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-muted-foreground hover:text-accent hover:underline text-sm mt-1">
                     <span>EMOTIONSCARE SASU</span><ExternalLink className="h-3 w-3" />
                   </a>
+                  <div className="mt-2">
+                    <VerifiedPresidentBadge size="sm" tone="light" showGLN={false} />
+                  </div>
                 </div>
               </div>
 

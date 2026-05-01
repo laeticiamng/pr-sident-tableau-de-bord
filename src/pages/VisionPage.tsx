@@ -11,6 +11,7 @@ import { useTranslation } from "@/contexts/LanguageContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { visionTranslations } from "@/i18n/vision";
 import { PresidentCredentials } from "@/components/PresidentCredentials";
+import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
 
 const VALUE_ICONS = [Target, Lightbulb, Heart, TrendingUp];
 const COMMITMENT_ICONS = [Shield, Users, Award, Rocket];
@@ -44,6 +45,9 @@ export default function VisionPage() {
               <span className="block text-accent">{t.hero.title2}</span>
             </h1>
             <p className="text-lg md:text-xl text-white/90 font-medium leading-relaxed">{t.hero.description}</p>
+            <div className="mt-6 flex justify-center">
+              <VerifiedPresidentBadge size="md" tone="dark" />
+            </div>
           </div>
         </div>
       </section>
