@@ -13,6 +13,12 @@ export const medregTranslations: Record<Language, {
   tooltipBody: (name: string, registry: string) => string;
   loadingLabel: string;
   unavailableLabel: string;
+  liveAnnouncements: {
+    loading: string;
+    success: string;
+    error: string;
+    unavailable: string;
+  };
   errors: {
     invalidUrlTitle: string;
     invalidUrlDescription: (label?: string) => string;
