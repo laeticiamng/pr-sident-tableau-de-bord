@@ -2,6 +2,17 @@ import { useMemo, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import {
@@ -36,6 +47,8 @@ import {
   Send,
   CheckCheck,
   History,
+  Paperclip,
+  MessageSquare,
 } from "lucide-react";
 
 const LAYER_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -109,11 +122,33 @@ export default function ArchitecturePlatformDetailPage() {
   const createEntry = useCreateJournalEntry();
   const { data: journalEntries = [] } = useJournalEntries();
   const [requested, setRequested] = useState<Set<string>>(new Set());
-  const requestApproval = (layerKey: string, action: ProposedAction) => {
+
+  // Dialog d'approbation avec commentaire + pièce jointe optionnels
+  const [dialogState, setDialogState] = useState<{
+    layerKey: string;
+    action: ProposedAction;
+  } | null>(null);
+  const [comment, setComment] = useState("");
+  const [attachmentUrl, setAttachmentUrl] = useState("");
+  const [attachmentLabel, setAttachmentLabel] = useState("");
+
+  const openApprovalDialog = (layerKey: string, action: ProposedAction) => {
+    setComment("");
+    setAttachmentUrl("");
+    setAttachmentLabel("");
+    setDialogState({ layerKey, action });
+  };
+
+  const submitApproval = () => {
+    if (!dialogState) return;
+    const { layerKey, action } = dialogState;
     const layer = ARCHITECTURE_LAYERS.find((l) => l.key === layerKey);
     const requestId = `${profile.key}::${layerKey}::${action.id}`;
     const title = `Demande d'approbation — ${profile.name} · ${action.title}`;
-    const content = [
+    const trimmedComment = comment.trim();
+    const trimmedUrl = attachmentUrl.trim();
+    const trimmedLabel = attachmentLabel.trim() || trimmedUrl;
+    const lines = [
       `Plateforme : **${profile.name}** (${profile.key})`,
       `Couche : ${layer?.title ?? layerKey}`,
       `Action proposée : ${action.title}`,
@@ -122,24 +157,35 @@ export default function ArchitecturePlatformDetailPage() {
       `Effort estimé : ${action.effortHours} h`,
       `Demandeur : ${user?.email ?? "—"}`,
       `Référence : ${requestId}`,
-    ].join("\n");
+    ];
+    if (trimmedComment) {
+      lines.push("", "**Commentaire du demandeur :**", trimmedComment);
+    }
+    if (trimmedUrl) {
+      lines.push("", `**Pièce jointe :** [${trimmedLabel}](${trimmedUrl})`);
+    }
+    const content = lines.join("\n");
+    const tags = [
+      "architecture",
+      "approval-request",
+      String(profile.key),
+      layerKey,
+      `action:${action.id}`,
+      `risk:${action.risk}`,
+    ];
+    if (trimmedComment) tags.push("has-comment");
+    if (trimmedUrl) tags.push("has-attachment");
     createEntry.mutate(
       {
         title,
         content,
         entry_type: "decision",
-        tags: [
-          "architecture",
-          "approval-request",
-          String(profile.key),
-          layerKey,
-          `action:${action.id}`,
-          `risk:${action.risk}`,
-        ],
+        tags,
       },
       {
         onSuccess: () => {
           setRequested((prev) => new Set(prev).add(requestId));
+          setDialogState(null);
           // Notifie la Présidente — best-effort, on n'interrompt pas le flux UI
           const urgency =
             action.risk === "critical" || action.risk === "high" ? "high" : "medium";
@@ -156,6 +202,8 @@ export default function ArchitecturePlatformDetailPage() {
                   layerKey,
                   actionId: action.id,
                   requestId,
+                  hasComment: Boolean(trimmedComment),
+                  hasAttachment: Boolean(trimmedUrl),
                 },
               },
             })
