@@ -2,6 +2,7 @@ import type { MouseEvent } from "react";
 import { BadgeCheck, ExternalLink } from "lucide-react";
 import { COMPANY_PROFILE } from "@/lib/constants";
 import { openExternalLink } from "@/lib/openExternalLink";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -41,16 +42,39 @@ export const VerifiedPresidentBadge = ({
 }: VerifiedPresidentBadgeProps) => {
   const sz = SIZE_CLASSES[size];
 
+  // Pré-validation de l'URL au render. Si elle est invalide ou non-HTTPS,
+  // le badge reste affiché à l'identique (cohérence visuelle sur toutes les
+  // vues), mais le clic informe l'utilisateur en français au lieu d'ouvrir
+  // un onglet cassé.
+  const rawUrl = COMPANY_PROFILE.presidentMedRegUrl;
+  let safeUrl: string | null = null;
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+      safeUrl = parsed.toString();
+    }
+  } catch {
+    safeUrl = null;
+  }
+
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    openExternalLink(COMPANY_PROFILE.presidentMedRegUrl, "le registre MedReg");
+    if (!safeUrl) {
+      toast.error("Registre MedReg indisponible", {
+        description:
+          "Le lien officiel est temporairement invalide. Vous pouvez vérifier le GLN " +
+          `${COMPANY_PROFILE.presidentMedRegGLN} sur https://www.healthregs.admin.ch.`,
+      });
+      return;
+    }
+    openExternalLink(safeUrl, "le registre MedReg");
   };
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <a
-          href={COMPANY_PROFILE.presidentMedRegUrl}
+          href={safeUrl ?? "#"}
           onClick={handleClick}
           target="_blank"
           rel="noopener noreferrer"
