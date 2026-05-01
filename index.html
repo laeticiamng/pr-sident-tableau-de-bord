@@ -446,14 +446,51 @@
     </div>
     <script>
       (function () {
-        var TIMEOUT = 8000;
-        var t = setTimeout(function () {
+        var build = "dev";
+        try {
+          var script = document.querySelector('script[type="module"][src*="/assets/index-"]');
+          var match = script && script.getAttribute("src") && script.getAttribute("src").match(/index-([A-Za-z0-9_-]+)\.js/);
+          build = match ? match[1] : "dev";
+          window.__APP_BUILD__ = build;
+          document.documentElement.setAttribute("data-app-build", build);
+          document.getElementById("root")?.setAttribute("data-build", build);
+          var buildNode = document.getElementById("app-build");
+          if (buildNode) { buildNode.setAttribute("data-build", build); buildNode.textContent = build; }
+        } catch (e) {}
+        var cleanup = async function () {
+          try {
+            if ("serviceWorker" in navigator) {
+              var regs = await navigator.serviceWorker.getRegistrations();
+              await Promise.all(regs.map(function (r) { return r.unregister().catch(function () { return false; }); }));
+            }
+          } catch (e) {}
+          try {
+            if ("caches" in window) {
+              var keys = await caches.keys();
+              await Promise.all(keys.map(function (k) { return caches.delete(k).catch(function () { return false; }); }));
+            }
+          } catch (e) {}
+        };
+        try {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) cleanup();
+        } catch (e) {}
+        var showFallback = function () {
           var root = document.getElementById("root");
           if (root && root.childElementCount === 0) {
             var f = document.getElementById("boot-fallback");
             if (f) f.style.display = "flex";
           }
+        };
+        var TIMEOUT = 4000;
+        var t = setTimeout(function () {
+          showFallback();
         }, TIMEOUT);
+        window.addEventListener("error", function (event) {
+          var target = event && event.target;
+          var tag = target && target.tagName;
+          if (tag === "SCRIPT" || tag === "LINK") showFallback();
+        }, true);
+        window.addEventListener("unhandledrejection", function () { setTimeout(showFallback, 0); });
         // Annule le fallback dès qu'un noeud est ajouté à #root.
         var root = document.getElementById("root");
         if (root && "MutationObserver" in window) {
@@ -464,9 +501,13 @@
         }
         var btn = document.getElementById("boot-fallback-reload");
         if (btn) btn.addEventListener("click", function () {
-          // Hard reload + cache bypass
           try { sessionStorage.removeItem("vite-preload-reloaded"); } catch (e) {}
-          window.location.reload();
+          window.location.replace("/?reload=" + Date.now());
+        });
+        var wipe = document.getElementById("boot-fallback-wipe");
+        if (wipe) wipe.addEventListener("click", function () {
+          try { sessionStorage.removeItem("vite-preload-reloaded"); } catch (e) {}
+          cleanup().finally(function () { window.location.replace("/?cache-clean=" + Date.now()); });
         });
       })();
     </script>
