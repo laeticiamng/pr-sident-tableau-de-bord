@@ -10,6 +10,7 @@ import { getVisionPageSchemas } from "@/lib/geo-schemas";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { visionTranslations } from "@/i18n/vision";
+import { PresidentCredentials } from "@/components/PresidentCredentials";
 
 const VALUE_ICONS = [Target, Lightbulb, Heart, TrendingUp];
 const COMMITMENT_ICONS = [Shield, Users, Award, Rocket];
@@ -105,6 +106,11 @@ export default function VisionPage() {
             <blockquote className="text-2xl md:text-3xl font-medium italic text-foreground leading-relaxed">{t.mission.quote}</blockquote>
             <p className="mt-6 text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">{t.mission.description}</p>
             <p className="mt-4 text-accent font-medium">{t.mission.author}</p>
+          </div>
+
+          {/* Preuve publique d'identité professionnelle */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <PresidentCredentials variant="panel" />
           </div>
         </div>
       </section>
