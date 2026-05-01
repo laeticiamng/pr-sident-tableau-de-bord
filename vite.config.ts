@@ -24,21 +24,33 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  define: {
-    // Garantit que les variables Supabase soient présentes même si .env est
-    // absent du contexte de build (ex. build de publication Lovable). Les
-    // valeurs réelles de import.meta.env (issues de .env) ont la priorité ;
-    // ces constantes ne servent que de filet de sécurité.
-    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
-      process.env.VITE_SUPABASE_URL || SUPABASE_URL_FALLBACK,
-    ),
-    "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
-      process.env.VITE_SUPABASE_PUBLISHABLE_KEY || SUPABASE_PUBLISHABLE_KEY_FALLBACK,
-    ),
-    "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
-      process.env.VITE_SUPABASE_PROJECT_ID || SUPABASE_PROJECT_ID_FALLBACK,
-    ),
-  },
+  // Filet de sécurité production uniquement.
+  // En dev, on laisse Vite lire `.env` normalement (les variables existent
+  // localement). En production, si le build n'a pas accès à `.env` (cas du
+  // build de publication Lovable, où `.env` est gitignore), on injecte les
+  // valeurs publiques pour éviter un écran noir « supabaseUrl is required ».
+  // Ces valeurs sont strictement publiques (URL + clé anon) et toute donnée
+  // reste protégée par les RLS Supabase.
+  define:
+    mode === "production"
+      ? {
+          ...(!process.env.VITE_SUPABASE_URL && {
+            "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(SUPABASE_URL_FALLBACK),
+            "import.meta.env.__SUPABASE_URL_FROM_FALLBACK__": JSON.stringify(true),
+          }),
+          ...(!process.env.VITE_SUPABASE_PUBLISHABLE_KEY && {
+            "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+              SUPABASE_PUBLISHABLE_KEY_FALLBACK,
+            ),
+            "import.meta.env.__SUPABASE_KEY_FROM_FALLBACK__": JSON.stringify(true),
+          }),
+          ...(!process.env.VITE_SUPABASE_PROJECT_ID && {
+            "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
+              SUPABASE_PROJECT_ID_FALLBACK,
+            ),
+          }),
+        }
+      : {},
   plugins: [
     react(),
     mode === "development" && componentTagger(),
