@@ -176,6 +176,21 @@ export const VerifiedPresidentBadge = ({
         ? t.unavailableLabel
         : t.badgeLabel;
 
+  // Annonce vocale pour lecteurs d'écran à chaque transition d'état.
+  // `error`/`success`/`unavailable` → assertif, `loading` → poli.
+  const liveMessage =
+    state === "loading"
+      ? t.liveAnnouncements.loading
+      : state === "success"
+        ? t.liveAnnouncements.success
+        : state === "error"
+          ? t.liveAnnouncements.error
+          : state === "unavailable"
+            ? t.liveAnnouncements.unavailable
+            : "";
+  const liveMode: "polite" | "assertive" =
+    state === "error" || state === "unavailable" ? "assertive" : "polite";
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -184,12 +199,14 @@ export const VerifiedPresidentBadge = ({
           onClick={handleClick}
           target="_blank"
           rel="noopener noreferrer"
+          role="link"
           aria-label={t.ariaLabel(
             COMPANY_PROFILE.presidentMedRegProfession,
             COMPANY_PROFILE.presidentMedRegGLN,
           )}
           aria-disabled={isDisabled}
           aria-busy={state === "loading"}
+          aria-describedby="medreg-badge-status"
           data-state={state}
           className={cn(
             "inline-flex max-w-full items-center rounded-full border font-medium transition-colors",
@@ -205,6 +222,7 @@ export const VerifiedPresidentBadge = ({
               sz.icon,
               state === "loading" && "animate-spin",
             )}
+            aria-hidden="true"
           />
           <span className="truncate">
             {label}
@@ -215,7 +233,10 @@ export const VerifiedPresidentBadge = ({
             )}
           </span>
           {state !== "loading" && state !== "unavailable" && (
-            <ExternalLink className={cn("shrink-0 opacity-70", sz.icon)} />
+            <ExternalLink
+              className={cn("shrink-0 opacity-70", sz.icon)}
+              aria-hidden="true"
+            />
           )}
         </a>
       </TooltipTrigger>
@@ -225,6 +246,17 @@ export const VerifiedPresidentBadge = ({
           COMPANY_PROFILE.presidentMedRegRegistry,
         )}
       </TooltipContent>
+      {/* Région live sr-only : annonce les transitions d'état aux lecteurs
+          d'écran sans perturber le rendu visuel. */}
+      <span
+        id="medreg-badge-status"
+        role="status"
+        aria-live={liveMode}
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {liveMessage}
+      </span>
     </Tooltip>
   );
 };
