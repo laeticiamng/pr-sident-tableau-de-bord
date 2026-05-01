@@ -1,5 +1,8 @@
-import { forwardRef } from "react";
-import { VerifiedPresidentBadge } from "@/components/VerifiedPresidentBadge";
+import { forwardRef, useState } from "react";
+import {
+  VerifiedPresidentBadge,
+  type VerifiedBadgeState,
+} from "@/components/VerifiedPresidentBadge";
 import { cn } from "@/lib/utils";
 
 interface HeroVerifiedSlotProps {
@@ -20,9 +23,20 @@ interface HeroVerifiedSlotProps {
  */
 export const HeroVerifiedSlot = forwardRef<HTMLDivElement, HeroVerifiedSlotProps>(
   ({ tone = "dark", className }, ref) => {
+    const [state, setState] = useState<VerifiedBadgeState>("ready");
     return (
-      <div ref={ref} className={cn("mt-6 flex justify-center", className)}>
-        <VerifiedPresidentBadge size="sm" tone={tone} showGLN={false} />
+      <div
+        ref={ref}
+        data-testid="hero-verified-slot"
+        data-badge-state={state}
+        className={cn("mt-6 flex justify-center", className)}
+      >
+        <VerifiedPresidentBadge
+          size="sm"
+          tone={tone}
+          showGLN={false}
+          onStateChange={setState}
+        />
       </div>
     );
   },
