@@ -222,6 +222,5 @@ const App = forwardRef<HTMLDivElement>(function App(_props, ref) {
   </div>
   );
 });
-);
 
 export default App;
