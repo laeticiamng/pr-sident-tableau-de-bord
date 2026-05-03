@@ -204,6 +204,21 @@ export default function StudioPage() {
             <p className="text-body-lg text-muted-foreground">
               Lorsque le projet présente un fort potentiel, EmotionSphere peut intervenir comme architecte stratégique associée, avec une participation minoritaire, un contrat d'advisory, un success fee ou un modèle hybride. Chaque deal est validé par un avocat ou un expert-comptable.
             </p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-3 text-left">
+              {[
+                { title: "Equity only", desc: "Pour les projets à très fort potentiel, équipe fiable et création de valeur claire." },
+                { title: "Forfait léger + equity", desc: "Engagement initial mesuré, complété par une participation minoritaire." },
+                { title: "Forfait + success fee + equity", desc: "Pour les gros appels à projets et dossiers structurants." },
+              ].map((m) => (
+                <div key={m.title} className="card-executive p-6">
+                  <h3 className="text-base font-semibold mb-1">{m.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{m.desc}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-10 text-sm text-muted-foreground italic max-w-2xl mx-auto">
+              Règle interne 80/20 : 80% sélection, 20% création. Nous n'engageons un deal en equity que lorsque le problème est réel, l'équipe exécutable, l'apport stratégique structurant et le cadre juridique propre.
+            </p>
           </div>
         </div>
       </section>
