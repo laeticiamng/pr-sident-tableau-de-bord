@@ -92,17 +92,17 @@ export default function StudioPage() {
         <div className="container">
           <div className="mx-auto max-w-3xl text-center px-4">
             <Badge variant="gold" className="mb-6 inline-flex items-center gap-1">
-              <Sparkles className="h-3 w-3" /> EmotionSphere Studio
+              <Sparkles className="h-3 w-3" /> EmotionSphere Venture Studio
             </Badge>
             <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
-              Studio d'architecture stratégique
+              Studio stratégique avec prise de participation
             </p>
             <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">
               Du problème au projet.
               <span className="block text-accent">De la vision au blueprint.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed">
-              Nous transformons les problématiques complexes en projets clairs, crédibles et activables.
+              Nous ne vendons pas uniquement du conseil : nous pouvons nous associer aux projets que nous contribuons à créer.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <PublicSubmissionDialog />
