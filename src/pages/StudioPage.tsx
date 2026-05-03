@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { usePageMeta } from "@/hooks/usePageMeta";
+import { PublicSubmissionDialog } from "@/components/studio/PublicSubmissionDialog";
 import {
   Sparkles,
   ArrowRight,
@@ -104,11 +105,7 @@ export default function StudioPage() {
               Nous transformons les problématiques complexes en projets clairs, crédibles et activables.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button asChild size="lg" variant="secondary">
-                <Link to="/contact" state={{ subject: "Studio — proposition de problématique" }}>
-                  Proposer une problématique <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <PublicSubmissionDialog />
               <Button asChild size="lg" variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10">
                 <Link to="/contact" state={{ subject: "Studio — demande de Blueprint 360°" }}>
                   Demander un Blueprint 360°
