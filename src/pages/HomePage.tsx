@@ -61,6 +61,16 @@ export default function HomePage() {
   const geoSchemas = useMemo(() => getHomePageSchemas(), []);
   const t = useTranslation(homeTranslations);
   const [studioInView, setStudioInView] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener?.("change", update);
+    return () => mq.removeEventListener?.("change", update);
+  }, []);
 
   useEffect(() => {
     const el = document.getElementById("emotionsphere-studio");
@@ -87,17 +97,31 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* Indicateur de scroll vers la section Studio */}
       <div
+        role="status"
         aria-live="polite"
+        aria-atomic="true"
         className={cn(
-          "fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transition-all duration-500 pointer-events-none",
+          "fixed bottom-6 left-1/2 z-50 -translate-x-1/2 pointer-events-none",
+          reducedMotion ? "" : "transition-all duration-500",
           studioInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4",
         )}
       >
-        <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 backdrop-blur-md border border-accent/40 px-4 py-2 text-xs font-medium text-white shadow-2xl">
+        <div
+          data-testid="studio-in-view-badge"
+          className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 backdrop-blur-md border border-accent/40 px-4 py-2 text-xs font-medium text-white shadow-2xl"
+        >
           <Sparkles className="h-3.5 w-3.5 text-accent" />
           Vous êtes sur EmotionSphere Studio
         </div>
       </div>
+
+      {/* Lien d'évitement / accès rapide pour lecteurs d'écran */}
+      <a
+        href="#emotionsphere-studio"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-accent-foreground focus:shadow-lg"
+      >
+        Aller à la section EmotionSphere Studio
+      </a>
 
       {/* HERO */}
       <section aria-label={t.hero.ariaLabel} className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
@@ -235,14 +259,22 @@ export default function HomePage() {
       {/* CTA vers la section Studio */}
       <div className="container px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 mb-10 sm:mb-12 flex justify-center">
         <Button
+          data-testid="discover-studio-cta"
           variant="hero"
           size="lg"
           className="group w-full sm:w-auto min-w-[260px]"
+          aria-controls="emotionsphere-studio"
           onClick={() => {
             const el = document.getElementById("emotionsphere-studio");
             if (el) {
-              el.scrollIntoView({ behavior: "smooth", block: "start" });
+              el.scrollIntoView({
+                behavior: reducedMotion ? "auto" : "smooth",
+                block: "start",
+              });
               window.history.replaceState(null, "", "#emotionsphere-studio");
+              // Donne le focus pour annonce lecteur d'écran
+              el.setAttribute("tabindex", "-1");
+              (el as HTMLElement).focus({ preventScroll: true });
             }
           }}
         >
@@ -254,7 +286,8 @@ export default function HomePage() {
       {/* EMOTIONSPHERE STUDIO — Studio d'architecture stratégique */}
       <section
         id="emotionsphere-studio"
-        aria-label="EmotionSphere Studio"
+        aria-label="EmotionSphere Studio — Studio d'architecture stratégique pour projets complexes"
+        aria-labelledby="emotionsphere-studio-heading"
         className="relative overflow-hidden scroll-mt-24 py-16 sm:py-20 md:py-28 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white"
       >
         <div
@@ -271,7 +304,7 @@ export default function HomePage() {
                 <Sparkles className="h-3 w-3 text-accent" />
                 EmotionSphere Studio
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 max-w-4xl mx-auto leading-tight">
+              <h2 id="emotionsphere-studio-heading" className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 max-w-4xl mx-auto leading-tight">
                 Studio d'architecture stratégique
                 <span className="block text-accent">pour projets complexes</span>
               </h2>
