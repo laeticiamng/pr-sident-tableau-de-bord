@@ -291,6 +291,30 @@ export type Database = {
         }
         Returns: string
       }
+      create_studio_call: {
+        Args: {
+          p_call_type: string
+          p_deadline?: string
+          p_domain?: string
+          p_eligibility?: string
+          p_estimated_budget?: string
+          p_issuer?: string
+          p_source_url?: string
+          p_title: string
+        }
+        Returns: string
+      }
+      create_studio_opportunity: {
+        Args: {
+          p_description?: string
+          p_domain?: string
+          p_problem_statement?: string
+          p_source_type?: string
+          p_source_url?: string
+          p_title: string
+        }
+        Returns: string
+      }
       current_user_org_id: { Args: never; Returns: string }
       delete_hq_conversation: {
         Args: { p_conversation_id: string }
@@ -523,6 +547,7 @@ export type Database = {
       get_hq_slo_status: { Args: never; Returns: Json }
       get_hq_system_config: { Args: { config_key: string }; Returns: Json }
       get_hq_top_run_costs: { Args: { p_window_days?: number }; Returns: Json }
+      get_studio_overview: { Args: never; Returns: Json }
       get_user_permissions: {
         Args: { _user_id: string }
         Returns: {
@@ -567,6 +592,66 @@ export type Database = {
         Returns: string
       }
       is_owner: { Args: never; Returns: boolean }
+      list_studio_advisory: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_advisory"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_blueprints: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_blueprints"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_calls: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_calls"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_deals: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_deals"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_documents: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_documents"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_opportunities: {
+        Args: never
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_opportunities"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       mark_dlq_attempt: {
         Args: { p_dlq_id: string; p_error?: string; p_outcome: string }
         Returns: boolean
