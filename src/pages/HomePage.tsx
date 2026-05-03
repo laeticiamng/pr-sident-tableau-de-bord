@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -206,10 +206,30 @@ export default function HomePage() {
 
       <HowItWorks />
 
+      {/* CTA vers la section Studio */}
+      <div className="container px-4 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 mb-10 sm:mb-12 flex justify-center">
+        <Button
+          variant="hero"
+          size="lg"
+          className="group w-full sm:w-auto min-w-[260px]"
+          onClick={() => {
+            const el = document.getElementById("emotionsphere-studio");
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+              window.history.replaceState(null, "", "#emotionsphere-studio");
+            }
+          }}
+        >
+          Découvrir EmotionSphere Studio
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </Button>
+      </div>
+
       {/* EMOTIONSPHERE STUDIO — Studio d'architecture stratégique */}
       <section
+        id="emotionsphere-studio"
         aria-label="EmotionSphere Studio"
-        className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white"
+        className="relative overflow-hidden scroll-mt-24 py-16 sm:py-20 md:py-28 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white"
       >
         <div
           className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,hsl(var(--accent)/0.18),transparent_70%)]"
