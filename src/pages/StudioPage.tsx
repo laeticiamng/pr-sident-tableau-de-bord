@@ -92,17 +92,17 @@ export default function StudioPage() {
         <div className="container">
           <div className="mx-auto max-w-3xl text-center px-4">
             <Badge variant="gold" className="mb-6 inline-flex items-center gap-1">
-              <Sparkles className="h-3 w-3" /> EmotionSphere Studio
+              <Sparkles className="h-3 w-3" /> EmotionSphere Venture Studio
             </Badge>
             <p className="text-sm font-medium text-accent tracking-[0.2em] uppercase mb-4">
-              Studio d'architecture stratégique
+              Studio stratégique avec prise de participation
             </p>
             <h1 className="text-headline-1 md:text-display-2 mb-6 text-white">
               Du problème au projet.
               <span className="block text-accent">De la vision au blueprint.</span>
             </h1>
             <p className="text-lg md:text-xl text-white/80 font-medium leading-relaxed">
-              Nous transformons les problématiques complexes en projets clairs, crédibles et activables.
+              Nous ne vendons pas uniquement du conseil : nous pouvons nous associer aux projets que nous contribuons à créer.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <PublicSubmissionDialog />
@@ -203,6 +203,21 @@ export default function StudioPage() {
             <h2 className="text-headline-1 mb-4">Advisory & prise de participation</h2>
             <p className="text-body-lg text-muted-foreground">
               Lorsque le projet présente un fort potentiel, EmotionSphere peut intervenir comme architecte stratégique associée, avec une participation minoritaire, un contrat d'advisory, un success fee ou un modèle hybride. Chaque deal est validé par un avocat ou un expert-comptable.
+            </p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-3 text-left">
+              {[
+                { title: "Equity only", desc: "Pour les projets à très fort potentiel, équipe fiable et création de valeur claire." },
+                { title: "Forfait léger + equity", desc: "Engagement initial mesuré, complété par une participation minoritaire." },
+                { title: "Forfait + success fee + equity", desc: "Pour les gros appels à projets et dossiers structurants." },
+              ].map((m) => (
+                <div key={m.title} className="card-executive p-6">
+                  <h3 className="text-base font-semibold mb-1">{m.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{m.desc}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-10 text-sm text-muted-foreground italic max-w-2xl mx-auto">
+              Règle interne 80/20 : 80% sélection, 20% création. Nous n'engageons un deal en equity que lorsque le problème est réel, l'équipe exécutable, l'apport stratégique structurant et le cadre juridique propre.
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DealSimulator } from "@/components/hq/studio/DealSimulator";
 import { RequestApprovalButton } from "@/components/hq/studio/RequestApprovalButton";
+import { GoNoGoChecklist } from "@/components/hq/studio/GoNoGoChecklist";
 import { useStudioDeals } from "@/hooks/useStudio";
 import {
   DEAL_STATUS_LABEL,
@@ -47,6 +48,8 @@ export default function StudioDealsPage() {
       </Card>
 
       <DealSimulator />
+
+      <GoNoGoChecklist />
 
       <Card className="border-primary/30 bg-primary/5">
         <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

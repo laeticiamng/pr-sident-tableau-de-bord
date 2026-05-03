@@ -28,13 +28,13 @@ export default function StudioCockpitPage() {
           <div className="space-y-2 max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-wider">
               <Sparkles className="h-3 w-3" />
-              EmotionSphere Studio
+              EmotionSphere Venture Studio · Equity-based
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold leading-tight">
               Studio d'architecture stratégique pour projets complexes
             </h1>
             <p className="text-sm sm:text-base text-white/70 max-w-2xl">
-              Du problème au projet. De la vision au blueprint. Du blueprint à la valeur. EmotionSphere Studio transforme les problématiques complexes en projets crédibles, finançables et activables — avec, le cas échéant, une participation minoritaire ou une mission d'advisory.
+              Nous ne vendons pas du temps : nous échangeons la conception stratégique d'un projet contre une participation minoritaire dans sa valeur future. Règle interne 80/20 — 80% sélection, 20% création.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
