@@ -16,6 +16,10 @@ import {
   Flag,
   FileCheck,
   Layers,
+  Compass,
+  Lightbulb,
+  Target,
+  Award,
 } from "lucide-react";
 import { PlatformShowcase } from "@/components/home/PlatformShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
@@ -207,6 +211,88 @@ export default function HomePage() {
       <PlatformShowcase />
 
       <HomeFAQ />
+
+      {/* EMOTIONSPHERE STUDIO — Studio d'architecture stratégique */}
+      <section
+        aria-label="EmotionSphere Studio"
+        className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white"
+      >
+        <div
+          className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,hsl(var(--accent)/0.18),transparent_70%)]"
+          aria-hidden="true"
+        />
+        <div className="absolute -top-20 -right-16 h-64 w-64 rounded-full bg-accent/15 blur-3xl" aria-hidden="true" />
+        <div className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-primary/15 blur-3xl" aria-hidden="true" />
+
+        <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <ScrollReveal className="text-center mb-14">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] mb-6 border border-white/10">
+                <Sparkles className="h-3 w-3 text-accent" />
+                EmotionSphere Studio
+              </div>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 max-w-4xl mx-auto leading-tight">
+                Studio d'architecture stratégique
+                <span className="block text-accent">pour projets complexes</span>
+              </h2>
+              <p className="text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
+                Du problème au projet. De la vision au blueprint. Du blueprint à la valeur.
+                EmotionSphere Studio transforme les problématiques complexes — appels à projets, AMI, défis d'innovation — en projets crédibles, finançables et activables.
+              </p>
+            </ScrollReveal>
+
+            <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+              {[
+                { icon: Lightbulb, title: "Détecter", description: "Veille active sur appels à projets, AMI et appels d'offres alignés à votre stratégie." },
+                { icon: Compass, title: "Concevoir", description: "Un Blueprint 360° en 12 sections : problème, solution, modèle, partenaires, KPI, risques." },
+                { icon: Target, title: "Activer", description: "Pitch, dossier de conviction, partenaires opérationnels et financeurs identifiés." },
+                { icon: Award, title: "Valoriser", description: "Advisory, equity, success fee : un deal ajusté à votre rôle d'architecte stratégique." },
+              ].map((step, index) => (
+                <ScrollReveal key={step.title} delay={index * 80}>
+                  <Card className="group h-full border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-accent/40 transition-all duration-300">
+                    <CardContent className="p-5 sm:p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="p-2.5 rounded-xl bg-accent/15 text-accent w-fit transition-transform group-hover:scale-110">
+                          <step.icon className="h-5 w-5" />
+                        </div>
+                        <span className="text-2xl font-bold text-white/15 tabular-nums" aria-hidden="true">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                      </div>
+                      <h3 className="text-base font-semibold text-white mb-2">{step.title}</h3>
+                      <p className="text-sm text-white/65 leading-relaxed">{step.description}</p>
+                    </CardContent>
+                  </Card>
+                </ScrollReveal>
+              ))}
+            </div>
+
+            <ScrollReveal delay={350} className="text-center">
+              <p className="text-sm text-white/60 italic max-w-2xl mx-auto mb-8">
+                « EmotionSphere Studio ne donne pas des idées. Il transforme des problèmes complexes
+                en projets activables, finançables et stratégiquement différenciants. »
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/studio" className="w-full sm:w-auto">
+                  <Button variant="hero" size="lg" className="group w-full min-w-[240px]">
+                    Découvrir le Studio
+                    <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+                <Link to="/studio#soumettre" className="w-full sm:w-auto">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full min-w-[240px] bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white"
+                  >
+                    Soumettre une opportunité
+                  </Button>
+                </Link>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
 
       {/* CREDIBILITY BADGES — Premium */}
       <section className="py-12 md:py-16 bg-secondary/30 border-y border-border/50">
