@@ -32,6 +32,7 @@ import {
   Landmark,
   Network,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
@@ -89,6 +90,7 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
         { href: "/hq/conformite", label: t.compliance, icon: Scale },
         { href: "/hq/audit", label: t.auditLog, icon: FileText },
         { href: "/hq/entreprise", label: t.enterprise, icon: Building2 },
+        { href: "/hq/studio/approbations", label: t.studioApprovals, icon: ShieldCheck },
       ],
     },
   ];

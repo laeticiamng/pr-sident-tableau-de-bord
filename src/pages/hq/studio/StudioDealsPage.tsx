@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DealSimulator } from "@/components/hq/studio/DealSimulator";
+import { RequestApprovalButton } from "@/components/hq/studio/RequestApprovalButton";
 import { useStudioDeals } from "@/hooks/useStudio";
 import {
   DEAL_STATUS_LABEL,
@@ -46,6 +47,27 @@ export default function StudioDealsPage() {
       </Card>
 
       <DealSimulator />
+
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">Création d'un nouveau deal</p>
+            <p className="text-xs text-muted-foreground">
+              Toute création de deal stratégique passe par la file d'approbations présidentielles si la porte est active.
+            </p>
+          </div>
+          <RequestApprovalButton
+            gateKey="create_deal"
+            input={{
+              action_type: "create_deal",
+              title: "Création d'un equity deal",
+              description: "Demande de validation pour structurer un nouveau deal selon la simulation en cours.",
+              risk_level: "high",
+            }}
+            label="Demander validation deal"
+          />
+        </CardContent>
+      </Card>
 
       <Card className="border-border/60">
         <CardHeader className="pb-3">

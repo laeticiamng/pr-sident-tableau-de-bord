@@ -2,6 +2,7 @@ import { Megaphone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CallForProjectsTable } from "@/components/hq/studio/CallForProjectsTable";
 import { NewCallDialog } from "@/components/hq/studio/NewCallDialog";
+import { RequestApprovalButton } from "@/components/hq/studio/RequestApprovalButton";
 
 export default function StudioCallsPage() {
   return (
@@ -31,6 +32,27 @@ export default function StudioCallsPage() {
       </Card>
 
       <CallForProjectsTable />
+
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold">Soumission officielle d'une réponse</p>
+            <p className="text-xs text-muted-foreground">
+              Avant tout dépôt d'une réponse à un appel à projets / AMI, la Présidence valide l'envoi via la file d'approbations.
+            </p>
+          </div>
+          <RequestApprovalButton
+            gateKey="submit_call_response"
+            input={{
+              action_type: "submit_call_response",
+              title: "Soumission d'une réponse à un appel",
+              description: "Demande de validation pour la soumission officielle d'une réponse à un appel à projets / AMI / appel d'offres.",
+              risk_level: "high",
+            }}
+            label="Demander validation soumission"
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }
