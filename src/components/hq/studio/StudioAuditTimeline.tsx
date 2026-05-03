@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { History, Bot, ShieldCheck, User2, Sparkles } from "lucide-react";
 
 interface Props {
-  resourceType: "studio_opportunity" | "studio_blueprint" | "studio_deal";
+  resourceType: "studio_opportunity" | "studio_blueprint" | "studio_deal" | "studio_approval";
   resourceId: string;
 }
 
