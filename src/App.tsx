@@ -109,6 +109,7 @@ const App = forwardRef<HTMLDivElement>(function App(_props, ref) {
   <div ref={ref} className="contents">
   <ErrorBoundary>
     <ProductionBootGuard>
+    <div className="contents">
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
@@ -217,6 +218,7 @@ const App = forwardRef<HTMLDivElement>(function App(_props, ref) {
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>
+    </div>
     </ProductionBootGuard>
   </ErrorBoundary>
   </div>
