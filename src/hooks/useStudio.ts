@@ -189,7 +189,7 @@ export function useCreateStudioCall() {
 // ──────────────────────────────────────────────────────────────────
 
 export function useStudioAuditTrail(
-  resourceType: "studio_opportunity" | "studio_blueprint" | "studio_deal",
+  resourceType: "studio_opportunity" | "studio_blueprint" | "studio_deal" | "studio_approval",
   resourceId: string | null | undefined,
 ) {
   return useQuery({
