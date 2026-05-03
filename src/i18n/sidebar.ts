@@ -32,6 +32,7 @@ export const sidebarTranslations = {
     governanceHub: "Gouvernance H3",
     architecture: "Architecture",
     studio: "Studio",
+    studioApprovals: "Approbations Studio",
   },
   en: {
     main: "Main",
@@ -66,6 +67,7 @@ export const sidebarTranslations = {
     governanceHub: "Governance H3",
     architecture: "Architecture",
     studio: "Studio",
+    studioApprovals: "Studio Approvals",
   },
   de: {
     main: "Hauptmenü",
@@ -100,5 +102,6 @@ export const sidebarTranslations = {
     governanceHub: "Governance H3",
     architecture: "Architektur",
     studio: "Studio",
+    studioApprovals: "Studio-Genehmigungen",
   },
 };
