@@ -280,6 +280,10 @@ export type Database = {
         }
         Returns: Json
       }
+      convert_studio_submission_to_opportunity: {
+        Args: { p_submission_id: string }
+        Returns: string
+      }
       create_hq_conversation: { Args: { p_title?: string }; Returns: string }
       create_hq_journal_entry: {
         Args: {
@@ -316,6 +320,10 @@ export type Database = {
         Returns: string
       }
       current_user_org_id: { Args: never; Returns: string }
+      decide_studio_approval: {
+        Args: { p_approval_id: string; p_decision: string; p_reason?: string }
+        Returns: boolean
+      }
       delete_hq_conversation: {
         Args: { p_conversation_id: string }
         Returns: boolean
@@ -547,6 +555,17 @@ export type Database = {
       get_hq_slo_status: { Args: never; Returns: Json }
       get_hq_system_config: { Args: { config_key: string }; Returns: Json }
       get_hq_top_run_costs: { Args: { p_window_days?: number }; Returns: Json }
+      get_studio_audit_trail: {
+        Args: { p_resource_id: string; p_resource_type: string }
+        Returns: {
+          action: string
+          actor_id: string
+          actor_type: string
+          details: Json
+          id: string
+          occurred_at: string
+        }[]
+      }
       get_studio_overview: { Args: never; Returns: Json }
       get_user_permissions: {
         Args: { _user_id: string }
@@ -591,6 +610,21 @@ export type Database = {
         }
         Returns: string
       }
+      insert_studio_public_submission: {
+        Args: {
+          p_contact_email: string
+          p_contact_name: string
+          p_contact_org?: string
+          p_contact_role?: string
+          p_context?: string
+          p_desired_outcome?: string
+          p_domain?: string
+          p_ip?: unknown
+          p_problem_statement: string
+          p_user_agent?: string
+        }
+        Returns: string
+      }
       is_owner: { Args: never; Returns: boolean }
       list_studio_advisory: {
         Args: never
@@ -598,6 +632,16 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "studio_advisory"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      list_studio_approvals: {
+        Args: { p_status?: string }
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_approvals"
           isOneToOne: false
           isSetofReturn: true
         }
@@ -652,6 +696,16 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      list_studio_public_submissions: {
+        Args: { p_status?: string }
+        Returns: unknown[]
+        SetofOptions: {
+          from: "*"
+          to: "studio_public_submissions"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       mark_dlq_attempt: {
         Args: { p_dlq_id: string; p_error?: string; p_outcome: string }
         Returns: boolean
@@ -661,6 +715,18 @@ export type Database = {
       remove_push_subscription: {
         Args: { p_endpoint: string }
         Returns: boolean
+      }
+      request_studio_approval: {
+        Args: {
+          p_action_type: string
+          p_description?: string
+          p_payload?: Json
+          p_resource_id?: string
+          p_resource_type?: string
+          p_risk_level?: string
+          p_title: string
+        }
+        Returns: string
       }
       save_push_subscription: {
         Args: {
@@ -685,6 +751,10 @@ export type Database = {
       }
       update_hq_system_config: {
         Args: { p_key: string; p_value: Json }
+        Returns: boolean
+      }
+      update_studio_submission_status: {
+        Args: { p_status: string; p_submission_id: string }
         Returns: boolean
       }
       upsert_hq_morning_digest: {

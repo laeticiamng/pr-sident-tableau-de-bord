@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.check-ai-budget]
 verify_jwt = false
+
+[functions.studio-public-submit]
+verify_jwt = false

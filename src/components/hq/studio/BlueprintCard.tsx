@@ -6,6 +6,7 @@ import {
 } from "@/lib/studio-types";
 import { FileText, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StudioBlueprintDetailDialog } from "./StudioBlueprintDetailDialog";
 
 interface BlueprintCardProps {
   blueprint: StudioBlueprint;
@@ -42,6 +43,9 @@ export function BlueprintCard({ blueprint }: BlueprintCardProps) {
         <p className="text-[11px] text-muted-foreground">
           Mis à jour {new Date(blueprint.updated_at).toLocaleDateString("fr-FR")}
         </p>
+        <div className="flex justify-end">
+          <StudioBlueprintDetailDialog blueprint={blueprint} />
+        </div>
       </CardContent>
     </Card>
   );

@@ -90,6 +90,7 @@ const StudioDealsPage = lazy(() => import("@/pages/hq/studio/StudioDealsPage"));
 const StudioAdvisoryPage = lazy(() => import("@/pages/hq/studio/StudioAdvisoryPage"));
 const StudioTemplatesPage = lazy(() => import("@/pages/hq/studio/StudioTemplatesPage"));
 const StudioLegalPage = lazy(() => import("@/pages/hq/studio/StudioLegalPage"));
+const StudioApprovalsPage = lazy(() => import("@/pages/hq/studio/StudioApprovalsPage"));
 
 // Public Studio Page (lazy loaded)
 const PublicStudioPage = lazy(() => import("@/pages/StudioPage"));
@@ -196,6 +197,7 @@ const App = forwardRef<HTMLDivElement>(function App(_props, ref) {
                     <Route path="/hq/studio/advisory" element={<StudioAdvisoryPage />} />
                     <Route path="/hq/studio/templates" element={<StudioTemplatesPage />} />
                     <Route path="/hq/studio/legal" element={<StudioLegalPage />} />
+                    <Route path="/hq/studio/approbations" element={<StudioApprovalsPage />} />
                   </Route>
                 </Route>
 
