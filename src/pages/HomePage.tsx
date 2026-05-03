@@ -206,12 +206,6 @@ export default function HomePage() {
 
       <HowItWorks />
 
-      <HomeArchitecture />
-
-      <PlatformShowcase />
-
-      <HomeFAQ />
-
       {/* EMOTIONSPHERE STUDIO — Studio d'architecture stratégique */}
       <section
         aria-label="EmotionSphere Studio"
@@ -293,6 +287,12 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <HomeArchitecture />
+
+      <PlatformShowcase />
+
+      <HomeFAQ />
 
       {/* CREDIBILITY BADGES — Premium */}
       <section className="py-12 md:py-16 bg-secondary/30 border-y border-border/50">
