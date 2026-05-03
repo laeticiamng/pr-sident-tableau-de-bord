@@ -304,7 +304,7 @@ export default function HomePage() {
                 <Sparkles className="h-3 w-3 text-accent" />
                 EmotionSphere Studio
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 max-w-4xl mx-auto leading-tight">
+              <h2 id="emotionsphere-studio-heading" className="text-3xl sm:text-4xl md:text-5xl font-semibold mb-6 max-w-4xl mx-auto leading-tight">
                 Studio d'architecture stratégique
                 <span className="block text-accent">pour projets complexes</span>
               </h2>
