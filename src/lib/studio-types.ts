@@ -206,6 +206,78 @@ export interface StudioOverview {
   advisory_active: number;
 }
 
+export interface StudioAuditEntry {
+  id: string;
+  occurred_at: string;
+  actor_type: string;
+  actor_id: string | null;
+  action: string;
+  details: Record<string, unknown> | null;
+}
+
+export type StudioPublicSubmissionStatus =
+  | "new" | "reviewed" | "converted" | "rejected" | "spam";
+
+export interface StudioPublicSubmission {
+  id: string;
+  contact_name: string;
+  contact_email: string;
+  contact_org: string | null;
+  contact_role: string | null;
+  domain: string | null;
+  problem_statement: string;
+  context: string | null;
+  desired_outcome: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  status: StudioPublicSubmissionStatus;
+  converted_opportunity_id: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+}
+
+export type StudioApprovalStatus =
+  | "pending" | "approved" | "rejected" | "executed" | "cancelled";
+
+export interface StudioApproval {
+  id: string;
+  action_type: string;
+  resource_type: string | null;
+  resource_id: string | null;
+  title: string;
+  description: string | null;
+  payload: Record<string, unknown>;
+  risk_level: StudioRiskLevel;
+  status: StudioApprovalStatus;
+  requested_by: string | null;
+  decided_by: string | null;
+  decided_at: string | null;
+  decision_reason: string | null;
+  executed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export const STUDIO_APPROVAL_GATE_KEYS = [
+  "create_deal",
+  "submit_call_response",
+  "send_legal_document",
+  "sign_deal",
+  "create_opportunity",
+  "create_blueprint",
+] as const;
+export type StudioApprovalGateKey = (typeof STUDIO_APPROVAL_GATE_KEYS)[number];
+export type StudioApprovalGates = Record<StudioApprovalGateKey, boolean>;
+
+export const STUDIO_APPROVAL_GATE_LABELS: Record<StudioApprovalGateKey, string> = {
+  create_deal: "Création d'un deal",
+  submit_call_response: "Soumission d'une réponse à appel",
+  send_legal_document: "Envoi d'un document légal",
+  sign_deal: "Signature d'un deal",
+  create_opportunity: "Création d'une opportunité",
+  create_blueprint: "Création d'un blueprint",
+};
+
 // ──────────────────────────────────────────────────────────────────
 // Display helpers
 // ──────────────────────────────────────────────────────────────────
