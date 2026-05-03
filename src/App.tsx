@@ -81,6 +81,19 @@ const ArchitecturePage = lazy(() => import("@/pages/hq/ArchitecturePage"));
 const ArchitecturePlatformDetailPage = lazy(() => import("@/pages/hq/ArchitecturePlatformDetailPage"));
 const BootErrorPage = lazy(() => import("@/pages/BootErrorPage"));
 
+// HQ Pages - EmotionSphere Studio (lazy loaded)
+const StudioCockpitPage = lazy(() => import("@/pages/hq/studio/StudioCockpitPage"));
+const StudioOpportunitiesPage = lazy(() => import("@/pages/hq/studio/StudioOpportunitiesPage"));
+const StudioCallsPage = lazy(() => import("@/pages/hq/studio/StudioCallsPage"));
+const StudioBlueprintsPage = lazy(() => import("@/pages/hq/studio/StudioBlueprintsPage"));
+const StudioDealsPage = lazy(() => import("@/pages/hq/studio/StudioDealsPage"));
+const StudioAdvisoryPage = lazy(() => import("@/pages/hq/studio/StudioAdvisoryPage"));
+const StudioTemplatesPage = lazy(() => import("@/pages/hq/studio/StudioTemplatesPage"));
+const StudioLegalPage = lazy(() => import("@/pages/hq/studio/StudioLegalPage"));
+
+// Public Studio Page (lazy loaded)
+const PublicStudioPage = lazy(() => import("@/pages/StudioPage"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -121,6 +134,7 @@ const App = () => (
                   <Route path="/legal/cgv" element={<CGVPage />} />
                   <Route path="/legal/rgpd" element={<RGPDRegistryPage />} />
                   <Route path="/legal/cookies" element={<CookiesPage />} />
+                  <Route path="/studio" element={<PublicStudioPage />} />
                 </Route>
 
                 {/* Auth */}
@@ -169,6 +183,16 @@ const App = () => (
                     <Route path="/hq/governance" element={<GovernancePage />} />
                     <Route path="/hq/architecture" element={<ArchitecturePage />} />
                     <Route path="/hq/architecture/:platformKey" element={<ArchitecturePlatformDetailPage />} />
+
+                    {/* EmotionSphere Studio */}
+                    <Route path="/hq/studio" element={<StudioCockpitPage />} />
+                    <Route path="/hq/studio/opportunites" element={<StudioOpportunitiesPage />} />
+                    <Route path="/hq/studio/appels" element={<StudioCallsPage />} />
+                    <Route path="/hq/studio/blueprints" element={<StudioBlueprintsPage />} />
+                    <Route path="/hq/studio/deals" element={<StudioDealsPage />} />
+                    <Route path="/hq/studio/advisory" element={<StudioAdvisoryPage />} />
+                    <Route path="/hq/studio/templates" element={<StudioTemplatesPage />} />
+                    <Route path="/hq/studio/legal" element={<StudioLegalPage />} />
                   </Route>
                 </Route>
 
