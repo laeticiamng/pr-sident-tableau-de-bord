@@ -31,6 +31,7 @@ export const sidebarTranslations = {
     enterprise: "Entreprise",
     governanceHub: "Gouvernance H3",
     architecture: "Architecture",
+    studio: "Studio",
   },
   en: {
     main: "Main",
@@ -64,6 +65,7 @@ export const sidebarTranslations = {
     enterprise: "Enterprise",
     governanceHub: "Governance H3",
     architecture: "Architecture",
+    studio: "Studio",
   },
   de: {
     main: "Hauptmenü",
@@ -97,5 +99,6 @@ export const sidebarTranslations = {
     enterprise: "Unternehmen",
     governanceHub: "Governance H3",
     architecture: "Architektur",
+    studio: "Studio",
   },
 };

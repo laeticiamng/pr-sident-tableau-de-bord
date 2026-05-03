@@ -31,6 +31,7 @@ import {
   Users,
   Landmark,
   Network,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePendingApprovals, useRecentRuns, usePlatforms, useAuditLogs } from "@/hooks/useHQData";
@@ -54,6 +55,7 @@ export function HQSidebar({ isOpen = true, onClose, onCommandOpen }: HQSidebarPr
     { href: "/hq/approbations", label: t.approvals, icon: CheckSquare, showBadge: true },
     { href: "/hq/journal", label: t.journal, icon: BookOpen },
     { href: "/hq/cockpit", label: t.cockpit, icon: Gauge },
+    { href: "/hq/studio", label: t.studio, icon: Sparkles },
     { href: "/hq/messages", label: t.messages, icon: Mail, showMessagesBadge: true },
     { href: "/hq/utilisateurs", label: t.users, icon: Users },
     { href: "/hq/settings", label: t.settings, icon: Settings },

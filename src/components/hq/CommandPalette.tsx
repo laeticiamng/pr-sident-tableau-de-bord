@@ -37,6 +37,12 @@ import {
   HeadphonesIcon,
   Zap,
   Activity,
+  Lightbulb,
+  Megaphone,
+  FileText as FileTextIcon,
+  Handshake,
+  Calculator,
+  Scale,
 } from "lucide-react";
 
 interface CommandPaletteProps {
@@ -62,6 +68,18 @@ const navigationItems = [
   { label: "Audit Log", icon: FileText, href: "/hq/audit" },
   { label: "Profil Entreprise", icon: Building2, href: "/hq/entreprise" },
   { label: "Diagnostics", icon: Activity, href: "/hq/diagnostics" },
+];
+
+const studioItems = [
+  { label: "Studio — Cockpit", icon: Sparkles, href: "/hq/studio" },
+  { label: "Créer une opportunité Studio", icon: Lightbulb, href: "/hq/studio/opportunites" },
+  { label: "Ajouter un appel à projets", icon: Megaphone, href: "/hq/studio/appels" },
+  { label: "Ouvrir le radar des opportunités", icon: Lightbulb, href: "/hq/studio/opportunites" },
+  { label: "Générer un Blueprint 360°", icon: FileTextIcon, href: "/hq/studio/blueprints" },
+  { label: "Simuler un equity deal", icon: Calculator, href: "/hq/studio/deals" },
+  { label: "Voir les deals en attente", icon: Handshake, href: "/hq/studio/deals" },
+  { label: "Créer une mission advisory", icon: Users, href: "/hq/studio/advisory" },
+  { label: "Protection juridique Studio", icon: Scale, href: "/hq/studio/legal" },
 ];
 
 const runItems = [
@@ -137,7 +155,22 @@ export function CommandPalette({ open: controlledOpen, onOpenChange }: CommandPa
           </CommandGroup>
           
           <CommandSeparator />
-          
+
+          <CommandGroup heading="EmotionSphere Studio">
+            {studioItems.map((item) => (
+              <CommandItem
+                key={`studio-${item.label}`}
+                onSelect={() => handleNavigation(item.href)}
+                className="cursor-pointer"
+              >
+                <item.icon className="mr-3 h-4 w-4 text-primary" />
+                <span>{item.label}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+
+          <CommandSeparator />
+
           <CommandGroup heading="Navigation">
             {navigationItems.map((item) => (
               <CommandItem
