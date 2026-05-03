@@ -12,6 +12,7 @@ import {
 import { Radar, Search } from "lucide-react";
 import { StrategicValueScore } from "./StrategicValueScore";
 import { ExecutionRiskBadge } from "./ExecutionRiskBadge";
+import { StudioOpportunityDetailDialog } from "./StudioOpportunityDetailDialog";
 
 function riskFromScore(score: number | null): "low" | "medium" | "high" | "critical" {
   if (score == null) return "medium";
@@ -46,9 +47,12 @@ function OpportunityRow({ opp }: OpportunityRowProps) {
         )}
       </div>
       <ExecutionRiskBadge level={riskFromScore(opp.execution_risk_score)} />
-      <Badge variant="outline" className={`text-[10px] ${OPPORTUNITY_STATUS_TONE[opp.status]}`}>
-        {OPPORTUNITY_STATUS_LABEL[opp.status]}
-      </Badge>
+      <div className="flex items-center gap-1">
+        <Badge variant="outline" className={`text-[10px] ${OPPORTUNITY_STATUS_TONE[opp.status]}`}>
+          {OPPORTUNITY_STATUS_LABEL[opp.status]}
+        </Badge>
+        <StudioOpportunityDetailDialog opp={opp} />
+      </div>
     </div>
   );
 }
