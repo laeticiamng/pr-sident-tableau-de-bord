@@ -25,12 +25,12 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
                 <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-                <span className="text-[10px] sm:text-xs text-muted-foreground">{t.footer.softwareEditor}</span>
+                <span className="text-sm sm:text-base font-bold tracking-[0.2em]">MNG</span>
+                <span className="text-[10px] sm:text-xs text-muted-foreground">Édité par EmotionsCare SASU</span>
               </div>
             </Link>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mb-4">
-              {t.footer.description}
+              Emotions Care · Med MNG · Memo MNG · MedCopilote Suisse
             </p>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">{t.footer.theme} :</span>
@@ -42,10 +42,6 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
             <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4">{t.footer.navigation}</h4>
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">{t.nav.home}</Link></li>
-              <li><Link to="/plateformes" className="hover:text-primary transition-colors">{t.nav.platforms}</Link></li>
-              <li><Link to="/tarifs" className="hover:text-primary transition-colors">{t.nav.pricing}</Link></li>
-              <li><Link to="/status" className="hover:text-primary transition-colors">{t.nav.status}</Link></li>
-              <li><Link to="/vision" className="hover:text-primary transition-colors">{t.nav.vision}</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">{t.nav.contact}</Link></li>
               <li><Link to="/trust" className="hover:text-primary transition-colors">{t.nav.security}</Link></li>
             </ul>
@@ -110,7 +106,7 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
 
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm font-medium text-foreground">{t.footer.ctaTitle}</p>
-          <Link to="/plateformes">
+          <Link to="/">
             <Button variant="executive" size="sm" className="group">
               {t.footer.ctaButton}
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -120,7 +116,7 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
 
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-            <p>© {currentYear} EMOTIONSCARE SASU. {t.footer.allRights}</p>
+            <p>© {currentYear} Conçu par MNG · Édité par EmotionsCare SASU</p>
             <p>SIREN : 944 505 445 | RCS Amiens</p>
           </div>
         </div>

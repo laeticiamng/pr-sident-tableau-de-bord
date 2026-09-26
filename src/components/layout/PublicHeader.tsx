@@ -8,11 +8,9 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { commonTranslations } from "@/i18n/common";
 
+// Site institutionnel MNG : les quatre produits sont sur l'accueil, chacun a ses propres tarifs.
 const navLinks = [
   { href: "/", key: "home" as const },
-  { href: "/plateformes", key: "platforms" as const },
-  { href: "/tarifs", key: "pricing" as const },
-  { href: "/vision", key: "vision" as const },
   { href: "/contact", key: "contact" as const },
 ];
 
@@ -47,8 +45,8 @@ export function PublicHeader() {
             <Building2 className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-bold tracking-tight">EMOTIONSCARE</span>
-            <span className="text-[10px] sm:text-xs text-muted-foreground">{t.footer.softwareEditor}</span>
+            <span className="text-sm sm:text-base font-bold tracking-[0.2em]">MNG</span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground">Édité par EmotionsCare SASU</span>
           </div>
         </Link>
 
