@@ -28,7 +28,7 @@ export const visionTranslations = {
       title: "Notre Mission",
       quote: "\"Créer des logiciels qui transforment la complexité en simplicité, et qui permettent à chacun de se concentrer sur ce qui compte vraiment.\"",
       description: "Depuis Amiens, nous construisons un écosystème technologique français au service de la santé, de l'éducation et de l'innovation.",
-      author: "— Motongane Laeticia, Présidente",
+      author: "— Laëticia Moto-Ngane, Présidente",
     },
     commitments: {
       title: "Nos Engagements",
@@ -50,7 +50,7 @@ export const visionTranslations = {
       title: "Notre Histoire",
       subtitle: "Une aventure entrepreneuriale ambitieuse.",
       items: [
-        { date: "Mai 2025", title: "Création d'EMOTIONSCARE SASU", description: "Immatriculation au RCS d'Amiens (SIREN 944 505 445). Début de l'aventure entrepreneuriale dans l'édition de logiciels applicatifs." },
+        { date: "Mai 2025", title: "Création d'EmotionsCare SASU SASU", description: "Immatriculation au RCS d'Amiens (SIREN 944 505 445). Début de l'aventure entrepreneuriale dans l'édition de logiciels applicatifs." },
         { date: "2025", title: "Lancement des premières plateformes", description: "Développement et mise en production de l'écosystème fondateur : EmotionsCare, NEARVITY, System Compass, Growth Copilot et Med MNG." },
         { date: "Début 2026", title: "Centre de pilotage & Expansion", description: "Création du centre de pilotage unifié avec IA intégrée. Lancement d'UrgenceOS, Track Triumph, Gouvernance Agents IA, StudyBeats et Vascular Atlas, portant l'écosystème à 10 plateformes." },
         { date: "Mi-2026", title: "Expansion & Intégrations", description: "Intégration des outils tiers (CRM, Analytics, Support) et déploiement des 39 processus automatisés de Growth Copilot." },
@@ -87,7 +87,7 @@ export const visionTranslations = {
       title: "Our Mission",
       quote: "\"Creating software that transforms complexity into simplicity, enabling everyone to focus on what truly matters.\"",
       description: "From Amiens, France, we build a French technology ecosystem serving healthcare, education and innovation.",
-      author: "— Motongane Laeticia, President",
+      author: "— Laëticia Moto-Ngane, President",
     },
     commitments: {
       title: "Our Commitments",
@@ -146,7 +146,7 @@ export const visionTranslations = {
       title: "Unsere Mission",
       quote: "\"Software schaffen, die Komplexität in Einfachheit verwandelt und jedem ermöglicht, sich auf das Wesentliche zu konzentrieren.\"",
       description: "Von Amiens aus bauen wir ein französisches Technologie-Ökosystem im Dienste von Gesundheit, Bildung und Innovation.",
-      author: "— Motongane Laeticia, Präsidentin",
+      author: "— Laëticia Moto-Ngane, Präsidentin",
     },
     commitments: {
       title: "Unsere Verpflichtungen",

@@ -145,17 +145,17 @@ export const MANAGED_PLATFORMS = [
 
 // Profil de l'entreprise (données légales)
 export const COMPANY_PROFILE = {
-  legalName: "EMOTIONSCARE SASU",
+  legalName: "EmotionsCare SASU",
   form: "SASU",
   siren: "944 505 445",
   siret: "944 505 445 00014",
   vat: "FR71944505445",
-  address: "APPARTEMENT 1, 5 RUE CAUDRON, 80000 AMIENS",
+  address: "Appartement 1, 5 rue Caudron, 80000 Amiens",
   activity: "58.29C — Édition de logiciels applicatifs",
   capital: "100,00 €",
   creationDate: "07/05/2025",
   rcs: "Amiens (inscrit le 21/05/2025)",
-  president: "Motongane Laeticia",
+  president: "Laëticia Moto-Ngane",
   linkedinPresident: "https://www.linkedin.com/in/laeticiamotongane/",
   linkedinCompany: "https://www.linkedin.com/company/emotionscare/",
   // Identité professionnelle vérifiée — registre officiel suisse MedReg
