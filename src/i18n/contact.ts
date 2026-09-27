@@ -47,7 +47,7 @@ export const contactTranslations = {
       mapCity: "Amiens, Hauts-de-France",
       mapRegion: "Préfecture de la Somme",
       demoTitle: "Planifier une démo",
-      demoDescription: "Une question sur un produit ? Écris-nous, on te répond directement.",
+      demoDescription: "Une question sur un produit ? Écrivez-nous, nous vous répondons directement.",
       demoButton: "Réserver un créneau",
       demoFeatures: ["Démonstration personnalisée", "Questions/réponses en direct", "30 min · Sans engagement"],
     },

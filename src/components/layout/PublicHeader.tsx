@@ -122,11 +122,6 @@ export function PublicHeader() {
             </Link>
           ))}
           <div className="pt-2 border-t mt-2 flex flex-col gap-2">
-            <Link to="/plateformes" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="executive" size="sm" className="w-full">
-                {t.nav.discover}
-              </Button>
-            </Link>
             <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
               <Button variant="executive-outline" size="sm" className="w-full">
                 {t.nav.login}
