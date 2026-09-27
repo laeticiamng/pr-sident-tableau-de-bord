@@ -53,7 +53,7 @@ export const cookiePolicyTranslations = {
     },
     thirdParty: {
       title: "Cookies tiers",
-      text: "EMOTIONSCARE n'utilise aucun cookie tiers (Google Analytics, Facebook Pixel, etc.). Toutes les analyses de trafic sont réalisées en interne, sur nos propres serveurs, sans transmission de données à des tiers. Cela garantit la confidentialité totale de vos données de navigation.",
+      text: "EMOTIONSCARE n'utilise aucun cookie tiers (Google Analytics, Facebook Pixel, etc.). Toutes les analyses de trafic sont réalisées en interne, sur nos propres serveurs, sans transmission de données à des tiers. Vos données de navigation ne sont pas partagées.",
     },
     rights: {
       title: "Vos droits",

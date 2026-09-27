@@ -34,7 +34,7 @@ export const contactTranslations = {
     },
     info: {
       title: "Nous sommes à votre écoute",
-      responseTime: "Réponse garantie sous 48h",
+      responseTime: "Réponse sous 48 h ouvrées en général",
       description: "N'hésitez pas à nous contacter directement. Nous répondons généralement sous 24 à 48 heures ouvrées.",
       companyName: "Raison sociale",
       headquarters: "Siège social",
@@ -47,7 +47,7 @@ export const contactTranslations = {
       mapCity: "Amiens, Hauts-de-France",
       mapRegion: "Préfecture de la Somme",
       demoTitle: "Planifier une démo",
-      demoDescription: "Vous préférez voir nos plateformes en action ? Réservez un créneau de 30 minutes avec notre équipe.",
+      demoDescription: "Une question sur un produit ? Écris-nous, on te répond directement.",
       demoButton: "Réserver un créneau",
       demoFeatures: ["Démonstration personnalisée", "Questions/réponses en direct", "30 min · Sans engagement"],
     },

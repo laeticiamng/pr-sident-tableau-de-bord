@@ -74,11 +74,6 @@ export function PublicHeader() {
           <LanguageSwitcher />
           <ThemeToggle variant="minimal" className="h-8 w-8 sm:h-9 sm:w-9" />
           
-          <Link to="/plateformes" className="hidden md:block">
-            <Button variant="executive" size="sm" className="text-xs sm:text-sm">
-              {t.nav.discover}
-            </Button>
-          </Link>
           <Link to="/auth" className="hidden sm:block">
             <Button variant="executive-outline" size="sm" className="text-xs sm:text-sm">
               {t.nav.login}

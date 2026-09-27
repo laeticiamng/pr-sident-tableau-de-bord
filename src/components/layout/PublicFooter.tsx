@@ -43,7 +43,6 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">{t.nav.home}</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">{t.nav.contact}</Link></li>
-              <li><Link to="/trust" className="hover:text-primary transition-colors">{t.nav.security}</Link></li>
             </ul>
           </div>
 
@@ -104,15 +103,6 @@ export const PublicFooter = forwardRef<HTMLElement>(function PublicFooter(_, ref
           </div>
         </div>
 
-        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm font-medium text-foreground">{t.footer.ctaTitle}</p>
-          <Link to="/">
-            <Button variant="executive" size="sm" className="group">
-              {t.footer.ctaButton}
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
-        </div>
 
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">

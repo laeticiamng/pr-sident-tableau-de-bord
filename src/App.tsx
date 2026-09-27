@@ -127,18 +127,18 @@ const App = forwardRef<HTMLDivElement>(function App(_props, ref) {
                 {/* Public Routes */}
                 <Route element={<PublicLayout />}>
                   <Route path="/" element={<HomePage />} />
-                  <Route path="/plateformes" element={<PlateformesPage />} />
-                  <Route path="/status" element={<StatusPage />} />
-                  <Route path="/vision" element={<VisionPage />} />
+                  <Route path="/plateformes" element={<Navigate to="/" replace />} />
+                  <Route path="/status" element={<Navigate to="/" replace />} />
+                  <Route path="/vision" element={<Navigate to="/" replace />} />
                   <Route path="/contact" element={<ContactPage />} />
-                  <Route path="/trust" element={<TrustPage />} />
-                  <Route path="/tarifs" element={<TarifsPage />} />
+                  <Route path="/trust" element={<Navigate to="/" replace />} />
+                  <Route path="/tarifs" element={<Navigate to="/" replace />} />
                   <Route path="/legal/mentions" element={<MentionsLegalesPage />} />
                   <Route path="/legal/confidentialite" element={<ConfidentialitePage />} />
                   <Route path="/legal/cgv" element={<CGVPage />} />
                   <Route path="/legal/rgpd" element={<RGPDRegistryPage />} />
                   <Route path="/legal/cookies" element={<CookiesPage />} />
-                  <Route path="/studio" element={<PublicStudioPage />} />
+                  <Route path="/studio" element={<Navigate to="/" replace />} />
                 </Route>
 
                 {/* Auth */}
