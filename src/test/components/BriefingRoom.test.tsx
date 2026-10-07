@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -23,7 +24,9 @@ function renderWithProviders(ui: React.ReactElement) {
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>{ui}</BrowserRouter>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
@@ -60,12 +63,14 @@ describe("BriefingRoom", () => {
     expect(screen.getByText("Demander un brief IA")).toBeInTheDocument();
   });
 
-  it("renders health section", () => {
+  // L'ancienne section « Santé de l'écosystème » (Opérationnelles / À surveiller / Critiques)
+  // a été retirée de BriefingRoom par le commit 2a06792 (simplification du tableau de bord) ;
+  // l'état de santé est désormais résumé sous le message d'accueil.
+  it("renders platform health summary", async () => {
     renderWithProviders(<BriefingRoom />);
-    expect(screen.getByText("Santé de l'écosystème")).toBeInTheDocument();
-    expect(screen.getByText("Opérationnelles")).toBeInTheDocument();
-    expect(screen.getByText("À surveiller")).toBeInTheDocument();
-    expect(screen.getByText("Critiques")).toBeInTheDocument();
+    expect(
+      await screen.findByText(/plateformes opérationnelles|fonctionnent parfaitement/),
+    ).toBeInTheDocument();
   });
 
   it("contains no NaN values", () => {

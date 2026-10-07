@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 // Mock supabase
 vi.mock("@/integrations/supabase/client", () => {
@@ -28,7 +29,9 @@ function renderWithProviders(ui: React.ReactElement) {
   });
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{ui}</BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>{ui}</BrowserRouter>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
