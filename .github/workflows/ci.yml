@@ -1,104 +1,86 @@
 name: CI
 
+# Vérification bloquante de chaque push et pull request sur main.
+# Gestionnaire de paquets : Bun, avec bun.lock (le seul fichier de verrouillage tenu à jour
+# par Lovable). L'ancien package-lock.json, figé depuis mars 2026, faisait échouer `npm ci`
+# (jspdf, @playwright/test… absents) : il a été supprimé, de même que bun.lockb (modèle 2025).
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint-and-test:
+  qualite:
+    name: Installation figée, lint, typage, tests, build
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 20
+    env:
+      TZ: UTC
+
     steps:
-      - name: Checkout repository
+      - name: Récupération du dépôt
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Installation de Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Installation de Node.js (exécution de vite, vitest, eslint, tsc)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '22'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Installation figée des dépendances (échoue si bun.lock est désynchronisé)
+        run: bun install --frozen-lockfile
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: ESLint
+        run: bun run lint
 
-      - name: Run TypeScript check
-        run: npx tsc --noEmit
+      # tsconfig.json racine a "files": [] : `tsc --noEmit` à la racine ne vérifiait rien.
+      # Le script typecheck vérifie réellement src/ (tsconfig.app.json), vite.config.ts
+      # (tsconfig.node.json) et e2e/ + configurations Playwright/Vitest (tsconfig.e2e.json).
+      - name: Typage TypeScript
+        run: bun run typecheck
 
-      - name: Run tests with coverage
-        run: npm run test -- --coverage --reporter=verbose
-        
-      - name: Check coverage thresholds
-        run: |
-          COVERAGE=$(cat coverage/coverage-summary.json 2>/dev/null | jq '.total.lines.pct // 0')
-          echo "Current coverage: $COVERAGE%"
-          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
-            echo "⚠️ Coverage below 50% threshold"
-          fi
+      - name: Tests unitaires Vitest
+        run: bun run test
 
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./coverage/lcov.info
-          fail_ci_if_error: false
+      # Sans variables VITE_SUPABASE_*, vite.config.ts injecte les valeurs publiques
+      # (URL + clé publishable) du projet : aucun secret n'est nécessaire au build.
+      - name: Build de production
+        run: bun run build
 
-  security:
+      - name: Taille du bundle
+        run: du -sh dist/
+
+  audit-dependances:
+    name: Audit des dépendances de production (bloquant au niveau critique)
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 10
+
     steps:
-      - name: Checkout repository
+      - name: Récupération du dépôt
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Installation de Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: '20'
-          cache: 'npm'
+          bun-version: 1.3.13
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Installation figée des dépendances
+        run: bun install --frozen-lockfile
 
-      - name: Run npm audit
-        run: npm audit --audit-level=high || true
-        
-      - name: Check for known vulnerabilities
-        run: npx audit-ci --high || true
-
-  build:
-    runs-on: ubuntu-latest
-    needs: [lint-and-test, security]
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-
-      - name: Check bundle size
-        run: |
-          BUNDLE_SIZE=$(du -sh dist/ | cut -f1)
-          echo "Bundle size: $BUNDLE_SIZE"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: dist/
-          retention-days: 7
+      # L'ancien job « security » se terminait toujours par `|| true` : il ne bloquait jamais.
+      # Ici, une vulnérabilité critique dans les dépendances de production fait échouer la CI.
+      - name: bun audit (production, niveau critique)
+        run: bun audit --prod --audit-level=critical

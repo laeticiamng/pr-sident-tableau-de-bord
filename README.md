@@ -8,7 +8,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e)](https://supabase.com/)
 [![Edge Functions](https://img.shields.io/badge/Edge_Functions-16_deployed-blue)](https://supabase.com/docs/guides/functions)
 [![E2E Tests](https://img.shields.io/badge/E2E-Playwright_12_specs-45ba4b)](.github/workflows/e2e.yml)
-[![Lint & Typecheck](https://img.shields.io/badge/CI-Lint_%2B_Typecheck-brightgreen)](.github/workflows/lint-typecheck.yml)
+[![CI](https://img.shields.io/badge/CI-lint_%2B_typage_%2B_tests_%2B_build-blue)](.github/workflows/ci.yml)
 [![Audit Score](https://img.shields.io/badge/Audit-9.3%2F10_(H3)-success)]()
 [![Status](https://img.shields.io/badge/Status-Beta_Privée-orange)]()
 
@@ -193,8 +193,8 @@ Toutes les tables sensibles ont des politiques RLS restrictives :
 ## 🚀 Développement
 
 ### Prérequis
-- Node.js 18+
-- npm ou bun
+- Node.js 22 (comme la CI)
+- Bun 1.3 (bun.lock est le seul fichier de verrouillage)
 
 ### Installation
 
@@ -203,8 +203,8 @@ Toutes les tables sensibles ont des politiques RLS restrictives :
 git clone <YOUR_GIT_URL>
 cd <YOUR_PROJECT_NAME>
 
-# Installer les dépendances
-npm install
+# Installer les dépendances (installation figée, comme la CI)
+bun install --frozen-lockfile
 
 # Lancer le serveur de développement
 npm run dev
@@ -216,8 +216,9 @@ npm run dev
 npm run dev      # Serveur dev avec HMR
 npm run build    # Build production
 npm run preview  # Preview du build
-npm run lint     # ESLint
-npm run test     # Tests Vitest
+npm run lint      # ESLint
+npm run typecheck # Typage réel (src, vite.config, e2e)
+npm run test      # Tests Vitest
 ```
 
 ---
