@@ -182,7 +182,7 @@ import { corsHeaders } from "../_shared/cors.ts";
          break;
  
        // ===== AGGREGATED DATA =====
-       case "full-sync":
+       case "full-sync": {
          // Comprehensive sync of all analytics sources
          console.log("Executing full sync across all sources...");
          
@@ -204,6 +204,7 @@ import { corsHeaders } from "../_shared/cors.ts";
            },
          };
          break;
+       }
  
        default:
          return new Response(JSON.stringify({ 

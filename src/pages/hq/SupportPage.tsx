@@ -40,7 +40,9 @@ export default function SupportPage() {
   const handleGenerateReport = async () => {
     try {
       await executeRun.mutateAsync({ run_type: "PLATFORM_STATUS_REVIEW" });
-    } catch {}
+    } catch {
+      // L'erreur est déjà notifiée par le onError de useExecuteRun (toast) : rien à ajouter ici.
+    }
   };
 
   return (
