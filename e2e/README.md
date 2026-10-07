@@ -22,30 +22,26 @@ npx playwright test e2e/public-home.spec.ts
 - `PLAYWRIGHT_HQ_EMAIL` — email Owner pour parcours HQ (sinon tests HQ skip)
 - `PLAYWRIGHT_HQ_PASSWORD` — mot de passe Owner
 
-## Couverture (12 parcours)
+## Couverture
 
-### Public (5)
-1. `public-home` — Page d'accueil charge + CTA visible
-2. `public-pricing` — Page Tarifs
+### Public — exécutés en CI sur chaque push / PR (`.github/workflows/e2e.yml`, build hermétique)
+1. `public-home` — Accueil MNG : titre, quatre produits et liens, lien Contact, aucune erreur console
+2. `public-redirects` — Les anciennes pages (/tarifs, /status, /trust, /vision, /plateformes, /studio) redirigent vers l'accueil
 3. `public-contact` — Formulaire contact
-4. `public-trust` — Page /trust (transparence)
-5. `public-status` — Page /status (santé publique)
+4. `public-i18n-translations` — Page Contact en FR / EN / DE + `<html lang>` + aria-label
+5. `public-verified-badge` — Slot canonique du badge MedReg (page Contact × 5 viewports)
+6. `public-verified-badge-a11y` — Rôles, aria-label, aria-describedby, aria-busy et région `role="status"` du badge
 
-### HQ — Owner uniquement (6)
-6. `hq-auth-login` — Login Owner réussi
-7. `hq-briefing-room` — Briefing Room charge sans erreur
-8. `hq-cockpit` — Cockpit Dirigeant
-9. `hq-finance` — Page Finance + widget AI Cost
-10. `hq-diagnostics` — Diagnostics + widget Reliability (DLQ + p95)
-11. `hq-securite` — Page Sécurité
+### Production — déclenchement manuel (`.github/workflows/e2e-production.yml`)
+7. `hq-auth-login`, `hq-briefing-room`, `hq-cockpit`, `hq-finance`, `hq-diagnostics`, `hq-securite` — compte Owner réel (sinon skip)
+8. `infra-healthz` — `/functions/v1/healthz` du projet Supabase de production
+9. `published-supabase-boot` — démarrage de l'URL publiée
 
-### Infrastructure (1)
-12. `infra-healthz` — `/functions/v1/healthz` retourne 200 + JSON valide
-
-### Qualité visuelle & A11y (3)
-13. `public-verified-badge` — Slot canonique du badge MedReg : alignement, spacing, non-chevauchement (4 pages × 5 viewports)
-14. `public-verified-badge-a11y` — Rôles, aria-label, aria-describedby, aria-busy et région `role="status"` `aria-live` du badge
-15. `public-visual-snapshots` — Diff visuel fullpage Home/Vision/Trust/Contact aux largeurs 320 / 768 / 1280 / 1920 px
+### Visuel — tag `@visuel`, exclu de la CI tant qu'aucune baseline n'est commitée
+10. `public-visual-snapshots` — Diff visuel fullpage Accueil / Contact aux largeurs 320 / 768 / 1280 / 1920 px.
+    Les baselines doivent être générées sur le runner Linux de la CI : lancer `e2e.yml` à la main
+    avec `mise_a_jour_baselines`, puis commiter l'artefact `baselines-visuelles`
+    dans `e2e/public-visual-snapshots.spec.ts-snapshots/`.
 
 > Première exécution : générer les baselines avec
 > `npx playwright test public-visual-snapshots --update-snapshots`.

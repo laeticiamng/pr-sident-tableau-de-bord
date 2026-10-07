@@ -13,13 +13,11 @@ import { test, expect, type Page } from "@playwright/test";
 type Lang = "fr" | "en" | "de";
 const LANGS: Lang[] = ["fr", "en", "de"];
 
+// Seule la page Contact reste traduite (FR/EN/DE) : l'accueil MNG est volontairement en
+// français uniquement (commit a59871e) et /vision, /trust, /tarifs, /plateformes redirigent
+// vers l'accueil depuis le commit 54b57c6.
 const ROUTES = [
-  { path: "/", key: "home" },
-  { path: "/vision", key: "vision" },
-  { path: "/trust", key: "trust" },
   { path: "/contact", key: "contact" },
-  { path: "/tarifs", key: "pricing" },
-  { path: "/plateformes", key: "platforms" },
 ] as const;
 
 /**
@@ -27,35 +25,10 @@ const ROUTES = [
  * page content for a given language. Picked to be unique to that locale.
  */
 const MARKERS: Record<string, Record<Lang, RegExp[]>> = {
-  home: {
-    fr: [/logiciels|plateformes|démo|découvrir/i],
-    en: [/software|platforms|demo|discover/i],
-    de: [/software|plattform|demo|entdecken/i],
-  },
-  vision: {
-    fr: [/vision|valeurs|mission/i],
-    en: [/vision|values|mission/i],
-    de: [/vision|werte|mission/i],
-  },
-  trust: {
-    fr: [/sécurité|confiance|conformité/i],
-    en: [/security|trust|compliance/i],
-    de: [/sicherheit|vertrauen|konformität|compliance/i],
-  },
   contact: {
     fr: [/contact|message|envoyer/i],
     en: [/contact|message|send/i],
     de: [/kontakt|nachricht|senden/i],
-  },
-  pricing: {
-    fr: [/tarifs|prix|mensuel|annuel/i],
-    en: [/pricing|price|monthly|annual/i],
-    de: [/preise|preis|monatlich|jährlich/i],
-  },
-  platforms: {
-    fr: [/plateformes|découvrir/i],
-    en: [/platforms|discover/i],
-    de: [/plattform|entdecken/i],
   },
 };
 
@@ -74,6 +47,9 @@ async function gotoWithLang(page: Page, path: string, lang: Lang) {
   }, lang);
   await page.goto(path);
   await page.waitForLoadState("domcontentloaded");
+  // Les pages publiques sont chargées en différé (React.lazy) : sans cette attente, le texte
+  // et les aria-label étaient parfois lus pendant le fallback de Suspense (tests instables).
+  await page.locator("#main-content h1").first().waitFor({ state: "visible" });
 }
 
 test.describe("Public — i18n trilingual coverage", () => {
@@ -101,8 +77,9 @@ test.describe("Public — i18n trilingual coverage", () => {
   }
 
   test("aria-label / alt attributes follow the active language", async ({ page }) => {
-    // Snapshot a known aria-label / alt on HomePage in FR vs EN.
-    await gotoWithLang(page, "/", "fr");
+    // Snapshot a known aria-label / alt on the Contact page in FR vs EN
+    // (l'accueil MNG n'est plus traduit, cf. commentaire de ROUTES).
+    await gotoWithLang(page, "/contact", "fr");
     const frAria = await page
       .locator("[aria-label]")
       .evaluateAll((els) => els.map((e) => e.getAttribute("aria-label") ?? "").filter(Boolean));
@@ -110,7 +87,7 @@ test.describe("Public — i18n trilingual coverage", () => {
       .locator("img[alt]")
       .evaluateAll((els) => els.map((e) => e.getAttribute("alt") ?? "").filter(Boolean));
 
-    await gotoWithLang(page, "/", "en");
+    await gotoWithLang(page, "/contact", "en");
     const enAria = await page
       .locator("[aria-label]")
       .evaluateAll((els) => els.map((e) => e.getAttribute("aria-label") ?? "").filter(Boolean));
