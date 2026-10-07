@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
     // 2. Calcul du MRR
     const mrr = calculerMrr(abonnementsActifs);
 
-    // 3. Customers totaux (simple count)
+    // 3. Customers totaux (toutes pages)
     let totalCustomers = 0;
     try {
       totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
@@ -178,24 +178,16 @@ Deno.serve(async (req) => {
     // 5. Churn rate (simplified)
     const churnRate = activeSubscriptions > 0 ? 2.1 : 0; // Simplified mock
 
-    // 6. Revenus (use charges for simplicity)
-    let chargesMoisCourant: ChargeStripe[] = [];
-    let chargesMoisPrecedent: ChargeStripe[] = [];
-    try {
-      chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
-        "created[gte]": debutMois.toString(),
-      });
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch charges");
-    }
-    try {
-      chargesMoisPrecedent = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
-        "created[gte]": debutMoisPrecedent.toString(),
-        "created[lt]": debutMois.toString(),
-      });
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch last month charges");
-    }
+    // 6. Revenus (charges, toutes pages)
+    // Pas de try/catch ici : un échec Stripe (même sur une page intermédiaire) doit remonter
+    // au gestionnaire global plutôt que d'afficher 0 € comme s'il s'agissait d'une mesure.
+    const chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+      "created[gte]": debutMois.toString(),
+    });
+    const chargesMoisPrecedent = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+      "created[gte]": debutMoisPrecedent.toString(),
+      "created[lt]": debutMois.toString(),
+    });
 
     // Calcul des variations
     const { revenueThisMonth, revenueLastMonth, mrrChange } = calculerEncaissements(

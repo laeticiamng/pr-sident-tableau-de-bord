@@ -34,14 +34,37 @@ export interface PageStripe<T> {
 
 export type RequeteStripe = (endpoint: string, params?: Record<string, string>) => Promise<PageStripe<unknown>>;
 
-/** Lit une liste Stripe. */
-export async function listerStripe<T>(
+/** Garde-fou : au-delà, on échoue plutôt que de renvoyer un total tronqué. */
+export const PAGES_STRIPE_MAX = 500;
+
+/**
+ * Lit une liste Stripe en entier : pages de 100 (maximum de l'API), en suivant
+ * `has_more` / `starting_after` (id du dernier objet de la page précédente).
+ * Les filtres passés dans `params` sont conservés sur chaque page.
+ */
+export async function listerStripe<T extends { id?: string }>(
   requete: RequeteStripe,
   endpoint: string,
   params: Record<string, string> = {},
 ): Promise<T[]> {
-  const page = (await requete(endpoint, { ...params, limit: "100" })) as PageStripe<T>;
-  return page.data || [];
+  const objets: T[] = [];
+  let curseur: string | undefined;
+  for (let numeroPage = 1; numeroPage <= PAGES_STRIPE_MAX; numeroPage++) {
+    const page = (await requete(endpoint, {
+      ...params,
+      limit: "100",
+      ...(curseur ? { starting_after: curseur } : {}),
+    })) as PageStripe<T>;
+    const data = page.data || [];
+    objets.push(...data);
+    if (!page.has_more) return objets;
+    const dernierId = data[data.length - 1]?.id;
+    if (!dernierId || dernierId === curseur) {
+      throw new Error(`Pagination Stripe bloquée sur ${endpoint} (has_more sans nouvel objet)`);
+    }
+    curseur = dernierId;
+  }
+  throw new Error(`Pagination Stripe interrompue sur ${endpoint} : plus de ${PAGES_STRIPE_MAX} pages`);
 }
 
 /** MRR (en unités monétaires) des abonnements actifs. */
