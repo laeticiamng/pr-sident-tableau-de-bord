@@ -1,5 +1,13 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
+import {
+  type AbonnementStripe,
+  type ChargeStripe,
+  bornesDePeriode,
+  calculerEncaissements,
+  calculerMrr,
+  listerStripe,
+} from "./calculs.ts";
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
@@ -138,48 +146,31 @@ Deno.serve(async (req) => {
     };
 
     // Dates de calcul
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const { debutMois, debutMoisPrecedent } = bornesDePeriode(new Date());
 
     // 1. Subscriptions actives
-    const activeSubsResponse = await stripeRequest("subscriptions", {
+    const abonnementsActifs = await listerStripe<AbonnementStripe>(stripeRequest, "subscriptions", {
       status: "active",
-      limit: "100",
     });
-    const activeSubscriptions = activeSubsResponse.data?.length || 0;
+    const activeSubscriptions = abonnementsActifs.length;
 
     // 2. Calcul du MRR
-    let mrr = 0;
-    for (const sub of activeSubsResponse.data || []) {
-      const amount = sub.items?.data?.[0]?.price?.unit_amount || 0;
-      const interval = sub.items?.data?.[0]?.price?.recurring?.interval;
-      
-      if (interval === "month") {
-        mrr += amount / 100;
-      } else if (interval === "year") {
-        mrr += (amount / 100) / 12;
-      }
-    }
+    const mrr = calculerMrr(abonnementsActifs);
 
     // 3. Customers totaux (simple count)
     let totalCustomers = 0;
     try {
-      const customersResponse = await stripeRequest("customers", { limit: "100" });
-      totalCustomers = customersResponse.data?.length || 0;
+      totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
     } catch (e) {
       console.log("[Stripe KPIs] Could not fetch customers");
     }
 
-    // 4. Nouveaux clients ce mois (simplified - count recent)
+    // 4. Nouveaux clients ce mois
     let newCustomersThisMonth = 0;
     try {
-      const startOfMonthUnix = Math.floor(startOfMonth.getTime() / 1000);
-      const newCustomersResponse = await stripeRequest("customers", {
-        "created[gte]": startOfMonthUnix.toString(),
-        limit: "100",
-      });
-      newCustomersThisMonth = newCustomersResponse.data?.length || 0;
+      newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
+        "created[gte]": debutMois.toString(),
+      })).length;
     } catch (e) {
       console.log("[Stripe KPIs] Could not fetch new customers");
     }
@@ -188,42 +179,29 @@ Deno.serve(async (req) => {
     const churnRate = activeSubscriptions > 0 ? 2.1 : 0; // Simplified mock
 
     // 6. Revenus (use charges for simplicity)
-    // Somme des paiements encaissés (payés, non remboursés) d'une liste de charges Stripe.
-    const sommeEncaissee = (charges: Array<{ paid?: boolean; refunded?: boolean; amount?: number }>) =>
-      charges
-        .filter((c) => c.paid && !c.refunded)
-        .reduce((sum, c) => sum + (c.amount || 0) / 100, 0);
-
-    let revenueThisMonth = 0;
-    let revenueLastMonth = 0;
-    const startOfMonthUnix = Math.floor(startOfMonth.getTime() / 1000);
+    let chargesMoisCourant: ChargeStripe[] = [];
+    let chargesMoisPrecedent: ChargeStripe[] = [];
     try {
-      const chargesResponse = await stripeRequest("charges", {
-        "created[gte]": startOfMonthUnix.toString(),
-        limit: "100",
+      chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+        "created[gte]": debutMois.toString(),
       });
-      revenueThisMonth = sommeEncaissee(chargesResponse.data || []);
     } catch (e) {
       console.log("[Stripe KPIs] Could not fetch charges");
     }
-    // Correctif : revenueLastMonth n'était jamais calculé (toujours 0), donc la variation
-    // mensuelle (mrrChange) valait toujours 0 et la page Finance affichait « mois précédent : 0 € ».
     try {
-      const startOfLastMonthUnix = Math.floor(startOfLastMonth.getTime() / 1000);
-      const lastMonthChargesResponse = await stripeRequest("charges", {
-        "created[gte]": startOfLastMonthUnix.toString(),
-        "created[lt]": startOfMonthUnix.toString(),
-        limit: "100",
+      chargesMoisPrecedent = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+        "created[gte]": debutMoisPrecedent.toString(),
+        "created[lt]": debutMois.toString(),
       });
-      revenueLastMonth = sommeEncaissee(lastMonthChargesResponse.data || []);
     } catch (e) {
       console.log("[Stripe KPIs] Could not fetch last month charges");
     }
 
     // Calcul des variations
-    const mrrChange = revenueLastMonth > 0 
-      ? ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100 
-      : 0;
+    const { revenueThisMonth, revenueLastMonth, mrrChange } = calculerEncaissements(
+      chargesMoisCourant,
+      chargesMoisPrecedent,
+    );
 
     const kpis: StripeKPIs = {
       mrr: Math.round(mrr * 100) / 100,
