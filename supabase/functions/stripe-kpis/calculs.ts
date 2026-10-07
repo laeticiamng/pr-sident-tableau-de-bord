@@ -8,9 +8,20 @@
 /** Sous-ensemble des champs d'un objet Charge Stripe utilisés ici. */
 export interface ChargeStripe {
   id?: string;
+  /** "succeeded" | "pending" | "failed" */
+  status?: string;
   paid?: boolean;
+  /** false pour une autorisation non encore capturée. */
+  captured?: boolean;
   refunded?: boolean;
+  /** Montant demandé, en centimes. */
   amount?: number;
+  /** Montant réellement capturé, en centimes. */
+  amount_captured?: number;
+  /** Montant déjà remboursé (partiellement ou totalement), en centimes. */
+  amount_refunded?: number;
+  /** Horodatage Unix (secondes) de création. */
+  created?: number;
 }
 
 /** Sous-ensemble des champs d'un objet Subscription Stripe utilisés ici. */
@@ -83,11 +94,21 @@ export function calculerMrr(abonnements: AbonnementStripe[]): number {
   return mrr;
 }
 
-/** Somme des paiements encaissés (payés, non remboursés) d'une liste de charges Stripe. */
+/**
+ * Montant net encaissé d'un paiement, en centimes : montant capturé moins les
+ * remboursements (partiels ou totaux). 0 pour un paiement non réussi
+ * (échoué, en attente) ou une autorisation non capturée.
+ */
+export function montantNetEncaisse(charge: ChargeStripe): number {
+  if (charge.status !== "succeeded" || charge.paid !== true || charge.captured === false) return 0;
+  const capture = charge.amount_captured ?? charge.amount ?? 0;
+  return Math.max(0, capture - (charge.amount_refunded ?? 0));
+}
+
+/** Chiffre encaissé net (en unités monétaires) d'une liste de charges Stripe. */
 export function sommeEncaissee(charges: ChargeStripe[]): number {
-  return charges
-    .filter((c) => c.paid && !c.refunded)
-    .reduce((sum, c) => sum + (c.amount || 0) / 100, 0);
+  const centimes = charges.reduce((sum, c) => sum + montantNetEncaisse(c), 0);
+  return centimes / 100;
 }
 
 /** Bornes (horodatages Unix, secondes) des périodes de calcul. */

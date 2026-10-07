@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import {
   listerStripe,
+  sommeEncaissee,
+  type ChargeStripe,
   type RequeteStripe,
 } from "../../supabase/functions/stripe-kpis/calculs.ts";
 
@@ -51,5 +53,38 @@ describe("stripe-kpis — pagination des listes Stripe", () => {
   it("échoue explicitement plutôt que de renvoyer une liste tronquée si la pagination ne progresse pas", async () => {
     const requete: RequeteStripe = async () => ({ data: [], has_more: true });
     await expect(listerStripe(requete, "charges")).rejects.toThrow(/pagination/i);
+  });
+});
+
+describe("stripe-kpis — chiffre encaissé net", () => {
+  const reussi = (montant: number, rembourse = 0): ChargeStripe => ({
+    status: "succeeded",
+    paid: true,
+    captured: true,
+    amount: montant,
+    amount_captured: montant,
+    amount_refunded: rembourse,
+    refunded: rembourse >= montant && montant > 0,
+  });
+
+  it("soustrait les remboursements partiels (amount_refunded)", () => {
+    // 100 € encaissés dont 30 € remboursés + 50 € encaissés sans remboursement = 120 € nets.
+    expect(sommeEncaissee([reussi(10_000, 3_000), reussi(5_000)])).toBe(120);
+  });
+
+  it("ne compte rien pour un paiement intégralement remboursé", () => {
+    expect(sommeEncaissee([reussi(10_000, 10_000)])).toBe(0);
+  });
+
+  it("ignore les paiements non réussis (échoués, en attente, autorisés non capturés)", () => {
+    const echoue: ChargeStripe = { status: "failed", paid: false, captured: false, amount: 4_000, amount_captured: 0, amount_refunded: 0 };
+    const enAttente: ChargeStripe = { status: "pending", paid: false, captured: false, amount: 6_000, amount_captured: 0, amount_refunded: 0 };
+    const nonCapture: ChargeStripe = { status: "succeeded", paid: true, captured: false, amount: 8_000, amount_captured: 0, amount_refunded: 0 };
+    expect(sommeEncaissee([echoue, enAttente, nonCapture, reussi(2_000)])).toBe(20);
+  });
+
+  it("utilise le montant réellement capturé en cas de capture partielle", () => {
+    const capturePartielle: ChargeStripe = { ...reussi(10_000), amount_captured: 7_000 };
+    expect(sommeEncaissee([capturePartielle])).toBe(70);
   });
 });
