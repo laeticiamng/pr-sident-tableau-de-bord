@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -24,33 +24,32 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  // Filet de sécurité production uniquement.
-  // En dev, on laisse Vite lire `.env` normalement (les variables existent
-  // localement). En production, si le build n'a pas accès à `.env` (cas du
-  // build de publication Lovable, où `.env` est gitignore), on injecte les
-  // valeurs publiques pour éviter un écran noir « supabaseUrl is required ».
-  // Ces valeurs sont strictement publiques (URL + clé anon) et toute donnée
-  // reste protégée par les RLS Supabase.
-  define:
-    mode === "production"
-      ? {
-          ...(!process.env.VITE_SUPABASE_URL && {
-            "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(SUPABASE_URL_FALLBACK),
-            "import.meta.env.__SUPABASE_URL_FROM_FALLBACK__": JSON.stringify(true),
-          }),
-          ...(!process.env.VITE_SUPABASE_PUBLISHABLE_KEY && {
-            "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
-              SUPABASE_PUBLISHABLE_KEY_FALLBACK,
-            ),
-            "import.meta.env.__SUPABASE_KEY_FROM_FALLBACK__": JSON.stringify(true),
-          }),
-          ...(!process.env.VITE_SUPABASE_PROJECT_ID && {
-            "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
-              SUPABASE_PROJECT_ID_FALLBACK,
-            ),
-          }),
-        }
-      : {},
+  // Filet de sécurité, tous modes (aperçu Lovable = build de développement).
+  // Si ni `.env` ni l'environnement ne fournissent la configuration Supabase
+  // (cas des builds Lovable depuis le retrait de `.env` du dépôt), on injecte
+  // les valeurs publiques (URL + clé anon). Une valeur fournie par `.env` ou
+  // l'environnement reste toujours prioritaire. Toute donnée reste protégée
+  // par les RLS Supabase.
+  define: (() => {
+    const env = { ...loadEnv(mode, process.cwd(), "VITE_"), ...process.env };
+    return {
+      ...(!env.VITE_SUPABASE_URL && {
+        "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(SUPABASE_URL_FALLBACK),
+        "import.meta.env.__SUPABASE_URL_FROM_FALLBACK__": JSON.stringify(true),
+      }),
+      ...(!env.VITE_SUPABASE_PUBLISHABLE_KEY && {
+        "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+          SUPABASE_PUBLISHABLE_KEY_FALLBACK,
+        ),
+        "import.meta.env.__SUPABASE_KEY_FROM_FALLBACK__": JSON.stringify(true),
+      }),
+      ...(!env.VITE_SUPABASE_PROJECT_ID && {
+        "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
+          SUPABASE_PROJECT_ID_FALLBACK,
+        ),
+      }),
+    };
+  })(),
   plugins: [
     react(),
     mode === "development" && componentTagger(),
