@@ -2,14 +2,15 @@
  
  export interface GrowthMetrics {
    cac: { value: number; trend: number; benchmark: number | null };
-   ltv: { value: number; trend: number; benchmark: number | null };
+   ltv: { value: number; trend: number | null; benchmark: number | null };
    ltvCacRatio: { value: number; trend: number; benchmark: number | null };
-   arpu: { value: number; trend: number; benchmark: number | null };
+   arpu: { value: number; trend: number | null; benchmark: number | null };
    paybackPeriod: { value: number; trend: number; benchmark: number | null };
    mau: { value: number; trend: number; benchmark: number | null };
    dau: { value: number; trend: number; benchmark: number | null };
    dauMauRatio: { value: number; trend: number; benchmark: number | null };
-   mrr: { value: number; trend: number; benchmark: number | null };
+   /** trend : variation du MRR en % ; null quand elle n'est pas mesurée (affichée « — »). */
+   mrr: { value: number; trend: number | null; benchmark: number | null };
    churn: { value: number; trend: number; benchmark: number | null };
    isRealData: boolean;
    lastUpdated: string;
@@ -59,7 +60,8 @@
  }
  
  export interface PredictionData {
-   mrr: { current: number; predicted30d: number; predicted90d: number; confidence: number };
+   /** null : pas de projection du MRR sans variation du MRR réellement mesurée. */
+   mrr: { current: number; predicted30d: number; predicted90d: number; confidence: number } | null;
    churn: { current: number; predicted30d: number; predicted90d: number; confidence: number };
    newUsers: { current: number; predicted30d: number; predicted90d: number; confidence: number };
    ltv: { current: number; predicted30d: number; predicted90d: number; confidence: number };
@@ -112,6 +114,9 @@
      const kpis = stripeData?.kpis;
      
      if (isRealData && kpis && kpis.mrr > 0) {
+       // Variation du MRR : null si non mesurée. Ne jamais lui substituer la variation des
+       // encaissements (paiements ponctuels/annuels, mois partiel).
+       const mrrTrend = typeof kpis.mrrChange === "number" ? kpis.mrrChange : null;
        const totalUsers = kpis.totalCustomers || 1;
        const arpu = kpis.mrr / totalUsers;
        const ltv = arpu * 24;
@@ -119,14 +124,14 @@
        
        return {
          cac: { value: Math.round(estimatedCAC), trend: 0, benchmark: 65 },
-         ltv: { value: Math.round(ltv), trend: kpis.mrrChange || 0, benchmark: 400 },
+         ltv: { value: Math.round(ltv), trend: mrrTrend, benchmark: 400 },
          ltvCacRatio: { value: Math.round((ltv / estimatedCAC) * 10) / 10, trend: 0, benchmark: 3.0 },
-         arpu: { value: Math.round(arpu * 100) / 100, trend: kpis.mrrChange || 0, benchmark: 25 },
+         arpu: { value: Math.round(arpu * 100) / 100, trend: mrrTrend, benchmark: 25 },
          paybackPeriod: { value: estimatedCAC > 0 ? Math.round((estimatedCAC / arpu) * 10) / 10 : 0, trend: 0, benchmark: 6 },
          mau: { value: kpis.totalCustomers || 0, trend: ((kpis.newCustomersThisMonth || 0) / Math.max(kpis.totalCustomers || 1, 1)) * 100, benchmark: null },
          dau: { value: 0, trend: 0, benchmark: null }, // Requires analytics
          dauMauRatio: { value: 0, trend: 0, benchmark: 40 }, // Requires analytics
-         mrr: { value: kpis.mrr, trend: kpis.mrrChange || 0, benchmark: null },
+         mrr: { value: kpis.mrr, trend: mrrTrend, benchmark: null },
          churn: { value: kpis.churnRate || 0, trend: kpis.churnRateChange || 0, benchmark: 5.0 },
          isRealData: true,
          lastUpdated: kpis.lastUpdated || new Date().toISOString(),
@@ -155,14 +160,16 @@
       const isRealData = stripeData?.success === true;
      
      if (isRealData && kpis && kpis.mrr > 0) {
-       const monthlyGrowth = (kpis.mrrChange || 0) / 100;
+       const monthlyGrowth = typeof kpis.mrrChange === "number" ? kpis.mrrChange / 100 : null;
        return {
-         mrr: {
-           current: kpis.mrr,
-           predicted30d: Math.round(kpis.mrr * (1 + monthlyGrowth)),
-           predicted90d: Math.round(kpis.mrr * Math.pow(1 + monthlyGrowth, 3)),
-           confidence: 78,
-         },
+         mrr: monthlyGrowth === null
+           ? null
+           : {
+               current: kpis.mrr,
+               predicted30d: Math.round(kpis.mrr * (1 + monthlyGrowth)),
+               predicted90d: Math.round(kpis.mrr * Math.pow(1 + monthlyGrowth, 3)),
+               confidence: 78,
+             },
          churn: {
            current: kpis.churnRate || 0,
            predicted30d: kpis.churnRate || 0,

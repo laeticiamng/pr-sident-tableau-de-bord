@@ -112,7 +112,7 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
     mrr: { 
       value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
       change: stripeKPIs?.mrrChange ?? undefined, 
-      trend: stripeKPIs ? (stripeKPIs.mrrChange > 0 ? "up" as const : stripeKPIs.mrrChange < 0 ? "down" as const : "neutral" as const) : "neutral" as const 
+      trend: stripeKPIs?.mrrChange != null ? (stripeKPIs.mrrChange > 0 ? "up" as const : stripeKPIs.mrrChange < 0 ? "down" as const : "neutral" as const) : "neutral" as const 
     },
     activeUsers: { 
       value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : "—", 

@@ -26,8 +26,8 @@ export function KeyMetricsGrid() {
     {
       title: "MRR",
       value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—",
-      change: kpis ? formatPercentage(kpis.mrrChange) : "—",
-      trend: kpis && kpis.mrrChange > 0 ? "up" : "down",
+      change: kpis && kpis.mrrChange != null ? formatPercentage(kpis.mrrChange) : "—",
+      trend: kpis && kpis.mrrChange != null && kpis.mrrChange > 0 ? "up" : "down",
       icon: DollarSign,
       color: "text-success"
     },
@@ -48,12 +48,16 @@ export function KeyMetricsGrid() {
       color: healthyPlatforms === totalPlatforms ? "text-success" : "text-warning"
     },
     {
-      title: "Croissance",
-      value: kpis ? `${kpis.mrrChange > 0 ? '+' : ''}${kpis.mrrChange}%` : "—",
-      change: "vs mois dernier",
-      trend: kpis && kpis.mrrChange > 0 ? "up" : "down",
+      // Croissance du chiffre encaissé sur périodes équivalentes (mois à date vs même
+      // durée du mois précédent) — ce n'est pas une croissance du MRR.
+      title: "Encaissé à date",
+      value: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : "—",
+      change: "vs même période M-1",
+      trend: kpis && kpis.revenueChangeToDate != null && kpis.revenueChangeToDate > 0 ? "up" : "down",
       icon: TrendingUp,
-      color: kpis && kpis.mrrChange > 0 ? "text-success" : "text-destructive"
+      color: kpis && kpis.revenueChangeToDate != null
+        ? (kpis.revenueChangeToDate > 0 ? "text-success" : "text-destructive")
+        : "text-muted-foreground"
     },
   ];
 

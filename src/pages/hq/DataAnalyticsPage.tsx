@@ -116,7 +116,7 @@ export default function DataAnalyticsPage() {
         <MetricCard
           title="MRR"
           value={kpis ? formatCurrency(kpis.mrr) : "—"}
-          change={kpis?.mrrChange}
+          change={kpis?.mrrChange ?? undefined}
           icon={<DollarSign className="h-5 w-5 text-accent" />}
           loading={isLoading}
         />

@@ -61,7 +61,8 @@ Deno.test("stripe-kpis: response should have correct KPI structure", async () =>
   const kpis = data.kpis;
   
   assertEquals(typeof kpis.mrr, "number");
-  assertEquals(typeof kpis.mrrChange, "number");
+  // null = variation du MRR non mesurée (Stripe ne fournit pas le MRR passé).
+  assertEquals(kpis.mrrChange === null || typeof kpis.mrrChange === "number", true);
   assertEquals(typeof kpis.activeSubscriptions, "number");
   assertEquals(typeof kpis.activeSubscriptionsChange, "number");
   assertEquals(typeof kpis.churnRate, "number");
@@ -70,6 +71,8 @@ Deno.test("stripe-kpis: response should have correct KPI structure", async () =>
   assertEquals(typeof kpis.newCustomersThisMonth, "number");
   assertEquals(typeof kpis.revenueThisMonth, "number");
   assertEquals(typeof kpis.revenueLastMonth, "number");
+  assertEquals(typeof kpis.revenueLastMonthToDate, "number");
+  assertEquals(kpis.revenueChangeToDate === null || typeof kpis.revenueChangeToDate === "number", true);
   assertEquals(typeof kpis.currency, "string");
   assertEquals(typeof kpis.lastUpdated, "string");
 });
@@ -129,6 +132,7 @@ Deno.test("stripe-kpis: numeric values should be non-negative", async () => {
   assertEquals(kpis.newCustomersThisMonth >= 0, true, "newCustomersThisMonth should be non-negative");
   assertEquals(kpis.revenueThisMonth >= 0, true, "revenueThisMonth should be non-negative");
   assertEquals(kpis.revenueLastMonth >= 0, true, "revenueLastMonth should be non-negative");
+  assertEquals(kpis.revenueLastMonthToDate >= 0, true, "revenueLastMonthToDate should be non-negative");
 });
 
 Deno.test("stripe-kpis: churn rate should be percentage (0-100)", async () => {

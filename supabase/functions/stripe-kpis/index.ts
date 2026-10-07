@@ -3,31 +3,17 @@ import { corsHeaders } from "../_shared/cors.ts";
 import {
   type AbonnementStripe,
   type ChargeStripe,
+  type StripeKPIs,
+  assemblerKpis,
   bornesDePeriode,
-  calculerEncaissements,
-  calculerMrr,
   listerStripe,
 } from "./calculs.ts";
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
- * Calcule MRR, churn, revenus et autres KPIs depuis Stripe
+ * Calcule MRR, churn, revenus et autres KPIs depuis Stripe.
+ * Les calculs sont dans calculs.ts (fonctions pures testées par Vitest).
  */
-
-interface StripeKPIs {
-  mrr: number;
-  mrrChange: number;
-  activeSubscriptions: number;
-  activeSubscriptionsChange: number;
-  churnRate: number;
-  churnRateChange: number;
-  totalCustomers: number;
-  newCustomersThisMonth: number;
-  revenueThisMonth: number;
-  revenueLastMonth: number;
-  currency: string;
-  lastUpdated: string;
-}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -106,7 +92,7 @@ Deno.serve(async (req) => {
           mock: true,
           kpis: {
             mrr: 12450,
-            mrrChange: 8.2,
+            mrrChange: null,
             activeSubscriptions: 247,
             activeSubscriptionsChange: 12,
             churnRate: 2.1,
@@ -115,6 +101,8 @@ Deno.serve(async (req) => {
             newCustomersThisMonth: 45,
             revenueThisMonth: 15400,
             revenueLastMonth: 14200,
+            revenueLastMonthToDate: 14200,
+            revenueChangeToDate: 8.5,
             currency: "eur",
             lastUpdated: new Date().toISOString(),
           },
@@ -145,19 +133,16 @@ Deno.serve(async (req) => {
       return response.json();
     };
 
-    // Dates de calcul
-    const { debutMois, debutMoisPrecedent } = bornesDePeriode(new Date());
+    // Dates de calcul (UTC)
+    const maintenant = new Date();
+    const { debutMois, debutMoisPrecedent } = bornesDePeriode(maintenant);
 
-    // 1. Subscriptions actives
+    // 1. Abonnements actifs (toutes pages) : MRR et nombre d'abonnements
     const abonnementsActifs = await listerStripe<AbonnementStripe>(stripeRequest, "subscriptions", {
       status: "active",
     });
-    const activeSubscriptions = abonnementsActifs.length;
 
-    // 2. Calcul du MRR
-    const mrr = calculerMrr(abonnementsActifs);
-
-    // 3. Customers totaux (toutes pages)
+    // 2. Clients totaux (toutes pages)
     let totalCustomers = 0;
     try {
       totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
@@ -165,7 +150,7 @@ Deno.serve(async (req) => {
       console.log("[Stripe KPIs] Could not fetch customers");
     }
 
-    // 4. Nouveaux clients ce mois
+    // 3. Nouveaux clients ce mois
     let newCustomersThisMonth = 0;
     try {
       newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
@@ -175,10 +160,10 @@ Deno.serve(async (req) => {
       console.log("[Stripe KPIs] Could not fetch new customers");
     }
 
-    // 5. Churn rate (simplified)
-    const churnRate = activeSubscriptions > 0 ? 2.1 : 0; // Simplified mock
+    // 4. Churn rate (simplified)
+    const churnRate = abonnementsActifs.length > 0 ? 2.1 : 0; // Simplified mock
 
-    // 6. Revenus (charges, toutes pages)
+    // 5. Revenus (charges, toutes pages)
     // Pas de try/catch ici : un échec Stripe (même sur une page intermédiaire) doit remonter
     // au gestionnaire global plutôt que d'afficher 0 € comme s'il s'agissait d'une mesure.
     const chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
@@ -189,26 +174,18 @@ Deno.serve(async (req) => {
       "created[lt]": debutMois.toString(),
     });
 
-    // Calcul des variations
-    const { revenueThisMonth, revenueLastMonth, mrrChange } = calculerEncaissements(
-      chargesMoisCourant,
-      chargesMoisPrecedent,
-    );
-
-    const kpis: StripeKPIs = {
-      mrr: Math.round(mrr * 100) / 100,
-      mrrChange: Math.round(mrrChange * 10) / 10,
-      activeSubscriptions,
-      activeSubscriptionsChange: newCustomersThisMonth,
-      churnRate: Math.round(churnRate * 10) / 10,
-      churnRateChange: 0, // Nécessiterait un calcul historique
+    // MRR, chiffre encaissé net et croissance sur périodes équivalentes. mrrChange reste
+    // null : Stripe ne fournit pas le MRR passé, et la variation des encaissements (qui
+    // incluent paiements ponctuels et annuels) n'est pas une variation de MRR.
+    const kpis: StripeKPIs = assemblerKpis({
+      abonnementsActifs,
       totalCustomers,
       newCustomersThisMonth,
-      revenueThisMonth: Math.round(revenueThisMonth * 100) / 100,
-      revenueLastMonth: Math.round(revenueLastMonth * 100) / 100,
-      currency: "eur",
-      lastUpdated: new Date().toISOString(),
-    };
+      chargesMoisCourant,
+      chargesMoisPrecedent,
+      maintenant,
+      churnRate,
+    });
 
     console.log(`[Stripe KPIs] MRR: ${kpis.mrr}€, Subs: ${kpis.activeSubscriptions}, Churn: ${kpis.churnRate}%`);
 
@@ -226,7 +203,7 @@ Deno.serve(async (req) => {
         mock: true,
         kpis: {
           mrr: 0,
-          mrrChange: 0,
+          mrrChange: null,
           activeSubscriptions: 0,
           activeSubscriptionsChange: 0,
           churnRate: 0,
@@ -235,6 +212,8 @@ Deno.serve(async (req) => {
           newCustomersThisMonth: 0,
           revenueThisMonth: 0,
           revenueLastMonth: 0,
+          revenueLastMonthToDate: 0,
+          revenueChangeToDate: null,
           currency: "eur",
           lastUpdated: new Date().toISOString(),
         },

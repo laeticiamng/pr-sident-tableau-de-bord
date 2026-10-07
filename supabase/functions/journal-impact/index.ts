@@ -114,7 +114,10 @@ Deno.serve(async (req: Request) => {
       current_kpis: stripeData?.kpis
         ? {
             mrr: stripeData.kpis.mrr,
-            mrr_change: stripeData.kpis.mrrChange,
+            // null = variation du MRR non mesurée (Stripe ne donne pas le MRR passé).
+            mrr_change: stripeData.kpis.mrrChange ?? null,
+            // Croissance du chiffre encaissé (pas du MRR), mois à date vs même période M-1.
+            encaisse_variation_meme_periode_pct: stripeData.kpis.revenueChangeToDate ?? null,
             total_customers: stripeData.kpis.totalCustomers,
             churn_rate: stripeData.kpis.churnRate,
             arpu: stripeData.kpis.arpu,

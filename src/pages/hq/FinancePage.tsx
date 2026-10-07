@@ -37,20 +37,22 @@ export default function FinancePage() {
     { 
       label: "MRR", 
       value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—", 
-      change: kpis ? formatPercentage(kpis.mrrChange) : "—",
-      trend: kpis && kpis.mrrChange > 0 ? "up" : kpis && kpis.mrrChange < 0 ? "down" : "neutral",
+      // Variation du MRR non mesurée par Stripe (null) : « — ».
+      change: kpis && kpis.mrrChange != null ? formatPercentage(kpis.mrrChange) : "—",
+      trend: kpis && kpis.mrrChange != null ? (kpis.mrrChange > 0 ? "up" : kpis.mrrChange < 0 ? "down" : "neutral") : "neutral",
       icon: DollarSign,
       description: "Monthly Recurring Revenue"
     },
     { 
-      label: "Revenus du Mois", 
+      label: "Encaissé ce mois (à date)", 
       value: kpis ? formatCurrency(kpis.revenueThisMonth, kpis.currency) : "—", 
-      change: kpis && kpis.revenueLastMonth > 0 
-        ? formatPercentage(((kpis.revenueThisMonth - kpis.revenueLastMonth) / kpis.revenueLastMonth) * 100) 
-        : "—",
-      trend: kpis && kpis.revenueThisMonth > kpis.revenueLastMonth ? "up" : "down",
+      // Comparaison sur périodes équivalentes : même durée écoulée du mois précédent.
+      change: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : "—",
+      trend: kpis && kpis.revenueChangeToDate != null
+        ? (kpis.revenueChangeToDate > 0 ? "up" : kpis.revenueChangeToDate < 0 ? "down" : "neutral")
+        : "neutral",
       icon: CreditCard,
-      description: "vs mois précédent"
+      description: "vs même période du mois précédent"
     },
     { 
       label: "Abonnements Actifs", 
@@ -186,10 +188,10 @@ export default function FinancePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <BarChart3 className="h-5 w-5 text-primary" />
-              Comparaison Revenus
+              Comparaison des encaissements
             </CardTitle>
             <CardDescription>
-              Ce mois vs mois précédent
+              Mois en cours à date vs même période du mois précédent
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -202,15 +204,15 @@ export default function FinancePage() {
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm">Ce mois</span>
+                    <span className="text-sm">Ce mois (à date)</span>
                     <span className="font-semibold">{formatCurrency(kpis?.revenueThisMonth || 0, kpis?.currency)}</span>
                   </div>
                   <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-primary rounded-full transition-all" 
                       style={{ 
-                        width: `${Math.min(100, kpis?.revenueLastMonth && kpis.revenueLastMonth > 0 
-                          ? (kpis.revenueThisMonth / kpis.revenueLastMonth) * 100 
+                        width: `${Math.min(100, kpis?.revenueLastMonthToDate && kpis.revenueLastMonthToDate > 0 
+                          ? (kpis.revenueThisMonth / kpis.revenueLastMonthToDate) * 100 
                           : 100)}%` 
                       }}
                     />
@@ -218,8 +220,8 @@ export default function FinancePage() {
                 </div>
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm">Mois précédent</span>
-                    <span className="font-semibold">{formatCurrency(kpis?.revenueLastMonth || 0, kpis?.currency)}</span>
+                    <span className="text-sm">Même période du mois précédent</span>
+                    <span className="font-semibold">{formatCurrency(kpis?.revenueLastMonthToDate || 0, kpis?.currency)}</span>
                   </div>
                   <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div 
@@ -228,6 +230,9 @@ export default function FinancePage() {
                     />
                   </div>
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  Mois précédent complet : {formatCurrency(kpis?.revenueLastMonth || 0, kpis?.currency)}
+                </p>
               </div>
             )}
           </CardContent>
@@ -239,7 +244,7 @@ export default function FinancePage() {
         <MRRChart />
         <RevenueComparisonChart 
           currentMonth={kpis?.revenueThisMonth || 0} 
-          previousMonth={kpis?.revenueLastMonth || 0}
+          previousMonth={kpis?.revenueLastMonthToDate || 0}
           currency={kpis?.currency || "EUR"}
         />
       </div>

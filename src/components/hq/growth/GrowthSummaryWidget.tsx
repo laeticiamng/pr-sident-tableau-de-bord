@@ -124,7 +124,8 @@
        <CardContent className="space-y-3">
          <div className="grid grid-cols-4 gap-2">
            {kpis.map((kpi) => {
-             const isPositive = kpi.good === "up" ? kpi.trend > 0 : kpi.trend < 0;
+             const trendMesure = typeof kpi.trend === "number";
+             const isPositive = trendMesure && (kpi.good === "up" ? kpi.trend > 0 : kpi.trend < 0);
              return (
                <div key={kpi.label} className="text-center p-2 rounded-lg bg-muted/30">
                  <kpi.icon className="h-3.5 w-3.5 mx-auto mb-1 text-muted-foreground" />
@@ -134,20 +135,24 @@
                  <div className="text-[9px] text-muted-foreground uppercase">
                    {kpi.label}
                  </div>
-                 <div className={cn(
-                   "text-[9px] font-medium flex items-center justify-center gap-0.5",
-                   isPositive ? "text-success" : "text-destructive"
-                 )}>
-                   {isPositive ? <TrendingUp className="h-2 w-2" /> : <TrendingDown className="h-2 w-2" />}
-                   {Math.abs(kpi.trend).toFixed(1)}%
-                 </div>
+                 {trendMesure ? (
+                   <div className={cn(
+                     "text-[9px] font-medium flex items-center justify-center gap-0.5",
+                     isPositive ? "text-success" : "text-destructive"
+                   )}>
+                     {isPositive ? <TrendingUp className="h-2 w-2" /> : <TrendingDown className="h-2 w-2" />}
+                     {Math.abs(kpi.trend).toFixed(1)}%
+                   </div>
+                 ) : (
+                   <div className="text-[9px] font-medium text-muted-foreground" title="Variation non mesurée">—</div>
+                 )}
                </div>
              );
            })}
          </div>
  
          {/* Prediction highlight - only show if predictions available */}
-         {predictions && (
+         {predictions?.mrr && (
            <div className="flex items-center justify-between p-2 rounded-lg bg-accent/5 border border-accent/20">
              <div className="text-xs">
                <span className="text-muted-foreground">Prédiction MRR +90j:</span>
