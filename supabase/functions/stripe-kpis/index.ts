@@ -141,7 +141,6 @@ Deno.serve(async (req) => {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
     // 1. Subscriptions actives
     const activeSubsResponse = await stripeRequest("subscriptions", {
@@ -189,19 +188,36 @@ Deno.serve(async (req) => {
     const churnRate = activeSubscriptions > 0 ? 2.1 : 0; // Simplified mock
 
     // 6. Revenus (use charges for simplicity)
+    // Somme des paiements encaissés (payés, non remboursés) d'une liste de charges Stripe.
+    const sommeEncaissee = (charges: Array<{ paid?: boolean; refunded?: boolean; amount?: number }>) =>
+      charges
+        .filter((c) => c.paid && !c.refunded)
+        .reduce((sum, c) => sum + (c.amount || 0) / 100, 0);
+
     let revenueThisMonth = 0;
     let revenueLastMonth = 0;
+    const startOfMonthUnix = Math.floor(startOfMonth.getTime() / 1000);
     try {
-      const startOfMonthUnix = Math.floor(startOfMonth.getTime() / 1000);
       const chargesResponse = await stripeRequest("charges", {
         "created[gte]": startOfMonthUnix.toString(),
         limit: "100",
       });
-      revenueThisMonth = (chargesResponse.data || [])
-        .filter((c: any) => c.paid && !c.refunded)
-        .reduce((sum: number, c: any) => sum + (c.amount || 0) / 100, 0);
+      revenueThisMonth = sommeEncaissee(chargesResponse.data || []);
     } catch (e) {
       console.log("[Stripe KPIs] Could not fetch charges");
+    }
+    // Correctif : revenueLastMonth n'était jamais calculé (toujours 0), donc la variation
+    // mensuelle (mrrChange) valait toujours 0 et la page Finance affichait « mois précédent : 0 € ».
+    try {
+      const startOfLastMonthUnix = Math.floor(startOfLastMonth.getTime() / 1000);
+      const lastMonthChargesResponse = await stripeRequest("charges", {
+        "created[gte]": startOfLastMonthUnix.toString(),
+        "created[lt]": startOfMonthUnix.toString(),
+        limit: "100",
+      });
+      revenueLastMonth = sommeEncaissee(lastMonthChargesResponse.data || []);
+    } catch (e) {
+      console.log("[Stripe KPIs] Could not fetch last month charges");
     }
 
     // Calcul des variations
