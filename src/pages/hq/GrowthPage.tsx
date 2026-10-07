@@ -76,14 +76,14 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
 
       const metricsRows = [
         { metric: "CAC", value: metrics.cac.value, trendPercent: metrics.cac.trend, benchmark: metrics.cac.benchmark ?? "N/A" },
-        { metric: "LTV", value: metrics.ltv.value, trendPercent: metrics.ltv.trend, benchmark: metrics.ltv.benchmark ?? "N/A" },
+        { metric: "LTV", value: metrics.ltv.value, trendPercent: metrics.ltv.trend ?? "N/A", benchmark: metrics.ltv.benchmark ?? "N/A" },
         { metric: "LTV:CAC", value: metrics.ltvCacRatio.value, trendPercent: metrics.ltvCacRatio.trend, benchmark: metrics.ltvCacRatio.benchmark ?? "N/A" },
-        { metric: "ARPU", value: metrics.arpu.value, trendPercent: metrics.arpu.trend, benchmark: metrics.arpu.benchmark ?? "N/A" },
+        { metric: "ARPU", value: metrics.arpu.value, trendPercent: metrics.arpu.trend ?? "N/A", benchmark: metrics.arpu.benchmark ?? "N/A" },
         { metric: "PaybackPeriod", value: metrics.paybackPeriod.value, trendPercent: metrics.paybackPeriod.trend, benchmark: metrics.paybackPeriod.benchmark ?? "N/A" },
         { metric: "MAU", value: metrics.mau.value, trendPercent: metrics.mau.trend, benchmark: metrics.mau.benchmark ?? "N/A" },
         { metric: "DAU", value: metrics.dau.value, trendPercent: metrics.dau.trend, benchmark: metrics.dau.benchmark ?? "N/A" },
         { metric: "DAU:MAU", value: metrics.dauMauRatio.value, trendPercent: metrics.dauMauRatio.trend, benchmark: metrics.dauMauRatio.benchmark ?? "N/A" },
-        { metric: "MRR", value: metrics.mrr.value, trendPercent: metrics.mrr.trend, benchmark: metrics.mrr.benchmark ?? "N/A" },
+        { metric: "MRR", value: metrics.mrr.value, trendPercent: metrics.mrr.trend ?? "N/A", benchmark: metrics.mrr.benchmark ?? "N/A" },
         { metric: "Churn", value: metrics.churn.value, trendPercent: metrics.churn.trend, benchmark: metrics.churn.benchmark ?? "N/A" },
       ];
 

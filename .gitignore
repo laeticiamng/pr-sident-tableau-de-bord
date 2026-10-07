@@ -28,3 +28,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sorties de tests (Playwright, Vitest)
+test-results/
+playwright-report/
+coverage/

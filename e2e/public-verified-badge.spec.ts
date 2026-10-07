@@ -17,10 +17,9 @@ const VIEWPORTS = [
   { name: "desktop-1920", width: 1920, height: 1080 },
 ] as const;
 
+// Le slot n'existe plus que sur la page Contact : retiré de l'accueil par le commit a59871e,
+// et /vision, /trust redirigent vers l'accueil depuis le commit 54b57c6.
 const PAGES = [
-  { name: "Home", path: "/" },
-  { name: "Vision", path: "/vision" },
-  { name: "Trust", path: "/trust" },
   { name: "Contact", path: "/contact" },
 ] as const;
 

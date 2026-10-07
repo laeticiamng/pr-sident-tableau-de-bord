@@ -28,8 +28,8 @@ export function QuickMetricsBar({ className }: QuickMetricsBarProps) {
     { 
       label: "MRR", 
       value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—",
-      change: stripeKPIs?.mrrChange,
-      trend: stripeKPIs ? (stripeKPIs.mrrChange > 0 ? "up" : stripeKPIs.mrrChange < 0 ? "down" : "neutral") : "neutral",
+      change: stripeKPIs?.mrrChange ?? undefined,
+      trend: stripeKPIs?.mrrChange != null ? (stripeKPIs.mrrChange > 0 ? "up" : stripeKPIs.mrrChange < 0 ? "down" : "neutral") : "neutral",
       icon: DollarSign,
       loading: stripeLoading,
     },

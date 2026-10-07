@@ -56,7 +56,9 @@ export default function MarketingPage() {
   const handleGenerateCompetitive = async () => {
     try {
       await executeRun.mutateAsync({ run_type: "COMPETITIVE_ANALYSIS" });
-    } catch {}
+    } catch {
+      // L'erreur est déjà notifiée par le onError de useExecuteRun (toast) : rien à ajouter ici.
+    }
   };
 
   return (

@@ -87,6 +87,8 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
        <CardContent className="space-y-4 relative">
          {predictionConfig.map((config) => {
            const prediction = predictions[config.key as keyof typeof predictions];
+           // Projection non disponible (ex. MRR sans variation mesurée) : on ne l'invente pas.
+           if (!prediction) return null;
            const change30d = ((prediction.predicted30d - prediction.current) / prediction.current) * 100;
            const change90d = ((prediction.predicted90d - prediction.current) / prediction.current) * 100;
            const isGood30d = config.good === "up" ? change30d > 0 : change30d < 0;

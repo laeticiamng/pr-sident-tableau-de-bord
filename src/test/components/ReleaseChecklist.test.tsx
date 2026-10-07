@@ -1,6 +1,16 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ReleaseChecklist } from "@/components/hq/engineering/ReleaseChecklist";
+import { ReleaseChecklist as ReleaseChecklistBrut } from "@/components/hq/engineering/ReleaseChecklist";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+
+// Le composant utilise useTranslation : il doit être rendu dans un LanguageProvider (langue par défaut : fr).
+function ReleaseChecklist(props: React.ComponentProps<typeof ReleaseChecklistBrut>) {
+  return (
+    <LanguageProvider>
+      <ReleaseChecklistBrut {...props} />
+    </LanguageProvider>
+  );
+}
 
 describe("ReleaseChecklist", () => {
   it("renders without crashing", () => {

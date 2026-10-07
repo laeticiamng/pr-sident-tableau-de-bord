@@ -32,7 +32,8 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
   const essentialKPIs = {
     mrr: { 
       value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
-      change: stripeKPIs ? formatPercentage(stripeKPIs.mrrChange) : "—",
+      // Variation du MRR non mesurée (null) : « — », jamais la variation des encaissements.
+      change: stripeKPIs && stripeKPIs.mrrChange != null ? formatPercentage(stripeKPIs.mrrChange) : "—",
     },
     platforms: {
       green: metrics.greenPlatforms,

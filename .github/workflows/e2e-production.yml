@@ -1,0 +1,60 @@
+name: E2E production (manuel)
+
+# Déclenchement manuel uniquement. Ces parcours dépendent d'une infrastructure qui n'existe
+# pas dans un runner de CI isolé :
+#  - hq-*.spec.ts : un compte Owner réel (secrets PLAYWRIGHT_HQ_EMAIL / PLAYWRIGHT_HQ_PASSWORD)
+#    sur le projet Supabase de production ; sans ces secrets, les tests sont ignorés (skip) ;
+#  - infra-healthz.spec.ts : la fonction Edge /healthz du projet Supabase de production ;
+#  - published-supabase-boot.spec.ts : l'URL publiée https://president-cockpit-hq.lovable.app.
+# Ils testaient donc la production et non le code de la PR : ils ne peuvent pas servir de
+# vérification automatique sur push / pull_request.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright-production:
+    name: Playwright contre l'URL publiée
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: UTC
+
+    steps:
+      - name: Récupération du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installation de Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Installation figée des dépendances
+        run: bun install --frozen-lockfile
+
+      - name: Installation de Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Parcours HQ, healthz et démarrage de l'URL publiée
+        run: npx playwright test --project=chromium e2e/hq- e2e/infra-healthz.spec.ts e2e/published-supabase-boot.spec.ts
+        env:
+          PLAYWRIGHT_BASE_URL: https://president-cockpit-hq.lovable.app
+          PLAYWRIGHT_HQ_EMAIL: ${{ secrets.PLAYWRIGHT_HQ_EMAIL }}
+          PLAYWRIGHT_HQ_PASSWORD: ${{ secrets.PLAYWRIGHT_HQ_PASSWORD }}
+          CI: true
+
+      - name: Rapport Playwright
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-production
+          path: playwright-report/
+          retention-days: 14

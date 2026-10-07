@@ -43,7 +43,9 @@ function setMetaTag(property: string, content: string, isOg = true) {
  */
 export function usePageMeta({ title, description, noindex, canonicalPath, jsonLd, ogImage, ogImageAlt }: PageMetaOptions) {
   useEffect(() => {
-    const fullTitle = `${title} — ${SITE_NAME}`;
+    // Correctif : n'ajoute pas « — MNG » à un titre qui commence déjà par la marque
+    // (l'accueil affichait « MNG — des outils … — MNG »).
+    const fullTitle = title.startsWith(`${SITE_NAME} `) ? title : `${title} — ${SITE_NAME}`;
     const desc = description || DEFAULT_DESCRIPTION;
     const path = canonicalPath ?? window.location.pathname;
     const canonicalUrl = `${SITE_URL}${path}`;

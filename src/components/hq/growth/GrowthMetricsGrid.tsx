@@ -74,7 +74,8 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
          const metric = metrics[config.key as keyof typeof metrics];
          if (!metric || typeof metric !== 'object' || !('value' in metric)) return null;
          
-         const isPositive = config.inverse ? metric.trend < 0 : metric.trend > 0;
+         const trendMesure = typeof metric.trend === "number";
+         const isPositive = trendMesure && (config.inverse ? metric.trend < 0 : metric.trend > 0);
          const absBenchmark = metric.benchmark as number | null;
          const beatsBenchmark = absBenchmark ? (config.inverse ? metric.value < absBenchmark : metric.value > absBenchmark) : null;
          
@@ -89,13 +90,17 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
                  <CardContent className="p-3">
                    <div className="flex items-center justify-between mb-1">
                      <config.icon className="h-3.5 w-3.5 text-muted-foreground" />
-                     <div className={cn(
-                       "flex items-center gap-0.5 text-[10px] font-medium",
-                       isPositive ? "text-success" : "text-destructive"
-                     )}>
-                       {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
-                       {Math.abs(metric.trend).toFixed(1)}%
-                     </div>
+                     {trendMesure ? (
+                       <div className={cn(
+                         "flex items-center gap-0.5 text-[10px] font-medium",
+                         isPositive ? "text-success" : "text-destructive"
+                       )}>
+                         {isPositive ? <TrendingUp className="h-2.5 w-2.5" /> : <TrendingDown className="h-2.5 w-2.5" />}
+                         {Math.abs(metric.trend).toFixed(1)}%
+                       </div>
+                     ) : (
+                       <div className="text-[10px] font-medium text-muted-foreground" title="Variation non mesurée">—</div>
+                     )}
                    </div>
                    <div className="text-lg sm:text-xl font-bold text-foreground">
                      {config.format === "€" && "€"}

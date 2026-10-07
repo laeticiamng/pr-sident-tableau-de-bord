@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import type { Language } from "@/i18n/types";
 
 interface LanguageContextType {
@@ -18,8 +18,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem("preferred-lang", lang);
-    document.documentElement.lang = lang;
   }, []);
+
+  // Correctif : <html lang> n'était mis à jour qu'au changement explicite de langue.
+  // Un visiteur revenant avec « en » ou « de » mémorisé voyait le contenu traduit
+  // sous <html lang="fr"> (lecteurs d'écran, SEO, et messages de src/lib/validation.ts
+  // qui lisent cet attribut). On synchronise l'attribut sur la langue active, y compris au démarrage.
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage }}>

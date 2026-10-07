@@ -114,28 +114,31 @@
        });
      }
  
-     // 4. MRR Growth Opportunities
-     if (metrics.mrr.value > 0 && metrics.mrr.trend >= THRESHOLDS.mrrGrowth.excellent) {
+     // 4. MRR Growth Opportunities (uniquement si la variation du MRR est mesurée)
+     const mrrTrend = metrics.mrr.trend;
+     if (mrrTrend === null) {
+       // Variation du MRR non mesurée : aucune alerte de croissance.
+     } else if (metrics.mrr.value > 0 && mrrTrend >= THRESHOLDS.mrrGrowth.excellent) {
        newAlerts.push({
          id: "mrr_growth_milestone",
          type: "milestone",
          severity: "low",
          title: "🎉 Croissance Exceptionnelle",
-         message: `La croissance MRR de +${metrics.mrr.trend.toFixed(1)}% ce mois dépasse l'objectif de ${THRESHOLDS.mrrGrowth.excellent}%.`,
+         message: `La croissance MRR de +${mrrTrend.toFixed(1)}% ce mois dépasse l'objectif de ${THRESHOLDS.mrrGrowth.excellent}%.`,
          metric: "mrr_growth",
-         value: metrics.mrr.trend,
+         value: mrrTrend,
          threshold: THRESHOLDS.mrrGrowth.excellent,
          action: "Capitaliser sur le momentum",
        });
-     } else if (metrics.mrr.value > 0 && metrics.mrr.trend < THRESHOLDS.mrrGrowth.stagnation && metrics.mrr.trend !== 0) {
+     } else if (metrics.mrr.value > 0 && mrrTrend < THRESHOLDS.mrrGrowth.stagnation && mrrTrend !== 0) {
        newAlerts.push({
          id: "mrr_stagnation",
          type: "benchmark_warning",
          severity: "medium",
          title: "📊 Croissance Ralentie",
-         message: `La croissance MRR (+${metrics.mrr.trend.toFixed(1)}%) est inférieure à l'objectif minimal de ${THRESHOLDS.mrrGrowth.stagnation}%.`,
+         message: `La croissance MRR (${mrrTrend > 0 ? "+" : ""}${mrrTrend.toFixed(1)}%) est inférieure à l'objectif minimal de ${THRESHOLDS.mrrGrowth.stagnation}%.`,
          metric: "mrr_growth",
-         value: metrics.mrr.trend,
+         value: mrrTrend,
          threshold: THRESHOLDS.mrrGrowth.stagnation,
          action: "Revoir la stratégie d'acquisition et d'expansion",
        });
@@ -172,7 +175,7 @@
      }
  
      // 6. MRR Prediction Opportunity
-     if (predictions && predictions.mrr.current > 0) {
+     if (predictions?.mrr && predictions.mrr.current > 0) {
        const mrrGrowthPredicted = ((predictions.mrr.predicted90d - predictions.mrr.current) / predictions.mrr.current) * 100;
        if (mrrGrowthPredicted >= 25) {
          newAlerts.push({

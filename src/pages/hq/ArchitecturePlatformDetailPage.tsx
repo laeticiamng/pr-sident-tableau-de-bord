@@ -106,6 +106,8 @@ function formatDate(iso?: string | null) {
   });
 }
 
+type PlatformProfile = (typeof PLATFORM_ARCHITECTURE)[number];
+
 export default function ArchitecturePlatformDetailPage() {
   const { platformKey = "" } = useParams<{ platformKey: string }>();
   const profile = PLATFORM_ARCHITECTURE.find((p) => String(p.key) === platformKey);
@@ -114,6 +116,18 @@ export default function ArchitecturePlatformDetailPage() {
     return <Navigate to="/hq/architecture" replace />;
   }
 
+  // Les hooks vivent dans un composant enfant : auparavant ils étaient appelés après ce
+  // retour anticipé (violation des règles des hooks React, ordre des hooks instable).
+  return <ArchitecturePlatformDetail profile={profile} platformKey={platformKey} />;
+}
+
+function ArchitecturePlatformDetail({
+  profile,
+  platformKey,
+}: {
+  profile: PlatformProfile;
+  platformKey: string;
+}) {
   const coverage = getCoverageScore(profile);
   const gaps = useMemo(() => getGaps(profile), [profile]);
   const auditActions = useMemo(() => getAuditActionsForPlatform(profile.key), [profile]);
@@ -182,7 +196,7 @@ export default function ArchitecturePlatformDetailPage() {
       });
       return null;
     }
-    const safeName = f.name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+    const safeName = f.name.replace(/[^\w.-]+/g, "_").slice(0, 120);
     const path = `${profile.key}/${requestId}/${Date.now()}-${safeName}`;
     const { error: upErr } = await supabase.storage
       .from("architecture-approvals")

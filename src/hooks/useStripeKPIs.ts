@@ -4,15 +4,25 @@ import { logger } from "@/lib/logger";
 
 export interface StripeKPIs {
   mrr: number;
-  mrrChange: number;
+  /**
+   * Variation du MRR en %. null = non mesurée : l'API Stripe ne fournit pas le MRR passé.
+   * Ne pas la remplacer par la variation des encaissements (revenueChangeToDate).
+   */
+  mrrChange: number | null;
   activeSubscriptions: number;
   activeSubscriptionsChange: number;
   churnRate: number;
   churnRateChange: number;
   totalCustomers: number;
   newCustomersThisMonth: number;
+  /** Encaissé net depuis le 1er du mois (UTC). */
   revenueThisMonth: number;
+  /** Encaissé net sur tout le mois précédent. */
   revenueLastMonth: number;
+  /** Encaissé net du mois précédent sur la même durée écoulée (période comparable). */
+  revenueLastMonthToDate: number;
+  /** Croissance en % du chiffre encaissé à date vs même période M-1 ; null si non mesurable. */
+  revenueChangeToDate: number | null;
   currency: string;
   lastUpdated: string;
 }

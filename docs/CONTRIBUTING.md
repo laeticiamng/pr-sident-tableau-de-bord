@@ -19,8 +19,8 @@
 
 ### Prérequis
 
-- Node.js 18+
-- npm ou bun
+- Node.js 22 (comme la CI)
+- Bun 1.3 (bun.lock est le seul fichier de verrouillage)
 - Git
 - Compte Lovable (pour le déploiement)
 
@@ -31,8 +31,8 @@
 git clone https://github.com/laeticiamng/hq-emotionscare.git
 cd hq-emotionscare
 
-# Installer les dépendances
-npm install
+# Installer les dépendances (installation figée, comme la CI)
+bun install --frozen-lockfile
 
 # Lancer le serveur de dev
 npm run dev

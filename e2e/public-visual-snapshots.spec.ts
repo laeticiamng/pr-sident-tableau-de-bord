@@ -7,6 +7,11 @@ import { test, expect } from "@playwright/test";
  * `e2e/public-visual-snapshots.spec.ts-snapshots/`.
  *
  * Mise à jour des baselines : `npx playwright test public-visual-snapshots --update-snapshots`.
+ *
+ * Tag @visuel : aucune baseline n'a jamais été commitée, ces tests ne peuvent donc pas
+ * passer en CI tant que les baselines n'ont pas été générées sur le runner Linux de la CI
+ * (workflow e2e.yml, déclenchement manuel avec mise_a_jour_baselines). Ils sont exclus
+ * du passage automatique par `--grep-invert @visuel`.
  */
 
 const VIEWPORTS = [
@@ -16,10 +21,9 @@ const VIEWPORTS = [
   { name: "1920", width: 1920, height: 1800 },
 ] as const;
 
+// /vision et /trust redirigent vers l'accueil depuis le commit 54b57c6.
 const PAGES = [
   { name: "home", path: "/" },
-  { name: "vision", path: "/vision" },
-  { name: "trust", path: "/trust" },
   { name: "contact", path: "/contact" },
 ] as const;
 
@@ -28,7 +32,7 @@ test.describe("Public — Diff visuel pages publiques", () => {
 
   for (const vp of VIEWPORTS) {
     for (const p of PAGES) {
-      test(`${p.name} @ ${vp.width}px — snapshot fullpage`, async ({ page }) => {
+      test(`${p.name} @ ${vp.width}px — snapshot fullpage @visuel`, async ({ page }) => {
         await page.setViewportSize({ width: vp.width, height: vp.height });
         await page.goto(p.path);
         await page.waitForLoadState("networkidle");

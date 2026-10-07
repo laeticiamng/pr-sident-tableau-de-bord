@@ -1,55 +1,97 @@
-name: E2E Tests (Playwright)
+name: E2E publics (Playwright)
+
+# Parcours publics hermétiques : le bundle est construit avec une URL Supabase locale
+# factice, aucune requête ne part vers la production. Les parcours HQ (compte réel) et les
+# contrôles de l'URL publiée vivent dans e2e-production.yml (déclenchement manuel).
 
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      mise_a_jour_baselines:
+        description: "Générer les baselines des snapshots visuels (@visuel) et les publier en artefact"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   playwright:
-    name: Playwright Tests
+    name: Playwright (chromium + mobile-safari)
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      TZ: UTC
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Récupération du dépôt
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Installation de Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.13
+
+      - name: Installation de Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '22'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Installation figée des dépendances
+        run: bun install --frozen-lockfile
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium webkit
+      - name: Installation des navigateurs Playwright
+        run: bunx playwright install --with-deps chromium webkit
 
-      - name: Build production bundle
-        run: npm run build
+      - name: Build hermétique (Supabase local factice)
+        run: bun run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+          VITE_SUPABASE_URL: http://127.0.0.1:54321
+          VITE_SUPABASE_PUBLISHABLE_KEY: cle-publique-factice-e2e
+          VITE_SUPABASE_PROJECT_ID: local
 
-      - name: Start preview server
+      - name: Démarrage du serveur de prévisualisation
         run: |
-          npx vite preview --port 8080 --host 0.0.0.0 &
+          npx vite preview --port 8080 --strictPort --host 127.0.0.1 &
           for i in $(seq 1 30); do
-            curl -sf http://localhost:8080 > /dev/null && break || sleep 2
+            curl -sf http://127.0.0.1:8080 > /dev/null && exit 0 || sleep 2
           done
+          echo "Le serveur de prévisualisation n'a pas démarré" >&2
+          exit 1
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=github
+      # Les snapshots @visuel sont exclus : aucune baseline n'a jamais été commitée
+      # (voir l'en-tête de e2e/public-visual-snapshots.spec.ts).
+      - name: Parcours publics
+        if: ${{ !inputs.mise_a_jour_baselines }}
+        run: npx playwright test e2e/public- --grep-invert @visuel
         env:
-          PLAYWRIGHT_BASE_URL: http://localhost:8080
-          PLAYWRIGHT_HQ_EMAIL: ${{ secrets.PLAYWRIGHT_HQ_EMAIL }}
-          PLAYWRIGHT_HQ_PASSWORD: ${{ secrets.PLAYWRIGHT_HQ_PASSWORD }}
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
           CI: true
 
-      - name: Upload Playwright report
+      - name: Génération des baselines visuelles
+        if: ${{ inputs.mise_a_jour_baselines }}
+        run: npx playwright test e2e/public-visual-snapshots.spec.ts --update-snapshots
+        env:
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:8080
+          CI: true
+
+      - name: Publication des baselines visuelles
+        if: ${{ inputs.mise_a_jour_baselines }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: baselines-visuelles
+          path: e2e/public-visual-snapshots.spec.ts-snapshots/
+          retention-days: 14
+
+      - name: Rapport Playwright
         if: always()
         uses: actions/upload-artifact@v4
         with:

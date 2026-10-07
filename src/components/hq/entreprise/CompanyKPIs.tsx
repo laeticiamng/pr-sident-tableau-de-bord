@@ -28,7 +28,8 @@ export function CompanyKPIs() {
   );
 
   const totalCustomers = stripeData?.kpis?.totalCustomers;
-  const mrrChange = stripeData?.kpis?.mrrChange;
+  // Croissance du chiffre encaissé à date vs même période du mois précédent (pas du MRR).
+  const encaisseVariation = stripeData?.kpis?.revenueChangeToDate;
   const agentCount = agents?.length;
 
   return (
@@ -70,10 +71,10 @@ export function CompanyKPIs() {
               <Skeleton className="h-8 w-16 mx-auto mb-1" />
             ) : (
               <p className="text-2xl font-bold">
-                {mrrChange != null ? formatPercentage(mrrChange) : "—"}
+                {encaisseVariation != null ? formatPercentage(encaisseVariation) : "—"}
               </p>
             )}
-            <p className="text-xs text-muted-foreground">Croissance MRR</p>
+            <p className="text-xs text-muted-foreground">Encaissé vs M-1 (à date)</p>
           </div>
         </div>
 

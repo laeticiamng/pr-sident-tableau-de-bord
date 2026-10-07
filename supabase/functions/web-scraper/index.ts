@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     let body: Record<string, any>;
 
     switch (action) {
-      case "scrape":
+      case "scrape": {
         endpoint = "https://api.firecrawl.dev/v1/scrape";
         // Formater l'URL
         let formattedUrl = url.trim();
@@ -116,6 +116,7 @@ Deno.serve(async (req) => {
           onlyMainContent: options.onlyMainContent ?? true,
         };
         break;
+      }
 
       case "search":
         endpoint = "https://api.firecrawl.dev/v1/search";
@@ -126,7 +127,7 @@ Deno.serve(async (req) => {
         };
         break;
 
-      case "map":
+      case "map": {
         endpoint = "https://api.firecrawl.dev/v1/map";
         let mapUrl = url.trim();
         if (!mapUrl.startsWith("http://") && !mapUrl.startsWith("https://")) {
@@ -137,6 +138,7 @@ Deno.serve(async (req) => {
           limit: options.limit || 100,
         };
         break;
+      }
 
       default:
         return new Response(

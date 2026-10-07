@@ -3,7 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BarChart3 } from "lucide-react";
 
 interface RevenueComparisonChartProps {
+  /** Encaissé du mois en cours, à date. */
   currentMonth: number;
+  /** Encaissé du mois précédent sur la même durée écoulée (période comparable). */
   previousMonth: number;
   currency?: string;
 }
@@ -14,8 +16,8 @@ export function RevenueComparisonChart({
   currency = "EUR" 
 }: RevenueComparisonChartProps) {
   const data = [
-    { name: "Mois précédent", revenue: previousMonth },
-    { name: "Ce mois", revenue: currentMonth },
+    { name: "M-1 même période", revenue: previousMonth },
+    { name: "Ce mois à date", revenue: currentMonth },
   ];
 
   const formatValue = (value: number) => {
@@ -36,10 +38,10 @@ export function RevenueComparisonChart({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BarChart3 className="h-5 w-5 text-primary" />
-          Évolution des Revenus
+          Évolution des encaissements
         </CardTitle>
         <CardDescription>
-          Croissance : {growth}% vs mois précédent
+          Croissance : {growth}% vs même période du mois précédent
         </CardDescription>
       </CardHeader>
       <CardContent>
