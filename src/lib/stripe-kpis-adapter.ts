@@ -64,6 +64,17 @@ export function messageIndisponibilite(reason?: RaisonIndisponible | null): stri
 const nombre = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 const nombreOuNull = (v: unknown): number | null => (nombre(v) ? v : null);
 
+/** Code ISO 4217 accepté par Intl (sinon le formatage des montants lèverait une erreur au rendu). */
+function deviseValide(v: unknown): string | null {
+  if (typeof v !== "string" || !/^[A-Za-z]{3}$/.test(v)) return null;
+  try {
+    new Intl.NumberFormat("fr-FR", { style: "currency", currency: v });
+    return v.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
 function normaliserKpis(brut: Record<string, unknown>): StripeKPIs | null {
   const requis = [
     "mrr",
@@ -75,6 +86,9 @@ function normaliserKpis(brut: Record<string, unknown>): StripeKPIs | null {
     "revenueLastMonthToDate",
   ] as const;
   if (!requis.every((cle) => nombre(brut[cle]))) return null;
+  // Revue Codex : sans devise valide, la réponse est incomplète → indisponible (jamais d'EUR supposé).
+  const currency = deviseValide(brut.currency);
+  if (!currency) return null;
   return {
     mrr: brut.mrr as number,
     mrrChange: nombreOuNull(brut.mrrChange),
@@ -88,7 +102,7 @@ function normaliserKpis(brut: Record<string, unknown>): StripeKPIs | null {
     revenueLastMonth: brut.revenueLastMonth as number,
     revenueLastMonthToDate: brut.revenueLastMonthToDate as number,
     revenueChangeToDate: nombreOuNull(brut.revenueChangeToDate),
-    currency: typeof brut.currency === "string" && brut.currency ? brut.currency : "eur",
+    currency,
     lastUpdated: typeof brut.lastUpdated === "string" ? brut.lastUpdated : "",
   };
 }

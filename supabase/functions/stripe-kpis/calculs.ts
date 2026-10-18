@@ -203,7 +203,8 @@ export function calculerEncaissements(
  *   (fin effective) ; `canceled_at` n'est que la date de la demande (une résiliation « en fin de période »
  *   demandée le mois dernier se termine ce mois-ci). `canceled_at` ne sert qu'en repli si `ended_at` manque ;
  * - churnRate = perdus / base × 100, ou null si la base est vide (taux non défini).
- * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus).
+ * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus), y compris quand la base
+ *   est vide ; null seulement si un abonnement actif n'a pas de date de création.
  *
  * Limites : les abonnements en essai (trialing) ou impayés (past_due) ne figurent pas dans
  * la liste « active » ; un abonnement encore en essai le 1er (trial_end après le 1er) n'est pas
@@ -229,12 +230,15 @@ export function calculerChurn(
     return creeAvant(a) && fin !== null && fin >= debutMois;
   }).length;
   const base = actifsAuDebut + perdus;
-  if (base === 0) {
-    return { churnRate: null, variationNetteAbonnements: null, perdus, base };
-  }
+  // Revue Codex : une base vide est une base connue (0). Seul le taux est alors non défini ; la variation
+  // nette reste mesurable (tous les actifs sont nouveaux). Elle n'est indisponible que si un abonnement actif
+  // n'a pas de date de création : on ne peut alors pas dire s'il était déjà là le 1er.
+  const variationNetteAbonnements = abonnementsActifs.every((a) => typeof a.created === "number")
+    ? abonnementsActifs.length - base
+    : null;
   return {
-    churnRate: (perdus / base) * 100,
-    variationNetteAbonnements: abonnementsActifs.length - base,
+    churnRate: base === 0 ? null : (perdus / base) * 100,
+    variationNetteAbonnements,
     perdus,
     base,
   };

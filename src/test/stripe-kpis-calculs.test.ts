@@ -260,15 +260,18 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
     expect(r.variationNetteAbonnements).toBe(1);
   });
 
-  it("retourne null (jamais 0 ni une valeur par défaut) quand la base est vide", () => {
-    const r = calculerChurn([{ id: "d", created: apres }], [], debutMois);
+  it("base vide : taux null (jamais 0 ni une valeur par défaut), variation nette mesurée (revue Codex)", () => {
+    const r = calculerChurn([{ id: "d", created: apres }, { id: "e", created: apres }], [], debutMois);
+    expect(r.base).toBe(0);
     expect(r.churnRate).toBeNull();
-    expect(r.variationNetteAbonnements).toBeNull();
+    expect(r.variationNetteAbonnements).toBe(2);
   });
 
   it("ignore les abonnements sans date de création connue au lieu de la supposer", () => {
     const r = calculerChurn([{ id: "a" }], [{ id: "b", canceled_at: apres }], debutMois);
     expect(r.churnRate).toBeNull();
+    // impossible de savoir si « a » était déjà là le 1er : la variation n'est pas inventée
+    expect(r.variationNetteAbonnements).toBeNull();
   });
 
   it("assemblerKpis : churn null si la liste des annulés n'a pas pu être lue", () => {

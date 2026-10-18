@@ -105,6 +105,15 @@ describe("parseStripeKpisResponse — seules des données explicitement réelles
     expect(parseStripeKpisResponse(reponseReelle(kpisBruts({ totalCustomers: undefined }))).available).toBe(false);
   });
 
+  it("revue Codex : devise absente, vide ou invalide → indisponible (jamais d'EUR supposé)", () => {
+    for (const currency of [undefined, "", "euros", "e1r", 978, null]) {
+      expect(parseStripeKpisResponse(reponseReelle(kpisBruts({ currency }))).available, String(currency)).toBe(false);
+    }
+    const chf = parseStripeKpisResponse(reponseReelle(kpisBruts({ currency: "CHF" })));
+    expect(chf.available).toBe(true);
+    if (chf.available) expect(chf.kpis.currency).toBe("chf");
+  });
+
   it("ne traduit jamais une réponse non réelle en nombre : aucune clé kpis dans le résultat indisponible", () => {
     const r = parseStripeKpisResponse({ success: true, mock: true, kpis: kpisBruts() });
     expect(r).not.toHaveProperty("kpis");

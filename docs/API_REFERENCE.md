@@ -175,11 +175,11 @@ jamais de zéros ni de valeurs de repli.
 | `mrr` | number | Monthly Recurring Revenue en € |
 | `mrrChange` | number \| null | Toujours `null` : Stripe ne fournit pas le MRR passé |
 | `activeSubscriptions` | number | Abonnements actifs |
-| `activeSubscriptionsChange` | number \| null | Variation nette depuis le 1er du mois |
+| `activeSubscriptionsChange` | number \| null | Variation nette depuis le 1er du mois (mesurée aussi quand la base du 1er est vide ; `null` si un abonnement actif n'a pas de date de création) |
 | `churnRate` | number \| null | Churn mensuel en % (abonnements terminés ce mois-ci selon `ended_at` ÷ actifs au 1er), `null` si non mesurable |
 | `totalCustomers` | number | Nombre total de clients |
 | `revenueThisMonth` | number | Encaissé net du mois en cours |
-| `currency` | string | Code devise (ISO 4217) |
+| `currency` | string | Code devise (ISO 4217), obligatoire : sans devise valide, le client affiche « indisponible » |
 
 ### Exemple TypeScript
 
