@@ -1,19 +1,35 @@
  import { useStripeKPIs } from "./useStripeKPIs";
- 
+
+ /**
+  * Métrique Growth : `value === null` signifie « Données indisponibles » (aucune source
+  * vérifiée) ; ne jamais lui substituer 0 ni une estimation. `trend === null` : variation
+  * non mesurée. `benchmark` reste null : aucune référence sectorielle n'est sourcée.
+  */
+ export interface MetricValue {
+   value: number | null;
+   trend: number | null;
+   benchmark: number | null;
+ }
+
  export interface GrowthMetrics {
-   cac: { value: number; trend: number; benchmark: number | null };
-   ltv: { value: number; trend: number | null; benchmark: number | null };
-   ltvCacRatio: { value: number; trend: number; benchmark: number | null };
-   arpu: { value: number; trend: number | null; benchmark: number | null };
-   paybackPeriod: { value: number; trend: number; benchmark: number | null };
-   mau: { value: number; trend: number; benchmark: number | null };
-   dau: { value: number; trend: number; benchmark: number | null };
-   dauMauRatio: { value: number; trend: number; benchmark: number | null };
+   /** Indisponible : le coût d'acquisition n'est suivi dans aucune source vérifiée. */
+   cac: MetricValue;
+   /** Indisponible : une LTV exige un CAC / une durée de vie mesurés, pas une estimation. */
+   ltv: MetricValue;
+   ltvCacRatio: MetricValue;
+   /** MRR ÷ abonnements actifs (Stripe), quand il y a au moins un abonnement actif. */
+   arpu: MetricValue;
+   paybackPeriod: MetricValue;
+   /** Indisponible : nécessite un analytics produit (les clients Stripe ne sont pas des MAU). */
+   mau: MetricValue;
+   dau: MetricValue;
+   dauMauRatio: MetricValue;
    /** trend : variation du MRR en % ; null quand elle n'est pas mesurée (affichée « — »). */
-   mrr: { value: number; trend: number | null; benchmark: number | null };
-   churn: { value: number; trend: number; benchmark: number | null };
+   mrr: MetricValue;
+   /** Churn mensuel Stripe en % ; null si non mesurable. */
+   churn: MetricValue;
    isRealData: boolean;
-   lastUpdated: string;
+   lastUpdated: string | null;
  }
  
  export interface FunnelStage {
@@ -100,113 +116,67 @@
    hasRealData: boolean;
  }
  
- const EMPTY_METRIC = { value: 0, trend: 0, benchmark: null };
- 
- /**
-  * Hook unifié pour les métriques Growth OS
-  * UNIQUEMENT données réelles - aucun mock autorisé
-  */
- export function useGrowthMetrics(): GrowthData {
-   const { data: stripeData, isLoading: stripeLoading, error: stripeError } = useStripeKPIs();
-   
-   const computeMetrics = (): GrowthMetrics => {
-      const isRealData = stripeData?.success === true;
-     const kpis = stripeData?.kpis;
-     
-     if (isRealData && kpis && kpis.mrr > 0) {
-       // Variation du MRR : null si non mesurée. Ne jamais lui substituer la variation des
-       // encaissements (paiements ponctuels/annuels, mois partiel).
-       const mrrTrend = typeof kpis.mrrChange === "number" ? kpis.mrrChange : null;
-       const totalUsers = kpis.totalCustomers || 1;
-       const arpu = kpis.mrr / totalUsers;
-       const ltv = arpu * 24;
-       const estimatedCAC = arpu * 1.8;
-       
-       return {
-         cac: { value: Math.round(estimatedCAC), trend: 0, benchmark: 65 },
-         ltv: { value: Math.round(ltv), trend: mrrTrend, benchmark: 400 },
-         ltvCacRatio: { value: Math.round((ltv / estimatedCAC) * 10) / 10, trend: 0, benchmark: 3.0 },
-         arpu: { value: Math.round(arpu * 100) / 100, trend: mrrTrend, benchmark: 25 },
-         paybackPeriod: { value: estimatedCAC > 0 ? Math.round((estimatedCAC / arpu) * 10) / 10 : 0, trend: 0, benchmark: 6 },
-         mau: { value: kpis.totalCustomers || 0, trend: ((kpis.newCustomersThisMonth || 0) / Math.max(kpis.totalCustomers || 1, 1)) * 100, benchmark: null },
-         dau: { value: 0, trend: 0, benchmark: null }, // Requires analytics
-         dauMauRatio: { value: 0, trend: 0, benchmark: 40 }, // Requires analytics
-         mrr: { value: kpis.mrr, trend: mrrTrend, benchmark: null },
-         churn: { value: kpis.churnRate || 0, trend: kpis.churnRateChange || 0, benchmark: 5.0 },
-         isRealData: true,
-         lastUpdated: kpis.lastUpdated || new Date().toISOString(),
-       };
-     }
-     
-     // Aucune donnée réelle - valeurs vides
-     return {
-       cac: EMPTY_METRIC,
-       ltv: EMPTY_METRIC,
-       ltvCacRatio: EMPTY_METRIC,
-       arpu: EMPTY_METRIC,
-       paybackPeriod: EMPTY_METRIC,
-       mau: EMPTY_METRIC,
-       dau: EMPTY_METRIC,
-       dauMauRatio: EMPTY_METRIC,
-       mrr: EMPTY_METRIC,
-       churn: EMPTY_METRIC,
-       isRealData: false,
-       lastUpdated: new Date().toISOString(),
-     };
-   };
-   
-   const computePredictions = (): PredictionData | null => {
-     const kpis = stripeData?.kpis;
-      const isRealData = stripeData?.success === true;
-     
-     if (isRealData && kpis && kpis.mrr > 0) {
-       const monthlyGrowth = typeof kpis.mrrChange === "number" ? kpis.mrrChange / 100 : null;
-       return {
-         mrr: monthlyGrowth === null
-           ? null
-           : {
-               current: kpis.mrr,
-               predicted30d: Math.round(kpis.mrr * (1 + monthlyGrowth)),
-               predicted90d: Math.round(kpis.mrr * Math.pow(1 + monthlyGrowth, 3)),
-               confidence: 78,
-             },
-         churn: {
-           current: kpis.churnRate || 0,
-           predicted30d: kpis.churnRate || 0,
-           predicted90d: kpis.churnRate || 0,
-           confidence: 72,
-         },
-         newUsers: {
-           current: kpis.newCustomersThisMonth || 0,
-           predicted30d: Math.round((kpis.newCustomersThisMonth || 0) * 1.15),
-           predicted90d: Math.round((kpis.newCustomersThisMonth || 0) * 1.5),
-           confidence: 65,
-         },
-         ltv: {
-           current: Math.round((kpis.mrr / Math.max(kpis.totalCustomers || 1, 1)) * 24),
-           predicted30d: Math.round((kpis.mrr / Math.max(kpis.totalCustomers || 1, 1)) * 24 * 1.05),
-           predicted90d: Math.round((kpis.mrr / Math.max(kpis.totalCustomers || 1, 1)) * 24 * 1.15),
-           confidence: 70,
-         },
-       };
-     }
-     return null;
-   };
-   
-   const isRealData = stripeData?.success === true;
- 
-   return {
-     metrics: computeMetrics(),
-     funnel: null,
-     channels: null,
-     cohorts: null,
-     segments: null,
-     workflows: null,
-     predictions: computePredictions(),
-     recommendations: null,
-     history: null,
-     isLoading: stripeLoading,
-     error: stripeError as Error | null,
-     hasRealData: isRealData,
-   };
- }
+ const EMPTY_METRIC: MetricValue = { value: null, trend: null, benchmark: null };
+
+/**
+ * Hook unifié pour les métriques Growth OS
+ * UNIQUEMENT données réelles - aucun mock, aucune estimation.
+ * Sont exposés : MRR, ARPU (MRR ÷ abonnements actifs) et churn, tous issus de Stripe.
+ * CAC, LTV, LTV:CAC, payback, MAU/DAU et prédictions n'ont pas de source vérifiée :
+ * ils restent indisponibles (null).
+ */
+export function useGrowthMetrics(): GrowthData {
+  const { data: stripeData, isLoading: stripeLoading, error: stripeError } = useStripeKPIs();
+
+  const kpis = stripeData?.available === true ? stripeData.kpis : null;
+
+  const computeMetrics = (): GrowthMetrics => {
+    if (kpis) {
+      // Variation du MRR : null si non mesurée. Ne jamais lui substituer la variation des
+      // encaissements (paiements ponctuels/annuels, mois partiel).
+      const mrrTrend = typeof kpis.mrrChange === "number" ? kpis.mrrChange : null;
+      const arpu = kpis.activeSubscriptions > 0 ? Math.round((kpis.mrr / kpis.activeSubscriptions) * 100) / 100 : null;
+
+      return {
+        ...INDISPONIBLES,
+        arpu: { value: arpu, trend: null, benchmark: null },
+        mrr: { value: kpis.mrr, trend: mrrTrend, benchmark: null },
+        churn: { value: kpis.churnRate, trend: kpis.churnRateChange, benchmark: null },
+        isRealData: true,
+        lastUpdated: kpis.lastUpdated || null,
+      };
+    }
+
+    // Aucune donnée réelle : toutes les métriques sont indisponibles
+    return { ...INDISPONIBLES, isRealData: false, lastUpdated: null };
+  };
+
+  return {
+    metrics: computeMetrics(),
+    funnel: null,
+    channels: null,
+    cohorts: null,
+    segments: null,
+    workflows: null,
+    // Aucune projection : les extrapolations (+15 %, confiance fixe…) étaient des inventions.
+    predictions: null,
+    recommendations: null,
+    history: null,
+    isLoading: stripeLoading,
+    error: stripeError as Error | null,
+    hasRealData: kpis !== null,
+  };
+}
+
+const INDISPONIBLES = {
+  cac: EMPTY_METRIC,
+  ltv: EMPTY_METRIC,
+  ltvCacRatio: EMPTY_METRIC,
+  arpu: EMPTY_METRIC,
+  paybackPeriod: EMPTY_METRIC,
+  mau: EMPTY_METRIC,
+  dau: EMPTY_METRIC,
+  dauMauRatio: EMPTY_METRIC,
+  mrr: EMPTY_METRIC,
+  churn: EMPTY_METRIC,
+};

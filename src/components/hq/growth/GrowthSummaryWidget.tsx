@@ -3,16 +3,17 @@
  import { Button } from "@/components/ui/button";
  import { Skeleton } from "@/components/ui/skeleton";
  import { Link } from "react-router-dom";
- import { Rocket, TrendingUp, TrendingDown, ArrowRight, Database, AlertTriangle, Users, DollarSign, Target, Link2 } from "lucide-react";
+ import { Rocket, TrendingUp, TrendingDown, ArrowRight, Database, AlertTriangle, DollarSign, Target, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
  import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
+ import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
  
  /**
   * Widget compact Growth OS pour le Briefing Room
   * Affiche les KPIs essentiels avec lien vers la page complète
   */
  export function GrowthSummaryWidget() {
-   const { metrics, predictions, isLoading } = useGrowthMetrics();
+   const { metrics, isLoading } = useGrowthMetrics();
  
    if (isLoading) {
      return (
@@ -70,30 +71,23 @@
    }
  
    const kpis = [
-     { 
-       label: "MRR", 
-       value: `€${metrics.mrr.value.toLocaleString("fr-FR")}`, 
+     {
+       label: "MRR",
+       value: metrics.mrr.value != null ? `€${metrics.mrr.value.toLocaleString("fr-FR")}` : DONNEES_INDISPONIBLES,
        trend: metrics.mrr.trend,
        icon: DollarSign,
        good: "up"
      },
-     { 
-       label: "LTV:CAC", 
-       value: `${metrics.ltvCacRatio.value}x`, 
-       trend: metrics.ltvCacRatio.trend,
+     {
+       label: "ARPU",
+       value: metrics.arpu.value != null ? `€${metrics.arpu.value.toLocaleString("fr-FR")}` : DONNEES_INDISPONIBLES,
+       trend: metrics.arpu.trend,
        icon: Target,
        good: "up"
      },
-     { 
-       label: "MAU", 
-       value: metrics.mau.value.toLocaleString("fr-FR"), 
-       trend: metrics.mau.trend,
-       icon: Users,
-       good: "up"
-     },
-     { 
-       label: "Churn", 
-       value: `${metrics.churn.value}%`, 
+     {
+       label: "Churn",
+       value: metrics.churn.value != null ? `${metrics.churn.value}%` : DONNEES_INDISPONIBLES,
        trend: metrics.churn.trend,
        icon: TrendingDown,
        good: "down"
@@ -122,14 +116,14 @@
          </div>
        </CardHeader>
        <CardContent className="space-y-3">
-         <div className="grid grid-cols-4 gap-2">
+         <div className="grid grid-cols-3 gap-2">
            {kpis.map((kpi) => {
              const trendMesure = typeof kpi.trend === "number";
              const isPositive = trendMesure && (kpi.good === "up" ? kpi.trend > 0 : kpi.trend < 0);
              return (
                <div key={kpi.label} className="text-center p-2 rounded-lg bg-muted/30">
                  <kpi.icon className="h-3.5 w-3.5 mx-auto mb-1 text-muted-foreground" />
-                 <div className="text-sm sm:text-base font-bold text-foreground">
+                 <div className={cn("font-bold", kpi.value === DONNEES_INDISPONIBLES ? "text-[10px] text-muted-foreground" : "text-sm sm:text-base text-foreground")}>
                    {kpi.value}
                  </div>
                  <div className="text-[9px] text-muted-foreground uppercase">
@@ -150,21 +144,6 @@
              );
            })}
          </div>
- 
-         {/* Prediction highlight - only show if predictions available */}
-         {predictions?.mrr && (
-           <div className="flex items-center justify-between p-2 rounded-lg bg-accent/5 border border-accent/20">
-             <div className="text-xs">
-               <span className="text-muted-foreground">Prédiction MRR +90j:</span>
-               <span className="font-semibold text-foreground ml-1">
-                 €{predictions.mrr.predicted90d.toLocaleString("fr-FR")}
-               </span>
-             </div>
-             <Badge variant="gold" className="text-[9px]">
-               {predictions.mrr.confidence}% confiance
-             </Badge>
-           </div>
-         )}
  
          <Link to="/hq/growth">
            <Button variant="ghost" size="sm" className="w-full text-xs text-platform-growth hover:text-platform-growth/80">

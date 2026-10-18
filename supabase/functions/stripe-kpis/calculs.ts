@@ -27,6 +27,12 @@ export interface ChargeStripe {
 /** Sous-ensemble des champs d'un objet Subscription Stripe utilisés ici. */
 export interface AbonnementStripe {
   id?: string;
+  /** "active" | "canceled" | ... */
+  status?: string;
+  /** Horodatage Unix (secondes) de création de l'abonnement. */
+  created?: number;
+  /** Horodatage Unix (secondes) de l'annulation ; null/absent si non annulé. */
+  canceled_at?: number | null;
   items?: {
     data?: Array<{
       quantity?: number;
@@ -184,6 +190,73 @@ export function calculerEncaissements(
   };
 }
 
+/**
+ * Churn du mois en cours à partir des seuls abonnements Stripe réellement lus.
+ *
+ * - base : abonnements actifs au 1er du mois (UTC) = actifs aujourd'hui créés avant le 1er
+ *   + annulés depuis le 1er mais créés avant le 1er ;
+ * - perdus : abonnements créés avant le 1er et annulés (canceled_at) depuis le 1er ;
+ * - churnRate = perdus / base × 100, ou null si la base est vide (taux non défini).
+ * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus).
+ *
+ * Limites : les abonnements en essai (trialing) ou impayés (past_due) ne figurent pas dans
+ * la liste « active » ; un abonnement créé et annulé dans le mois n'est compté nulle part.
+ * Un abonnement sans date de création connue est ignoré plutôt que supposé.
+ */
+export function calculerChurn(
+  abonnementsActifs: AbonnementStripe[],
+  abonnementsAnnules: AbonnementStripe[],
+  debutMois: number,
+): { churnRate: number | null; variationNetteAbonnements: number | null; perdus: number; base: number } {
+  const creeAvant = (a: AbonnementStripe) => typeof a.created === "number" && a.created < debutMois;
+  const actifsAuDebut = abonnementsActifs.filter(creeAvant).length;
+  const perdus = abonnementsAnnules.filter(
+    (a) => creeAvant(a) && typeof a.canceled_at === "number" && a.canceled_at >= debutMois,
+  ).length;
+  const base = actifsAuDebut + perdus;
+  if (base === 0) {
+    return { churnRate: null, variationNetteAbonnements: null, perdus, base };
+  }
+  return {
+    churnRate: (perdus / base) * 100,
+    variationNetteAbonnements: abonnementsActifs.length - base,
+    perdus,
+    base,
+  };
+}
+
+/** Raisons pour lesquelles les KPIs Stripe ne sont pas fournis. */
+export type RaisonIndisponible = "stripe_not_configured" | "stripe_error";
+
+/**
+ * Contrat de réponse de la fonction Edge (toujours HTTP 200 pour que le client lise le corps) :
+ * - disponible : { success: true, available: true, mock: false, kpis } ;
+ * - indisponible : { success: false, available: false, reason, kpis: null }.
+ * Aucune valeur inventée, jamais de zéros qui feraient passer une panne pour une mesure.
+ */
+export type ReponseKpisStripe =
+  | { success: true; available: true; mock: false; kpis: StripeKPIs }
+  | { success: false; available: false; reason: RaisonIndisponible; error: string; kpis: null };
+
+export function reponseKpisDisponibles(kpis: StripeKPIs): ReponseKpisStripe {
+  return { success: true, available: true, mock: false, kpis };
+}
+
+export function reponseKpisIndisponibles(reason: RaisonIndisponible): ReponseKpisStripe {
+  return {
+    success: false,
+    available: false,
+    reason,
+    error: reason === "stripe_not_configured" ? "Stripe n'est pas configuré." : "Stripe est momentanément injoignable.",
+    kpis: null,
+  };
+}
+
+/** Réponse quand la clé Stripe est absente ou vide : indisponible, jamais de données factices. */
+export function reponseSansCleStripe(cleStripe: string | undefined | null): ReponseKpisStripe | null {
+  return cleStripe && cleStripe.trim() !== "" ? null : reponseKpisIndisponibles("stripe_not_configured");
+}
+
 /** Indicateurs renvoyés au front par la fonction Edge. */
 export interface StripeKPIs {
   mrr: number;
@@ -193,9 +266,17 @@ export interface StripeKPIs {
    */
   mrrChange: number | null;
   activeSubscriptions: number;
-  activeSubscriptionsChange: number;
-  churnRate: number;
-  churnRateChange: number;
+  /**
+   * Variation nette du nombre d'abonnements actifs depuis le 1er du mois (UTC) : abonnements
+   * actifs aujourd'hui moins abonnements actifs au 1er. null si non calculable.
+   */
+  activeSubscriptionsChange: number | null;
+  /**
+   * Churn mensuel en % (voir calculerChurn). null = non mesurable (aucune valeur inventée).
+   */
+  churnRate: number | null;
+  /** Variation du churn vs mois précédent : toujours null (nécessiterait un historique). */
+  churnRateChange: number | null;
   totalCustomers: number;
   newCustomersThisMonth: number;
   /** Encaissé net depuis le 1er du mois (UTC) jusqu'à maintenant. */
@@ -222,20 +303,25 @@ export function assemblerKpis(entrees: {
   chargesMoisCourant: ChargeStripe[];
   chargesMoisPrecedent: ChargeStripe[];
   maintenant: Date;
-  churnRate?: number;
+  /** Abonnements annulés (status=canceled), pour le churn ; null = non récupérés (churn indisponible). */
+  abonnementsAnnules?: AbonnementStripe[] | null;
 }): StripeKPIs {
   const encaissements = calculerEncaissements(
     entrees.chargesMoisCourant,
     entrees.chargesMoisPrecedent,
     entrees.maintenant,
   );
+  const { debutMois } = bornesDePeriode(entrees.maintenant);
+  const churn = entrees.abonnementsAnnules
+    ? calculerChurn(entrees.abonnementsActifs, entrees.abonnementsAnnules, debutMois)
+    : { churnRate: null, variationNetteAbonnements: null };
   return {
     mrr: arrondi(calculerMrr(entrees.abonnementsActifs), 2),
     mrrChange: null,
     activeSubscriptions: entrees.abonnementsActifs.length,
-    activeSubscriptionsChange: entrees.newCustomersThisMonth,
-    churnRate: arrondi(entrees.churnRate ?? 0, 1),
-    churnRateChange: 0, // Nécessiterait un calcul historique
+    activeSubscriptionsChange: churn.variationNetteAbonnements,
+    churnRate: churn.churnRate === null ? null : arrondi(churn.churnRate, 1),
+    churnRateChange: null, // Nécessiterait un historique que Stripe ne fournit pas
     totalCustomers: entrees.totalCustomers,
     newCustomersThisMonth: entrees.newCustomersThisMonth,
     revenueThisMonth: arrondi(encaissements.revenueThisMonth, 2),

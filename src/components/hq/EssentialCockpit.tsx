@@ -15,6 +15,7 @@ import { usePendingApprovals } from "@/hooks/useHQData";
 import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { cn } from "@/lib/utils";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 interface EssentialCockpitProps {
   className?: string;
@@ -31,7 +32,7 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
   // KPIs essentiels uniquement
   const essentialKPIs = {
     mrr: { 
-      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : DONNEES_INDISPONIBLES, 
       // Variation du MRR non mesurée (null) : « — », jamais la variation des encaissements.
       change: stripeKPIs && stripeKPIs.mrrChange != null ? formatPercentage(stripeKPIs.mrrChange) : "—",
     },
@@ -108,10 +109,10 @@ export function EssentialCockpit({ className }: EssentialCockpitProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Revenu Mensuel</p>
-                <p className="text-2xl sm:text-3xl font-bold mt-1">{essentialKPIs.mrr.value}</p>
+                <p className={cn("font-bold mt-1", essentialKPIs.mrr.value === DONNEES_INDISPONIBLES ? "text-base text-muted-foreground" : "text-2xl sm:text-3xl")}>{essentialKPIs.mrr.value}</p>
                 <p className={cn("text-sm flex items-center gap-1 mt-1", stripeKPIs ? "text-success" : "text-muted-foreground")}>
                   {stripeKPIs ? <TrendingUp className="h-4 w-4" /> : null}
-                  {stripeKPIs ? `${essentialKPIs.mrr.change} ce mois` : "Données Stripe"}
+                  {stripeKPIs ? `${essentialKPIs.mrr.change} ce mois` : "Aucune source vérifiée"}
                 </p>
               </div>
               <div className="p-4 rounded-xl bg-accent/10">

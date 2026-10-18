@@ -2,6 +2,10 @@ import { describe, it, expect } from "vitest";
 import {
   assemblerKpis,
   bornesDePeriode,
+  calculerChurn,
+  reponseKpisDisponibles,
+  reponseKpisIndisponibles,
+  reponseSansCleStripe,
   calculerEncaissements,
   calculerMrr,
   listerStripe,
@@ -199,5 +203,111 @@ describe("stripe-kpis — MRR normalisé au mois", () => {
       { id: "sub_e", items: { data: [element(10, "month", 1, 1, "metered")] } },
     ];
     expect(calculerMrr(abonnements)).toBeCloseTo(65 + 10 + 10 + (10 * 52) / 12, 6);
+  });
+});
+
+describe("stripe-kpis — churn calculé uniquement à partir de données réelles", () => {
+  const debutMois = Math.floor(Date.UTC(2026, 9, 1) / 1000);
+  const avant = debutMois - 86_400 * 30;
+  const apres = debutMois + 86_400;
+
+  it("perdus / actifs au 1er du mois : 1 annulé sur 4 abonnés présents au 1er = 25 %", () => {
+    const actifs: AbonnementStripe[] = [
+      { id: "a", created: avant },
+      { id: "b", created: avant },
+      { id: "c", created: avant },
+      { id: "d", created: apres }, // créé ce mois : pas dans la base du 1er
+    ];
+    const annules: AbonnementStripe[] = [
+      { id: "e", created: avant, canceled_at: apres }, // perdu ce mois
+      { id: "f", created: avant, canceled_at: avant + 86_400 }, // annulé le mois dernier : ignoré
+    ];
+    const r = calculerChurn(actifs, annules, debutMois);
+    expect(r.base).toBe(4);
+    expect(r.perdus).toBe(1);
+    expect(r.churnRate).toBe(25);
+    // 4 actifs aujourd'hui - 4 au 1er = 0 (1 nouveau, 1 perdu)
+    expect(r.variationNetteAbonnements).toBe(0);
+  });
+
+  it("retourne null (jamais 0 ni une valeur par défaut) quand la base est vide", () => {
+    const r = calculerChurn([{ id: "d", created: apres }], [], debutMois);
+    expect(r.churnRate).toBeNull();
+    expect(r.variationNetteAbonnements).toBeNull();
+  });
+
+  it("ignore les abonnements sans date de création connue au lieu de la supposer", () => {
+    const r = calculerChurn([{ id: "a" }], [{ id: "b", canceled_at: apres }], debutMois);
+    expect(r.churnRate).toBeNull();
+  });
+
+  it("assemblerKpis : churn null si la liste des annulés n'a pas pu être lue", () => {
+    const kpis = assemblerKpis({
+      abonnementsActifs: [{ id: "a", created: avant }],
+      totalCustomers: 1,
+      newCustomersThisMonth: 0,
+      chargesMoisCourant: [],
+      chargesMoisPrecedent: [],
+      maintenant: new Date("2026-10-03T12:00:00Z"),
+      abonnementsAnnules: null,
+    });
+    expect(kpis.churnRate).toBeNull();
+    expect(kpis.churnRateChange).toBeNull();
+    expect(kpis.activeSubscriptionsChange).toBeNull();
+  });
+
+  it("assemblerKpis : ne renvoie jamais l'ancien 2,1 % codé en dur", () => {
+    const kpis = assemblerKpis({
+      abonnementsActifs: [{ id: "a", created: avant }, { id: "b", created: avant }],
+      totalCustomers: 2,
+      newCustomersThisMonth: 0,
+      chargesMoisCourant: [],
+      chargesMoisPrecedent: [],
+      maintenant: new Date("2026-10-03T12:00:00Z"),
+      abonnementsAnnules: [],
+    });
+    expect(kpis.churnRate).toBe(0); // 0 perdu sur 2 : mesure réelle, pas un défaut
+    expect(kpis.churnRate).not.toBe(2.1);
+  });
+});
+
+describe("stripe-kpis — chemin sans clé Stripe / erreur : indisponible, jamais de données factices", () => {
+  it("sans clé (undefined, null, vide, espaces) : réponse indisponible explicite", () => {
+    for (const cle of [undefined, null, "", "   "]) {
+      const r = reponseSansCleStripe(cle);
+      expect(r).toEqual({
+        success: false,
+        available: false,
+        reason: "stripe_not_configured",
+        error: expect.any(String),
+        kpis: null,
+      });
+      expect(JSON.stringify(r)).not.toMatch(/12450|1247|15400|14200|"mock":true/);
+    }
+  });
+
+  it("avec une clé : pas de réponse court-circuitée", () => {
+    expect(reponseSansCleStripe("sk_test_exemple")).toBeNull();
+  });
+
+  it("erreur Stripe : indisponible, kpis null (aucun zéro)", () => {
+    const r = reponseKpisIndisponibles("stripe_error");
+    expect(r.success).toBe(false);
+    expect(r.available).toBe(false);
+    expect(r.kpis).toBeNull();
+  });
+
+  it("réponse réelle : available true et mock false explicites", () => {
+    const kpis = assemblerKpis({
+      abonnementsActifs: [],
+      totalCustomers: 0,
+      newCustomersThisMonth: 0,
+      chargesMoisCourant: [],
+      chargesMoisPrecedent: [],
+      maintenant: new Date("2026-10-03T12:00:00Z"),
+      abonnementsAnnules: [],
+    });
+    const r = reponseKpisDisponibles(kpis);
+    expect(r).toMatchObject({ success: true, available: true, mock: false });
   });
 });

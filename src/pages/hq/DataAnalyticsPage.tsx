@@ -1,23 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  BarChart3, 
-  TrendingUp, 
+import {
+  TrendingUp,
   TrendingDown,
-  Users, 
+  Users,
   DollarSign,
-  Target,
-  Activity,
-  PieChart,
-  LineChart,
   ArrowUpRight,
   ArrowDownRight
 } from "lucide-react";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { CohortRetentionTable } from "@/components/hq/data/CohortRetentionTable";
-import { CohortAnalysis } from "@/components/hq/data/CohortAnalysis";
 import { ARPUTrendChart } from "@/components/hq/charts/ARPUTrendChart";
 import { LTVSegmentChart } from "@/components/hq/data/LTVSegmentChart";
 import { FeatureAdoptionChart } from "@/components/hq/data/FeatureAdoptionChart";
@@ -25,6 +17,8 @@ import { UserSegmentation } from "@/components/hq/data/UserSegmentation";
 import { cn } from "@/lib/utils";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
+import { DonneesIndisponibles } from "@/components/hq/DonneesIndisponibles";
+import { DONNEES_INDISPONIBLES, messageIndisponibilite } from "@/lib/stripe-kpis-adapter";
 
 interface MetricCardProps {
   title: string;
@@ -32,9 +26,11 @@ interface MetricCardProps {
   change?: number;
   icon: React.ReactNode;
   loading?: boolean;
+  /** Valeur sans source vérifiée : « Données indisponibles » au lieu d'un nombre. */
+  unavailable?: boolean;
 }
 
-function MetricCard({ title, value, change, icon, loading }: MetricCardProps) {
+function MetricCard({ title, value, change, icon, loading, unavailable }: MetricCardProps) {
   if (loading) {
     return (
       <Card className="card-executive">
@@ -54,8 +50,12 @@ function MetricCard({ title, value, change, icon, loading }: MetricCardProps) {
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold">{value}</p>
-            {change !== undefined && (
+            {unavailable ? (
+              <p className="text-sm font-medium text-muted-foreground py-1">{DONNEES_INDISPONIBLES}</p>
+            ) : (
+              <p className="text-2xl font-bold">{value}</p>
+            )}
+            {!unavailable && change !== undefined && (
               <div className="flex items-center gap-1 text-xs">
                 {isPositive ? (
                   <ArrowUpRight className="h-3 w-3 text-success" />
@@ -81,104 +81,72 @@ function MetricCard({ title, value, change, icon, loading }: MetricCardProps) {
   );
 }
 
-// Données de cohortes simulées
-const COHORT_DATA = [
-  { month: "Sep 2025", users: 120, retention: [100, 85, 72, 65, 58] },
-  { month: "Oct 2025", users: 145, retention: [100, 88, 75, 68] },
-  { month: "Nov 2025", users: 168, retention: [100, 82, 70] },
-  { month: "Déc 2025", users: 195, retention: [100, 86] },
-  { month: "Jan 2026", users: 220, retention: [100] },
-];
-
-// Données de funnel
-const FUNNEL_DATA = [
-  { stage: "Visiteurs", count: 10000, percentage: 100 },
-  { stage: "Inscriptions", count: 2500, percentage: 25 },
-  { stage: "Activation", count: 1200, percentage: 12 },
-  { stage: "Premier achat", count: 450, percentage: 4.5 },
-  { stage: "Récurrence", count: 180, percentage: 1.8 },
-];
-
 export default function DataAnalyticsPage() {
   const { data: stripeData, isLoading } = useStripeKPIs();
-  const kpis = stripeData?.kpis;
+  const kpis = stripeData?.kpis ?? null;
+  const raison = messageIndisponibilite(stripeData?.reason);
+
+  // Variation relative du nombre d'abonnés actifs depuis le 1er du mois (base = actifs au 1er).
+  const baseAbonnes = kpis && kpis.activeSubscriptionsChange !== null
+    ? kpis.activeSubscriptions - kpis.activeSubscriptionsChange
+    : 0;
+  const variationAbonnes = kpis && kpis.activeSubscriptionsChange !== null && baseAbonnes > 0
+    ? (kpis.activeSubscriptionsChange / baseAbonnes) * 100
+    : undefined;
 
   return (
     <div className="space-y-8 animate-fade-in">
       <ExecutiveHeader
         title="Data & Analytics"
         subtitle="Analyse des cohortes, LTV, ROI et métriques business"
-        source={{ source: "stripe", lastUpdated: new Date(), confidence: "high" }}
+        source={kpis ? { source: "stripe", lastUpdated: kpis.lastUpdated || undefined, confidence: "high" } : undefined}
       />
 
-      {/* KPIs principaux depuis Stripe */}
+      {!isLoading && !kpis && (
+        <DonneesIndisponibles reason={raison} />
+      )}
+
+      {/* KPIs principaux depuis Stripe (réels uniquement) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
           title="MRR"
-          value={kpis ? formatCurrency(kpis.mrr) : "—"}
+          value={kpis ? formatCurrency(kpis.mrr, kpis.currency) : DONNEES_INDISPONIBLES}
           change={kpis?.mrrChange ?? undefined}
           icon={<DollarSign className="h-5 w-5 text-accent" />}
           loading={isLoading}
+          unavailable={!kpis}
         />
         <MetricCard
           title="Abonnés Actifs"
-          value={kpis?.activeSubscriptions.toString() || "—"}
-          change={kpis ? (kpis.activeSubscriptionsChange / (kpis.activeSubscriptions || 1)) * 100 : undefined}
+          value={kpis ? kpis.activeSubscriptions.toString() : DONNEES_INDISPONIBLES}
+          change={variationAbonnes}
           icon={<Users className="h-5 w-5 text-accent" />}
           loading={isLoading}
+          unavailable={!kpis}
         />
         <MetricCard
           title="Taux de Churn"
-          value={kpis ? `${kpis.churnRate}%` : "—"}
-          change={kpis?.churnRateChange}
+          value={kpis?.churnRate != null ? `${kpis.churnRate}%` : DONNEES_INDISPONIBLES}
+          change={kpis?.churnRateChange ?? undefined}
           icon={<TrendingDown className="h-5 w-5 text-accent" />}
           loading={isLoading}
+          unavailable={!kpis || kpis.churnRate === null}
         />
         <MetricCard
           title="Nouveaux ce mois"
-          value={kpis?.newCustomersThisMonth.toString() || "—"}
+          value={kpis ? kpis.newCustomersThisMonth.toString() : DONNEES_INDISPONIBLES}
           icon={<TrendingUp className="h-5 w-5 text-accent" />}
           loading={isLoading}
+          unavailable={!kpis}
         />
       </div>
 
-      {/* Funnel de conversion */}
-      <Card className="card-executive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-primary" />
-            Funnel de Conversion
-          </CardTitle>
-          <CardDescription>
-            Parcours utilisateur de la visite à la récurrence
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {FUNNEL_DATA.map((stage, index) => (
-              <div key={stage.stage} className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center font-medium">
-                      {index + 1}
-                    </span>
-                    <span className="font-medium">{stage.stage}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-muted-foreground">
-                      {stage.count.toLocaleString("fr-FR")}
-                    </span>
-                    <Badge variant="subtle" className="font-mono">
-                      {stage.percentage}%
-                    </Badge>
-                  </div>
-                </div>
-                <Progress value={stage.percentage} className="h-2" />
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Funnel de conversion : aucune source (analytics) connectée */}
+      <DonneesIndisponibles
+        title="Funnel de Conversion"
+        description="Parcours utilisateur de la visite à la récurrence"
+        reason="Aucune source vérifiée n'est connectée (analytics de visites et d'inscriptions)."
+      />
 
       {/* Analyse de cohortes - Composants dédiés */}
       <div className="grid gap-6 lg:grid-cols-2">
@@ -195,71 +163,34 @@ export default function DataAnalyticsPage() {
       {/* User Segmentation */}
       <UserSegmentation />
 
-      {/* LTV et ROI */}
+      {/* LTV et ROI : aucune donnée vérifiée (CAC et investissement marketing non suivis) */}
       <div className="grid md:grid-cols-2 gap-6">
-        <Card className="card-executive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <LineChart className="h-5 w-5 text-primary" />
-              Customer Lifetime Value
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="text-center p-6 rounded-lg bg-gradient-to-br from-primary/10 to-transparent">
-                <p className="text-4xl font-bold text-primary">€487</p>
-                <p className="text-sm text-muted-foreground">LTV moyen</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="p-3 rounded-lg bg-muted/30">
-                  <p className="text-muted-foreground">CAC</p>
-                  <p className="font-bold">€52</p>
-                </div>
-                <div className="p-3 rounded-lg bg-muted/30">
-                  <p className="text-muted-foreground">LTV:CAC</p>
-                  <p className="font-bold text-success">9.4x</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="card-executive">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-primary" />
-              ROI Marketing
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="text-center p-6 rounded-lg bg-gradient-to-br from-success/10 to-transparent">
-                <p className="text-4xl font-bold text-success">342%</p>
-                <p className="text-sm text-muted-foreground">ROI global</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="p-3 rounded-lg bg-muted/30">
-                  <p className="text-muted-foreground">Investissement</p>
-                  <p className="font-bold">€12,400</p>
-                </div>
-                <div className="p-3 rounded-lg bg-muted/30">
-                  <p className="text-muted-foreground">Revenus générés</p>
-                  <p className="font-bold">€54,800</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <DonneesIndisponibles
+          title="Customer Lifetime Value"
+          description="LTV, CAC et ratio LTV:CAC"
+          reason="Le coût d'acquisition (CAC) n'est suivi dans aucune source vérifiée."
+        />
+        <DonneesIndisponibles
+          title="ROI Marketing"
+          description="ROI, investissement et revenus générés"
+          reason="Aucune source vérifiée ne suit les dépenses marketing ni leur attribution."
+        />
       </div>
 
       <MethodologyDisclosure
         sources={[
-          { name: "Stripe API", type: "api", refreshRate: "Temps réel", reliability: "verified", description: "MRR, abonnés, churn" },
-          { name: "Données simulées", type: "mock", reliability: "simulated", description: "Cohortes, funnel, LTV/CAC, ROI" },
+          kpis
+            ? { name: "Stripe API", type: "api", refreshRate: "À chaque chargement", reliability: "verified", description: "MRR, abonnés, churn, nouveaux clients" }
+            : { name: "Stripe API", type: "api", reliability: "estimated", description: "Non connectée : aucune donnée affichée" },
         ]}
         calculations={[
-          { metric: "LTV/CAC", formula: "ARPU / Churn Rate ÷ CAC", assumptions: ["Moyennes sectorielles"], limitations: ["Cohortes et funnel simulés"] },
+          {
+            metric: "Taux de churn",
+            formula: "Abonnements annulés ce mois (créés avant le 1er) ÷ abonnements actifs au 1er du mois × 100",
+            limitations: ["Hors essais et impayés", "Indisponible si aucun abonnement au 1er du mois"],
+          },
         ]}
+        dataQuality={kpis ? "high" : "low"}
       />
     </div>
   );

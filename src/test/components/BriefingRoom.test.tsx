@@ -12,7 +12,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 vi.mock("@/hooks/useStripeKPIs", () => ({
-  useStripeKPIs: () => ({ data: null, isError: true }),
+  useStripeKPIs: () => ({ data: { success: false, available: false, kpis: null, reason: "stripe_not_configured" }, isError: false }),
   formatCurrency: (v: number) => `€${v}`,
 }));
 
@@ -49,11 +49,12 @@ describe("BriefingRoom", () => {
     expect(screen.getByText("Uptime global")).toBeInTheDocument();
   });
 
-  it("shows MRR as dash when Stripe is unavailable", () => {
+  it("shows « Données indisponibles » (never a number) for MRR when Stripe is unavailable", () => {
     renderWithProviders(<BriefingRoom />);
-    // With stripeError=true, MRR should show "—"
+    // Stripe indisponible : jamais de chiffre, le texte explicite à la place
     const mrrCard = screen.getByText("MRR").closest("div")?.parentElement;
-    expect(mrrCard?.textContent).toContain("—");
+    expect(mrrCard?.textContent).toContain("Données indisponibles");
+    expect(mrrCard?.textContent).not.toMatch(/\d/);
   });
 
   it("renders guided actions", () => {

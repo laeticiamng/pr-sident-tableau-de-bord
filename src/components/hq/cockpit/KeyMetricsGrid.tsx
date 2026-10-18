@@ -11,6 +11,8 @@ import {
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { usePlatforms } from "@/hooks/useHQData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 export function KeyMetricsGrid() {
   const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
@@ -25,7 +27,7 @@ export function KeyMetricsGrid() {
   const metrics = [
     {
       title: "MRR",
-      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—",
+      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : DONNEES_INDISPONIBLES,
       change: kpis && kpis.mrrChange != null ? formatPercentage(kpis.mrrChange) : "—",
       trend: kpis && kpis.mrrChange != null && kpis.mrrChange > 0 ? "up" : "down",
       icon: DollarSign,
@@ -33,9 +35,11 @@ export function KeyMetricsGrid() {
     },
     {
       title: "Clients Actifs",
-      value: kpis?.activeSubscriptions?.toString() || "—",
-      change: kpis ? `+${kpis.activeSubscriptionsChange}` : "—",
-      trend: "up",
+      value: kpis ? kpis.activeSubscriptions.toString() : DONNEES_INDISPONIBLES,
+      change: kpis && kpis.activeSubscriptionsChange != null
+        ? `${kpis.activeSubscriptionsChange > 0 ? "+" : ""}${kpis.activeSubscriptionsChange}`
+        : "—",
+      trend: kpis && kpis.activeSubscriptionsChange != null && kpis.activeSubscriptionsChange < 0 ? "down" : "up",
       icon: Users,
       color: "text-primary"
     },
@@ -51,7 +55,7 @@ export function KeyMetricsGrid() {
       // Croissance du chiffre encaissé sur périodes équivalentes (mois à date vs même
       // durée du mois précédent) — ce n'est pas une croissance du MRR.
       title: "Encaissé à date",
-      value: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : "—",
+      value: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : DONNEES_INDISPONIBLES,
       change: "vs même période M-1",
       trend: kpis && kpis.revenueChangeToDate != null && kpis.revenueChangeToDate > 0 ? "up" : "down",
       icon: TrendingUp,
@@ -84,13 +88,13 @@ export function KeyMetricsGrid() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <metric.icon className={`h-5 w-5 ${metric.color}`} />
-              {metric.trend === "up" ? (
+              {metric.value === DONNEES_INDISPONIBLES ? null : metric.trend === "up" ? (
                 <ArrowUpRight className="h-4 w-4 text-success" />
               ) : (
                 <ArrowDownRight className="h-4 w-4 text-destructive" />
               )}
             </div>
-            <div className="text-lg sm:text-2xl font-bold">{metric.value}</div>
+            <div className={cn("font-bold", metric.value === DONNEES_INDISPONIBLES ? "text-sm text-muted-foreground py-1" : "text-lg sm:text-2xl")}>{metric.value}</div>
             <div className="text-sm text-muted-foreground">{metric.title}</div>
             <div className="text-xs text-muted-foreground mt-1">{metric.change}</div>
           </CardContent>

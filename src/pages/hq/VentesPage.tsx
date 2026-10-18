@@ -27,6 +27,7 @@ import { useStripeKPIs, formatCurrency } from "@/hooks/useStripeKPIs";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 export default function VentesPage() {
   const executeRun = useExecuteRun();
@@ -75,7 +76,7 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-20 mb-1" /> : (
-                  <p className="text-xl font-bold">{kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—"}</p>
+                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? formatCurrency(kpis.mrr, kpis.currency) : DONNEES_INDISPONIBLES}</p>
                 )}
                 <p className="text-xs text-muted-foreground">MRR (Stripe)</p>
               </div>
@@ -91,7 +92,7 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
-                  <p className="text-xl font-bold">{kpis?.totalCustomers ?? "—"}</p>
+                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? kpis.totalCustomers : DONNEES_INDISPONIBLES}</p>
                 )}
                 <p className="text-xs text-muted-foreground">Clients totaux</p>
               </div>
@@ -107,7 +108,7 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
-                  <p className="text-xl font-bold">{kpis?.activeSubscriptions ?? "—"}</p>
+                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? kpis.activeSubscriptions : DONNEES_INDISPONIBLES}</p>
                 )}
                 <p className="text-xs text-muted-foreground">Abonnements actifs</p>
               </div>
@@ -123,7 +124,7 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
-                  <p className="text-xl font-bold">+{kpis?.newCustomersThisMonth ?? 0}</p>
+                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? `+${kpis.newCustomersThisMonth}` : DONNEES_INDISPONIBLES}</p>
                 )}
                 <p className="text-xs text-muted-foreground">Nouveaux ce mois</p>
               </div>

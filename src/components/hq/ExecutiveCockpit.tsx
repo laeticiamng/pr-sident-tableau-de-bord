@@ -25,6 +25,7 @@ import { usePendingApprovals, useRecentRuns } from "@/hooks/useHQData";
 import { useConsolidatedMetrics, useRefreshPlatformMonitor } from "@/hooks/usePlatformMonitor";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { cn } from "@/lib/utils";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 interface MetricCardProps {
   title: string;
@@ -110,19 +111,19 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
 
   const realKPIs = {
     mrr: { 
-      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—", 
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : DONNEES_INDISPONIBLES, 
       change: stripeKPIs?.mrrChange ?? undefined, 
       trend: stripeKPIs?.mrrChange != null ? (stripeKPIs.mrrChange > 0 ? "up" as const : stripeKPIs.mrrChange < 0 ? "down" as const : "neutral" as const) : "neutral" as const 
     },
     activeUsers: { 
-      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : "—", 
+      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : DONNEES_INDISPONIBLES, 
       change: stripeKPIs?.newCustomersThisMonth ?? undefined, 
       trend: stripeKPIs && stripeKPIs.newCustomersThisMonth > 0 ? "up" as const : "neutral" as const 
     },
     churnRate: { 
-      value: stripeKPIs ? formatPercentage(stripeKPIs.churnRate, false) : "—", 
+      value: stripeKPIs && stripeKPIs.churnRate != null ? formatPercentage(stripeKPIs.churnRate, false) : DONNEES_INDISPONIBLES, 
       change: stripeKPIs?.churnRateChange ?? undefined, 
-      trend: stripeKPIs ? (stripeKPIs.churnRateChange < 0 ? "up" as const : stripeKPIs.churnRateChange > 0 ? "down" as const : "neutral" as const) : "neutral" as const 
+      trend: stripeKPIs && stripeKPIs.churnRateChange != null ? (stripeKPIs.churnRateChange < 0 ? "up" as const : stripeKPIs.churnRateChange > 0 ? "down" as const : "neutral" as const) : "neutral" as const 
     },
     avgResponseTime: { value: `${metrics.avgResponseTime}ms`, change: undefined, trend: "neutral" as const },
   };

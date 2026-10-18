@@ -18,13 +18,14 @@ import { useState, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
 import { briefingTranslations } from "@/i18n/briefing";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 const dateFnsLocales = { fr, en: enGB, de };
 
 export function MobileBriefing() {
   const { data: platforms } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
-  const { data: stripeData, isError: stripeError } = useStripeKPIs();
+  const { data: stripeData } = useStripeKPIs();
   const { data: digest } = useMorningDigest();
   const executeRun = useExecuteRun();
   const [runResult, setRunResult] = useState<ExecutiveRunResult | null>(null);
@@ -38,7 +39,7 @@ export function MobileBriefing() {
   const redCount = platforms?.filter(p => p.status === "red").length || 0;
   const total = platforms?.length || 0;
   const pendingCount = pendingApprovals?.length || 0;
-  const mrr = stripeError ? null : (stripeData?.kpis?.mrr ?? 0);
+  const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null; // null = indisponible (jamais 0 par défaut)
   const uptime = platforms?.length
     ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
     : null;
@@ -248,7 +249,7 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
   const kpis = [
     {
       icon: <DollarSign className="h-5 w-5 text-success" />,
-      value: mrr != null && mrr > 0 ? formatCurrency(mrr) : "—",
+      value: mrr != null ? formatCurrency(mrr) : DONNEES_INDISPONIBLES,
       label: t.mrr,
       sublabel: t.mrrSub,
       bg: "bg-success/5 border-success/20",
@@ -292,7 +293,7 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
                 <CardContent className="p-4 flex items-center gap-3">
                   <div className="flex-shrink-0">{kpi.icon}</div>
                   <div>
-                    <p className="text-xl font-bold leading-tight">{kpi.value}</p>
+                    <p className={kpi.value === DONNEES_INDISPONIBLES ? "text-sm font-medium text-muted-foreground leading-tight" : "text-xl font-bold leading-tight"}>{kpi.value}</p>
                     <p className="text-xs font-medium">{kpi.label}</p>
                     <p className="text-[10px] text-muted-foreground">{kpi.sublabel}</p>
                   </div>

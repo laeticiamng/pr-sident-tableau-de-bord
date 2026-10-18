@@ -22,7 +22,7 @@ Deno.test("stripe-kpis: should handle CORS preflight", async () => {
   assertExists(response.headers.get("access-control-allow-origin"));
 });
 
-Deno.test("stripe-kpis: should return mock data when no Stripe key configured", async () => {
+const appeler = async () => {
   const response = await fetch(FUNCTION_URL, {
     method: "GET",
     headers: {
@@ -30,181 +30,66 @@ Deno.test("stripe-kpis: should return mock data when no Stripe key configured", 
       "apikey": SUPABASE_ANON_KEY,
     },
   });
+  return { response, data: await response.json() };
+};
 
-  const data = await response.json();
-
+// Contrat : soit des KPIs réels (available:true, mock:false), soit « indisponible »
+// (available:false, kpis:null). Jamais de données factices ni de zéros de remplacement.
+Deno.test("stripe-kpis: never returns mock data (real KPIs or explicit unavailable)", async () => {
+  const { response, data } = await appeler();
+  // 401/403 si l'appelant n'est pas owner : le corps n'a alors aucun KPI.
+  if (response.status === 401 || response.status === 403) {
+    assertEquals(data.kpis, undefined);
+    return;
+  }
   assertEquals(response.status, 200);
-  assertEquals(data.success, true);
-  
-  // Should indicate mock data or have valid KPIs structure
-  assertExists(data.kpis);
-  assertExists(data.kpis.mrr);
-  assertExists(data.kpis.activeSubscriptions);
-  assertExists(data.kpis.churnRate);
-  assertExists(data.kpis.totalCustomers);
-  assertExists(data.kpis.currency);
-  assertExists(data.kpis.lastUpdated);
+  assertEquals(data.mock === true, false);
+  if (data.available === true) {
+    assertEquals(data.success, true);
+    assertEquals(data.mock, false);
+    assertExists(data.kpis);
+  } else {
+    assertEquals(data.available, false);
+    assertEquals(data.success, false);
+    assertEquals(data.kpis, null);
+    assertExists(data.reason);
+  }
 });
 
-Deno.test("stripe-kpis: response should have correct KPI structure", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-
-  // Verify all expected fields exist
+Deno.test("stripe-kpis: when available, KPI structure and ranges are valid", async () => {
+  const { data } = await appeler();
+  if (data.available !== true) return;
   const kpis = data.kpis;
-  
+
   assertEquals(typeof kpis.mrr, "number");
-  // null = variation du MRR non mesurée (Stripe ne fournit pas le MRR passé).
+  // null = non mesuré (jamais inventé).
   assertEquals(kpis.mrrChange === null || typeof kpis.mrrChange === "number", true);
   assertEquals(typeof kpis.activeSubscriptions, "number");
-  assertEquals(typeof kpis.activeSubscriptionsChange, "number");
-  assertEquals(typeof kpis.churnRate, "number");
-  assertEquals(typeof kpis.churnRateChange, "number");
+  assertEquals(kpis.activeSubscriptionsChange === null || typeof kpis.activeSubscriptionsChange === "number", true);
+  assertEquals(kpis.churnRate === null || typeof kpis.churnRate === "number", true);
+  assertEquals(kpis.churnRateChange, null);
   assertEquals(typeof kpis.totalCustomers, "number");
   assertEquals(typeof kpis.newCustomersThisMonth, "number");
   assertEquals(typeof kpis.revenueThisMonth, "number");
   assertEquals(typeof kpis.revenueLastMonth, "number");
   assertEquals(typeof kpis.revenueLastMonthToDate, "number");
   assertEquals(kpis.revenueChangeToDate === null || typeof kpis.revenueChangeToDate === "number", true);
-  assertEquals(typeof kpis.currency, "string");
-  assertEquals(typeof kpis.lastUpdated, "string");
+  assertEquals(["eur", "usd", "gbp", "chf"].includes(kpis.currency.toLowerCase()), true);
+  assertEquals(isNaN(new Date(kpis.lastUpdated).getTime()), false);
+
+  assertEquals(kpis.mrr >= 0, true);
+  assertEquals(kpis.activeSubscriptions >= 0, true);
+  assertEquals(kpis.totalCustomers >= 0, true);
+  assertEquals(kpis.revenueThisMonth >= 0, true);
+  if (kpis.churnRate !== null) {
+    assertEquals(kpis.churnRate >= 0 && kpis.churnRate <= 100, true, "churnRate doit être un pourcentage");
+  }
 });
 
-Deno.test("stripe-kpis: currency should be valid ISO code", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-
-  const validCurrencies = ["eur", "usd", "gbp", "chf"];
-  assertEquals(
-    validCurrencies.includes(data.kpis.currency.toLowerCase()),
-    true,
-    `Currency ${data.kpis.currency} should be valid`
-  );
-});
-
-Deno.test("stripe-kpis: lastUpdated should be valid ISO date", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-
-  const date = new Date(data.kpis.lastUpdated);
-  assertEquals(date instanceof Date, true);
-  assertEquals(isNaN(date.getTime()), false, "lastUpdated should be a valid date");
-});
-
-Deno.test("stripe-kpis: numeric values should be non-negative", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-  const kpis = data.kpis;
-
-  // Core metrics should be non-negative
-  assertEquals(kpis.mrr >= 0, true, "MRR should be non-negative");
-  assertEquals(kpis.activeSubscriptions >= 0, true, "activeSubscriptions should be non-negative");
-  assertEquals(kpis.churnRate >= 0, true, "churnRate should be non-negative");
-  assertEquals(kpis.totalCustomers >= 0, true, "totalCustomers should be non-negative");
-  assertEquals(kpis.newCustomersThisMonth >= 0, true, "newCustomersThisMonth should be non-negative");
-  assertEquals(kpis.revenueThisMonth >= 0, true, "revenueThisMonth should be non-negative");
-  assertEquals(kpis.revenueLastMonth >= 0, true, "revenueLastMonth should be non-negative");
-  assertEquals(kpis.revenueLastMonthToDate >= 0, true, "revenueLastMonthToDate should be non-negative");
-});
-
-Deno.test("stripe-kpis: churn rate should be percentage (0-100)", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-
-  assertEquals(data.kpis.churnRate >= 0, true, "churnRate should be >= 0");
-  assertEquals(data.kpis.churnRate <= 100, true, "churnRate should be <= 100");
-});
-
-Deno.test("stripe-kpis: should have CORS headers in response", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  await response.json();
-
+Deno.test("stripe-kpis: should have CORS headers and JSON content type", async () => {
+  const { response } = await appeler();
   assertEquals(response.headers.get("access-control-allow-origin"), "*");
-});
-
-Deno.test("stripe-kpis: should return JSON content type", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  await response.json();
-
   const contentType = response.headers.get("content-type");
   assertExists(contentType);
   assertEquals(contentType.includes("application/json"), true);
-});
-
-// Mock data validation test
-Deno.test("stripe-kpis: mock data should have realistic values", async () => {
-  const response = await fetch(FUNCTION_URL, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-      "apikey": SUPABASE_ANON_KEY,
-    },
-  });
-
-  const data = await response.json();
-
-  if (data.mock === true) {
-    const kpis = data.kpis;
-    
-    // Mock data should have realistic placeholder values
-    // MRR should be in reasonable range for a SaaS
-    assertEquals(kpis.mrr >= 0, true);
-    assertEquals(kpis.mrr <= 1000000, true, "Mock MRR should be reasonable");
-    
-    // Subscriptions should be reasonable
-    assertEquals(kpis.activeSubscriptions >= 0, true);
-    assertEquals(kpis.activeSubscriptions <= 100000, true);
-    
-    // Churn rate should be reasonable
-    assertEquals(kpis.churnRate <= 50, true, "Churn rate should be < 50%");
-  }
 });

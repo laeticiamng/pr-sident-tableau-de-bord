@@ -7,11 +7,17 @@ import {
   assemblerKpis,
   bornesDePeriode,
   listerStripe,
+  reponseKpisDisponibles,
+  reponseKpisIndisponibles,
+  reponseSansCleStripe,
 } from "./calculs.ts";
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
  * Calcule MRR, churn, revenus et autres KPIs depuis Stripe.
+ * Contrat : voir ReponseKpisStripe (calculs.ts). Sans clé Stripe ou en cas d'erreur Stripe,
+ * la réponse est HTTP 200 { success:false, available:false, reason, kpis:null } : jamais de
+ * données factices ni de zéros présentés comme des mesures.
  * Les calculs sont dans calculs.ts (fonctions pures testées par Vitest).
  */
 
@@ -84,31 +90,14 @@ Deno.serve(async (req) => {
     // END AUTHENTICATION CHECK
     // ============================================
 
-    if (!STRIPE_SECRET_KEY) {
-      console.log("[Stripe KPIs] No Stripe key - returning mock data");
-      return new Response(
-        JSON.stringify({
-          success: true,
-          mock: true,
-          kpis: {
-            mrr: 12450,
-            mrrChange: null,
-            activeSubscriptions: 247,
-            activeSubscriptionsChange: 12,
-            churnRate: 2.1,
-            churnRateChange: -0.3,
-            totalCustomers: 1247,
-            newCustomersThisMonth: 45,
-            revenueThisMonth: 15400,
-            revenueLastMonth: 14200,
-            revenueLastMonthToDate: 14200,
-            revenueChangeToDate: 8.5,
-            currency: "eur",
-            lastUpdated: new Date().toISOString(),
-          },
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // Sans clé Stripe : réponse « indisponible » explicite. Aucune donnée factice, jamais.
+    const sansCle = reponseSansCleStripe(STRIPE_SECRET_KEY);
+    if (sansCle) {
+      console.log("[Stripe KPIs] No Stripe key - returning unavailable");
+      return new Response(JSON.stringify(sansCle), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("[Stripe KPIs] Fetching real Stripe data...");
@@ -160,8 +149,16 @@ Deno.serve(async (req) => {
       console.log("[Stripe KPIs] Could not fetch new customers");
     }
 
-    // 4. Churn rate (simplified)
-    const churnRate = abonnementsActifs.length > 0 ? 2.1 : 0; // Simplified mock
+    // 4. Churn : abonnements annulés (toutes pages). Si la lecture échoue, le churn reste
+    // indisponible (null) : on ne le remplace jamais par une valeur par défaut.
+    let abonnementsAnnules: AbonnementStripe[] | null = null;
+    try {
+      abonnementsAnnules = await listerStripe<AbonnementStripe>(stripeRequest, "subscriptions", {
+        status: "canceled",
+      });
+    } catch (e) {
+      console.log("[Stripe KPIs] Could not fetch canceled subscriptions - churn unavailable");
+    }
 
     // 5. Revenus (charges, toutes pages)
     // Pas de try/catch ici : un échec Stripe (même sur une page intermédiaire) doit remonter
@@ -184,40 +181,21 @@ Deno.serve(async (req) => {
       chargesMoisCourant,
       chargesMoisPrecedent,
       maintenant,
-      churnRate,
+      abonnementsAnnules,
     });
 
-    console.log(`[Stripe KPIs] MRR: ${kpis.mrr}€, Subs: ${kpis.activeSubscriptions}, Churn: ${kpis.churnRate}%`);
+    console.log(`[Stripe KPIs] KPIs calculés (churn ${kpis.churnRate === null ? "indisponible" : "mesuré"})`);
 
     return new Response(
-      JSON.stringify({ success: true, mock: false, kpis }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify(reponseKpisDisponibles(kpis)),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error) {
     console.error("[Stripe KPIs] Unexpected error:", error);
-    // Return graceful degradation with mock data on error
+    // Erreur inattendue (Stripe injoignable, etc.) : « indisponible », sans zéros ni mock.
     return new Response(
-      JSON.stringify({ 
-        error: "Service temporarily unavailable. Displaying cached data.",
-        mock: true,
-        kpis: {
-          mrr: 0,
-          mrrChange: null,
-          activeSubscriptions: 0,
-          activeSubscriptionsChange: 0,
-          churnRate: 0,
-          churnRateChange: 0,
-          totalCustomers: 0,
-          newCustomersThisMonth: 0,
-          revenueThisMonth: 0,
-          revenueLastMonth: 0,
-          revenueLastMonthToDate: 0,
-          revenueChangeToDate: null,
-          currency: "eur",
-          lastUpdated: new Date().toISOString(),
-        },
-      }),
+      JSON.stringify(reponseKpisIndisponibles("stripe_error")),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

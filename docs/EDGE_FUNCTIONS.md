@@ -335,7 +335,7 @@ Chaque appel est loggé avec :
 | intelligence-search | 15s | Message "Recherche indisponible" |
 | platform-analysis | 60s | Analyse partielle (GitHub seul si scrape échoue) |
 | platform-monitor | 10s | Status "unknown" |
-| stripe-kpis | 10s | Données mockées si dev |
+| stripe-kpis | 10s | `available: false`, `kpis: null` (jamais de données simulées) |
 | web-scraper | 30s | Erreur explicite |
 
 ---

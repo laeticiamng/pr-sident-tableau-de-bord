@@ -14,7 +14,6 @@ import {
   RefreshCw,
   CheckCircle2,
   Users,
-  AlertCircle,
 } from "lucide-react";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,48 +25,59 @@ import { RevenueBreakdown } from "@/components/hq/finance/RevenueBreakdown";
 import { CashFlowForecast } from "@/components/hq/finance/CashFlowForecast";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
+import { DonneesIndisponibles } from "@/components/hq/DonneesIndisponibles";
+import { DONNEES_INDISPONIBLES, messageIndisponibilite } from "@/lib/stripe-kpis-adapter";
 
 export default function FinancePage() {
-  const { data, isLoading, error, refetch, isFetching } = useStripeKPIs();
+  const { data, isLoading, refetch, isFetching } = useStripeKPIs();
 
-  const kpis = data?.kpis;
+  // kpis n'est renseigné que pour des données Stripe réelles ; sinon « Données indisponibles ».
+  const kpis = data?.kpis ?? null;
+  const raison = messageIndisponibilite(data?.reason);
+
+  const direction = (v: number | null | undefined, inverse = false) =>
+    v == null || v === 0 ? "neutral" : (v > 0) !== inverse ? "up" : "down";
 
   // Financial KPIs from Stripe
   const financialKPIs = [
-    { 
-      label: "MRR", 
-      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—", 
+    {
+      label: "MRR",
+      available: !!kpis,
+      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : DONNEES_INDISPONIBLES,
       // Variation du MRR non mesurée par Stripe (null) : « — ».
       change: kpis && kpis.mrrChange != null ? formatPercentage(kpis.mrrChange) : "—",
-      trend: kpis && kpis.mrrChange != null ? (kpis.mrrChange > 0 ? "up" : kpis.mrrChange < 0 ? "down" : "neutral") : "neutral",
+      trend: direction(kpis?.mrrChange),
       icon: DollarSign,
       description: "Monthly Recurring Revenue"
     },
-    { 
-      label: "Encaissé ce mois (à date)", 
-      value: kpis ? formatCurrency(kpis.revenueThisMonth, kpis.currency) : "—", 
+    {
+      label: "Encaissé ce mois (à date)",
+      available: !!kpis,
+      value: kpis ? formatCurrency(kpis.revenueThisMonth, kpis.currency) : DONNEES_INDISPONIBLES,
       // Comparaison sur périodes équivalentes : même durée écoulée du mois précédent.
       change: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : "—",
-      trend: kpis && kpis.revenueChangeToDate != null
-        ? (kpis.revenueChangeToDate > 0 ? "up" : kpis.revenueChangeToDate < 0 ? "down" : "neutral")
-        : "neutral",
+      trend: direction(kpis?.revenueChangeToDate),
       icon: CreditCard,
       description: "vs même période du mois précédent"
     },
-    { 
-      label: "Abonnements Actifs", 
-      value: kpis ? kpis.activeSubscriptions.toString() : "—", 
-      change: kpis ? `+${kpis.activeSubscriptionsChange} ce mois` : "—",
-      trend: kpis && kpis.activeSubscriptionsChange > 0 ? "up" : "neutral",
+    {
+      label: "Abonnements Actifs",
+      available: !!kpis,
+      value: kpis ? kpis.activeSubscriptions.toString() : DONNEES_INDISPONIBLES,
+      change: kpis && kpis.activeSubscriptionsChange != null
+        ? `${kpis.activeSubscriptionsChange > 0 ? "+" : ""}${kpis.activeSubscriptionsChange} ce mois (net)`
+        : "—",
+      trend: direction(kpis?.activeSubscriptionsChange),
       icon: TrendingUp,
       description: "Subscriptions actives"
     },
-    { 
-      label: "Taux de Churn", 
-      value: kpis ? `${kpis.churnRate}%` : "—", 
-      change: kpis ? formatPercentage(kpis.churnRateChange) : "—",
-      trend: kpis && kpis.churnRateChange < 0 ? "up" : kpis && kpis.churnRateChange > 0 ? "down" : "neutral",
-      icon: kpis && kpis.churnRate < 3 ? TrendingDown : Wallet,
+    {
+      label: "Taux de Churn",
+      available: kpis?.churnRate != null,
+      value: kpis?.churnRate != null ? `${kpis.churnRate}%` : DONNEES_INDISPONIBLES,
+      change: kpis && kpis.churnRateChange != null ? formatPercentage(kpis.churnRateChange) : "—",
+      trend: direction(kpis?.churnRateChange, true),
+      icon: kpis?.churnRate != null && kpis.churnRate < 3 ? TrendingDown : Wallet,
       description: "Attrition mensuelle"
     },
   ];
@@ -86,13 +96,13 @@ export default function FinancePage() {
       <ExecutiveHeader
         title="Finance & ROI"
         subtitle={`Vue financière consolidée des ${MANAGED_PLATFORMS.length} plateformes`}
-        context="Indicateurs financiers standardisés : MRR, churn, LTV/CAC. Données actualisées depuis l'API Stripe avec réconciliation automatique."
-        source={{
+        context="Indicateurs financiers issus de l'API Stripe : MRR, encaissements, churn. Aucun chiffre n'est affiché sans source vérifiée."
+        source={kpis ? {
           source: "stripe",
-          lastUpdated: kpis?.lastUpdated,
+          lastUpdated: kpis.lastUpdated || undefined,
           confidence: "high",
-          methodology: "Agrégation automatique des données de paiement Stripe",
-        }}
+          methodology: "Agrégation des données de paiement Stripe",
+        } : undefined}
         actions={
           <div className="flex items-center gap-3">
             {kpis && (
@@ -109,14 +119,7 @@ export default function FinancePage() {
         }
       />
 
-      {error && (
-        <Card className="border-destructive/50 bg-destructive/5">
-          <CardContent className="p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-destructive" />
-            <span className="text-destructive">Erreur de chargement : {error.message}</span>
-          </CardContent>
-        </Card>
-      )}
+      {!isLoading && !kpis && <DonneesIndisponibles reason={raison} />}
 
       {/* KPIs */}
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
@@ -136,7 +139,11 @@ export default function FinancePage() {
                     {kpi.trend === "up" && <ArrowUpRight className="h-4 w-4 text-success" />}
                     {kpi.trend === "down" && <ArrowDownRight className="h-4 w-4 text-destructive" />}
                   </div>
-                  <div className="text-2xl font-bold">{kpi.value}</div>
+                  {kpi.available ? (
+                    <div className="text-2xl font-bold">{kpi.value}</div>
+                  ) : (
+                    <div className="text-sm font-medium text-muted-foreground py-1">{kpi.value}</div>
+                  )}
                   <div className="text-sm text-muted-foreground mt-1">{kpi.label}</div>
                   <div className="text-xs text-muted-foreground mt-2">{kpi.change}</div>
                 </>
@@ -168,17 +175,19 @@ export default function FinancePage() {
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : kpis ? (
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg border text-center">
-                  <div className="text-3xl font-bold text-primary">{kpis?.totalCustomers || 0}</div>
+                  <div className="text-3xl font-bold text-primary">{kpis.totalCustomers}</div>
                   <div className="text-sm text-muted-foreground">Clients totaux</div>
                 </div>
                 <div className="p-4 rounded-lg border text-center">
-                  <div className="text-3xl font-bold text-success">+{kpis?.newCustomersThisMonth || 0}</div>
+                  <div className="text-3xl font-bold text-success">+{kpis.newCustomersThisMonth}</div>
                   <div className="text-sm text-muted-foreground">Nouveaux ce mois</div>
                 </div>
               </div>
+            ) : (
+              <DonneesIndisponibles reason={raison} />
             )}
           </CardContent>
         </Card>
@@ -200,19 +209,21 @@ export default function FinancePage() {
                 <Skeleton className="h-8 w-full" />
                 <Skeleton className="h-8 w-3/4" />
               </div>
+            ) : !kpis ? (
+              <DonneesIndisponibles reason={raison} />
             ) : (
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm">Ce mois (à date)</span>
-                    <span className="font-semibold">{formatCurrency(kpis?.revenueThisMonth || 0, kpis?.currency)}</span>
+                    <span className="font-semibold">{formatCurrency(kpis.revenueThisMonth, kpis.currency)}</span>
                   </div>
                   <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-primary rounded-full transition-all" 
                       style={{ 
-                        width: `${Math.min(100, kpis?.revenueLastMonthToDate && kpis.revenueLastMonthToDate > 0 
-                          ? (kpis.revenueThisMonth / kpis.revenueLastMonthToDate) * 100 
+                        width: `${Math.min(100, kpis.revenueLastMonthToDate > 0
+                          ? (kpis.revenueThisMonth / kpis.revenueLastMonthToDate) * 100
                           : 100)}%` 
                       }}
                     />
@@ -221,7 +232,7 @@ export default function FinancePage() {
                 <div>
                   <div className="flex justify-between mb-2">
                     <span className="text-sm">Même période du mois précédent</span>
-                    <span className="font-semibold">{formatCurrency(kpis?.revenueLastMonthToDate || 0, kpis?.currency)}</span>
+                    <span className="font-semibold">{formatCurrency(kpis.revenueLastMonthToDate, kpis.currency)}</span>
                   </div>
                   <div className="h-3 bg-muted rounded-full overflow-hidden">
                     <div 
@@ -231,7 +242,7 @@ export default function FinancePage() {
                   </div>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Mois précédent complet : {formatCurrency(kpis?.revenueLastMonth || 0, kpis?.currency)}
+                  Mois précédent complet : {formatCurrency(kpis.revenueLastMonth, kpis.currency)}
                 </p>
               </div>
             )}
@@ -242,11 +253,19 @@ export default function FinancePage() {
       {/* MRR Chart & Revenue Comparison */}
       <div className="grid gap-6 lg:grid-cols-2">
         <MRRChart />
-        <RevenueComparisonChart 
-          currentMonth={kpis?.revenueThisMonth || 0} 
-          previousMonth={kpis?.revenueLastMonthToDate || 0}
-          currency={kpis?.currency || "EUR"}
-        />
+        {kpis ? (
+          <RevenueComparisonChart
+            currentMonth={kpis.revenueThisMonth}
+            previousMonth={kpis.revenueLastMonthToDate}
+            currency={kpis.currency}
+          />
+        ) : (
+          <DonneesIndisponibles
+            title="Évolution des encaissements"
+            description="Mois en cours à date vs même période du mois précédent"
+            reason={raison}
+          />
+        )}
       </div>
 
       {/* Revenue Breakdown */}
@@ -294,42 +313,36 @@ export default function FinancePage() {
       {/* Méthodologie & Sources — Standard HEC/Polytechnique */}
       <MethodologyDisclosure
         sources={[
-          {
-            name: "Stripe API",
-            type: "api",
-            refreshRate: "Temps réel",
-            reliability: "verified",
-            description: "Données transactionnelles et subscriptions",
-          },
-          {
-            name: "Lovable Cloud Database",
-            type: "database",
-            refreshRate: "Synchrone",
-            reliability: "verified",
-            description: "Métadonnées clients et configurations",
-          },
+          kpis
+            ? {
+                name: "Stripe API",
+                type: "api",
+                refreshRate: "À chaque chargement",
+                reliability: "verified",
+                description: "Abonnements, clients et paiements (lecture seule)",
+              }
+            : {
+                name: "Stripe API",
+                type: "api",
+                reliability: "estimated",
+                description: "Non connectée : aucune donnée affichée",
+              },
         ]}
         calculations={[
           {
             metric: "MRR (Monthly Recurring Revenue)",
-            formula: "Σ (subscription.amount × subscription.quantity)",
-            assumptions: ["Tous les abonnements sont mensualisés", "Les devises sont converties en EUR"],
-            limitations: ["Exclut les revenus one-time"],
+            formula: "Σ (prix unitaire × quantité), ramené au mois selon l'intervalle de facturation",
+            assumptions: ["Abonnements au statut « actif » uniquement", "Annuel ÷ 12, trimestriel ÷ 3, etc."],
+            limitations: ["Exclut les revenus ponctuels, les prix à l'usage et à paliers", "Remises non déduites"],
           },
           {
             metric: "Taux de Churn",
-            formula: "(Clients perdus ce mois / Clients début de mois) × 100",
-            assumptions: ["Période de 30 jours glissants"],
-          },
-          {
-            metric: "LTV (Lifetime Value)",
-            formula: "ARPU / Churn Rate",
-            assumptions: ["Churn constant sur la durée de vie"],
-            limitations: ["Ne prend pas en compte l'expansion revenue"],
+            formula: "Abonnements annulés ce mois (créés avant le 1er) ÷ abonnements actifs au 1er du mois × 100",
+            limitations: ["Hors essais et impayés", "Indisponible si aucun abonnement au 1er du mois"],
           },
         ]}
-        lastUpdated={kpis?.lastUpdated}
-        dataQuality="high"
+        lastUpdated={kpis?.lastUpdated || undefined}
+        dataQuality={kpis ? "high" : "low"}
       />
 
       {/* Last Updated */}

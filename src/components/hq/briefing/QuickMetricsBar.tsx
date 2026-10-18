@@ -5,6 +5,7 @@ import { ArrowUpRight, ArrowDownRight, Users, DollarSign, Activity, Shield } fro
 import { cn } from "@/lib/utils";
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { useConsolidatedMetrics } from "@/hooks/usePlatformMonitor";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 interface QuickMetricsBarProps {
   className?: string;
@@ -27,7 +28,7 @@ export function QuickMetricsBar({ className }: QuickMetricsBarProps) {
   const metricsItems: MetricItem[] = [
     { 
       label: "MRR", 
-      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : "—",
+      value: stripeKPIs ? formatCurrency(stripeKPIs.mrr, stripeKPIs.currency) : DONNEES_INDISPONIBLES,
       change: stripeKPIs?.mrrChange ?? undefined,
       trend: stripeKPIs?.mrrChange != null ? (stripeKPIs.mrrChange > 0 ? "up" : stripeKPIs.mrrChange < 0 ? "down" : "neutral") : "neutral",
       icon: DollarSign,
@@ -35,7 +36,7 @@ export function QuickMetricsBar({ className }: QuickMetricsBarProps) {
     },
     { 
       label: "Clients", 
-      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : "—",
+      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : DONNEES_INDISPONIBLES,
       change: stripeKPIs?.newCustomersThisMonth,
       trend: stripeKPIs && stripeKPIs.newCustomersThisMonth > 0 ? "up" : "neutral",
       icon: Users,
@@ -89,13 +90,13 @@ export function QuickMetricsBar({ className }: QuickMetricsBarProps) {
                     {typeof metric.change === 'number' ? formatPercentage(metric.change) : metric.change}
                   </Badge>
                 )}
-                {metric.trend === "neutral" && (
+                {metric.trend === "neutral" && metric.value !== DONNEES_INDISPONIBLES && (
                   <Badge variant="subtle" className="text-xs">
                     Stable
                   </Badge>
                 )}
               </div>
-              <div className="text-xl font-bold">{metric.value}</div>
+              <div className={cn("font-bold", metric.value === DONNEES_INDISPONIBLES ? "text-sm text-muted-foreground py-1" : "text-xl")}>{metric.value}</div>
               <div className="text-xs text-muted-foreground">{metric.label}</div>
             </CardContent>
           </Card>

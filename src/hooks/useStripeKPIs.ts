@@ -1,54 +1,42 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
+import {
+  parseStripeKpisResponse,
+  type RaisonIndisponible,
+  type StripeKPIs,
+} from "@/lib/stripe-kpis-adapter";
 
-export interface StripeKPIs {
-  mrr: number;
-  /**
-   * Variation du MRR en %. null = non mesurée : l'API Stripe ne fournit pas le MRR passé.
-   * Ne pas la remplacer par la variation des encaissements (revenueChangeToDate).
-   */
-  mrrChange: number | null;
-  activeSubscriptions: number;
-  activeSubscriptionsChange: number;
-  churnRate: number;
-  churnRateChange: number;
-  totalCustomers: number;
-  newCustomersThisMonth: number;
-  /** Encaissé net depuis le 1er du mois (UTC). */
-  revenueThisMonth: number;
-  /** Encaissé net sur tout le mois précédent. */
-  revenueLastMonth: number;
-  /** Encaissé net du mois précédent sur la même durée écoulée (période comparable). */
-  revenueLastMonthToDate: number;
-  /** Croissance en % du chiffre encaissé à date vs même période M-1 ; null si non mesurable. */
-  revenueChangeToDate: number | null;
-  currency: string;
-  lastUpdated: string;
-}
+export type { StripeKPIs, RaisonIndisponible } from "@/lib/stripe-kpis-adapter";
 
-interface StripeKPIsResponse {
+/**
+ * Résultat du hook. `kpis` n'est renseigné que pour des données Stripe réelles ;
+ * sinon `available === false`, `kpis === null` et `reason` dit pourquoi.
+ */
+export interface StripeKPIsResponse {
   success: boolean;
-  kpis: StripeKPIs;
-  error?: string;
+  available: boolean;
+  kpis: StripeKPIs | null;
+  reason?: RaisonIndisponible;
 }
 
 export function useStripeKPIs() {
   return useQuery({
     queryKey: ["stripe-kpis"],
     queryFn: async (): Promise<StripeKPIsResponse> => {
-      const { data, error } = await supabase.functions.invoke<StripeKPIsResponse>("stripe-kpis");
+      const { data, error } = await supabase.functions.invoke<unknown>("stripe-kpis");
 
       if (error) {
         logger.error("[useStripeKPIs] Edge function error:", error.message);
-        throw new Error(error.message || "Erreur de connexion à Stripe");
       }
 
-      if (!data || !data.success) {
-        throw new Error(data?.error || "Réponse invalide de l'API Stripe");
+      // Toute réponse non réelle (mock, indisponible, erreur, forme inattendue) devient
+      // « indisponible » : on ne laisse jamais passer de chiffre sans source vérifiée.
+      const resultat = parseStripeKpisResponse(data, error);
+      if (resultat.available === false) {
+        return { success: false, available: false, kpis: null, reason: resultat.reason };
       }
-
-      return data;
+      return { success: true, available: true, kpis: resultat.kpis };
     },
     staleTime: 1000 * 60 * 5,
     refetchInterval: 1000 * 60 * 10,

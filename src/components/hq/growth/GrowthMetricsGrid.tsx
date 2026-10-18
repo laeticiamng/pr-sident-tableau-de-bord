@@ -4,9 +4,12 @@
 import { Skeleton } from "@/components/ui/skeleton";
  import { TrendingUp, TrendingDown, Target, Users, DollarSign, Clock, Activity, Zap, Database, AlertTriangle, Link2 } from "lucide-react";
  import { cn } from "@/lib/utils";
-import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
+import { useGrowthMetrics, type MetricValue } from "@/hooks/useGrowthMetrics";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
  
  const metricsConfig = [
+   { key: "mrr", label: "MRR", icon: DollarSign, format: "€", inverse: false, description: "Revenu mensuel récurrent (Stripe)" },
+   { key: "churn", label: "Churn", icon: TrendingDown, format: "%", inverse: true, description: "Attrition mensuelle des abonnements (Stripe)" },
    { key: "cac", label: "CAC", icon: DollarSign, format: "€", inverse: true, description: "Coût d'Acquisition Client" },
    { key: "ltv", label: "LTV", icon: Users, format: "€", inverse: false, description: "Valeur Vie Client" },
    { key: "ltvCacRatio", label: "LTV:CAC", icon: Target, format: "x", inverse: false, description: "Ratio rentabilité" },
@@ -45,7 +48,7 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
          <Card className="border-dashed border-2 border-muted-foreground/20">
            <CardContent className="py-8 text-center">
              <Database className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
-             <h3 className="text-sm font-semibold mb-1">Connexion Stripe requise</h3>
+             <h3 className="text-sm font-semibold mb-1">{DONNEES_INDISPONIBLES}</h3>
              <p className="text-xs text-muted-foreground mb-3 max-w-md mx-auto">
                Les métriques de croissance nécessitent une connexion Stripe active avec des données réelles.
              </p>
@@ -59,6 +62,10 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
      );
    }
  
+   const valeur = (key: string) => (metrics[key as keyof typeof metrics] as MetricValue | undefined)?.value;
+   const disponibles = metricsConfig.filter((config) => valeur(config.key) != null);
+   const indisponibles = metricsConfig.filter((config) => valeur(config.key) == null);
+
    return (
      <div className="space-y-2">
        {/* Data source indicator */}
@@ -70,9 +77,8 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
        </div>
        
        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
-       {metricsConfig.map((config) => {
-         const metric = metrics[config.key as keyof typeof metrics];
-         if (!metric || typeof metric !== 'object' || !('value' in metric)) return null;
+       {disponibles.map((config) => {
+         const metric = metrics[config.key as keyof typeof metrics] as MetricValue;
          
          const trendMesure = typeof metric.trend === "number";
          const isPositive = trendMesure && (config.inverse ? metric.trend < 0 : metric.trend > 0);
@@ -131,6 +137,11 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
          );
        })}
        </div>
+       {indisponibles.length > 0 && (
+         <p className="text-[11px] text-muted-foreground" role="status">
+           {DONNEES_INDISPONIBLES} : {indisponibles.map((config) => config.label).join(", ")}. Aucune source vérifiée n'est connectée.
+         </p>
+       )}
      </div>
    );
  }
