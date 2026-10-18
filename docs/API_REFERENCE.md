@@ -481,7 +481,8 @@ const { data: logs } = await supabase.rpc("get_hq_audit_logs", {
 | Secret | Edge Function | Description |
 |--------|--------------|-------------|
 | `LOVABLE_API_KEY` | executive-run | Gateway IA Lovable |
-| `STRIPE_SECRET_KEY` | stripe-kpis | API Stripe (sk_live_...) |
+| `STRIPE_KPIS_READ_KEY` | stripe-kpis | Clé Stripe restreinte du mode réel, lecture seule (rk_live_...) ; prioritaire |
+| `STRIPE_SECRET_KEY` | stripe-kpis | Repli : secret Stripe géré par Lovable (une clé du mode test est refusée : `stripe_test_mode`) |
 | `GITHUB_TOKEN` | github-sync, executive-run | Personal Access Token GitHub |
 | `PERPLEXITY_API_KEY` | intelligence-search, executive-run | API Perplexity |
 | `FIRECRAWL_API_KEY` | web-scraper | API Firecrawl |

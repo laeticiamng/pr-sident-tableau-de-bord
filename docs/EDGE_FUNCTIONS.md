@@ -259,7 +259,8 @@ Authorization: Bearer <JWT>
 ```
 
 ### Secrets requis
-- `STRIPE_SECRET_KEY` (obligatoire)
+- `STRIPE_KPIS_READ_KEY` : clé restreinte du mode réel, lecture seule (Balance, Balance Transaction Sources, Charges and Refunds, Customers, Subscriptions) ; prioritaire
+- `STRIPE_SECRET_KEY` : repli (secret géré par Lovable) ; une clé du mode test donne « indisponible » (`stripe_test_mode`), jamais un zéro
 
 ---
 
