@@ -131,23 +131,13 @@ Deno.serve(async (req) => {
       status: "active",
     });
 
-    // 2. Clients totaux (toutes pages)
-    let totalCustomers = 0;
-    try {
-      totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch customers");
-    }
-
-    // 3. Nouveaux clients ce mois
-    let newCustomersThisMonth = 0;
-    try {
-      newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
-        "created[gte]": debutMois.toString(),
-      })).length;
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch new customers");
-    }
+    // 2. Clients totaux et 3. nouveaux clients ce mois (toutes pages).
+    // Pas de try/catch (revue Codex) : un échec laissait 0, publié comme une mesure vérifiée
+    // (available: true). L'erreur remonte au gestionnaire global → « indisponible ».
+    const totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
+    const newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
+      "created[gte]": debutMois.toString(),
+    })).length;
 
     // 4. Churn : abonnements annulés (toutes pages). Si la lecture échoue, le churn reste
     // indisponible (null) : on ne le remplace jamais par une valeur par défaut.
