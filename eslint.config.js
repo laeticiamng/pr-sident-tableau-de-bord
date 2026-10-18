@@ -28,4 +28,11 @@ export default tseslint.config(
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
+  // Fichier généré et réécrit par Lovable (« automatically generated. Do not edit it directly ») : seule la règle
+  // prefer-const est coupée, car `timer` est déclaré avant la fermeture qui le lit puis affecté une seule fois
+  // (un const y est impossible). Toutes les autres règles restent actives sur ce fichier.
+  {
+    files: ["src/integrations/supabase/previewAuthStorage.ts"],
+    rules: { "prefer-const": "off" },
+  },
 );
