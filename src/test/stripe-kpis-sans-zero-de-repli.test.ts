@@ -41,6 +41,8 @@ describe("stripe-kpis : clé restreinte en lecture seule du mode réel", () => {
     // la valeur de la clé n'apparaît dans aucun journal
     expect(source).not.toMatch(/console\.(log|error|warn)\([^)]*STRIPE_SECRET_KEY/);
     const status = readFileSync(join(process.cwd(), "supabase/functions/check-api-status/index.ts"), "utf8");
-    expect(status).toMatch(/STRIPE_KPIS_READ_KEY/);
+    // revue Codex : seule la clé dédiée compte comme connexion Stripe (le repli Lovable est du mode test)
+    expect(status).toMatch(/stripe: !!Deno\.env\.get\("STRIPE_KPIS_READ_KEY"\)\?\.trim\(\),/);
+    expect(status).not.toMatch(/stripe:[^\n]*STRIPE_SECRET_KEY/);
   });
 });

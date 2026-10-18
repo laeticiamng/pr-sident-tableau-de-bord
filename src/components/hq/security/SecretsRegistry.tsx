@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Key, CheckCircle, AlertTriangle, ExternalLink } from "lucide-react";
+import { Key, CheckCircle, AlertTriangle, ExternalLink, HelpCircle } from "lucide-react";
+import { useApiStatus } from "@/hooks/useApiStatus";
 
 interface Secret {
   name: string;
-  status: "configured" | "missing" | "connector";
+  status: "configured" | "missing" | "connector" | "unknown";
   source?: string;
   lastRotated?: string;
 }
@@ -14,8 +15,6 @@ const SECRETS_REGISTRY: Secret[] = [
   { name: "SUPABASE_URL", status: "configured" },
   { name: "SUPABASE_PUBLISHABLE_KEY", status: "configured" },
   { name: "SUPABASE_SERVICE_ROLE_KEY", status: "configured" },
-  // Clé restreinte en lecture seule du mode réel, lue en priorité par stripe-kpis (à ajouter par la propriétaire).
-  { name: "STRIPE_KPIS_READ_KEY", status: "missing", source: "Stripe, lecture seule, mode réel" },
   { name: "STRIPE_SECRET_KEY", status: "configured", source: "Géré par Lovable (repli)" },
   { name: "GITHUB_TOKEN", status: "configured" },
   { name: "PERPLEXITY_API_KEY", status: "connector", source: "Perplexity Connector" },
@@ -23,8 +22,17 @@ const SECRETS_REGISTRY: Secret[] = [
 ];
 
 export function SecretsRegistry() {
-  const configuredCount = SECRETS_REGISTRY.filter(s => s.status !== "missing").length;
-  const missingCount = SECRETS_REGISTRY.filter(s => s.status === "missing").length;
+  // Revue Codex : la présence de la clé Stripe dédiée (lecture seule, mode réel) est lue à l'exécution
+  // (check-api-status), jamais codée en dur ; tant que la vérification n'a pas répondu : « non vérifié ».
+  const { data: apiStatus } = useApiStatus();
+  const cleStripe: Secret = {
+    name: "STRIPE_KPIS_READ_KEY",
+    status: apiStatus ? (apiStatus.status.stripe ? "configured" : "missing") : "unknown",
+    source: "Stripe, lecture seule, mode réel",
+  };
+  const secrets = [...SECRETS_REGISTRY, cleStripe];
+  const configuredCount = secrets.filter(s => s.status === "configured" || s.status === "connector").length;
+  const missingCount = secrets.filter(s => s.status === "missing").length;
 
   return (
     <Card className="card-executive">
@@ -49,7 +57,7 @@ export function SecretsRegistry() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-3 md:grid-cols-2">
-          {SECRETS_REGISTRY.map((secret) => (
+          {secrets.map((secret) => (
             <div 
               key={secret.name} 
               className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
@@ -60,6 +68,8 @@ export function SecretsRegistry() {
             >
               {secret.status === "missing" ? (
                 <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
+              ) : secret.status === "unknown" ? (
+                <HelpCircle className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               ) : (
                 <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
               )}
@@ -76,12 +86,14 @@ export function SecretsRegistry() {
                 variant={
                   secret.status === "configured" ? "success" : 
                   secret.status === "connector" ? "gold" : 
+                  secret.status === "unknown" ? "outline" :
                   "destructive"
                 }
                 className="text-xs"
               >
                 {secret.status === "configured" ? "Configuré" : 
                  secret.status === "connector" ? "Connector" : 
+                 secret.status === "unknown" ? "Non vérifié" :
                  "Manquant"}
               </Badge>
             </div>

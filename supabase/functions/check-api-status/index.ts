@@ -54,7 +54,9 @@ Deno.serve(async (req) => {
     // Check for API keys presence (not their values, just existence)
     const status = {
       github: !!Deno.env.get("GITHUB_TOKEN"),
-      stripe: !!(Deno.env.get("STRIPE_KPIS_READ_KEY")?.trim() || Deno.env.get("STRIPE_SECRET_KEY")),
+      // Revue Codex : seule la clé dédiée en lecture seule du mode réel compte comme connexion Stripe ;
+      // le secret de repli géré par Lovable est du mode test (refusé par stripe-kpis).
+      stripe: !!Deno.env.get("STRIPE_KPIS_READ_KEY")?.trim(),
       perplexity: !!Deno.env.get("PERPLEXITY_API_KEY"),
       lovable_ai: !!Deno.env.get("LOVABLE_API_KEY"),
       firecrawl: !!Deno.env.get("FIRECRAWL_API_KEY"),
