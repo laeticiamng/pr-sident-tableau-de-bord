@@ -5,8 +5,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  // Fichiers générés et réécrits par Lovable (« automatically generated. Do not edit it directly ») : hors lint.
-  { ignores: ["dist", "src/integrations/supabase/previewAuthStorage.ts"] },
+  { ignores: ["dist"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -28,5 +27,12 @@ export default tseslint.config(
       // autres règles (dont react-hooks/rules-of-hooks) restent bloquantes.
       "@typescript-eslint/no-explicit-any": "warn",
     },
+  },
+  // Fichier généré et réécrit par Lovable (« automatically generated. Do not edit it directly ») : seule la règle
+  // prefer-const est coupée, car `timer` est déclaré avant la fermeture qui le lit puis affecté une seule fois
+  // (un const y est impossible). Toutes les autres règles restent actives sur ce fichier.
+  {
+    files: ["src/integrations/supabase/previewAuthStorage.ts"],
+    rules: { "prefer-const": "off" },
   },
 );
