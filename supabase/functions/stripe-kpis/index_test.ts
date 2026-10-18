@@ -65,8 +65,9 @@ Deno.test("stripe-kpis: when available, KPI structure and ranges are valid", asy
   // null = non mesuré (jamais inventé).
   assertEquals(kpis.mrrChange === null || typeof kpis.mrrChange === "number", true);
   assertEquals(typeof kpis.activeSubscriptions, "number");
-  assertEquals(kpis.activeSubscriptionsChange === null || typeof kpis.activeSubscriptionsChange === "number", true);
-  assertEquals(kpis.churnRate === null || typeof kpis.churnRate === "number", true);
+  // churn et variation nette : non mesurés (statuts Stripe sans historique), toujours null
+  assertEquals(kpis.churnRate, null);
+  assertEquals(kpis.activeSubscriptionsChange, null);
   assertEquals(kpis.churnRateChange, null);
   assertEquals(typeof kpis.totalCustomers, "number");
   assertEquals(typeof kpis.newCustomersThisMonth, "number");
@@ -74,15 +75,16 @@ Deno.test("stripe-kpis: when available, KPI structure and ranges are valid", asy
   assertEquals(typeof kpis.revenueLastMonth, "number");
   assertEquals(typeof kpis.revenueLastMonthToDate, "number");
   assertEquals(kpis.revenueChangeToDate === null || typeof kpis.revenueChangeToDate === "number", true);
-  assertEquals(["eur", "usd", "gbp", "chf"].includes(kpis.currency.toLowerCase()), true);
+  // devise lue dans Stripe : tout code ISO 4217 en minuscules
+  assertEquals(/^[a-z]{3}$/.test(kpis.currency), true);
   assertEquals(isNaN(new Date(kpis.lastUpdated).getTime()), false);
 
   assertEquals(kpis.mrr >= 0, true);
   assertEquals(kpis.activeSubscriptions >= 0, true);
   assertEquals(kpis.totalCustomers >= 0, true);
-  assertEquals(kpis.revenueThisMonth >= 0, true);
-  if (kpis.churnRate !== null) {
-    assertEquals(kpis.churnRate >= 0 && kpis.churnRate <= 100, true, "churnRate doit être un pourcentage");
+  // revue Codex : l'encaissement net est signé (remboursements, paiements annulés) et peut être négatif
+  for (const v of [kpis.revenueThisMonth, kpis.revenueLastMonth, kpis.revenueLastMonthToDate]) {
+    assertEquals(Number.isFinite(v), true);
   }
 });
 
