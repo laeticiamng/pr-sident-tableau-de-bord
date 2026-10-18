@@ -11,16 +11,16 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
 const kpisReels = (surcharges: Record<string, unknown> = {}) => ({
   data: {
     success: true,
+    available: true,
     kpis: {
       mrr: 1000,
       mrrChange: null,
       activeSubscriptions: 20,
       activeSubscriptionsChange: 2,
-      churnRate: 2.1,
-      churnRateChange: 0,
+      churnRate: 5,
+      churnRateChange: null,
       totalCustomers: 40,
       newCustomersThisMonth: 2,
-      // Début de mois : 300 € encaissés contre 3000 € sur tout le mois précédent.
       revenueThisMonth: 300,
       revenueLastMonth: 3000,
       revenueLastMonthToDate: 300,
@@ -34,28 +34,89 @@ const kpisReels = (surcharges: Record<string, unknown> = {}) => ({
   error: null,
 });
 
-describe("useGrowthMetrics — croissance du MRR", () => {
+const indisponible = () => ({
+  data: { success: false, available: false, kpis: null, reason: "stripe_not_configured" },
+  isLoading: false,
+  error: null,
+});
+
+describe("useGrowthMetrics — données réelles uniquement", () => {
   beforeEach(() => useStripeKPIsMock.mockReset());
 
-  it("n'affiche pas de tendance MRR et ne projette pas le MRR quand sa variation n'est pas mesurée", () => {
-    useStripeKPIsMock.mockReturnValue(kpisReels({ mrrChange: null, revenueChangeToDate: -90 }));
-    const { result } = renderHook(() => useGrowthMetrics());
-
-    expect(result.current.metrics.mrr.value).toBe(1000);
-    // null = non mesuré (affiché « — »), et non une tendance de 0 % ou dérivée des encaissements.
-    expect(result.current.metrics.mrr.trend).toBeNull();
-    expect(result.current.metrics.arpu.trend).toBeNull();
-    expect(result.current.metrics.ltv.trend).toBeNull();
-    // Pas de projection du MRR sans croissance mesurée du MRR.
-    expect(result.current.predictions?.mrr).toBeNull();
+  it("revue Codex : la devise Stripe est transmise (jamais d'EUR supposé) ; null sans données", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels({ currency: "chf" }));
+    expect(renderHook(() => useGrowthMetrics()).result.current.metrics.currency).toBe("chf");
+    useStripeKPIsMock.mockReturnValue(indisponible());
+    expect(renderHook(() => useGrowthMetrics()).result.current.metrics.currency).toBeNull();
   });
 
-  it("utilise la variation du MRR quand elle est réellement mesurée", () => {
-    useStripeKPIsMock.mockReturnValue(kpisReels({ mrrChange: 10 }));
+  it("Stripe indisponible : toutes les métriques sont null (jamais 0, jamais une estimation)", () => {
+    useStripeKPIsMock.mockReturnValue(indisponible());
     const { result } = renderHook(() => useGrowthMetrics());
+    const { metrics } = result.current;
 
-    expect(result.current.metrics.mrr.trend).toBe(10);
-    expect(result.current.predictions?.mrr?.predicted30d).toBe(1100);
-    expect(result.current.predictions?.mrr?.predicted90d).toBe(1331);
+    expect(metrics.isRealData).toBe(false);
+    expect(result.current.hasRealData).toBe(false);
+    for (const m of Object.values(metrics)) {
+      if (typeof m === "object" && m !== null) {
+        expect(m.value).toBeNull();
+        expect(m.trend).toBeNull();
+        expect(m.benchmark).toBeNull();
+      }
+    }
+    expect(result.current.predictions).toBeNull();
+  });
+
+  it("pendant le chargement ou sans données : même état indisponible", () => {
+    useStripeKPIsMock.mockReturnValue({ data: undefined, isLoading: true, error: null });
+    const { result } = renderHook(() => useGrowthMetrics());
+    expect(result.current.metrics.mrr.value).toBeNull();
+    expect(result.current.metrics.isRealData).toBe(false);
+  });
+
+  it("données réelles : MRR, ARPU (MRR ÷ abonnements actifs) et churn Stripe uniquement", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels());
+    const { result } = renderHook(() => useGrowthMetrics());
+    const { metrics } = result.current;
+
+    expect(metrics.isRealData).toBe(true);
+    expect(metrics.mrr.value).toBe(1000);
+    // revue Codex : MRR ÷ abonnements n'est pas un ARPU (sièges, multi-abonnements) : indisponible
+    expect(metrics.arpu.value).toBeNull();
+    expect(metrics.churn.value).toBe(5);
+    // Variation du MRR non mesurée : null, pas 0 % ni dérivée des encaissements
+    expect(metrics.mrr.trend).toBeNull();
+  });
+
+  it("LTV = ARPU×24 et CAC = ARPU×1,8 (estimations inventées) ont disparu", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels());
+    const { result } = renderHook(() => useGrowthMetrics());
+    const { metrics } = result.current;
+
+    expect(metrics.ltv.value).toBeNull();
+    expect(metrics.cac.value).toBeNull();
+    expect(metrics.ltvCacRatio.value).toBeNull();
+    expect(metrics.paybackPeriod.value).toBeNull();
+    // Les clients Stripe ne sont pas des utilisateurs actifs mensuels
+    expect(metrics.mau.value).toBeNull();
+    expect(metrics.dau.value).toBeNull();
+    // Plus aucune projection ni benchmark inventés
+    expect(result.current.predictions).toBeNull();
+    expect(metrics.mrr.benchmark).toBeNull();
+    expect(metrics.churn.benchmark).toBeNull();
+  });
+
+  it("churn non mesurable : reste null même avec un MRR réel", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels({ churnRate: null }));
+    const { result } = renderHook(() => useGrowthMetrics());
+    expect(result.current.metrics.mrr.value).toBe(1000);
+    expect(result.current.metrics.churn.value).toBeNull();
+  });
+
+  it("aucun abonnement actif : ARPU null (pas de division par zéro ni de 0 affiché)", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels({ activeSubscriptions: 0, mrr: 0 }));
+    const { result } = renderHook(() => useGrowthMetrics());
+    expect(result.current.metrics.arpu.value).toBeNull();
+    expect(result.current.metrics.mrr.value).toBe(0);
   });
 });

@@ -9,6 +9,7 @@ vi.mock("@/hooks/useStripeKPIs", () => ({
   useStripeKPIs: () => ({
     data: {
       success: true,
+      available: true,
       mock: false,
       kpis: {
         mrr: 45200,

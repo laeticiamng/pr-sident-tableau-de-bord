@@ -2,16 +2,23 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import {
   type AbonnementStripe,
-  type ChargeStripe,
   type StripeKPIs,
+  type TransactionSolde,
   assemblerKpis,
   bornesDePeriode,
+  devisesObservees,
   listerStripe,
+  reponseKpisDisponibles,
+  reponseKpisIndisponibles,
+  reponseSansCleStripe,
 } from "./calculs.ts";
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
- * Calcule MRR, churn, revenus et autres KPIs depuis Stripe.
+ * Calcule MRR, revenus et autres KPIs depuis Stripe (churn et variation nette : indisponibles, voir calculs.ts).
+ * Contrat : voir ReponseKpisStripe (calculs.ts). Sans clé Stripe ou en cas d'erreur Stripe,
+ * la réponse est HTTP 200 { success:false, available:false, reason, kpis:null } : jamais de
+ * données factices ni de zéros présentés comme des mesures.
  * Les calculs sont dans calculs.ts (fonctions pures testées par Vitest).
  */
 
@@ -84,31 +91,14 @@ Deno.serve(async (req) => {
     // END AUTHENTICATION CHECK
     // ============================================
 
-    if (!STRIPE_SECRET_KEY) {
-      console.log("[Stripe KPIs] No Stripe key - returning mock data");
-      return new Response(
-        JSON.stringify({
-          success: true,
-          mock: true,
-          kpis: {
-            mrr: 12450,
-            mrrChange: null,
-            activeSubscriptions: 247,
-            activeSubscriptionsChange: 12,
-            churnRate: 2.1,
-            churnRateChange: -0.3,
-            totalCustomers: 1247,
-            newCustomersThisMonth: 45,
-            revenueThisMonth: 15400,
-            revenueLastMonth: 14200,
-            revenueLastMonthToDate: 14200,
-            revenueChangeToDate: 8.5,
-            currency: "eur",
-            lastUpdated: new Date().toISOString(),
-          },
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    // Sans clé Stripe : réponse « indisponible » explicite. Aucune donnée factice, jamais.
+    const sansCle = reponseSansCleStripe(STRIPE_SECRET_KEY);
+    if (sansCle) {
+      console.log("[Stripe KPIs] No Stripe key - returning unavailable");
+      return new Response(JSON.stringify(sansCle), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("[Stripe KPIs] Fetching real Stripe data...");
@@ -142,37 +132,30 @@ Deno.serve(async (req) => {
       status: "active",
     });
 
-    // 2. Clients totaux (toutes pages)
-    let totalCustomers = 0;
-    try {
-      totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch customers");
-    }
-
-    // 3. Nouveaux clients ce mois
-    let newCustomersThisMonth = 0;
-    try {
-      newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
-        "created[gte]": debutMois.toString(),
-      })).length;
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch new customers");
-    }
-
-    // 4. Churn rate (simplified)
-    const churnRate = abonnementsActifs.length > 0 ? 2.1 : 0; // Simplified mock
-
-    // 5. Revenus (charges, toutes pages)
-    // Pas de try/catch ici : un échec Stripe (même sur une page intermédiaire) doit remonter
-    // au gestionnaire global plutôt que d'afficher 0 € comme s'il s'agissait d'une mesure.
-    const chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+    // 2. Clients totaux et 3. nouveaux clients ce mois (toutes pages).
+    // Pas de try/catch (revue Codex) : un échec laissait 0, publié comme une mesure vérifiée
+    // (available: true). L'erreur remonte au gestionnaire global → « indisponible ».
+    const totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
+    const newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
       "created[gte]": debutMois.toString(),
-    });
-    const chargesMoisPrecedent = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+    })).length;
+
+    // 4. Churn et variation nette : non calculés (pas d'historique des statuts Stripe, voir calculs.ts).
+
+    // 5. Encaissements : transactions de solde depuis le 1er du mois précédent (toutes pages). Revue Codex :
+    // chaque paiement et chaque remboursement compte dans le mois de sa propre date. Pas de try/catch : un
+    // échec remonte au gestionnaire global (« indisponible ») plutôt que d'afficher 0 comme une mesure.
+    const transactions = await listerStripe<TransactionSolde>(stripeRequest, "balance_transactions", {
       "created[gte]": debutMoisPrecedent.toString(),
-      "created[lt]": debutMois.toString(),
     });
+
+    // 6. Devise : lue dans les prix et les transactions ; la devise du compte n'est demandée que si aucun
+    // objet n'en porte. Plusieurs devises → erreur → « indisponible » (jamais de total mélangé).
+    let deviseCompte: string | null = null;
+    if (devisesObservees(abonnementsActifs, transactions).size === 0) {
+      const compte = (await stripeRequest("account")) as { default_currency?: string };
+      deviseCompte = compte.default_currency ?? null;
+    }
 
     // MRR, chiffre encaissé net et croissance sur périodes équivalentes. mrrChange reste
     // null : Stripe ne fournit pas le MRR passé, et la variation des encaissements (qui
@@ -181,43 +164,23 @@ Deno.serve(async (req) => {
       abonnementsActifs,
       totalCustomers,
       newCustomersThisMonth,
-      chargesMoisCourant,
-      chargesMoisPrecedent,
+      transactions,
       maintenant,
-      churnRate,
+      deviseCompte,
     });
 
-    console.log(`[Stripe KPIs] MRR: ${kpis.mrr}€, Subs: ${kpis.activeSubscriptions}, Churn: ${kpis.churnRate}%`);
+    console.log("[Stripe KPIs] KPIs calculés");
 
     return new Response(
-      JSON.stringify({ success: true, mock: false, kpis }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify(reponseKpisDisponibles(kpis)),
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
   } catch (error) {
     console.error("[Stripe KPIs] Unexpected error:", error);
-    // Return graceful degradation with mock data on error
+    // Erreur inattendue (Stripe injoignable, etc.) : « indisponible », sans zéros ni mock.
     return new Response(
-      JSON.stringify({ 
-        error: "Service temporarily unavailable. Displaying cached data.",
-        mock: true,
-        kpis: {
-          mrr: 0,
-          mrrChange: null,
-          activeSubscriptions: 0,
-          activeSubscriptionsChange: 0,
-          churnRate: 0,
-          churnRateChange: 0,
-          totalCustomers: 0,
-          newCustomersThisMonth: 0,
-          revenueThisMonth: 0,
-          revenueLastMonth: 0,
-          revenueLastMonthToDate: 0,
-          revenueChangeToDate: null,
-          currency: "eur",
-          lastUpdated: new Date().toISOString(),
-        },
-      }),
+      JSON.stringify(reponseKpisIndisponibles("stripe_error")),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

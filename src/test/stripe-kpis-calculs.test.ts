@@ -2,12 +2,17 @@ import { describe, it, expect } from "vitest";
 import {
   assemblerKpis,
   bornesDePeriode,
+  reponseKpisDisponibles,
+  reponseKpisIndisponibles,
+  reponseSansCleStripe,
   calculerEncaissements,
   calculerMrr,
   listerStripe,
   sommeEncaissee,
+  deviseUnique,
+  uniteMineure,
   type AbonnementStripe,
-  type ChargeStripe,
+  type TransactionSolde,
   type RequeteStripe,
 } from "../../supabase/functions/stripe-kpis/calculs.ts";
 
@@ -61,48 +66,12 @@ describe("stripe-kpis — pagination des listes Stripe", () => {
   });
 });
 
-describe("stripe-kpis — chiffre encaissé net", () => {
-  const reussi = (montant: number, rembourse = 0): ChargeStripe => ({
-    status: "succeeded",
-    paid: true,
-    captured: true,
-    amount: montant,
-    amount_captured: montant,
-    amount_refunded: rembourse,
-    refunded: rembourse >= montant && montant > 0,
-  });
-
-  it("soustrait les remboursements partiels (amount_refunded)", () => {
-    // 100 € encaissés dont 30 € remboursés + 50 € encaissés sans remboursement = 120 € nets.
-    expect(sommeEncaissee([reussi(10_000, 3_000), reussi(5_000)])).toBe(120);
-  });
-
-  it("ne compte rien pour un paiement intégralement remboursé", () => {
-    expect(sommeEncaissee([reussi(10_000, 10_000)])).toBe(0);
-  });
-
-  it("ignore les paiements non réussis (échoués, en attente, autorisés non capturés)", () => {
-    const echoue: ChargeStripe = { status: "failed", paid: false, captured: false, amount: 4_000, amount_captured: 0, amount_refunded: 0 };
-    const enAttente: ChargeStripe = { status: "pending", paid: false, captured: false, amount: 6_000, amount_captured: 0, amount_refunded: 0 };
-    const nonCapture: ChargeStripe = { status: "succeeded", paid: true, captured: false, amount: 8_000, amount_captured: 0, amount_refunded: 0 };
-    expect(sommeEncaissee([echoue, enAttente, nonCapture, reussi(2_000)])).toBe(20);
-  });
-
-  it("utilise le montant réellement capturé en cas de capture partielle", () => {
-    const capturePartielle: ChargeStripe = { ...reussi(10_000), amount_captured: 7_000 };
-    expect(sommeEncaissee([capturePartielle])).toBe(70);
-  });
-});
-
 const unix = (iso: string) => Math.floor(Date.parse(iso) / 1000);
-const paiement = (iso: string, euros: number): ChargeStripe => ({
-  id: `ch_${iso}`,
-  status: "succeeded",
-  paid: true,
-  captured: true,
+const paiement = (iso: string, euros: number): TransactionSolde => ({
+  id: `txn_${iso}`,
+  type: "charge",
   amount: euros * 100,
-  amount_captured: euros * 100,
-  amount_refunded: 0,
+  currency: "eur",
   created: unix(iso),
 });
 /** Un paiement de `euros` chaque jour à 09:00 UTC, du jour `de` au jour `a` inclus. */
@@ -111,15 +80,86 @@ const paiementsQuotidiens = (mois: string, de: number, a: number, euros = 100) =
     paiement(`${mois}-${String(de + i).padStart(2, "0")}T09:00:00Z`, euros),
   );
 
+describe("stripe-kpis — chiffre encaissé net (transactions de solde)", () => {
+  const tx = (type: string, amount: number, created = 0, currency = "eur"): TransactionSolde => ({ type, amount, created, currency });
+
+  it("additionne paiements et remboursements (montants signés)", () => {
+    // 100 € et 50 € encaissés, 30 € remboursés = 120 € nets.
+    expect(sommeEncaissee([tx("charge", 10_000), tx("charge", 5_000), tx("refund", -3_000)])).toBe(120);
+  });
+
+  it("revue Codex : litiges et annulations de litige (type=adjustment) comptent via reporting_category ; frais et virements non", () => {
+    const rc = (reporting_category: string, type: string, amount: number): TransactionSolde => ({ reporting_category, type, amount, created: 0, currency: "eur" });
+    expect(sommeEncaissee([
+      rc("charge", "charge", 10_000),
+      rc("dispute", "adjustment", -10_000), // fonds retirés pour litige
+      rc("dispute_reversal", "adjustment", 10_000), // litige gagné : fonds rendus
+      rc("fee", "adjustment", -1_500), // frais Stripe classés en adjustment
+      rc("other_adjustment", "adjustment", -700),
+      rc("payout", "payout", -5_000),
+    ])).toBe(100);
+  });
+
+  it("revue Codex : un paiement annulé et un remboursement échoué corrigent l'encaissement net", () => {
+    // 100 € encaissés puis annulés (paiement différé) ; 50 € remboursés puis remboursement échoué : net 50 €.
+    expect(sommeEncaissee([tx("payment", 10_000), tx("payment_reversal", -10_000), tx("charge", 5_000), tx("refund", -5_000), tx("refund_failure", 5_000)])).toBe(50);
+  });
+
+  it("ignore frais Stripe, virements et litiges (ce ne sont pas des encaissements clients)", () => {
+    expect(sommeEncaissee([tx("charge", 2_000), tx("stripe_fee", -300), tx("payout", -1_500), tx("adjustment", -2_000)])).toBe(20);
+  });
+
+  it("revue Codex : un remboursement compte dans le mois où il a lieu, sans modifier le mois du paiement", () => {
+    const maintenant = new Date("2026-10-10T12:00:00Z");
+    const r = calculerEncaissements(
+      [tx("charge", 10_000, unix("2026-09-20T10:00:00Z")), tx("refund", -10_000, unix("2026-10-05T10:00:00Z"))],
+      maintenant,
+    );
+    expect(r.revenueLastMonth).toBe(100); // septembre garde son encaissement
+    expect(r.revenueThisMonth).toBe(-100); // le remboursement d'octobre est en octobre
+  });
+
+  it("devises sans décimales : le montant Stripe est déjà en unités (JPY, XAF)", () => {
+    expect(uniteMineure("jpy")).toBe(1);
+    expect(uniteMineure("XAF")).toBe(1);
+    expect(uniteMineure("chf")).toBe(100);
+    // cas particuliers Stripe : UGX et ISK restent représentées en deux décimales (500 = 5 UGX)
+    expect(uniteMineure("ugx")).toBe(100);
+    expect(uniteMineure("isk")).toBe(100);
+    expect(sommeEncaissee([tx("charge", 5_000, 0, "jpy")], "jpy")).toBe(5_000);
+  });
+});
+
+describe("stripe-kpis — devise lue dans Stripe (revue Codex)", () => {
+  const abo = (currency: string): AbonnementStripe => ({ id: `sub_${currency}`, items: { data: [{ quantity: 1, price: { currency, unit_amount: 1_000, recurring: { interval: "month" } } }] } });
+  it("une seule devise observée : c'est elle", () => {
+    expect(deviseUnique([abo("chf")], [{ type: "charge", amount: 1, currency: "chf" }])).toBe("chf");
+  });
+  it("aucune devise observée : devise du compte ; sans elle, erreur (jamais d'EUR supposé)", () => {
+    expect(deviseUnique([], [], "CHF")).toBe("chf");
+    expect(() => deviseUnique([], [], null)).toThrow(/Devise Stripe inconnue/);
+  });
+  it("revue Codex : un prix à l'usage ou à paliers dans une autre devise (exclu du MRR) ne bloque pas les KPIs", () => {
+    const usageUsd: AbonnementStripe = { id: "sub_usd", items: { data: [{ quantity: 1, price: { currency: "usd", unit_amount: 100, recurring: { interval: "month", usage_type: "metered" } } }] } };
+    const palierUsd: AbonnementStripe = { id: "sub_usd2", items: { data: [{ quantity: 1, price: { currency: "usd", unit_amount: null, recurring: { interval: "month" } } }] } };
+    expect(deviseUnique([abo("eur"), usageUsd, palierUsd], [])).toBe("eur");
+  });
+  it("plusieurs devises : erreur (aucun total mélangé), la fonction répond « indisponible »", () => {
+    expect(() => deviseUnique([abo("chf"), abo("eur")], [])).toThrow(/Plusieurs devises/);
+    expect(() => deviseUnique([abo("eur")], [{ type: "charge", amount: 1, currency: "usd" }])).toThrow(/Plusieurs devises/);
+  });
+  it("assemblerKpis publie la devise de Stripe", () => {
+    const kpis = assemblerKpis({ abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z") });
+    expect(kpis.currency).toBe("chf");
+    expect(kpis.mrr).toBe(10);
+  });
+});
+
 describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
   it("compare le mois en cours à date à la même durée du mois précédent", () => {
     // 3 octobre 12:00 : 3 jours encaissés en octobre, contre 30 jours en septembre.
     const maintenant = new Date("2026-10-03T12:00:00Z");
-    const r = calculerEncaissements(
-      paiementsQuotidiens("2026-10", 1, 3),
-      paiementsQuotidiens("2026-09", 1, 30),
-      maintenant,
-    );
+    const r = calculerEncaissements([...paiementsQuotidiens("2026-10", 1, 3), ...paiementsQuotidiens("2026-09", 1, 30)], maintenant);
     expect(r.revenueThisMonth).toBe(300);
     expect(r.revenueLastMonth).toBe(3000);
     // Même période : 1er septembre 00:00 → 3 septembre 12:00.
@@ -130,18 +170,14 @@ describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
 
   it("plafonne la période de référence à la fin du mois précédent (31 mars vs février)", () => {
     const maintenant = new Date("2026-03-31T18:00:00Z");
-    const r = calculerEncaissements(
-      paiementsQuotidiens("2026-03", 1, 31),
-      paiementsQuotidiens("2026-02", 1, 28),
-      maintenant,
-    );
+    const r = calculerEncaissements([...paiementsQuotidiens("2026-03", 1, 31), ...paiementsQuotidiens("2026-02", 1, 28)], maintenant);
     expect(r.revenueLastMonthToDate).toBe(2800);
     expect(r.revenueChangeToDate).toBeCloseTo(((3100 - 2800) / 2800) * 100, 6);
   });
 
   it("renvoie null (non mesurable), et non 0 %, sans encaissement sur la période de référence", () => {
     const maintenant = new Date("2026-10-03T12:00:00Z");
-    const r = calculerEncaissements(paiementsQuotidiens("2026-10", 1, 3), [], maintenant);
+    const r = calculerEncaissements(paiementsQuotidiens("2026-10", 1, 3), maintenant);
     expect(r.revenueChangeToDate).toBeNull();
   });
 
@@ -165,8 +201,7 @@ describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
       ],
       totalCustomers: 1,
       newCustomersThisMonth: 0,
-      chargesMoisCourant: paiementsQuotidiens("2026-10", 1, 3),
-      chargesMoisPrecedent: paiementsQuotidiens("2026-09", 1, 30),
+      transactions: [...paiementsQuotidiens("2026-10", 1, 3), ...paiementsQuotidiens("2026-09", 1, 30)],
       maintenant: new Date("2026-10-03T12:00:00Z"),
     });
     expect(kpis.mrr).toBe(50);
@@ -199,5 +234,65 @@ describe("stripe-kpis — MRR normalisé au mois", () => {
       { id: "sub_e", items: { data: [element(10, "month", 1, 1, "metered")] } },
     ];
     expect(calculerMrr(abonnements)).toBeCloseTo(65 + 10 + 10 + (10 * 52) / 12, 6);
+  });
+});
+
+describe("stripe-kpis — churn et variation nette : indisponibles faute d'historique (revue Codex)", () => {
+  const debutMois = Math.floor(Date.UTC(2026, 9, 1) / 1000);
+  const avant = debutMois - 86_400 * 30;
+
+  it("assemblerKpis ne publie jamais de churn ni de variation nette estimés (ni l'ancien 2,1 %)", () => {
+    const kpis = assemblerKpis({
+      abonnementsActifs: [{ id: "a", created: avant }, { id: "b", created: avant }],
+      totalCustomers: 2,
+      newCustomersThisMonth: 0,
+      transactions: [],
+      deviseCompte: "eur",
+      maintenant: new Date("2026-10-03T12:00:00Z"),
+    });
+    expect(kpis.churnRate).toBeNull();
+    expect(kpis.churnRateChange).toBeNull();
+    expect(kpis.activeSubscriptionsChange).toBeNull();
+    expect(kpis.activeSubscriptions).toBe(2); // le nombre actuel, lui, est une mesure
+  });
+});
+
+describe("stripe-kpis — chemin sans clé Stripe / erreur : indisponible, jamais de données factices", () => {
+  it("sans clé (undefined, null, vide, espaces) : réponse indisponible explicite", () => {
+    for (const cle of [undefined, null, "", "   "]) {
+      const r = reponseSansCleStripe(cle);
+      expect(r).toEqual({
+        success: false,
+        available: false,
+        reason: "stripe_not_configured",
+        error: expect.any(String),
+        kpis: null,
+      });
+      expect(JSON.stringify(r)).not.toMatch(/12450|1247|15400|14200|"mock":true/);
+    }
+  });
+
+  it("avec une clé : pas de réponse court-circuitée", () => {
+    expect(reponseSansCleStripe("sk_test_exemple")).toBeNull();
+  });
+
+  it("erreur Stripe : indisponible, kpis null (aucun zéro)", () => {
+    const r = reponseKpisIndisponibles("stripe_error");
+    expect(r.success).toBe(false);
+    expect(r.available).toBe(false);
+    expect(r.kpis).toBeNull();
+  });
+
+  it("réponse réelle : available true et mock false explicites", () => {
+    const kpis = assemblerKpis({
+      abonnementsActifs: [],
+      totalCustomers: 0,
+      newCustomersThisMonth: 0,
+      transactions: [],
+      deviseCompte: "eur",
+      maintenant: new Date("2026-10-03T12:00:00Z"),
+    });
+    const r = reponseKpisDisponibles(kpis);
+    expect(r).toMatchObject({ success: true, available: true, mock: false });
   });
 });

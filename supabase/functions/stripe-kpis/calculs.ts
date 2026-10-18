@@ -5,32 +5,45 @@
  * et testé par Vitest (src/test/stripe-kpis-calculs.test.ts).
  */
 
-/** Sous-ensemble des champs d'un objet Charge Stripe utilisés ici. */
-export interface ChargeStripe {
+/**
+ * Sous-ensemble des champs d'une transaction de solde Stripe (GET /v1/balance_transactions).
+ * Revue Codex : les encaissements se lisent sur les transactions de solde, datées chacune de leur propre
+ * création. Un remboursement compte donc dans le mois où il a lieu (montant négatif), sans modifier
+ * rétroactivement le mois du paiement d'origine, ce que ne permettaient pas les charges (`amount_refunded`).
+ */
+export interface TransactionSolde {
   id?: string;
-  /** "succeeded" | "pending" | "failed" */
-  status?: string;
-  paid?: boolean;
-  /** false pour une autorisation non encore capturée. */
-  captured?: boolean;
-  refunded?: boolean;
-  /** Montant demandé, en centimes. */
+  /** "charge" | "payment" | "refund" | "payment_refund" | "payment_failure_refund" | "stripe_fee" | "payout" | ... */
+  type?: string;
+  /** Montant signé en unité mineure de `currency` (négatif pour un remboursement), frais Stripe non déduits. */
   amount?: number;
-  /** Montant réellement capturé, en centimes. */
-  amount_captured?: number;
-  /** Montant déjà remboursé (partiellement ou totalement), en centimes. */
-  amount_refunded?: number;
-  /** Horodatage Unix (secondes) de création. */
+  /** Devise du solde (ISO 4217, minuscules). */
+  currency?: string;
+  /** Horodatage Unix (secondes) de création de la transaction. */
   created?: number;
+  /** Catégorie comptable Stripe (charge, refund, dispute, dispute_reversal, fee, payout…). */
+  reporting_category?: string;
 }
 
 /** Sous-ensemble des champs d'un objet Subscription Stripe utilisés ici. */
 export interface AbonnementStripe {
   id?: string;
+  /** "active" | "canceled" | ... */
+  status?: string;
+  /** Horodatage Unix (secondes) de création de l'abonnement. */
+  created?: number;
+  /** Horodatage Unix (secondes) de la DEMANDE d'annulation (Stripe) ; null/absent si non annulé. */
+  canceled_at?: number | null;
+  /** Horodatage Unix (secondes) de la fin effective de l'abonnement (Stripe) ; null si pas encore terminé. */
+  ended_at?: number | null;
+  /** Horodatage Unix (secondes) de la fin de la période d'essai (Stripe) ; null/absent sans essai. */
+  trial_end?: number | null;
   items?: {
     data?: Array<{
       quantity?: number;
       price?: {
+        /** Devise du prix (ISO 4217, minuscules). */
+        currency?: string;
         unit_amount?: number | null;
         recurring?: {
           /** "day" | "week" | "month" | "year" */
@@ -100,37 +113,103 @@ const PERIODES_PAR_MOIS: Record<string, number> = {
  * Exclus faute de montant connu d'avance : prix à l'usage (metered) et prix sans
  * unit_amount (paliers). Les remises (coupons) ne sont pas déduites.
  */
-export function calculerMrr(abonnements: AbonnementStripe[]): number {
+type ElementAbonnement = NonNullable<NonNullable<AbonnementStripe["items"]>["data"]>[number];
+
+/** Élément compté dans le MRR : prix récurrent à montant fixe connu (ni à l'usage, ni à paliers). */
+export function elementCompteDansMrr(item: ElementAbonnement): boolean {
+  const prix = item.price;
+  const recurrence = prix?.recurring;
+  if (!prix || prix.unit_amount == null || !recurrence?.interval) return false;
+  return Boolean(PERIODES_PAR_MOIS[recurrence.interval]) && recurrence.usage_type !== "metered";
+}
+
+export function calculerMrr(abonnements: AbonnementStripe[], devise = "eur"): number {
   let centimesParMois = 0;
   for (const sub of abonnements) {
     for (const item of sub.items?.data || []) {
-      const prix = item.price;
-      const recurrence = prix?.recurring;
-      if (!prix || prix.unit_amount == null || !recurrence?.interval) continue;
-      const parMois = PERIODES_PAR_MOIS[recurrence.interval];
-      if (!parMois || recurrence.usage_type === "metered") continue;
+      if (!elementCompteDansMrr(item)) continue;
+      const prix = item.price!;
+      const recurrence = prix.recurring!;
+      const parMois = PERIODES_PAR_MOIS[recurrence.interval!];
       const intervalCount = recurrence.interval_count && recurrence.interval_count > 0 ? recurrence.interval_count : 1;
       centimesParMois += (prix.unit_amount * (item.quantity ?? 1) * parMois) / intervalCount;
     }
   }
-  return centimesParMois / 100;
+  return centimesParMois / uniteMineure(devise);
 }
 
 /**
- * Montant net encaissé d'un paiement, en centimes : montant capturé moins les
- * remboursements (partiels ou totaux). 0 pour un paiement non réussi
- * (échoué, en attente) ou une autorisation non capturée.
+ * Devises sans décimales chez Stripe (montant API déjà en unités), d'après la documentation Stripe « Zero-decimal
+ * currencies ». UGX et ISK en sont exclues (revue Codex) : Stripe les représente encore en deux décimales
+ * (« Special cases » : 500 = 5 UGX), elles se divisent donc par 100.
  */
-export function montantNetEncaisse(charge: ChargeStripe): number {
-  if (charge.status !== "succeeded" || charge.paid !== true || charge.captured === false) return 0;
-  const capture = charge.amount_captured ?? charge.amount ?? 0;
-  return Math.max(0, capture - (charge.amount_refunded ?? 0));
+export const DEVISES_SANS_DECIMALES = new Set([
+  "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "vnd", "vuv", "xaf", "xof", "xpf",
+]);
+
+/** Nombre d'unités mineures par unité de la devise (100 pour l'euro, 1 pour le yen ou le franc CFA). */
+export function uniteMineure(devise: string): number {
+  return DEVISES_SANS_DECIMALES.has(devise.toLowerCase()) ? 1 : 100;
 }
 
-/** Chiffre encaissé net (en unités monétaires) d'une liste de charges Stripe. */
-export function sommeEncaissee(charges: ChargeStripe[]): number {
-  const centimes = charges.reduce((sum, c) => sum + montantNetEncaisse(c), 0);
-  return centimes / 100;
+/**
+ * Transactions de solde qui constituent un encaissement net client, montants signés par Stripe.
+ * Revue Codex : la classification suit `reporting_category`, que Stripe recommande pour la comptabilité
+ * (docs.stripe.com/reports/reporting-categories) : il distingue notamment, parmi les `type=adjustment`, les litiges
+ * (`dispute`, fonds retirés) et leurs annulations (`dispute_reversal`, fonds rendus). Catégories retenues :
+ * paiements, remboursements, échecs de paiement et de remboursement, litiges et annulations de litige, annulation de
+ * la part non capturée. Exclus : frais Stripe, virements, transferts, réserves et autres ajustements.
+ */
+export const CATEGORIES_ENCAISSEMENT = new Set([
+  "charge", "refund", "charge_failure", "refund_failure", "dispute", "dispute_reversal", "partial_capture_reversal",
+]);
+
+/** Repli quand `reporting_category` est absent (anciennes réponses, tests) : classification par `type`. */
+export const TYPES_ENCAISSEMENT = new Set([
+  "charge", "payment", "refund", "payment_refund", "payment_failure_refund", "payment_reversal", "refund_failure",
+]);
+
+/** Une transaction de solde fait-elle partie de l'encaissement net client ? */
+export function estEncaissement(t: TransactionSolde): boolean {
+  return t.reporting_category ? CATEGORIES_ENCAISSEMENT.has(t.reporting_category) : TYPES_ENCAISSEMENT.has(t.type ?? "");
+}
+
+/** Chiffre encaissé net (en unités monétaires) d'une liste de transactions de solde, dans une devise. */
+export function sommeEncaissee(transactions: TransactionSolde[], devise = "eur"): number {
+  const mineures = transactions
+    .filter((t) => estEncaissement(t) && typeof t.amount === "number")
+    .reduce((somme, t) => somme + (t.amount as number), 0);
+  return mineures / uniteMineure(devise);
+}
+
+/**
+ * Devises des montants réellement additionnés : prix comptés dans le MRR (revue Codex : un prix à l'usage ou à
+ * paliers, exclu du MRR, ne rend pas l'indicateur indisponible) et transactions d'encaissement.
+ */
+export function devisesObservees(abonnements: AbonnementStripe[], transactions: TransactionSolde[]): Set<string> {
+  const devises = new Set<string>();
+  for (const sub of abonnements) for (const item of sub.items?.data || []) {
+    if (item.price?.currency && elementCompteDansMrr(item)) devises.add(item.price.currency.toLowerCase());
+  }
+  for (const t of transactions) if (estEncaissement(t) && t.currency) devises.add(t.currency.toLowerCase());
+  return devises;
+}
+
+/**
+ * Devise des indicateurs, lue dans Stripe (revue Codex : plus d'EUR codé en dur). Une seule devise observée :
+ * c'est elle. Aucune : devise par défaut du compte Stripe. Plusieurs : erreur, car additionner des montants de
+ * devises différentes publierait un total faux ; la fonction répond alors « indisponible ».
+ */
+export function deviseUnique(
+  abonnements: AbonnementStripe[],
+  transactions: TransactionSolde[],
+  deviseCompte?: string | null,
+): string {
+  const devises = devisesObservees(abonnements, transactions);
+  if (devises.size > 1) throw new Error(`Plusieurs devises Stripe (${[...devises].sort().join(", ")}) : totaux non additionnables`);
+  if (devises.size === 1) return [...devises][0];
+  if (deviseCompte && /^[a-z]{3}$/i.test(deviseCompte)) return deviseCompte.toLowerCase();
+  throw new Error("Devise Stripe inconnue (aucun prix, aucune transaction, pas de devise de compte)");
 }
 
 /**
@@ -164,24 +243,63 @@ export function variationPourcentage(actuel: number, reference: number): number 
  * Chiffre encaissé (net des remboursements) et sa croissance sur des périodes
  * équivalentes : mois en cours à date contre la même durée du mois précédent.
  * Il s'agit d'encaissements (paiements ponctuels et annuels compris), pas de MRR.
+ * Chaque transaction (paiement ou remboursement) compte dans la période de SA date de création.
  */
-export function calculerEncaissements(
-  chargesMoisCourant: ChargeStripe[],
-  chargesMoisPrecedent: ChargeStripe[],
-  maintenant: Date,
-) {
-  const { finPeriodeComparable } = bornesDePeriode(maintenant);
-  const revenueThisMonth = sommeEncaissee(chargesMoisCourant);
-  const revenueLastMonth = sommeEncaissee(chargesMoisPrecedent);
-  const revenueLastMonthToDate = sommeEncaissee(
-    chargesMoisPrecedent.filter((c) => (c.created ?? Infinity) < finPeriodeComparable),
-  );
+export function calculerEncaissements(transactions: TransactionSolde[], maintenant: Date, devise = "eur") {
+  const { debutMois, debutMoisPrecedent, finPeriodeComparable } = bornesDePeriode(maintenant);
+  const entre = (de: number, a: number) =>
+    transactions.filter((t) => typeof t.created === "number" && t.created >= de && t.created < a);
+  const revenueThisMonth = sommeEncaissee(transactions.filter((t) => typeof t.created === "number" && t.created >= debutMois), devise);
+  const revenueLastMonth = sommeEncaissee(entre(debutMoisPrecedent, debutMois), devise);
+  const revenueLastMonthToDate = sommeEncaissee(entre(debutMoisPrecedent, finPeriodeComparable), devise);
   return {
     revenueThisMonth,
     revenueLastMonth,
     revenueLastMonthToDate,
     revenueChangeToDate: variationPourcentage(revenueThisMonth, revenueLastMonthToDate),
   };
+}
+
+/**
+ * Churn et variation nette des abonnements : NON calculés (revue Codex, à plusieurs reprises).
+ * L'API Stripe ne donne que le statut ACTUEL d'un abonnement. Un abonnement actif le 1er du mois peut être
+ * aujourd'hui en essai, impayé (past_due, unpaid), en pause ou annulé ; un abonnement impayé le 1er peut être
+ * redevenu actif. Sans historique des statuts, la base du 1er du mois ne peut pas être reconstituée de façon
+ * fiable : toute valeur serait une estimation présentée comme une mesure. Ces indicateurs restent donc
+ * « indisponibles » (null) jusqu'à ce qu'un historique (instantané quotidien ou événements Stripe conservés)
+ * existe.
+ */
+
+/** Raisons pour lesquelles les KPIs Stripe ne sont pas fournis. */
+export type RaisonIndisponible = "stripe_not_configured" | "stripe_error";
+
+/**
+ * Contrat de réponse de la fonction Edge (toujours HTTP 200 pour que le client lise le corps) :
+ * - disponible : { success: true, available: true, mock: false, kpis } ;
+ * - indisponible : { success: false, available: false, reason, kpis: null }.
+ * Aucune valeur inventée, jamais de zéros qui feraient passer une panne pour une mesure.
+ */
+export type ReponseKpisStripe =
+  | { success: true; available: true; mock: false; kpis: StripeKPIs }
+  | { success: false; available: false; reason: RaisonIndisponible; error: string; kpis: null };
+
+export function reponseKpisDisponibles(kpis: StripeKPIs): ReponseKpisStripe {
+  return { success: true, available: true, mock: false, kpis };
+}
+
+export function reponseKpisIndisponibles(reason: RaisonIndisponible): ReponseKpisStripe {
+  return {
+    success: false,
+    available: false,
+    reason,
+    error: reason === "stripe_not_configured" ? "Stripe n'est pas configuré." : "Stripe est momentanément injoignable.",
+    kpis: null,
+  };
+}
+
+/** Réponse quand la clé Stripe est absente ou vide : indisponible, jamais de données factices. */
+export function reponseSansCleStripe(cleStripe: string | undefined | null): ReponseKpisStripe | null {
+  return cleStripe && cleStripe.trim() !== "" ? null : reponseKpisIndisponibles("stripe_not_configured");
 }
 
 /** Indicateurs renvoyés au front par la fonction Edge. */
@@ -193,9 +311,12 @@ export interface StripeKPIs {
    */
   mrrChange: number | null;
   activeSubscriptions: number;
-  activeSubscriptionsChange: number;
-  churnRate: number;
-  churnRateChange: number;
+  /** Variation nette des abonnements actifs depuis le 1er du mois : toujours null (pas d'historique des statuts Stripe). */
+  activeSubscriptionsChange: number | null;
+  /** Churn mensuel en % : toujours null (pas d'historique des statuts Stripe, voir plus haut). */
+  churnRate: number | null;
+  /** Variation du churn vs mois précédent : toujours null (nécessiterait un historique). */
+  churnRateChange: number | null;
   totalCustomers: number;
   newCustomersThisMonth: number;
   /** Encaissé net depuis le 1er du mois (UTC) jusqu'à maintenant. */
@@ -219,23 +340,21 @@ export function assemblerKpis(entrees: {
   abonnementsActifs: AbonnementStripe[];
   totalCustomers: number;
   newCustomersThisMonth: number;
-  chargesMoisCourant: ChargeStripe[];
-  chargesMoisPrecedent: ChargeStripe[];
+  /** Transactions de solde depuis le 1er du mois précédent (UTC). */
+  transactions: TransactionSolde[];
   maintenant: Date;
-  churnRate?: number;
+  /** Devise par défaut du compte Stripe, utilisée seulement si aucun prix ni aucune transaction ne porte de devise. */
+  deviseCompte?: string | null;
 }): StripeKPIs {
-  const encaissements = calculerEncaissements(
-    entrees.chargesMoisCourant,
-    entrees.chargesMoisPrecedent,
-    entrees.maintenant,
-  );
+  const devise = deviseUnique(entrees.abonnementsActifs, entrees.transactions, entrees.deviseCompte);
+  const encaissements = calculerEncaissements(entrees.transactions, entrees.maintenant, devise);
   return {
-    mrr: arrondi(calculerMrr(entrees.abonnementsActifs), 2),
+    mrr: arrondi(calculerMrr(entrees.abonnementsActifs, devise), 2),
     mrrChange: null,
     activeSubscriptions: entrees.abonnementsActifs.length,
-    activeSubscriptionsChange: entrees.newCustomersThisMonth,
-    churnRate: arrondi(entrees.churnRate ?? 0, 1),
-    churnRateChange: 0, // Nécessiterait un calcul historique
+    activeSubscriptionsChange: null, // pas d'historique des statuts Stripe : non mesurable
+    churnRate: null, // idem : jamais une estimation présentée comme une mesure
+    churnRateChange: null, // Nécessiterait un historique que Stripe ne fournit pas
     totalCustomers: entrees.totalCustomers,
     newCustomersThisMonth: entrees.newCustomersThisMonth,
     revenueThisMonth: arrondi(encaissements.revenueThisMonth, 2),
@@ -244,7 +363,7 @@ export function assemblerKpis(entrees: {
     revenueChangeToDate: encaissements.revenueChangeToDate === null
       ? null
       : arrondi(encaissements.revenueChangeToDate, 1),
-    currency: "eur",
+    currency: devise,
     lastUpdated: entrees.maintenant.toISOString(),
   };
 }

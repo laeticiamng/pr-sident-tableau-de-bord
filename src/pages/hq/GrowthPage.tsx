@@ -21,6 +21,7 @@ import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
 import { useGrowthAlerts } from "@/hooks/useGrowthAlerts";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
  
  // Growth OS Components
  import { GrowthMetricsGrid } from "@/components/hq/growth/GrowthMetricsGrid";
@@ -74,17 +75,24 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
       const now = new Date();
       const timestamp = now.toISOString().replace(/:/g, "-");
 
+      // Valeur null = « Données indisponibles » : exportée telle quelle, jamais 0.
+      const ligne = (metric: string, m: { value: number | null; trend: number | null; benchmark: number | null }) => ({
+        metric,
+        value: m.value ?? DONNEES_INDISPONIBLES,
+        trendPercent: m.trend ?? "N/A",
+        benchmark: m.benchmark ?? "N/A",
+      });
       const metricsRows = [
-        { metric: "CAC", value: metrics.cac.value, trendPercent: metrics.cac.trend, benchmark: metrics.cac.benchmark ?? "N/A" },
-        { metric: "LTV", value: metrics.ltv.value, trendPercent: metrics.ltv.trend ?? "N/A", benchmark: metrics.ltv.benchmark ?? "N/A" },
-        { metric: "LTV:CAC", value: metrics.ltvCacRatio.value, trendPercent: metrics.ltvCacRatio.trend, benchmark: metrics.ltvCacRatio.benchmark ?? "N/A" },
-        { metric: "ARPU", value: metrics.arpu.value, trendPercent: metrics.arpu.trend ?? "N/A", benchmark: metrics.arpu.benchmark ?? "N/A" },
-        { metric: "PaybackPeriod", value: metrics.paybackPeriod.value, trendPercent: metrics.paybackPeriod.trend, benchmark: metrics.paybackPeriod.benchmark ?? "N/A" },
-        { metric: "MAU", value: metrics.mau.value, trendPercent: metrics.mau.trend, benchmark: metrics.mau.benchmark ?? "N/A" },
-        { metric: "DAU", value: metrics.dau.value, trendPercent: metrics.dau.trend, benchmark: metrics.dau.benchmark ?? "N/A" },
-        { metric: "DAU:MAU", value: metrics.dauMauRatio.value, trendPercent: metrics.dauMauRatio.trend, benchmark: metrics.dauMauRatio.benchmark ?? "N/A" },
-        { metric: "MRR", value: metrics.mrr.value, trendPercent: metrics.mrr.trend ?? "N/A", benchmark: metrics.mrr.benchmark ?? "N/A" },
-        { metric: "Churn", value: metrics.churn.value, trendPercent: metrics.churn.trend, benchmark: metrics.churn.benchmark ?? "N/A" },
+        ligne("CAC", metrics.cac),
+        ligne("LTV", metrics.ltv),
+        ligne("LTV:CAC", metrics.ltvCacRatio),
+        ligne("ARPU", metrics.arpu),
+        ligne("PaybackPeriod", metrics.paybackPeriod),
+        ligne("MAU", metrics.mau),
+        ligne("DAU", metrics.dau),
+        ligne("DAU:MAU", metrics.dauMauRatio),
+        ligne("MRR", metrics.mrr),
+        ligne("Churn", metrics.churn),
       ];
 
       const alertRows = criticalAlerts.map((alert) => ({
@@ -100,7 +108,7 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
       const metadataRows = [
         {
           generatedAt: now.toISOString(),
-          dataSource: metrics.isRealData ? "stripe_live" : "simulated",
+          dataSource: metrics.isRealData ? "stripe_live" : "unavailable",
           hasCriticalAlerts: hasCritical,
           criticalAlertsCount: criticalAlerts.length,
         },
@@ -150,7 +158,7 @@ import { GrowthAlertsWidget } from "@/components/hq/growth/GrowthAlertsWidget";
                ) : (
                  <>
                    <Cloud className="h-3 w-3" />
-                   Données Simulées
+                   Données indisponibles
                  </>
                )}
              </Badge>

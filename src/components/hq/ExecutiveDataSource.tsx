@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, Database, Clock, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 interface DataSourceIndicatorProps {
   source: "stripe" | "github" | "supabase" | "mock" | "realtime";
@@ -174,7 +175,7 @@ export function ExecutiveKPICard({
         )}
       </div>
       <div>
-        <div className="text-2xl md:text-3xl font-bold">{value}</div>
+        <div className={cn("font-bold", value === DONNEES_INDISPONIBLES ? "text-sm text-muted-foreground py-1" : "text-2xl md:text-3xl")}>{value}</div>
         <div className="text-sm text-muted-foreground mt-0.5">{label}</div>
       </div>
       {change !== undefined && (

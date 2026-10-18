@@ -11,6 +11,8 @@ import {
 import { useStripeKPIs, formatCurrency, formatPercentage } from "@/hooks/useStripeKPIs";
 import { usePlatforms } from "@/hooks/useHQData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 export function KeyMetricsGrid() {
   const { data: stripeData, isLoading: stripeLoading } = useStripeKPIs();
@@ -22,20 +24,26 @@ export function KeyMetricsGrid() {
   const healthyPlatforms = platforms?.filter(p => p.status === "green").length || 0;
   const totalPlatforms = platforms?.length || 8;
 
+  // Revue Codex : une variation non mesurée (null) ou nulle est neutre — aucune flèche, jamais une tendance supposée.
+  const tendance = (v: number | null | undefined): "up" | "down" | "neutral" =>
+    v == null || v === 0 ? "neutral" : v > 0 ? "up" : "down";
+
   const metrics = [
     {
       title: "MRR",
-      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : "—",
+      value: kpis ? formatCurrency(kpis.mrr, kpis.currency) : DONNEES_INDISPONIBLES,
       change: kpis && kpis.mrrChange != null ? formatPercentage(kpis.mrrChange) : "—",
-      trend: kpis && kpis.mrrChange != null && kpis.mrrChange > 0 ? "up" : "down",
+      trend: tendance(kpis?.mrrChange),
       icon: DollarSign,
       color: "text-success"
     },
     {
       title: "Clients Actifs",
-      value: kpis?.activeSubscriptions?.toString() || "—",
-      change: kpis ? `+${kpis.activeSubscriptionsChange}` : "—",
-      trend: "up",
+      value: kpis ? kpis.activeSubscriptions.toString() : DONNEES_INDISPONIBLES,
+      change: kpis && kpis.activeSubscriptionsChange != null
+        ? `${kpis.activeSubscriptionsChange > 0 ? "+" : ""}${kpis.activeSubscriptionsChange}`
+        : "—",
+      trend: tendance(kpis?.activeSubscriptionsChange),
       icon: Users,
       color: "text-primary"
     },
@@ -43,7 +51,7 @@ export function KeyMetricsGrid() {
       title: "Plateformes OK",
       value: `${healthyPlatforms}/${totalPlatforms}`,
       change: healthyPlatforms === totalPlatforms ? "100%" : `${Math.round((healthyPlatforms/totalPlatforms)*100)}%`,
-      trend: healthyPlatforms === totalPlatforms ? "up" : "down",
+      trend: (healthyPlatforms === totalPlatforms ? "up" : "down") as "up" | "down" | "neutral",
       icon: Activity,
       color: healthyPlatforms === totalPlatforms ? "text-success" : "text-warning"
     },
@@ -51,9 +59,9 @@ export function KeyMetricsGrid() {
       // Croissance du chiffre encaissé sur périodes équivalentes (mois à date vs même
       // durée du mois précédent) — ce n'est pas une croissance du MRR.
       title: "Encaissé à date",
-      value: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : "—",
+      value: kpis && kpis.revenueChangeToDate != null ? formatPercentage(kpis.revenueChangeToDate) : DONNEES_INDISPONIBLES,
       change: "vs même période M-1",
-      trend: kpis && kpis.revenueChangeToDate != null && kpis.revenueChangeToDate > 0 ? "up" : "down",
+      trend: tendance(kpis?.revenueChangeToDate),
       icon: TrendingUp,
       color: kpis && kpis.revenueChangeToDate != null
         ? (kpis.revenueChangeToDate > 0 ? "text-success" : "text-destructive")
@@ -84,13 +92,13 @@ export function KeyMetricsGrid() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between mb-3">
               <metric.icon className={`h-5 w-5 ${metric.color}`} />
-              {metric.trend === "up" ? (
-                <ArrowUpRight className="h-4 w-4 text-success" />
+              {metric.value === DONNEES_INDISPONIBLES || metric.trend === "neutral" ? null : metric.trend === "up" ? (
+                <ArrowUpRight className="h-4 w-4 text-success" aria-label="en hausse" />
               ) : (
-                <ArrowDownRight className="h-4 w-4 text-destructive" />
+                <ArrowDownRight className="h-4 w-4 text-destructive" aria-label="en baisse" />
               )}
             </div>
-            <div className="text-lg sm:text-2xl font-bold">{metric.value}</div>
+            <div className={cn("font-bold", metric.value === DONNEES_INDISPONIBLES ? "text-sm text-muted-foreground py-1" : "text-lg sm:text-2xl")}>{metric.value}</div>
             <div className="text-sm text-muted-foreground">{metric.title}</div>
             <div className="text-xs text-muted-foreground mt-1">{metric.change}</div>
           </CardContent>

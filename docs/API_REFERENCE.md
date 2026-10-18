@@ -129,39 +129,57 @@ Récupère les métriques financières depuis Stripe.
 GET /functions/v1/stripe-kpis
 ```
 
-### Response (200 OK)
+### Response (200 OK) — données réelles
+
+Aucune donnée simulée n'est jamais renvoyée. Les valeurs ci-dessous sont un exemple de forme.
 
 ```json
 {
   "success": true,
+  "available": true,
   "mock": false,
   "kpis": {
-    "mrr": 12450.00,
-    "mrrChange": 8.2,
-    "activeSubscriptions": 247,
-    "activeSubscriptionsChange": 12,
-    "churnRate": 2.1,
-    "churnRateChange": -0.3,
-    "totalCustomers": 1247,
-    "newCustomersThisMonth": 45,
-    "revenueThisMonth": 15400.00,
-    "revenueLastMonth": 14200.00,
+    "mrr": 1000.00,
+    "mrrChange": null,
+    "activeSubscriptions": 20,
+    "activeSubscriptionsChange": null,
+    "churnRate": null,
+    "churnRateChange": null,
+    "totalCustomers": 40,
+    "newCustomersThisMonth": 2,
+    "revenueThisMonth": 300.00,
+    "revenueLastMonth": 3000.00,
+    "revenueLastMonthToDate": 300.00,
+    "revenueChangeToDate": 0,
     "currency": "eur",
-    "lastUpdated": "2026-02-03T12:00:00.000Z"
+    "lastUpdated": "2026-10-03T12:00:00.000Z"
   }
 }
 ```
 
+### Response (200 OK) — indisponible
+
+Clé `STRIPE_SECRET_KEY` absente ou erreur Stripe : HTTP 200 (le client lit le corps), `kpis` est `null`,
+jamais de zéros ni de valeurs de repli.
+
+```json
+{ "success": false, "available": false, "reason": "stripe_not_configured", "error": "Stripe n'est pas configuré.", "kpis": null }
+```
+
+`reason` : `stripe_not_configured` | `stripe_error`. Authentification : 401 / 403 inchangés.
+
 | Champ | Type | Description |
 |-------|------|-------------|
-| `mock` | boolean | `true` si données simulées (STRIPE_SECRET_KEY manquant) |
+| `available` | boolean | `true` uniquement pour des données Stripe réelles |
+| `mock` | boolean | Toujours `false` quand `available` est `true` |
 | `mrr` | number | Monthly Recurring Revenue en € |
-| `mrrChange` | number | Variation MRR en % vs mois précédent |
+| `mrrChange` | number \| null | Toujours `null` : Stripe ne fournit pas le MRR passé |
 | `activeSubscriptions` | number | Abonnements actifs |
-| `churnRate` | number | Taux de churn en % |
+| `activeSubscriptionsChange` | number \| null | Toujours `null` : Stripe ne donne que le statut actuel des abonnements, la base du 1er du mois n'est pas reconstituable |
+| `churnRate` | number \| null | Toujours `null` (même raison) : jamais une estimation présentée comme une mesure |
 | `totalCustomers` | number | Nombre total de clients |
-| `revenueThisMonth` | number | Revenus du mois en cours |
-| `currency` | string | Code devise (ISO 4217) |
+| `revenueThisMonth` | number | Encaissé net du mois en cours (transactions de solde Stripe classées par `reporting_category` : paiements, remboursements, échecs, litiges et annulations de litige, chacun dans le mois de sa date ; frais, virements et autres ajustements exclus) |
+| `currency` | string | Code devise (ISO 4217) lu dans Stripe (prix, transactions, sinon devise du compte), obligatoire. Plusieurs devises sur le compte → réponse « indisponible » (aucun total mélangé) |
 
 ### Exemple TypeScript
 
@@ -170,7 +188,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const { data, error } = await supabase.functions.invoke("stripe-kpis");
 
-if (data?.success) {
+if (data?.available === true) {
   console.log(`MRR: ${data.kpis.mrr}€`);
   console.log(`Abonnés: ${data.kpis.activeSubscriptions}`);
 }

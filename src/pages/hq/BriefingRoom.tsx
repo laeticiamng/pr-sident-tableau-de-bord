@@ -33,6 +33,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr, enGB, de } from "date-fns/locale";
 import { useTranslation, useLanguage } from "@/contexts/LanguageContext";
 import { briefingTranslations } from "@/i18n/briefing";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 const dateFnsLocales = { fr, en: enGB, de };
 
@@ -41,7 +42,7 @@ export default function BriefingRoom() {
   const { data: platforms, isLoading: platformsLoading } = usePlatforms();
   const { data: pendingApprovals } = usePendingApprovals();
   const { data: runs, refetch: refetchRuns } = useRecentRuns(50);
-  const { data: stripeData, isError: stripeError } = useStripeKPIs();
+  const { data: stripeData } = useStripeKPIs();
   const { data: morningDigest } = useMorningDigest();
   const { data: journalEntries } = useJournalEntries();
   const executeRun = useExecuteRun();
@@ -60,8 +61,10 @@ export default function BriefingRoom() {
   const totalPlatforms = platforms?.length || 8;
   const pendingCount = pendingApprovals?.length || 0;
 
-  const mrr = stripeError ? null : (stripeData?.kpis?.mrr ?? 0);
-  const mrrChange = stripeError ? null : (stripeData?.kpis?.mrrChange ?? 0);
+  // null = indisponible (jamais 0 par défaut).
+  const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null;
+  const devise = stripeData?.kpis?.currency ?? null;
+  const mrrChange = stripeData?.kpis ? stripeData.kpis.mrrChange : null;
 
   const activeAgents24h = (() => {
     const now = Date.now();
@@ -168,10 +171,10 @@ export default function BriefingRoom() {
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-success/10"><DollarSign className="h-5 w-5 text-success" /></div>
             <div>
-              <p className="text-xl font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p>
+              <p className={mrr != null ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null && devise ? formatCurrency(mrr, devise) : DONNEES_INDISPONIBLES}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 {t.mrr}
-                {stripeError && <span className="text-destructive" title="Service indisponible">⚠</span>}
+                {stripeData && !stripeData.available && <span className="text-destructive" title="Service indisponible">⚠</span>}
                 {mrrChange != null && mrrChange !== 0 && (
                   <span className={mrrChange > 0 ? "text-success" : "text-destructive"}>
                     {mrrChange > 0 ? "+" : ""}{mrrChange.toFixed(1)}%

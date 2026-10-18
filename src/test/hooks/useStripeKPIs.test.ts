@@ -11,6 +11,7 @@ vi.mock("@/integrations/supabase/client", () => ({
       invoke: vi.fn().mockResolvedValue({
         data: {
           success: true,
+          available: true,
           mock: false,
           kpis: {
             mrr: 12450,

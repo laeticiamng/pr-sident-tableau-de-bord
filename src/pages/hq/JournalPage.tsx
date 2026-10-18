@@ -25,6 +25,7 @@ import { fr, enGB, de } from "date-fns/locale";
 import { useTranslation } from "@/contexts/LanguageContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { hqCommon } from "@/i18n/hq-common";
+import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
 
 const DATE_LOCALES = { fr, en: enGB, de } as const;
 
@@ -207,12 +208,14 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
 }
 
 function LiveKPIStrip() {
-  const { data: stripeData, isError } = useStripeKPIs();
+  const { data: stripeData } = useStripeKPIs();
   const { data: platforms } = usePlatforms();
   const t = useTranslation(hqCommon);
 
-  const mrr = isError ? null : (stripeData?.kpis?.mrr ?? 0);
-  const clients = isError ? null : (stripeData?.kpis?.totalCustomers ?? 0);
+  // null = indisponible (jamais 0 par défaut).
+  const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null;
+  const devise = stripeData?.kpis?.currency ?? null;
+  const clients = stripeData?.kpis ? stripeData.kpis.totalCustomers : null;
   const uptime = platforms?.length
     ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
     : null;
@@ -222,8 +225,8 @@ function LiveKPIStrip() {
       <CardContent className="p-4">
         <h4 className="text-xs font-semibold text-muted-foreground mb-3">{t.journalKPIs}</h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div><p className="text-lg font-bold">{mrr != null && mrr > 0 ? formatCurrency(mrr) : "—"}</p><p className="text-[10px] text-muted-foreground">MRR</p></div>
-          <div><p className="text-lg font-bold">{clients ?? "—"}</p><p className="text-[10px] text-muted-foreground">{t.journalActiveClients}</p></div>
+          <div><p className={mrr != null ? "text-lg font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null && devise ? formatCurrency(mrr, devise) : DONNEES_INDISPONIBLES}</p><p className="text-[10px] text-muted-foreground">MRR</p></div>
+          <div><p className={clients != null ? "text-lg font-bold" : "text-sm font-medium text-muted-foreground"}>{clients ?? DONNEES_INDISPONIBLES}</p><p className="text-[10px] text-muted-foreground">{t.journalActiveClients}</p></div>
           <div><p className="text-lg font-bold">{uptime != null ? `${uptime}%` : "—"}</p><p className="text-[10px] text-muted-foreground">Uptime</p></div>
         </div>
       </CardContent>

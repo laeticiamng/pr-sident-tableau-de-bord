@@ -64,7 +64,11 @@ Deno.serve(async (req: Request) => {
       const stripeResp = await fetch(`${supabaseUrl}/functions/v1/stripe-kpis`, {
         headers: { Authorization: `Bearer ${serviceKey}` },
       });
-      if (stripeResp.ok) stripeData = await stripeResp.json();
+      if (stripeResp.ok) {
+        const reponse = await stripeResp.json();
+        // Seules des données Stripe réelles (available === true) alimentent l'analyse.
+        if (reponse?.available === true && reponse?.kpis) stripeData = reponse;
+      }
     } catch { /* skip */ }
 
     // 2. Platform health
@@ -119,8 +123,8 @@ Deno.serve(async (req: Request) => {
             // Croissance du chiffre encaissé (pas du MRR), mois à date vs même période M-1.
             encaisse_variation_meme_periode_pct: stripeData.kpis.revenueChangeToDate ?? null,
             total_customers: stripeData.kpis.totalCustomers,
-            churn_rate: stripeData.kpis.churnRate,
-            arpu: stripeData.kpis.arpu,
+            // null = churn non mesurable (jamais une valeur par défaut).
+            churn_rate: stripeData.kpis.churnRate ?? null,
           }
         : "Données Stripe non disponibles",
       platforms: platforms.map((p: any) => ({
