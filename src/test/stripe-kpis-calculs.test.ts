@@ -88,6 +88,11 @@ describe("stripe-kpis — chiffre encaissé net (transactions de solde)", () => 
     expect(sommeEncaissee([tx("charge", 10_000), tx("charge", 5_000), tx("refund", -3_000)])).toBe(120);
   });
 
+  it("revue Codex : un paiement annulé et un remboursement échoué corrigent l'encaissement net", () => {
+    // 100 € encaissés puis annulés (paiement différé) ; 50 € remboursés puis remboursement échoué : net 50 €.
+    expect(sommeEncaissee([tx("payment", 10_000), tx("payment_reversal", -10_000), tx("charge", 5_000), tx("refund", -5_000), tx("refund_failure", 5_000)])).toBe(50);
+  });
+
   it("ignore frais Stripe, virements et litiges (ce ne sont pas des encaissements clients)", () => {
     expect(sommeEncaissee([tx("charge", 2_000), tx("stripe_fee", -300), tx("payout", -1_500), tx("adjustment", -2_000)])).toBe(20);
   });

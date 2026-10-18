@@ -142,10 +142,14 @@ export function uniteMineure(devise: string): number {
 }
 
 /**
- * Transactions de solde qui constituent un encaissement net : paiements (+) et remboursements (−).
+ * Transactions de solde qui constituent un encaissement net, montants signés par Stripe : paiements (+),
+ * remboursements (−) et leurs annulations — paiement différé annulé `payment_reversal` (−), remboursement
+ * échoué `refund_failure` (+), remboursement d'un paiement échoué `payment_failure_refund` (revue Codex).
  * Exclus : frais Stripe, virements, litiges et ajustements (ce ne sont pas des encaissements clients).
  */
-export const TYPES_ENCAISSEMENT = new Set(["charge", "payment", "refund", "payment_refund", "payment_failure_refund"]);
+export const TYPES_ENCAISSEMENT = new Set([
+  "charge", "payment", "refund", "payment_refund", "payment_failure_refund", "payment_reversal", "refund_failure",
+]);
 
 /** Chiffre encaissé net (en unités monétaires) d'une liste de transactions de solde, dans une devise. */
 export function sommeEncaissee(transactions: TransactionSolde[], devise = "eur"): number {
