@@ -215,7 +215,8 @@ function LiveKPIStrip() {
   // null = indisponible (jamais 0 par défaut).
   const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null;
   const devise = stripeData?.kpis?.currency ?? null;
-  const clients = stripeData?.kpis ? stripeData.kpis.totalCustomers : null;
+  // Clients réels seulement (comptes de test exclus sur preuve) ; sans répartition : indisponible.
+  const clients = stripeData?.kpis?.clients ? stripeData.kpis.clients.reels : null;
   const uptime = platforms?.length
     ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
     : null;

@@ -35,11 +35,27 @@ export interface StripeKPIs {
   revenueChangeToDate: number | null;
   currency: string;
   lastUpdated: string;
+  /**
+   * Répartition vérifiable des clients Stripe ; null si la fonction ne la fournit pas (ancienne version)
+   * ou si elle est incomplète : jamais de zéro de repli.
+   */
+  clients: RepartitionClients | null;
+  /** Compte Stripe lu par la clé (identifiant public acct_…) ; null si inconnu. */
+  compteStripeId: string | null;
+}
+
+export interface RepartitionClients {
+  total: number;
+  reels: number;
+  test: number;
+  indetermines: number;
+  nouveauxReelsCeMois: number;
 }
 
 export type RaisonIndisponible =
   | "stripe_not_configured"
   | "stripe_error"
+  | "stripe_test_mode"
   | "mock_data"
   | "request_failed"
   | "invalid_response";
@@ -51,6 +67,7 @@ export type StripeKpiResult =
 const MESSAGES: Record<RaisonIndisponible, string> = {
   stripe_not_configured: "Stripe n'est pas configuré : aucune source vérifiée n'est connectée.",
   stripe_error: "Stripe est momentanément injoignable.",
+  stripe_test_mode: "La clé Stripe du Cockpit lit le mode test : aucun chiffre de l'activité réelle.",
   mock_data: AUCUNE_SOURCE_VERIFIEE,
   request_failed: "La récupération des données Stripe a échoué.",
   invalid_response: "La réponse de Stripe est inexploitable.",
@@ -73,6 +90,22 @@ function deviseValide(v: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+function normaliserRepartition(v: unknown): RepartitionClients | null {
+  if (!v || typeof v !== "object") return null;
+  const r = v as Record<string, unknown>;
+  const cles = ["total", "reels", "test", "indetermines", "nouveauxReelsCeMois"] as const;
+  if (!cles.every((c) => nombre(r[c]) && (r[c] as number) >= 0)) return null;
+  // Cohérence : les trois catégories couvrent exactement le total, sinon la répartition n'est pas crue.
+  if ((r.reels as number) + (r.test as number) + (r.indetermines as number) !== r.total) return null;
+  return { total: r.total as number, reels: r.reels as number, test: r.test as number, indetermines: r.indetermines as number, nouveauxReelsCeMois: r.nouveauxReelsCeMois as number };
+}
+
+function idCompte(v: unknown): string | null {
+  if (!v || typeof v !== "object") return null;
+  const id = (v as Record<string, unknown>).id;
+  return typeof id === "string" && /^acct_[A-Za-z0-9]+$/.test(id) ? id : null;
 }
 
 function normaliserKpis(brut: Record<string, unknown>): StripeKPIs | null {
@@ -104,6 +137,8 @@ function normaliserKpis(brut: Record<string, unknown>): StripeKPIs | null {
     revenueChangeToDate: nombreOuNull(brut.revenueChangeToDate),
     currency,
     lastUpdated: typeof brut.lastUpdated === "string" ? brut.lastUpdated : "",
+    clients: normaliserRepartition(brut.clients),
+    compteStripeId: idCompte(brut.compteStripe),
   };
 }
 
@@ -123,7 +158,7 @@ export function parseStripeKpisResponse(data: unknown, error?: unknown): StripeK
     const reason = reponse.reason;
     return {
       available: false,
-      reason: reason === "stripe_not_configured" || reason === "stripe_error" ? reason : "invalid_response",
+      reason: reason === "stripe_not_configured" || reason === "stripe_error" || reason === "stripe_test_mode" ? reason : "invalid_response",
     };
   }
 

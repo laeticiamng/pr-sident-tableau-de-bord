@@ -82,8 +82,9 @@ describe("FinancePage — Stripe indisponible", () => {
   it("pas de zéro de remplacement dans la base clients", () => {
     useStripeKPIsMock.mockReturnValue(indisponible);
     rendre(<FinancePage />);
-    expect(screen.queryByText("Clients totaux")).not.toBeInTheDocument();
-    expect(screen.queryByText("Nouveaux ce mois")).not.toBeInTheDocument();
+    expect(screen.queryByText("Clients réels")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Clients Stripe/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Clients réels nouveaux ce mois")).not.toBeInTheDocument();
   });
 
   it("données réelles : affiche les valeurs Stripe, et « Données indisponibles » pour le churn non mesuré", () => {
@@ -92,7 +93,9 @@ describe("FinancePage — Stripe indisponible", () => {
 
     expect(screen.getByText(/Stripe connecté/)).toBeInTheDocument();
     expect(container.textContent).toMatch(/777/);
-    expect(screen.getByText("Clients totaux")).toBeInTheDocument();
+    // Réponse sans répartition (ancienne fonction) : total Stripe dit « réels et tests confondus », répartition indisponible
+    expect(screen.getByText("Clients Stripe (réels et tests confondus)")).toBeInTheDocument();
+    expect(screen.getByText(/Répartition réels \/ tests : données indisponibles/)).toBeInTheDocument();
     // Churn null : jamais « 0% » ni « 2.1% »
     expect(screen.getAllByText("Données indisponibles").length).toBeGreaterThanOrEqual(1);
     expect(container.textContent).not.toMatch(/2[.,]1\s?%/);
@@ -144,5 +147,22 @@ describe("GrowthSummaryWidget — plus de LTV:CAC ni de prédiction inventée", 
     useStripeKPIsMock.mockReturnValue(indisponible);
     const { container } = rendre(<GrowthSummaryWidget />);
     expect(container.textContent).not.toMatch(/€|\d/);
+  });
+
+  it("répartition vérifiable : clients réels, comptes de test et indéterminés, sans mélanger les tests aux clients", () => {
+    const avecRepartition = {
+      ...reel,
+      data: {
+        ...reel.data,
+        kpis: { ...reel.data.kpis, totalCustomers: 21, clients: { total: 21, reels: 0, test: 17, indetermines: 4, nouveauxReelsCeMois: 0 }, compteStripeId: "acct_1Exemple" },
+      },
+    };
+    useStripeKPIsMock.mockReturnValue(avecRepartition);
+    const { container } = rendre(<FinancePage />);
+    expect(screen.getByTestId("repartition-clients")).toBeInTheDocument();
+    expect(screen.getByText("Clients réels")).toBeInTheDocument();
+    expect(container.textContent).toMatch(/21 clients Stripe au total : 0 réel .*17 comptes de test ou internes .*4 indéterminés/);
+    expect(container.textContent).toMatch(/Compte Stripe lu : acct_1Exemple \(mode réel\)/);
+    expect(screen.queryByText("Clients totaux")).not.toBeInTheDocument();
   });
 });

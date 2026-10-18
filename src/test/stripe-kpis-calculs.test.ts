@@ -16,6 +16,8 @@ import {
   type RequeteStripe,
 } from "../../supabase/functions/stripe-kpis/calculs.ts";
 
+const REPARTITION_VIDE = { total: 0, reels: 0, test: 0, indetermines: 0, nouveauxReelsCeMois: 0 };
+
 /** Faux client Stripe paginé : `total` objets servis par pages de `limit` (max 100). */
 function fausseApiPaginee(total: number) {
   const objets = Array.from({ length: total }, (_, i) => ({ id: `ch_${i}` }));
@@ -149,7 +151,8 @@ describe("stripe-kpis — devise lue dans Stripe (revue Codex)", () => {
     expect(() => deviseUnique([abo("eur")], [{ type: "charge", amount: 1, currency: "usd" }])).toThrow(/Plusieurs devises/);
   });
   it("assemblerKpis publie la devise de Stripe", () => {
-    const kpis = assemblerKpis({ abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z") });
+    const kpis = assemblerKpis({
+      clients: REPARTITION_VIDE, abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z") });
     expect(kpis.currency).toBe("chf");
     expect(kpis.mrr).toBe(10);
   });
@@ -196,6 +199,7 @@ describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
 
   it("n'expose pas de variation de MRR déduite des encaissements (mrrChange = null)", () => {
     const kpis = assemblerKpis({
+      clients: REPARTITION_VIDE,
       abonnementsActifs: [
         { id: "sub_1", items: { data: [{ quantity: 1, price: { unit_amount: 5_000, recurring: { interval: "month" } } }] } },
       ],
@@ -243,6 +247,7 @@ describe("stripe-kpis — churn et variation nette : indisponibles faute d'histo
 
   it("assemblerKpis ne publie jamais de churn ni de variation nette estimés (ni l'ancien 2,1 %)", () => {
     const kpis = assemblerKpis({
+      clients: REPARTITION_VIDE,
       abonnementsActifs: [{ id: "a", created: avant }, { id: "b", created: avant }],
       totalCustomers: 2,
       newCustomersThisMonth: 0,
@@ -285,6 +290,7 @@ describe("stripe-kpis — chemin sans clé Stripe / erreur : indisponible, jamai
 
   it("réponse réelle : available true et mock false explicites", () => {
     const kpis = assemblerKpis({
+      clients: REPARTITION_VIDE,
       abonnementsActifs: [],
       totalCustomers: 0,
       newCustomersThisMonth: 0,

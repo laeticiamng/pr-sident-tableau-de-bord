@@ -116,9 +116,10 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
       trend: stripeKPIs?.mrrChange != null ? (stripeKPIs.mrrChange > 0 ? "up" as const : stripeKPIs.mrrChange < 0 ? "down" as const : "neutral" as const) : "neutral" as const 
     },
     activeUsers: { 
-      value: stripeKPIs ? stripeKPIs.totalCustomers.toLocaleString("fr-FR") : DONNEES_INDISPONIBLES, 
-      change: stripeKPIs?.newCustomersThisMonth ?? undefined, 
-      trend: stripeKPIs && stripeKPIs.newCustomersThisMonth > 0 ? "up" as const : "neutral" as const 
+      // Clients réels seulement (comptes de test exclus sur preuve) ; sans répartition : indisponible.
+      value: stripeKPIs?.clients ? stripeKPIs.clients.reels.toLocaleString("fr-FR") : DONNEES_INDISPONIBLES, 
+      change: stripeKPIs?.clients?.nouveauxReelsCeMois ?? undefined, 
+      trend: stripeKPIs?.clients && stripeKPIs.clients.nouveauxReelsCeMois > 0 ? "up" as const : "neutral" as const 
     },
     churnRate: { 
       value: stripeKPIs && stripeKPIs.churnRate != null ? formatPercentage(stripeKPIs.churnRate, false) : DONNEES_INDISPONIBLES, 
@@ -205,7 +206,7 @@ export function ExecutiveCockpit({ className }: ExecutiveCockpitProps) {
           loading={isLoading}
         />
         <MetricCard
-          title="Clients Stripe"
+          title="Clients réels (Stripe)"
           value={realKPIs.activeUsers.value}
           change={realKPIs.activeUsers.change}
           changeLabel="nouveaux ce mois"

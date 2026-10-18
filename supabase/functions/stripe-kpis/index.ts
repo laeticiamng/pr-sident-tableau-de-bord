@@ -12,6 +12,14 @@ import {
   reponseKpisIndisponibles,
   reponseSansCleStripe,
 } from "./calculs.ts";
+import {
+  type ClientStripe,
+  type PaiementStripe,
+  type RepartitionClients,
+  classerClients,
+  lireIdentifiantsInternes,
+  repartirClients,
+} from "./clients.ts";
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
@@ -127,18 +135,51 @@ Deno.serve(async (req) => {
     const maintenant = new Date();
     const { debutMois, debutMoisPrecedent } = bornesDePeriode(maintenant);
 
+    // 0. Mode réel vérifié (revue du 18.10.2026) : une clé du mode test renvoyait 0 client et 0 € présentés comme
+    // des mesures. Le solde porte `livemode` même quand le compte n'a aucun objet ; sans `true` explicite → indisponible.
+    const solde = (await stripeRequest("balance")) as { livemode?: boolean };
+    if (solde.livemode !== true) {
+      console.log("[Stripe KPIs] Clé du mode test : indisponible");
+      return new Response(JSON.stringify(reponseKpisIndisponibles("stripe_test_mode")), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Compte réellement lu (identifiant public, e-mail du titulaire pour reconnaître ses propres comptes de test).
+    // Facultatif : une clé restreinte peut ne pas y avoir accès ; rien n'est alors inventé (null).
+    let compte: { id?: string; email?: string | null; default_currency?: string } = {};
+    try {
+      compte = (await stripeRequest("account")) as typeof compte;
+    } catch (_e) {
+      console.log("[Stripe KPIs] Compte Stripe non lisible avec cette clé (facultatif)");
+    }
+
     // 1. Abonnements actifs (toutes pages) : MRR et nombre d'abonnements
     const abonnementsActifs = await listerStripe<AbonnementStripe>(stripeRequest, "subscriptions", {
       status: "active",
     });
 
-    // 2. Clients totaux et 3. nouveaux clients ce mois (toutes pages).
-    // Pas de try/catch (revue Codex) : un échec laissait 0, publié comme une mesure vérifiée
-    // (available: true). L'erreur remonte au gestionnaire global → « indisponible ».
-    const totalCustomers = (await listerStripe(stripeRequest, "customers")).length;
-    const newCustomersThisMonth = (await listerStripe(stripeRequest, "customers", {
-      "created[gte]": debutMois.toString(),
-    })).length;
+    // 2. Clients (toutes pages), lus une seule fois. Pas de try/catch (revue Codex) : un échec remonte au
+    // gestionnaire global (« indisponible ») plutôt que d'afficher 0 comme une mesure.
+    const clients = await listerStripe<ClientStripe>(stripeRequest, "customers");
+    const totalCustomers = clients.length;
+    const newCustomersThisMonth = clients.filter((c) => typeof c.created === "number" && c.created >= debutMois).length;
+
+    // 3. Paiements (toutes pages) : seule preuve d'un client réel, avec l'abonnement actif. Revue Codex : l'historique
+    // complet peut dépasser la limite de pagination sur un gros compte ; cet échec ne rend indisponible QUE la
+    // répartition (null, affichée « indisponible »), jamais les autres KPIs, et ne produit aucun chiffre de repli.
+    let repartitionClients: RepartitionClients | null = null;
+    try {
+      const paiements = await listerStripe<PaiementStripe>(stripeRequest, "charges");
+      const classement = classerClients(clients, paiements, abonnementsActifs as unknown as { customer?: string; status?: string }[], {
+        emailCompteStripe: compte.email ?? null,
+        identifiantsInternes: lireIdentifiantsInternes(Deno.env.get("STRIPE_IDENTIFIANTS_INTERNES")),
+      });
+      repartitionClients = repartirClients(clients, classement, debutMois);
+    } catch (_e) {
+      console.log("[Stripe KPIs] Répartition des clients indisponible (historique des paiements illisible)");
+    }
 
     // 4. Churn et variation nette : non calculés (pas d'historique des statuts Stripe, voir calculs.ts).
 
@@ -149,13 +190,9 @@ Deno.serve(async (req) => {
       "created[gte]": debutMoisPrecedent.toString(),
     });
 
-    // 6. Devise : lue dans les prix et les transactions ; la devise du compte n'est demandée que si aucun
+    // 6. Devise : lue dans les prix et les transactions ; la devise du compte n'est utilisée que si aucun
     // objet n'en porte. Plusieurs devises → erreur → « indisponible » (jamais de total mélangé).
-    let deviseCompte: string | null = null;
-    if (devisesObservees(abonnementsActifs, transactions).size === 0) {
-      const compte = (await stripeRequest("account")) as { default_currency?: string };
-      deviseCompte = compte.default_currency ?? null;
-    }
+    const deviseCompte = devisesObservees(abonnementsActifs, transactions).size === 0 ? (compte.default_currency ?? null) : null;
 
     // MRR, chiffre encaissé net et croissance sur périodes équivalentes. mrrChange reste
     // null : Stripe ne fournit pas le MRR passé, et la variation des encaissements (qui
@@ -167,6 +204,8 @@ Deno.serve(async (req) => {
       transactions,
       maintenant,
       deviseCompte,
+      clients: repartitionClients,
+      idCompteStripe: compte.id ?? null,
     });
 
     console.log("[Stripe KPIs] KPIs calculés");

@@ -133,11 +133,11 @@ export default function DataAnalyticsPage() {
           unavailable={!kpis || kpis.churnRate === null}
         />
         <MetricCard
-          title="Nouveaux ce mois"
-          value={kpis ? kpis.newCustomersThisMonth.toString() : DONNEES_INDISPONIBLES}
+          title="Clients réels nouveaux ce mois"
+          value={kpis?.clients ? kpis.clients.nouveauxReelsCeMois.toString() : DONNEES_INDISPONIBLES}
           icon={<TrendingUp className="h-5 w-5 text-accent" />}
           loading={isLoading}
-          unavailable={!kpis}
+          unavailable={!kpis?.clients}
         />
       </div>
 

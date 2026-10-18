@@ -176,16 +176,34 @@ export default function FinancePage() {
                 ))}
               </div>
             ) : kpis ? (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg border text-center">
-                  <div className="text-3xl font-bold text-primary">{kpis.totalCustomers}</div>
-                  <div className="text-sm text-muted-foreground">Clients totaux</div>
+              kpis.clients ? (
+                <div className="space-y-3" data-testid="repartition-clients">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 rounded-lg border text-center">
+                      <div className="text-3xl font-bold text-primary">{kpis.clients.reels}</div>
+                      <div className="text-sm text-muted-foreground">Clients réels</div>
+                    </div>
+                    <div className="p-4 rounded-lg border text-center">
+                      <div className="text-3xl font-bold text-success">+{kpis.clients.nouveauxReelsCeMois}</div>
+                      <div className="text-sm text-muted-foreground">Clients réels nouveaux ce mois</div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {kpis.clients.total} client{kpis.clients.total > 1 ? "s" : ""} Stripe au total : {kpis.clients.reels} réel{kpis.clients.reels > 1 ? "s" : ""} (achat conservé ou abonnement actif), {kpis.clients.test} compte{kpis.clients.test > 1 ? "s" : ""} de test ou interne{kpis.clients.test > 1 ? "s" : ""} (preuve explicite), {kpis.clients.indetermines} indéterminé{kpis.clients.indetermines > 1 ? "s" : ""} (ni preuve de test ni achat conservé).
+                  </p>
+                  {kpis.compteStripeId && (
+                    <p className="text-xs text-muted-foreground">Compte Stripe lu : {kpis.compteStripeId} (mode réel)</p>
+                  )}
                 </div>
-                <div className="p-4 rounded-lg border text-center">
-                  <div className="text-3xl font-bold text-success">+{kpis.newCustomersThisMonth}</div>
-                  <div className="text-sm text-muted-foreground">Nouveaux ce mois</div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="p-4 rounded-lg border text-center">
+                    <div className="text-3xl font-bold text-primary">{kpis.totalCustomers}</div>
+                    <div className="text-sm text-muted-foreground">Clients Stripe (réels et tests confondus)</div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Répartition réels / tests : {DONNEES_INDISPONIBLES.toLowerCase()}.</p>
                 </div>
-              </div>
+              )
             ) : (
               <DonneesIndisponibles reason={raison} />
             )}

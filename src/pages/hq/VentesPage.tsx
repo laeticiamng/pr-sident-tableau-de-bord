@@ -93,9 +93,9 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
-                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? kpis.totalCustomers : DONNEES_INDISPONIBLES}</p>
+                  <p className={kpis?.clients ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis?.clients ? kpis.clients.reels : DONNEES_INDISPONIBLES}</p>
                 )}
-                <p className="text-xs text-muted-foreground">Clients totaux</p>
+                <p className="text-xs text-muted-foreground">Clients réels</p>
               </div>
             </div>
           </CardContent>
@@ -125,9 +125,9 @@ export default function VentesPage() {
               </div>
               <div>
                 {stripeLoading ? <Skeleton className="h-7 w-16 mb-1" /> : (
-                  <p className={kpis ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis ? `+${kpis.newCustomersThisMonth}` : DONNEES_INDISPONIBLES}</p>
+                  <p className={kpis?.clients ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{kpis?.clients ? `+${kpis.clients.nouveauxReelsCeMois}` : DONNEES_INDISPONIBLES}</p>
                 )}
-                <p className="text-xs text-muted-foreground">Nouveaux ce mois</p>
+                <p className="text-xs text-muted-foreground">Clients réels nouveaux ce mois</p>
               </div>
             </div>
           </CardContent>
