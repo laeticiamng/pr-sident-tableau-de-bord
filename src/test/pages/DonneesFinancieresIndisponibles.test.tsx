@@ -130,13 +130,14 @@ describe("DataAnalyticsPage — aucune donnée fictive", () => {
 describe("GrowthSummaryWidget — plus de LTV:CAC ni de prédiction inventée", () => {
   beforeEach(() => useStripeKPIsMock.mockReset());
 
-  it("données réelles : MRR et ARPU réels, churn indisponible, pas de LTV:CAC ni de prédiction", () => {
+  it("données réelles : MRR réel ; ARPU et churn indisponibles (non mesurés) ; pas de LTV:CAC ni de prédiction", () => {
     useStripeKPIsMock.mockReturnValue(reel);
     const { container } = rendre(<GrowthSummaryWidget />);
 
     expect(container.textContent).toMatch(/777/);
     expect(container.textContent).not.toMatch(/LTV|CAC|Prédiction|confiance/i);
-    expect(screen.getByText("Données indisponibles")).toBeInTheDocument();
+    // revue Codex : MRR ÷ abonnements n'est pas un ARPU ; ARPU et churn affichent « indisponible »
+    expect(screen.getAllByText("Données indisponibles")).toHaveLength(2);
   });
 
   it("Stripe indisponible : état vide, aucun chiffre", () => {

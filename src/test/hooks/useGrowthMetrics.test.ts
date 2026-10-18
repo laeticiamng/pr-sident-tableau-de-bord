@@ -81,7 +81,8 @@ describe("useGrowthMetrics — données réelles uniquement", () => {
 
     expect(metrics.isRealData).toBe(true);
     expect(metrics.mrr.value).toBe(1000);
-    expect(metrics.arpu.value).toBe(50);
+    // revue Codex : MRR ÷ abonnements n'est pas un ARPU (sièges, multi-abonnements) : indisponible
+    expect(metrics.arpu.value).toBeNull();
     expect(metrics.churn.value).toBe(5);
     // Variation du MRR non mesurée : null, pas 0 % ni dérivée des encaissements
     expect(metrics.mrr.trend).toBeNull();

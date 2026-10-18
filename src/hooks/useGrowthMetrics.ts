@@ -17,7 +17,10 @@
    /** Indisponible : une LTV exige un CAC / une durée de vie mesurés, pas une estimation. */
    ltv: MetricValue;
    ltvCacRatio: MetricValue;
-   /** MRR ÷ abonnements actifs (Stripe), quand il y a au moins un abonnement actif. */
+   /**
+    * Indisponible (revue Codex) : MRR ÷ abonnements n'est pas un revenu par utilisateur (sièges, clients à
+    * plusieurs abonnements). Aucun nombre d'utilisateurs actifs vérifié n'est disponible.
+    */
    arpu: MetricValue;
    paybackPeriod: MetricValue;
    /** Indisponible : nécessite un analytics produit (les clients Stripe ne sont pas des MAU). */
@@ -137,11 +140,9 @@ export function useGrowthMetrics(): GrowthData {
       // Variation du MRR : null si non mesurée. Ne jamais lui substituer la variation des
       // encaissements (paiements ponctuels/annuels, mois partiel).
       const mrrTrend = typeof kpis.mrrChange === "number" ? kpis.mrrChange : null;
-      const arpu = kpis.activeSubscriptions > 0 ? Math.round((kpis.mrr / kpis.activeSubscriptions) * 100) / 100 : null;
 
       return {
         ...INDISPONIBLES,
-        arpu: { value: arpu, trend: null, benchmark: null },
         mrr: { value: kpis.mrr, trend: mrrTrend, benchmark: null },
         churn: { value: kpis.churnRate, trend: kpis.churnRateChange, benchmark: null },
         isRealData: true,
