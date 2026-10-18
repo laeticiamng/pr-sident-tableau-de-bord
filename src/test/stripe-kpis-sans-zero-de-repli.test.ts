@@ -17,11 +17,11 @@ describe("stripe-kpis : aucun zéro de repli présenté comme une mesure", () =>
     expect(source).toMatch(/const totalCustomers = \(await listerStripe\(stripeRequest, "customers"\)\)\.length;/);
   });
 
-  it("seul le churn tolère un échec de lecture, et il devient null (pas 0)", () => {
+  it("aucun échec de lecture n'est toléré localement : tout remonte au gestionnaire global (indisponible)", () => {
     const catches = source.match(/}\s*catch\s*\(/g) ?? [];
-    // un catch pour les annulés (churn → null) + le gestionnaire global
-    expect(catches.length).toBe(2);
-    expect(source).toMatch(/let abonnementsAnnules: AbonnementStripe\[\] \| null = null;/);
+    expect(catches.length).toBe(1);
+    // revue Codex : plus de lecture des abonnements annulés, le churn n'est pas estimé
+    expect(source).not.toMatch(/status: "canceled"/);
     expect(source).toMatch(/reponseKpisIndisponibles\("stripe_error"\)/);
   });
 });

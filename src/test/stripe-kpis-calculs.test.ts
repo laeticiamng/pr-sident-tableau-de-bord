@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   assemblerKpis,
   bornesDePeriode,
-  calculerChurn,
   reponseKpisDisponibles,
   reponseKpisIndisponibles,
   reponseSansCleStripe,
@@ -128,7 +127,7 @@ describe("stripe-kpis — devise lue dans Stripe (revue Codex)", () => {
     expect(() => deviseUnique([abo("eur")], [{ type: "charge", amount: 1, currency: "usd" }])).toThrow(/Plusieurs devises/);
   });
   it("assemblerKpis publie la devise de Stripe", () => {
-    const kpis = assemblerKpis({ abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z"), abonnementsAnnules: [] });
+    const kpis = assemblerKpis({ abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z") });
     expect(kpis.currency).toBe("chf");
     expect(kpis.mrr).toBe(10);
   });
@@ -216,90 +215,11 @@ describe("stripe-kpis — MRR normalisé au mois", () => {
   });
 });
 
-describe("stripe-kpis — churn calculé uniquement à partir de données réelles", () => {
+describe("stripe-kpis — churn et variation nette : indisponibles faute d'historique (revue Codex)", () => {
   const debutMois = Math.floor(Date.UTC(2026, 9, 1) / 1000);
   const avant = debutMois - 86_400 * 30;
-  const apres = debutMois + 86_400;
 
-  it("perdus / actifs au 1er du mois : 1 annulé sur 4 abonnés présents au 1er = 25 %", () => {
-    const actifs: AbonnementStripe[] = [
-      { id: "a", created: avant },
-      { id: "b", created: avant },
-      { id: "c", created: avant },
-      { id: "d", created: apres }, // créé ce mois : pas dans la base du 1er
-    ];
-    const annules: AbonnementStripe[] = [
-      { id: "e", created: avant, canceled_at: apres }, // perdu ce mois
-      { id: "f", created: avant, canceled_at: avant + 86_400 }, // annulé le mois dernier : ignoré
-    ];
-    const r = calculerChurn(actifs, annules, debutMois);
-    expect(r.base).toBe(4);
-    expect(r.perdus).toBe(1);
-    expect(r.churnRate).toBe(25);
-    // 4 actifs aujourd'hui - 4 au 1er = 0 (1 nouveau, 1 perdu)
-    expect(r.variationNetteAbonnements).toBe(0);
-  });
-
-  it("revue Codex : une résiliation demandée le mois dernier mais terminée ce mois-ci (ended_at) est une perte de ce mois", () => {
-    const actifs: AbonnementStripe[] = [{ id: "a", created: avant }];
-    const annules: AbonnementStripe[] = [
-      // cancel_at_period_end demandé le mois dernier, fin effective ce mois-ci
-      { id: "g", created: avant, canceled_at: avant + 86_400, ended_at: apres },
-      // demandé ce mois-ci mais terminé le mois dernier : impossible en pratique, ended_at fait foi
-      { id: "h", created: avant - 86_400, canceled_at: apres, ended_at: avant + 86_400 },
-    ];
-    const r = calculerChurn(actifs, annules, debutMois);
-    expect(r.perdus).toBe(1);
-    expect(r.base).toBe(2);
-    expect(r.churnRate).toBe(50);
-    expect(r.variationNetteAbonnements).toBe(-1);
-  });
-
-  it("revue Codex : un abonnement encore en essai le 1er et converti ce mois-ci est un nouvel abonné, pas un abonné de départ", () => {
-    const actifs: AbonnementStripe[] = [
-      { id: "a", created: avant },
-      { id: "essai", created: avant, trial_end: apres }, // en essai le 1er, actif aujourd'hui
-    ];
-    const annules: AbonnementStripe[] = [
-      { id: "essai-annule", created: avant, trial_end: apres, ended_at: apres + 3600 }, // jamais payant au 1er
-    ];
-    const r = calculerChurn(actifs, annules, debutMois);
-    expect(r.base).toBe(1);
-    expect(r.perdus).toBe(0);
-    expect(r.churnRate).toBe(0);
-    expect(r.variationNetteAbonnements).toBe(1);
-  });
-
-  it("base vide : taux null (jamais 0 ni une valeur par défaut), variation nette mesurée (revue Codex)", () => {
-    const r = calculerChurn([{ id: "d", created: apres }, { id: "e", created: apres }], [], debutMois);
-    expect(r.base).toBe(0);
-    expect(r.churnRate).toBeNull();
-    expect(r.variationNetteAbonnements).toBe(2);
-  });
-
-  it("ignore les abonnements sans date de création connue au lieu de la supposer", () => {
-    const r = calculerChurn([{ id: "a" }], [{ id: "b", canceled_at: apres }], debutMois);
-    expect(r.churnRate).toBeNull();
-    // impossible de savoir si « a » était déjà là le 1er : la variation n'est pas inventée
-    expect(r.variationNetteAbonnements).toBeNull();
-  });
-
-  it("assemblerKpis : churn null si la liste des annulés n'a pas pu être lue", () => {
-    const kpis = assemblerKpis({
-      abonnementsActifs: [{ id: "a", created: avant }],
-      totalCustomers: 1,
-      newCustomersThisMonth: 0,
-      transactions: [],
-      deviseCompte: "eur",
-      maintenant: new Date("2026-10-03T12:00:00Z"),
-      abonnementsAnnules: null,
-    });
-    expect(kpis.churnRate).toBeNull();
-    expect(kpis.churnRateChange).toBeNull();
-    expect(kpis.activeSubscriptionsChange).toBeNull();
-  });
-
-  it("assemblerKpis : ne renvoie jamais l'ancien 2,1 % codé en dur", () => {
+  it("assemblerKpis ne publie jamais de churn ni de variation nette estimés (ni l'ancien 2,1 %)", () => {
     const kpis = assemblerKpis({
       abonnementsActifs: [{ id: "a", created: avant }, { id: "b", created: avant }],
       totalCustomers: 2,
@@ -307,10 +227,11 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
       transactions: [],
       deviseCompte: "eur",
       maintenant: new Date("2026-10-03T12:00:00Z"),
-      abonnementsAnnules: [],
     });
-    expect(kpis.churnRate).toBe(0); // 0 perdu sur 2 : mesure réelle, pas un défaut
-    expect(kpis.churnRate).not.toBe(2.1);
+    expect(kpis.churnRate).toBeNull();
+    expect(kpis.churnRateChange).toBeNull();
+    expect(kpis.activeSubscriptionsChange).toBeNull();
+    expect(kpis.activeSubscriptions).toBe(2); // le nombre actuel, lui, est une mesure
   });
 });
 
@@ -348,7 +269,6 @@ describe("stripe-kpis — chemin sans clé Stripe / erreur : indisponible, jamai
       transactions: [],
       deviseCompte: "eur",
       maintenant: new Date("2026-10-03T12:00:00Z"),
-      abonnementsAnnules: [],
     });
     const r = reponseKpisDisponibles(kpis);
     expect(r).toMatchObject({ success: true, available: true, mock: false });

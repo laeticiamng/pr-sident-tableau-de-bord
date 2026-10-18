@@ -63,6 +63,7 @@ export default function BriefingRoom() {
 
   // null = indisponible (jamais 0 par défaut).
   const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null;
+  const devise = stripeData?.kpis?.currency ?? null;
   const mrrChange = stripeData?.kpis ? stripeData.kpis.mrrChange : null;
 
   const activeAgents24h = (() => {
@@ -170,7 +171,7 @@ export default function BriefingRoom() {
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-2 rounded-lg bg-success/10"><DollarSign className="h-5 w-5 text-success" /></div>
             <div>
-              <p className={mrr != null ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null ? formatCurrency(mrr) : DONNEES_INDISPONIBLES}</p>
+              <p className={mrr != null ? "text-xl font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null && devise ? formatCurrency(mrr, devise) : DONNEES_INDISPONIBLES}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 {t.mrr}
                 {stripeData && !stripeData.available && <span className="text-destructive" title="Service indisponible">⚠</span>}

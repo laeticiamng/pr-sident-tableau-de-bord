@@ -15,7 +15,7 @@ import {
 
 /**
  * Stripe KPIs - Récupération des métriques financières réelles
- * Calcule MRR, churn, revenus et autres KPIs depuis Stripe.
+ * Calcule MRR, revenus et autres KPIs depuis Stripe (churn et variation nette : indisponibles, voir calculs.ts).
  * Contrat : voir ReponseKpisStripe (calculs.ts). Sans clé Stripe ou en cas d'erreur Stripe,
  * la réponse est HTTP 200 { success:false, available:false, reason, kpis:null } : jamais de
  * données factices ni de zéros présentés comme des mesures.
@@ -140,16 +140,7 @@ Deno.serve(async (req) => {
       "created[gte]": debutMois.toString(),
     })).length;
 
-    // 4. Churn : abonnements annulés (toutes pages). Si la lecture échoue, le churn reste
-    // indisponible (null) : on ne le remplace jamais par une valeur par défaut.
-    let abonnementsAnnules: AbonnementStripe[] | null = null;
-    try {
-      abonnementsAnnules = await listerStripe<AbonnementStripe>(stripeRequest, "subscriptions", {
-        status: "canceled",
-      });
-    } catch (e) {
-      console.log("[Stripe KPIs] Could not fetch canceled subscriptions - churn unavailable");
-    }
+    // 4. Churn et variation nette : non calculés (pas d'historique des statuts Stripe, voir calculs.ts).
 
     // 5. Encaissements : transactions de solde depuis le 1er du mois précédent (toutes pages). Revue Codex :
     // chaque paiement et chaque remboursement compte dans le mois de sa propre date. Pas de try/catch : un
@@ -176,10 +167,9 @@ Deno.serve(async (req) => {
       transactions,
       maintenant,
       deviseCompte,
-      abonnementsAnnules,
     });
 
-    console.log(`[Stripe KPIs] KPIs calculés (churn ${kpis.churnRate === null ? "indisponible" : "mesuré"})`);
+    console.log("[Stripe KPIs] KPIs calculés");
 
     return new Response(
       JSON.stringify(reponseKpisDisponibles(kpis)),

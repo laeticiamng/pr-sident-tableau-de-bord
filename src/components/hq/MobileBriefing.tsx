@@ -40,6 +40,7 @@ export function MobileBriefing() {
   const total = platforms?.length || 0;
   const pendingCount = pendingApprovals?.length || 0;
   const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null; // null = indisponible (jamais 0 par défaut)
+  const devise = stripeData?.kpis?.currency ?? null;
   const uptime = platforms?.length
     ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
     : null;
@@ -80,7 +81,7 @@ export function MobileBriefing() {
 
       {/* KPI Carousel */}
       <KPICarousel
-        mrr={mrr} uptime={uptime} greenCount={greenCount} amberCount={amberCount}
+        mrr={mrr} devise={devise} uptime={uptime} greenCount={greenCount} amberCount={amberCount}
         redCount={redCount} total={total} pendingCount={pendingCount} t={t}
       />
 
@@ -221,6 +222,8 @@ function CompactDecisions({ t, locale }: { t: any; locale: any }) {
 
 interface KPICarouselProps {
   mrr: number | null;
+  /** Devise Stripe des montants (revue Codex : jamais d'EUR supposé). */
+  devise: string | null;
   uptime: number | null;
   greenCount: number;
   amberCount: number;
@@ -230,7 +233,7 @@ interface KPICarouselProps {
   t: ReturnType<typeof useTranslation<typeof briefingTranslations>>;
 }
 
-function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pendingCount, t }: KPICarouselProps) {
+function KPICarousel({ mrr, devise, uptime, greenCount, amberCount, redCount, total, pendingCount, t }: KPICarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps", dragFree: true });
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -249,7 +252,7 @@ function KPICarousel({ mrr, uptime, greenCount, amberCount, redCount, total, pen
   const kpis = [
     {
       icon: <DollarSign className="h-5 w-5 text-success" />,
-      value: mrr != null ? formatCurrency(mrr) : DONNEES_INDISPONIBLES,
+      value: mrr != null && devise ? formatCurrency(mrr, devise) : DONNEES_INDISPONIBLES,
       label: t.mrr,
       sublabel: t.mrrSub,
       bg: "bg-success/5 border-success/20",

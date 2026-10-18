@@ -43,6 +43,13 @@ const indisponible = () => ({
 describe("useGrowthMetrics — données réelles uniquement", () => {
   beforeEach(() => useStripeKPIsMock.mockReset());
 
+  it("revue Codex : la devise Stripe est transmise (jamais d'EUR supposé) ; null sans données", () => {
+    useStripeKPIsMock.mockReturnValue(kpisReels({ currency: "chf" }));
+    expect(renderHook(() => useGrowthMetrics()).result.current.metrics.currency).toBe("chf");
+    useStripeKPIsMock.mockReturnValue(indisponible());
+    expect(renderHook(() => useGrowthMetrics()).result.current.metrics.currency).toBeNull();
+  });
+
   it("Stripe indisponible : toutes les métriques sont null (jamais 0, jamais une estimation)", () => {
     useStripeKPIsMock.mockReturnValue(indisponible());
     const { result } = renderHook(() => useGrowthMetrics());

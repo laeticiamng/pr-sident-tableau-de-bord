@@ -231,54 +231,14 @@ export function calculerEncaissements(transactions: TransactionSolde[], maintena
 }
 
 /**
- * Churn du mois en cours à partir des seuls abonnements Stripe réellement lus.
- *
- * - base : abonnements actifs au 1er du mois (UTC) = actifs aujourd'hui créés avant le 1er
- *   + annulés depuis le 1er mais créés avant le 1er ;
- * - perdus : abonnements créés avant le 1er et TERMINÉS depuis le 1er. La date de fin est `ended_at`
- *   (fin effective) ; `canceled_at` n'est que la date de la demande (une résiliation « en fin de période »
- *   demandée le mois dernier se termine ce mois-ci). `canceled_at` ne sert qu'en repli si `ended_at` manque ;
- * - churnRate = perdus / base × 100, ou null si la base est vide (taux non défini).
- * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus), y compris quand la base
- *   est vide ; null seulement si un abonnement actif n'a pas de date de création.
- *
- * Limites : les abonnements en essai (trialing) ou impayés (past_due) ne figurent pas dans
- * la liste « active » ; un abonnement encore en essai le 1er (trial_end après le 1er) n'est pas
- * compté dans la base ; un abonnement impayé le 1er puis régularisé ne peut pas être distingué
- * sans l'historique des événements Stripe ; un abonnement créé et annulé dans le mois n'est compté nulle part.
- * Un abonnement sans date de création connue est ignoré plutôt que supposé.
+ * Churn et variation nette des abonnements : NON calculés (revue Codex, à plusieurs reprises).
+ * L'API Stripe ne donne que le statut ACTUEL d'un abonnement. Un abonnement actif le 1er du mois peut être
+ * aujourd'hui en essai, impayé (past_due, unpaid), en pause ou annulé ; un abonnement impayé le 1er peut être
+ * redevenu actif. Sans historique des statuts, la base du 1er du mois ne peut pas être reconstituée de façon
+ * fiable : toute valeur serait une estimation présentée comme une mesure. Ces indicateurs restent donc
+ * « indisponibles » (null) jusqu'à ce qu'un historique (instantané quotidien ou événements Stripe conservés)
+ * existe.
  */
-export function calculerChurn(
-  abonnementsActifs: AbonnementStripe[],
-  abonnementsAnnules: AbonnementStripe[],
-  debutMois: number,
-): { churnRate: number | null; variationNetteAbonnements: number | null; perdus: number; base: number } {
-  // Présent au 1er du mois = créé avant le 1er ET hors période d'essai au 1er (revue Codex) : un abonnement
-  // encore en essai le 1er, converti en cours de mois, est un nouvel abonné de ce mois, pas un abonné de départ.
-  const enEssaiAuDebut = (a: AbonnementStripe) => typeof a.trial_end === "number" && a.trial_end > debutMois;
-  const creeAvant = (a: AbonnementStripe) =>
-    typeof a.created === "number" && a.created < debutMois && !enEssaiAuDebut(a);
-  const actifsAuDebut = abonnementsActifs.filter(creeAvant).length;
-  const finEffective = (a: AbonnementStripe) =>
-    typeof a.ended_at === "number" ? a.ended_at : typeof a.canceled_at === "number" ? a.canceled_at : null;
-  const perdus = abonnementsAnnules.filter((a) => {
-    const fin = finEffective(a);
-    return creeAvant(a) && fin !== null && fin >= debutMois;
-  }).length;
-  const base = actifsAuDebut + perdus;
-  // Revue Codex : une base vide est une base connue (0). Seul le taux est alors non défini ; la variation
-  // nette reste mesurable (tous les actifs sont nouveaux). Elle n'est indisponible que si un abonnement actif
-  // n'a pas de date de création : on ne peut alors pas dire s'il était déjà là le 1er.
-  const variationNetteAbonnements = abonnementsActifs.every((a) => typeof a.created === "number")
-    ? abonnementsActifs.length - base
-    : null;
-  return {
-    churnRate: base === 0 ? null : (perdus / base) * 100,
-    variationNetteAbonnements,
-    perdus,
-    base,
-  };
-}
 
 /** Raisons pour lesquelles les KPIs Stripe ne sont pas fournis. */
 export type RaisonIndisponible = "stripe_not_configured" | "stripe_error";
@@ -321,14 +281,9 @@ export interface StripeKPIs {
    */
   mrrChange: number | null;
   activeSubscriptions: number;
-  /**
-   * Variation nette du nombre d'abonnements actifs depuis le 1er du mois (UTC) : abonnements
-   * actifs aujourd'hui moins abonnements actifs au 1er. null si non calculable.
-   */
+  /** Variation nette des abonnements actifs depuis le 1er du mois : toujours null (pas d'historique des statuts Stripe). */
   activeSubscriptionsChange: number | null;
-  /**
-   * Churn mensuel en % (voir calculerChurn). null = non mesurable (aucune valeur inventée).
-   */
+  /** Churn mensuel en % : toujours null (pas d'historique des statuts Stripe, voir plus haut). */
   churnRate: number | null;
   /** Variation du churn vs mois précédent : toujours null (nécessiterait un historique). */
   churnRateChange: number | null;
@@ -360,21 +315,15 @@ export function assemblerKpis(entrees: {
   maintenant: Date;
   /** Devise par défaut du compte Stripe, utilisée seulement si aucun prix ni aucune transaction ne porte de devise. */
   deviseCompte?: string | null;
-  /** Abonnements annulés (status=canceled), pour le churn ; null = non récupérés (churn indisponible). */
-  abonnementsAnnules?: AbonnementStripe[] | null;
 }): StripeKPIs {
   const devise = deviseUnique(entrees.abonnementsActifs, entrees.transactions, entrees.deviseCompte);
   const encaissements = calculerEncaissements(entrees.transactions, entrees.maintenant, devise);
-  const { debutMois } = bornesDePeriode(entrees.maintenant);
-  const churn = entrees.abonnementsAnnules
-    ? calculerChurn(entrees.abonnementsActifs, entrees.abonnementsAnnules, debutMois)
-    : { churnRate: null, variationNetteAbonnements: null };
   return {
     mrr: arrondi(calculerMrr(entrees.abonnementsActifs, devise), 2),
     mrrChange: null,
     activeSubscriptions: entrees.abonnementsActifs.length,
-    activeSubscriptionsChange: churn.variationNetteAbonnements,
-    churnRate: churn.churnRate === null ? null : arrondi(churn.churnRate, 1),
+    activeSubscriptionsChange: null, // pas d'historique des statuts Stripe : non mesurable
+    churnRate: null, // idem : jamais une estimation présentée comme une mesure
     churnRateChange: null, // Nécessiterait un historique que Stripe ne fournit pas
     totalCustomers: entrees.totalCustomers,
     newCustomersThisMonth: entrees.newCustomersThisMonth,

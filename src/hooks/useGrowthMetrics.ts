@@ -30,6 +30,8 @@
    churn: MetricValue;
    isRealData: boolean;
    lastUpdated: string | null;
+   /** Devise Stripe des montants (MRR, ARPU) ; null sans données réelles. */
+   currency: string | null;
  }
  
  export interface FunnelStage {
@@ -144,11 +146,12 @@ export function useGrowthMetrics(): GrowthData {
         churn: { value: kpis.churnRate, trend: kpis.churnRateChange, benchmark: null },
         isRealData: true,
         lastUpdated: kpis.lastUpdated || null,
+        currency: kpis.currency,
       };
     }
 
     // Aucune donnée réelle : toutes les métriques sont indisponibles
-    return { ...INDISPONIBLES, isRealData: false, lastUpdated: null };
+    return { ...INDISPONIBLES, isRealData: false, lastUpdated: null, currency: null };
   };
 
   return {

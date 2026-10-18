@@ -7,6 +7,7 @@
  import { cn } from "@/lib/utils";
  import { useGrowthMetrics } from "@/hooks/useGrowthMetrics";
  import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
+ import { formatCurrency } from "@/hooks/useStripeKPIs";
  
  /**
   * Widget compact Growth OS pour le Briefing Room
@@ -73,14 +74,14 @@
    const kpis = [
      {
        label: "MRR",
-       value: metrics.mrr.value != null ? `€${metrics.mrr.value.toLocaleString("fr-FR")}` : DONNEES_INDISPONIBLES,
+       value: metrics.mrr.value != null && metrics.currency ? formatCurrency(metrics.mrr.value, metrics.currency) : DONNEES_INDISPONIBLES,
        trend: metrics.mrr.trend,
        icon: DollarSign,
        good: "up"
      },
      {
        label: "ARPU",
-       value: metrics.arpu.value != null ? `€${metrics.arpu.value.toLocaleString("fr-FR")}` : DONNEES_INDISPONIBLES,
+       value: metrics.arpu.value != null && metrics.currency ? formatCurrency(metrics.arpu.value, metrics.currency) : DONNEES_INDISPONIBLES,
        trend: metrics.arpu.trend,
        icon: Target,
        good: "up"

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
  import { cn } from "@/lib/utils";
 import { useGrowthMetrics, type MetricValue } from "@/hooks/useGrowthMetrics";
 import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
+import { formatCurrency } from "@/hooks/useStripeKPIs";
  
  const metricsConfig = [
    { key: "mrr", label: "MRR", icon: DollarSign, format: "€", inverse: false, description: "Revenu mensuel récurrent (Stripe)" },
@@ -109,9 +110,10 @@ import { DONNEES_INDISPONIBLES } from "@/lib/stripe-kpis-adapter";
                      )}
                    </div>
                    <div className="text-lg sm:text-xl font-bold text-foreground">
-                     {config.format === "€" && "€"}
-                     {typeof metric.value === "number" ? metric.value.toLocaleString("fr-FR") : metric.value}
-                     {config.format !== "€" && config.format}
+                     {/* revue Codex : montants dans la devise Stripe, jamais un « € » supposé */}
+                     {config.format === "€"
+                       ? typeof metric.value === "number" && metrics.currency ? formatCurrency(metric.value, metrics.currency) : DONNEES_INDISPONIBLES
+                       : <>{typeof metric.value === "number" ? metric.value.toLocaleString("fr-FR") : metric.value}{config.format}</>}
                    </div>
                    <div className="text-[9px] sm:text-[10px] text-muted-foreground font-medium uppercase tracking-wide">
                      {config.label}

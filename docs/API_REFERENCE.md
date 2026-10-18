@@ -142,8 +142,8 @@ Aucune donnée simulée n'est jamais renvoyée. Les valeurs ci-dessous sont un e
     "mrr": 1000.00,
     "mrrChange": null,
     "activeSubscriptions": 20,
-    "activeSubscriptionsChange": 1,
-    "churnRate": 5.0,
+    "activeSubscriptionsChange": null,
+    "churnRate": null,
     "churnRateChange": null,
     "totalCustomers": 40,
     "newCustomersThisMonth": 2,
@@ -175,8 +175,8 @@ jamais de zéros ni de valeurs de repli.
 | `mrr` | number | Monthly Recurring Revenue en € |
 | `mrrChange` | number \| null | Toujours `null` : Stripe ne fournit pas le MRR passé |
 | `activeSubscriptions` | number | Abonnements actifs |
-| `activeSubscriptionsChange` | number \| null | Variation nette depuis le 1er du mois (mesurée aussi quand la base du 1er est vide ; `null` si un abonnement actif n'a pas de date de création) |
-| `churnRate` | number \| null | Churn mensuel en % (abonnements terminés ce mois-ci selon `ended_at` ÷ actifs au 1er), `null` si non mesurable |
+| `activeSubscriptionsChange` | number \| null | Toujours `null` : Stripe ne donne que le statut actuel des abonnements, la base du 1er du mois n'est pas reconstituable |
+| `churnRate` | number \| null | Toujours `null` (même raison) : jamais une estimation présentée comme une mesure |
 | `totalCustomers` | number | Nombre total de clients |
 | `revenueThisMonth` | number | Encaissé net du mois en cours (transactions de solde Stripe : paiements moins remboursements, chacun dans le mois de sa date ; frais, virements et litiges exclus) |
 | `currency` | string | Code devise (ISO 4217) lu dans Stripe (prix, transactions, sinon devise du compte), obligatoire. Plusieurs devises sur le compte → réponse « indisponible » (aucun total mélangé) |

@@ -214,6 +214,7 @@ function LiveKPIStrip() {
 
   // null = indisponible (jamais 0 par défaut).
   const mrr = stripeData?.kpis ? stripeData.kpis.mrr : null;
+  const devise = stripeData?.kpis?.currency ?? null;
   const clients = stripeData?.kpis ? stripeData.kpis.totalCustomers : null;
   const uptime = platforms?.length
     ? Math.round((platforms.reduce((s, p) => s + (p.uptime_percent || 0), 0) / Math.max(platforms.length, 1)) * 10) / 10
@@ -224,7 +225,7 @@ function LiveKPIStrip() {
       <CardContent className="p-4">
         <h4 className="text-xs font-semibold text-muted-foreground mb-3">{t.journalKPIs}</h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-          <div><p className={mrr != null ? "text-lg font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null ? formatCurrency(mrr) : DONNEES_INDISPONIBLES}</p><p className="text-[10px] text-muted-foreground">MRR</p></div>
+          <div><p className={mrr != null ? "text-lg font-bold" : "text-sm font-medium text-muted-foreground"}>{mrr != null && devise ? formatCurrency(mrr, devise) : DONNEES_INDISPONIBLES}</p><p className="text-[10px] text-muted-foreground">MRR</p></div>
           <div><p className={clients != null ? "text-lg font-bold" : "text-sm font-medium text-muted-foreground"}>{clients ?? DONNEES_INDISPONIBLES}</p><p className="text-[10px] text-muted-foreground">{t.journalActiveClients}</p></div>
           <div><p className="text-lg font-bold">{uptime != null ? `${uptime}%` : "—"}</p><p className="text-[10px] text-muted-foreground">Uptime</p></div>
         </div>
