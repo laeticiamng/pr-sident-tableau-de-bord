@@ -31,7 +31,7 @@ const API_KEYS: Array<{
   i18nKey: "github" | "stripe" | "perplexity" | "lovable_ai" | "firecrawl";
 }> = [
   { key: "github", icon: GitBranch, envVar: "GITHUB_TOKEN", docsUrl: "https://github.com/settings/tokens", i18nKey: "github" },
-  { key: "stripe", icon: CreditCard, envVar: "STRIPE_SECRET_KEY", docsUrl: "https://dashboard.stripe.com/apikeys", i18nKey: "stripe" },
+  { key: "stripe", icon: CreditCard, envVar: "STRIPE_KPIS_READ_KEY", docsUrl: "https://dashboard.stripe.com/apikeys", i18nKey: "stripe" },
   { key: "perplexity", icon: Search, envVar: "PERPLEXITY_API_KEY", docsUrl: "https://www.perplexity.ai/settings/api", i18nKey: "perplexity" },
   { key: "lovable_ai", icon: Sparkles, envVar: "LOVABLE_API_KEY", docsUrl: null, i18nKey: "lovable_ai" },
   { key: "firecrawl", icon: Globe, envVar: "FIRECRAWL_API_KEY", docsUrl: "https://firecrawl.dev/app/api-keys", i18nKey: "firecrawl" },

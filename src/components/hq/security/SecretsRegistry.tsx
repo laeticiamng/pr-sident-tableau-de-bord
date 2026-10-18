@@ -14,7 +14,9 @@ const SECRETS_REGISTRY: Secret[] = [
   { name: "SUPABASE_URL", status: "configured" },
   { name: "SUPABASE_PUBLISHABLE_KEY", status: "configured" },
   { name: "SUPABASE_SERVICE_ROLE_KEY", status: "configured" },
-  { name: "STRIPE_SECRET_KEY", status: "configured" },
+  // Clé restreinte en lecture seule du mode réel, lue en priorité par stripe-kpis (à ajouter par la propriétaire).
+  { name: "STRIPE_KPIS_READ_KEY", status: "missing", source: "Stripe, lecture seule, mode réel" },
+  { name: "STRIPE_SECRET_KEY", status: "configured", source: "Géré par Lovable (repli)" },
   { name: "GITHUB_TOKEN", status: "configured" },
   { name: "PERPLEXITY_API_KEY", status: "connector", source: "Perplexity Connector" },
   { name: "FIRECRAWL_API_KEY", status: "connector", source: "Firecrawl Connector" },
