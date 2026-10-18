@@ -159,7 +159,7 @@ Aucune donnée simulée n'est jamais renvoyée. Les valeurs ci-dessous sont un e
 
 ### Response (200 OK) — indisponible
 
-Clé `STRIPE_SECRET_KEY` absente ou erreur Stripe : HTTP 200 (le client lit le corps), `kpis` est `null`,
+Aucune clé Stripe (ni `STRIPE_KPIS_READ_KEY`, prioritaire, ni `STRIPE_SECRET_KEY`, repli), clé du mode test (`stripe_test_mode`) ou erreur Stripe : HTTP 200 (le client lit le corps), `kpis` est `null`,
 jamais de zéros ni de valeurs de repli.
 
 ```json
