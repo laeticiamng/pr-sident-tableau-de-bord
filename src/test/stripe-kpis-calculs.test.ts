@@ -88,6 +88,18 @@ describe("stripe-kpis — chiffre encaissé net (transactions de solde)", () => 
     expect(sommeEncaissee([tx("charge", 10_000), tx("charge", 5_000), tx("refund", -3_000)])).toBe(120);
   });
 
+  it("revue Codex : litiges et annulations de litige (type=adjustment) comptent via reporting_category ; frais et virements non", () => {
+    const rc = (reporting_category: string, type: string, amount: number): TransactionSolde => ({ reporting_category, type, amount, created: 0, currency: "eur" });
+    expect(sommeEncaissee([
+      rc("charge", "charge", 10_000),
+      rc("dispute", "adjustment", -10_000), // fonds retirés pour litige
+      rc("dispute_reversal", "adjustment", 10_000), // litige gagné : fonds rendus
+      rc("fee", "adjustment", -1_500), // frais Stripe classés en adjustment
+      rc("other_adjustment", "adjustment", -700),
+      rc("payout", "payout", -5_000),
+    ])).toBe(100);
+  });
+
   it("revue Codex : un paiement annulé et un remboursement échoué corrigent l'encaissement net", () => {
     // 100 € encaissés puis annulés (paiement différé) ; 50 € remboursés puis remboursement échoué : net 50 €.
     expect(sommeEncaissee([tx("payment", 10_000), tx("payment_reversal", -10_000), tx("charge", 5_000), tx("refund", -5_000), tx("refund_failure", 5_000)])).toBe(50);

@@ -21,6 +21,8 @@ export interface TransactionSolde {
   currency?: string;
   /** Horodatage Unix (secondes) de création de la transaction. */
   created?: number;
+  /** Catégorie comptable Stripe (charge, refund, dispute, dispute_reversal, fee, payout…). */
+  reporting_category?: string;
 }
 
 /** Sous-ensemble des champs d'un objet Subscription Stripe utilisés ici. */
@@ -151,19 +153,31 @@ export function uniteMineure(devise: string): number {
 }
 
 /**
- * Transactions de solde qui constituent un encaissement net, montants signés par Stripe : paiements (+),
- * remboursements (−) et leurs annulations — paiement différé annulé `payment_reversal` (−), remboursement
- * échoué `refund_failure` (+), remboursement d'un paiement échoué `payment_failure_refund` (revue Codex).
- * Exclus : frais Stripe, virements, litiges et ajustements (ce ne sont pas des encaissements clients).
+ * Transactions de solde qui constituent un encaissement net client, montants signés par Stripe.
+ * Revue Codex : la classification suit `reporting_category`, que Stripe recommande pour la comptabilité
+ * (docs.stripe.com/reports/reporting-categories) : il distingue notamment, parmi les `type=adjustment`, les litiges
+ * (`dispute`, fonds retirés) et leurs annulations (`dispute_reversal`, fonds rendus). Catégories retenues :
+ * paiements, remboursements, échecs de paiement et de remboursement, litiges et annulations de litige, annulation de
+ * la part non capturée. Exclus : frais Stripe, virements, transferts, réserves et autres ajustements.
  */
+export const CATEGORIES_ENCAISSEMENT = new Set([
+  "charge", "refund", "charge_failure", "refund_failure", "dispute", "dispute_reversal", "partial_capture_reversal",
+]);
+
+/** Repli quand `reporting_category` est absent (anciennes réponses, tests) : classification par `type`. */
 export const TYPES_ENCAISSEMENT = new Set([
   "charge", "payment", "refund", "payment_refund", "payment_failure_refund", "payment_reversal", "refund_failure",
 ]);
 
+/** Une transaction de solde fait-elle partie de l'encaissement net client ? */
+export function estEncaissement(t: TransactionSolde): boolean {
+  return t.reporting_category ? CATEGORIES_ENCAISSEMENT.has(t.reporting_category) : TYPES_ENCAISSEMENT.has(t.type ?? "");
+}
+
 /** Chiffre encaissé net (en unités monétaires) d'une liste de transactions de solde, dans une devise. */
 export function sommeEncaissee(transactions: TransactionSolde[], devise = "eur"): number {
   const mineures = transactions
-    .filter((t) => TYPES_ENCAISSEMENT.has(t.type ?? "") && typeof t.amount === "number")
+    .filter((t) => estEncaissement(t) && typeof t.amount === "number")
     .reduce((somme, t) => somme + (t.amount as number), 0);
   return mineures / uniteMineure(devise);
 }
@@ -177,7 +191,7 @@ export function devisesObservees(abonnements: AbonnementStripe[], transactions: 
   for (const sub of abonnements) for (const item of sub.items?.data || []) {
     if (item.price?.currency && elementCompteDansMrr(item)) devises.add(item.price.currency.toLowerCase());
   }
-  for (const t of transactions) if (TYPES_ENCAISSEMENT.has(t.type ?? "") && t.currency) devises.add(t.currency.toLowerCase());
+  for (const t of transactions) if (estEncaissement(t) && t.currency) devises.add(t.currency.toLowerCase());
   return devises;
 }
 
