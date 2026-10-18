@@ -23,6 +23,10 @@ export interface PaiementStripe {
   status?: string;
   paid?: boolean;
   amount?: number;
+  /** Montant réellement capturé (capture manuelle ou partielle : peut être inférieur à `amount`). */
+  amount_captured?: number;
+  /** false = autorisation sans capture : aucun fonds encaissé. */
+  captured?: boolean;
   amount_refunded?: number;
   livemode?: boolean;
 }
@@ -109,11 +113,15 @@ export function preuveCompteTest(
   return null;
 }
 
-/** Montant réellement conservé d'un paiement : réussi, payé, net des remboursements. */
-const montantConserve = (p: PaiementStripe) =>
-  p.status === "succeeded" && p.paid !== false && typeof p.amount === "number"
-    ? p.amount - (typeof p.amount_refunded === "number" ? p.amount_refunded : 0)
-    : 0;
+/**
+ * Montant réellement conservé d'un paiement : réussi, payé, CAPTURÉ, net des remboursements. Revue Codex : une
+ * autorisation non capturée (capture manuelle) ou la part non capturée d'une capture partielle n'est pas encaissée.
+ */
+const montantConserve = (p: PaiementStripe) => {
+  if (p.status !== "succeeded" || p.paid === false || p.captured === false) return 0;
+  const capture = typeof p.amount_captured === "number" ? p.amount_captured : typeof p.amount === "number" ? p.amount : 0;
+  return capture - (typeof p.amount_refunded === "number" ? p.amount_refunded : 0);
+};
 
 /**
  * Classe chaque client. Réel = aucune preuve de test ET au moins un paiement réussi non intégralement remboursé,

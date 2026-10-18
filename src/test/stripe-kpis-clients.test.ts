@@ -74,6 +74,17 @@ describe("classification des clients Stripe : jamais sur une supposition", () =>
     for (const c of classement) expect(c.preuve.length).toBeGreaterThan(5);
   });
 
+  it("revue Codex : seul le montant capturé compte (autorisation non capturée, capture partielle remboursée)", () => {
+    const clients = [client("autorise"), client("partiel-rembourse"), client("partiel-garde")];
+    const paiements = [
+      paiement("autorise", 3500, 0, { captured: false, amount_captured: 0 }),
+      paiement("partiel-rembourse", 3500, 1000, { captured: true, amount_captured: 1000 }),
+      paiement("partiel-garde", 3500, 0, { captured: true, amount_captured: 1000 }),
+    ];
+    const cat = Object.fromEntries(classerClients(clients, paiements, []).map((c) => [c.id, c.categorie]));
+    expect(cat).toEqual({ autorise: "indetermine", "partiel-rembourse": "indetermine", "partiel-garde": "reel" });
+  });
+
   it("répartition : les trois catégories couvrent exactement le total ; nouveaux réels comptés depuis le 1er du mois", () => {
     const debutMois = 1_790_812_800; // 01.10.2026 00:00 UTC
     const clients = [
