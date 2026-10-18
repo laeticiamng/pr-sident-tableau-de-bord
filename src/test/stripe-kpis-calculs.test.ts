@@ -10,8 +10,10 @@ import {
   calculerMrr,
   listerStripe,
   sommeEncaissee,
+  deviseUnique,
+  uniteMineure,
   type AbonnementStripe,
-  type ChargeStripe,
+  type TransactionSolde,
   type RequeteStripe,
 } from "../../supabase/functions/stripe-kpis/calculs.ts";
 
@@ -65,48 +67,12 @@ describe("stripe-kpis — pagination des listes Stripe", () => {
   });
 });
 
-describe("stripe-kpis — chiffre encaissé net", () => {
-  const reussi = (montant: number, rembourse = 0): ChargeStripe => ({
-    status: "succeeded",
-    paid: true,
-    captured: true,
-    amount: montant,
-    amount_captured: montant,
-    amount_refunded: rembourse,
-    refunded: rembourse >= montant && montant > 0,
-  });
-
-  it("soustrait les remboursements partiels (amount_refunded)", () => {
-    // 100 € encaissés dont 30 € remboursés + 50 € encaissés sans remboursement = 120 € nets.
-    expect(sommeEncaissee([reussi(10_000, 3_000), reussi(5_000)])).toBe(120);
-  });
-
-  it("ne compte rien pour un paiement intégralement remboursé", () => {
-    expect(sommeEncaissee([reussi(10_000, 10_000)])).toBe(0);
-  });
-
-  it("ignore les paiements non réussis (échoués, en attente, autorisés non capturés)", () => {
-    const echoue: ChargeStripe = { status: "failed", paid: false, captured: false, amount: 4_000, amount_captured: 0, amount_refunded: 0 };
-    const enAttente: ChargeStripe = { status: "pending", paid: false, captured: false, amount: 6_000, amount_captured: 0, amount_refunded: 0 };
-    const nonCapture: ChargeStripe = { status: "succeeded", paid: true, captured: false, amount: 8_000, amount_captured: 0, amount_refunded: 0 };
-    expect(sommeEncaissee([echoue, enAttente, nonCapture, reussi(2_000)])).toBe(20);
-  });
-
-  it("utilise le montant réellement capturé en cas de capture partielle", () => {
-    const capturePartielle: ChargeStripe = { ...reussi(10_000), amount_captured: 7_000 };
-    expect(sommeEncaissee([capturePartielle])).toBe(70);
-  });
-});
-
 const unix = (iso: string) => Math.floor(Date.parse(iso) / 1000);
-const paiement = (iso: string, euros: number): ChargeStripe => ({
-  id: `ch_${iso}`,
-  status: "succeeded",
-  paid: true,
-  captured: true,
+const paiement = (iso: string, euros: number): TransactionSolde => ({
+  id: `txn_${iso}`,
+  type: "charge",
   amount: euros * 100,
-  amount_captured: euros * 100,
-  amount_refunded: 0,
+  currency: "eur",
   created: unix(iso),
 });
 /** Un paiement de `euros` chaque jour à 09:00 UTC, du jour `de` au jour `a` inclus. */
@@ -115,15 +81,61 @@ const paiementsQuotidiens = (mois: string, de: number, a: number, euros = 100) =
     paiement(`${mois}-${String(de + i).padStart(2, "0")}T09:00:00Z`, euros),
   );
 
+describe("stripe-kpis — chiffre encaissé net (transactions de solde)", () => {
+  const tx = (type: string, amount: number, created = 0, currency = "eur"): TransactionSolde => ({ type, amount, created, currency });
+
+  it("additionne paiements et remboursements (montants signés)", () => {
+    // 100 € et 50 € encaissés, 30 € remboursés = 120 € nets.
+    expect(sommeEncaissee([tx("charge", 10_000), tx("charge", 5_000), tx("refund", -3_000)])).toBe(120);
+  });
+
+  it("ignore frais Stripe, virements et litiges (ce ne sont pas des encaissements clients)", () => {
+    expect(sommeEncaissee([tx("charge", 2_000), tx("stripe_fee", -300), tx("payout", -1_500), tx("adjustment", -2_000)])).toBe(20);
+  });
+
+  it("revue Codex : un remboursement compte dans le mois où il a lieu, sans modifier le mois du paiement", () => {
+    const maintenant = new Date("2026-10-10T12:00:00Z");
+    const r = calculerEncaissements(
+      [tx("charge", 10_000, unix("2026-09-20T10:00:00Z")), tx("refund", -10_000, unix("2026-10-05T10:00:00Z"))],
+      maintenant,
+    );
+    expect(r.revenueLastMonth).toBe(100); // septembre garde son encaissement
+    expect(r.revenueThisMonth).toBe(-100); // le remboursement d'octobre est en octobre
+  });
+
+  it("devises sans décimales : le montant Stripe est déjà en unités (JPY, XAF)", () => {
+    expect(uniteMineure("jpy")).toBe(1);
+    expect(uniteMineure("XAF")).toBe(1);
+    expect(uniteMineure("chf")).toBe(100);
+    expect(sommeEncaissee([tx("charge", 5_000, 0, "jpy")], "jpy")).toBe(5_000);
+  });
+});
+
+describe("stripe-kpis — devise lue dans Stripe (revue Codex)", () => {
+  const abo = (currency: string): AbonnementStripe => ({ id: `sub_${currency}`, items: { data: [{ quantity: 1, price: { currency, unit_amount: 1_000, recurring: { interval: "month" } } }] } });
+  it("une seule devise observée : c'est elle", () => {
+    expect(deviseUnique([abo("chf")], [{ type: "charge", amount: 1, currency: "chf" }])).toBe("chf");
+  });
+  it("aucune devise observée : devise du compte ; sans elle, erreur (jamais d'EUR supposé)", () => {
+    expect(deviseUnique([], [], "CHF")).toBe("chf");
+    expect(() => deviseUnique([], [], null)).toThrow(/Devise Stripe inconnue/);
+  });
+  it("plusieurs devises : erreur (aucun total mélangé), la fonction répond « indisponible »", () => {
+    expect(() => deviseUnique([abo("chf"), abo("eur")], [])).toThrow(/Plusieurs devises/);
+    expect(() => deviseUnique([abo("eur")], [{ type: "charge", amount: 1, currency: "usd" }])).toThrow(/Plusieurs devises/);
+  });
+  it("assemblerKpis publie la devise de Stripe", () => {
+    const kpis = assemblerKpis({ abonnementsActifs: [abo("chf")], totalCustomers: 1, newCustomersThisMonth: 0, transactions: [], maintenant: new Date("2026-10-03T12:00:00Z"), abonnementsAnnules: [] });
+    expect(kpis.currency).toBe("chf");
+    expect(kpis.mrr).toBe(10);
+  });
+});
+
 describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
   it("compare le mois en cours à date à la même durée du mois précédent", () => {
     // 3 octobre 12:00 : 3 jours encaissés en octobre, contre 30 jours en septembre.
     const maintenant = new Date("2026-10-03T12:00:00Z");
-    const r = calculerEncaissements(
-      paiementsQuotidiens("2026-10", 1, 3),
-      paiementsQuotidiens("2026-09", 1, 30),
-      maintenant,
-    );
+    const r = calculerEncaissements([...paiementsQuotidiens("2026-10", 1, 3), ...paiementsQuotidiens("2026-09", 1, 30)], maintenant);
     expect(r.revenueThisMonth).toBe(300);
     expect(r.revenueLastMonth).toBe(3000);
     // Même période : 1er septembre 00:00 → 3 septembre 12:00.
@@ -134,18 +146,14 @@ describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
 
   it("plafonne la période de référence à la fin du mois précédent (31 mars vs février)", () => {
     const maintenant = new Date("2026-03-31T18:00:00Z");
-    const r = calculerEncaissements(
-      paiementsQuotidiens("2026-03", 1, 31),
-      paiementsQuotidiens("2026-02", 1, 28),
-      maintenant,
-    );
+    const r = calculerEncaissements([...paiementsQuotidiens("2026-03", 1, 31), ...paiementsQuotidiens("2026-02", 1, 28)], maintenant);
     expect(r.revenueLastMonthToDate).toBe(2800);
     expect(r.revenueChangeToDate).toBeCloseTo(((3100 - 2800) / 2800) * 100, 6);
   });
 
   it("renvoie null (non mesurable), et non 0 %, sans encaissement sur la période de référence", () => {
     const maintenant = new Date("2026-10-03T12:00:00Z");
-    const r = calculerEncaissements(paiementsQuotidiens("2026-10", 1, 3), [], maintenant);
+    const r = calculerEncaissements(paiementsQuotidiens("2026-10", 1, 3), maintenant);
     expect(r.revenueChangeToDate).toBeNull();
   });
 
@@ -169,8 +177,7 @@ describe("stripe-kpis — croissance comparable (pas de faux MRR)", () => {
       ],
       totalCustomers: 1,
       newCustomersThisMonth: 0,
-      chargesMoisCourant: paiementsQuotidiens("2026-10", 1, 3),
-      chargesMoisPrecedent: paiementsQuotidiens("2026-09", 1, 30),
+      transactions: [...paiementsQuotidiens("2026-10", 1, 3), ...paiementsQuotidiens("2026-09", 1, 30)],
       maintenant: new Date("2026-10-03T12:00:00Z"),
     });
     expect(kpis.mrr).toBe(50);
@@ -279,8 +286,8 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
       abonnementsActifs: [{ id: "a", created: avant }],
       totalCustomers: 1,
       newCustomersThisMonth: 0,
-      chargesMoisCourant: [],
-      chargesMoisPrecedent: [],
+      transactions: [],
+      deviseCompte: "eur",
       maintenant: new Date("2026-10-03T12:00:00Z"),
       abonnementsAnnules: null,
     });
@@ -294,8 +301,8 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
       abonnementsActifs: [{ id: "a", created: avant }, { id: "b", created: avant }],
       totalCustomers: 2,
       newCustomersThisMonth: 0,
-      chargesMoisCourant: [],
-      chargesMoisPrecedent: [],
+      transactions: [],
+      deviseCompte: "eur",
       maintenant: new Date("2026-10-03T12:00:00Z"),
       abonnementsAnnules: [],
     });
@@ -335,8 +342,8 @@ describe("stripe-kpis — chemin sans clé Stripe / erreur : indisponible, jamai
       abonnementsActifs: [],
       totalCustomers: 0,
       newCustomersThisMonth: 0,
-      chargesMoisCourant: [],
-      chargesMoisPrecedent: [],
+      transactions: [],
+      deviseCompte: "eur",
       maintenant: new Date("2026-10-03T12:00:00Z"),
       abonnementsAnnules: [],
     });

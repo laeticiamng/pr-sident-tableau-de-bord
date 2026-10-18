@@ -2,10 +2,11 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import {
   type AbonnementStripe,
-  type ChargeStripe,
   type StripeKPIs,
+  type TransactionSolde,
   assemblerKpis,
   bornesDePeriode,
+  devisesObservees,
   listerStripe,
   reponseKpisDisponibles,
   reponseKpisIndisponibles,
@@ -150,16 +151,20 @@ Deno.serve(async (req) => {
       console.log("[Stripe KPIs] Could not fetch canceled subscriptions - churn unavailable");
     }
 
-    // 5. Revenus (charges, toutes pages)
-    // Pas de try/catch ici : un échec Stripe (même sur une page intermédiaire) doit remonter
-    // au gestionnaire global plutôt que d'afficher 0 € comme s'il s'agissait d'une mesure.
-    const chargesMoisCourant = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
-      "created[gte]": debutMois.toString(),
-    });
-    const chargesMoisPrecedent = await listerStripe<ChargeStripe>(stripeRequest, "charges", {
+    // 5. Encaissements : transactions de solde depuis le 1er du mois précédent (toutes pages). Revue Codex :
+    // chaque paiement et chaque remboursement compte dans le mois de sa propre date. Pas de try/catch : un
+    // échec remonte au gestionnaire global (« indisponible ») plutôt que d'afficher 0 comme une mesure.
+    const transactions = await listerStripe<TransactionSolde>(stripeRequest, "balance_transactions", {
       "created[gte]": debutMoisPrecedent.toString(),
-      "created[lt]": debutMois.toString(),
     });
+
+    // 6. Devise : lue dans les prix et les transactions ; la devise du compte n'est demandée que si aucun
+    // objet n'en porte. Plusieurs devises → erreur → « indisponible » (jamais de total mélangé).
+    let deviseCompte: string | null = null;
+    if (devisesObservees(abonnementsActifs, transactions).size === 0) {
+      const compte = (await stripeRequest("account")) as { default_currency?: string };
+      deviseCompte = compte.default_currency ?? null;
+    }
 
     // MRR, chiffre encaissé net et croissance sur périodes équivalentes. mrrChange reste
     // null : Stripe ne fournit pas le MRR passé, et la variation des encaissements (qui
@@ -168,9 +173,9 @@ Deno.serve(async (req) => {
       abonnementsActifs,
       totalCustomers,
       newCustomersThisMonth,
-      chargesMoisCourant,
-      chargesMoisPrecedent,
+      transactions,
       maintenant,
+      deviseCompte,
       abonnementsAnnules,
     });
 

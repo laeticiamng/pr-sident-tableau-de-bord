@@ -178,8 +178,8 @@ jamais de zéros ni de valeurs de repli.
 | `activeSubscriptionsChange` | number \| null | Variation nette depuis le 1er du mois (mesurée aussi quand la base du 1er est vide ; `null` si un abonnement actif n'a pas de date de création) |
 | `churnRate` | number \| null | Churn mensuel en % (abonnements terminés ce mois-ci selon `ended_at` ÷ actifs au 1er), `null` si non mesurable |
 | `totalCustomers` | number | Nombre total de clients |
-| `revenueThisMonth` | number | Encaissé net du mois en cours |
-| `currency` | string | Code devise (ISO 4217), obligatoire : sans devise valide, le client affiche « indisponible » |
+| `revenueThisMonth` | number | Encaissé net du mois en cours (transactions de solde Stripe : paiements moins remboursements, chacun dans le mois de sa date ; frais, virements et litiges exclus) |
+| `currency` | string | Code devise (ISO 4217) lu dans Stripe (prix, transactions, sinon devise du compte), obligatoire. Plusieurs devises sur le compte → réponse « indisponible » (aucun total mélangé) |
 
 ### Exemple TypeScript
 
