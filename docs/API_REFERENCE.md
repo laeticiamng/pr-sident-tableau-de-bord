@@ -176,7 +176,7 @@ jamais de zéros ni de valeurs de repli.
 | `mrrChange` | number \| null | Toujours `null` : Stripe ne fournit pas le MRR passé |
 | `activeSubscriptions` | number | Abonnements actifs |
 | `activeSubscriptionsChange` | number \| null | Variation nette depuis le 1er du mois |
-| `churnRate` | number \| null | Churn mensuel en % (annulés ÷ actifs au 1er), `null` si non mesurable |
+| `churnRate` | number \| null | Churn mensuel en % (abonnements terminés ce mois-ci selon `ended_at` ÷ actifs au 1er), `null` si non mesurable |
 | `totalCustomers` | number | Nombre total de clients |
 | `revenueThisMonth` | number | Encaissé net du mois en cours |
 | `currency` | string | Code devise (ISO 4217) |

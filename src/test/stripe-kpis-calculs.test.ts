@@ -230,6 +230,21 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
     expect(r.variationNetteAbonnements).toBe(0);
   });
 
+  it("revue Codex : une résiliation demandée le mois dernier mais terminée ce mois-ci (ended_at) est une perte de ce mois", () => {
+    const actifs: AbonnementStripe[] = [{ id: "a", created: avant }];
+    const annules: AbonnementStripe[] = [
+      // cancel_at_period_end demandé le mois dernier, fin effective ce mois-ci
+      { id: "g", created: avant, canceled_at: avant + 86_400, ended_at: apres },
+      // demandé ce mois-ci mais terminé le mois dernier : impossible en pratique, ended_at fait foi
+      { id: "h", created: avant - 86_400, canceled_at: apres, ended_at: avant + 86_400 },
+    ];
+    const r = calculerChurn(actifs, annules, debutMois);
+    expect(r.perdus).toBe(1);
+    expect(r.base).toBe(2);
+    expect(r.churnRate).toBe(50);
+    expect(r.variationNetteAbonnements).toBe(-1);
+  });
+
   it("retourne null (jamais 0 ni une valeur par défaut) quand la base est vide", () => {
     const r = calculerChurn([{ id: "d", created: apres }], [], debutMois);
     expect(r.churnRate).toBeNull();

@@ -31,8 +31,10 @@ export interface AbonnementStripe {
   status?: string;
   /** Horodatage Unix (secondes) de création de l'abonnement. */
   created?: number;
-  /** Horodatage Unix (secondes) de l'annulation ; null/absent si non annulé. */
+  /** Horodatage Unix (secondes) de la DEMANDE d'annulation (Stripe) ; null/absent si non annulé. */
   canceled_at?: number | null;
+  /** Horodatage Unix (secondes) de la fin effective de l'abonnement (Stripe) ; null si pas encore terminé. */
+  ended_at?: number | null;
   items?: {
     data?: Array<{
       quantity?: number;
@@ -195,7 +197,9 @@ export function calculerEncaissements(
  *
  * - base : abonnements actifs au 1er du mois (UTC) = actifs aujourd'hui créés avant le 1er
  *   + annulés depuis le 1er mais créés avant le 1er ;
- * - perdus : abonnements créés avant le 1er et annulés (canceled_at) depuis le 1er ;
+ * - perdus : abonnements créés avant le 1er et TERMINÉS depuis le 1er. La date de fin est `ended_at`
+ *   (fin effective) ; `canceled_at` n'est que la date de la demande (une résiliation « en fin de période »
+ *   demandée le mois dernier se termine ce mois-ci). `canceled_at` ne sert qu'en repli si `ended_at` manque ;
  * - churnRate = perdus / base × 100, ou null si la base est vide (taux non défini).
  * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus).
  *
@@ -210,9 +214,12 @@ export function calculerChurn(
 ): { churnRate: number | null; variationNetteAbonnements: number | null; perdus: number; base: number } {
   const creeAvant = (a: AbonnementStripe) => typeof a.created === "number" && a.created < debutMois;
   const actifsAuDebut = abonnementsActifs.filter(creeAvant).length;
-  const perdus = abonnementsAnnules.filter(
-    (a) => creeAvant(a) && typeof a.canceled_at === "number" && a.canceled_at >= debutMois,
-  ).length;
+  const finEffective = (a: AbonnementStripe) =>
+    typeof a.ended_at === "number" ? a.ended_at : typeof a.canceled_at === "number" ? a.canceled_at : null;
+  const perdus = abonnementsAnnules.filter((a) => {
+    const fin = finEffective(a);
+    return creeAvant(a) && fin !== null && fin >= debutMois;
+  }).length;
   const base = actifsAuDebut + perdus;
   if (base === 0) {
     return { churnRate: null, variationNetteAbonnements: null, perdus, base };
