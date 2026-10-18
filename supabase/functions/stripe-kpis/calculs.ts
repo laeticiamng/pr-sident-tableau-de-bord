@@ -35,6 +35,8 @@ export interface AbonnementStripe {
   canceled_at?: number | null;
   /** Horodatage Unix (secondes) de la fin effective de l'abonnement (Stripe) ; null si pas encore terminé. */
   ended_at?: number | null;
+  /** Horodatage Unix (secondes) de la fin de la période d'essai (Stripe) ; null/absent sans essai. */
+  trial_end?: number | null;
   items?: {
     data?: Array<{
       quantity?: number;
@@ -204,7 +206,9 @@ export function calculerEncaissements(
  * - variationNetteAbonnements = actifs aujourd'hui − base (nouveaux actifs − perdus).
  *
  * Limites : les abonnements en essai (trialing) ou impayés (past_due) ne figurent pas dans
- * la liste « active » ; un abonnement créé et annulé dans le mois n'est compté nulle part.
+ * la liste « active » ; un abonnement encore en essai le 1er (trial_end après le 1er) n'est pas
+ * compté dans la base ; un abonnement impayé le 1er puis régularisé ne peut pas être distingué
+ * sans l'historique des événements Stripe ; un abonnement créé et annulé dans le mois n'est compté nulle part.
  * Un abonnement sans date de création connue est ignoré plutôt que supposé.
  */
 export function calculerChurn(
@@ -212,7 +216,11 @@ export function calculerChurn(
   abonnementsAnnules: AbonnementStripe[],
   debutMois: number,
 ): { churnRate: number | null; variationNetteAbonnements: number | null; perdus: number; base: number } {
-  const creeAvant = (a: AbonnementStripe) => typeof a.created === "number" && a.created < debutMois;
+  // Présent au 1er du mois = créé avant le 1er ET hors période d'essai au 1er (revue Codex) : un abonnement
+  // encore en essai le 1er, converti en cours de mois, est un nouvel abonné de ce mois, pas un abonné de départ.
+  const enEssaiAuDebut = (a: AbonnementStripe) => typeof a.trial_end === "number" && a.trial_end > debutMois;
+  const creeAvant = (a: AbonnementStripe) =>
+    typeof a.created === "number" && a.created < debutMois && !enEssaiAuDebut(a);
   const actifsAuDebut = abonnementsActifs.filter(creeAvant).length;
   const finEffective = (a: AbonnementStripe) =>
     typeof a.ended_at === "number" ? a.ended_at : typeof a.canceled_at === "number" ? a.canceled_at : null;

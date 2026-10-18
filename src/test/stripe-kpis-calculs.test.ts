@@ -245,6 +245,21 @@ describe("stripe-kpis — churn calculé uniquement à partir de données réell
     expect(r.variationNetteAbonnements).toBe(-1);
   });
 
+  it("revue Codex : un abonnement encore en essai le 1er et converti ce mois-ci est un nouvel abonné, pas un abonné de départ", () => {
+    const actifs: AbonnementStripe[] = [
+      { id: "a", created: avant },
+      { id: "essai", created: avant, trial_end: apres }, // en essai le 1er, actif aujourd'hui
+    ];
+    const annules: AbonnementStripe[] = [
+      { id: "essai-annule", created: avant, trial_end: apres, ended_at: apres + 3600 }, // jamais payant au 1er
+    ];
+    const r = calculerChurn(actifs, annules, debutMois);
+    expect(r.base).toBe(1);
+    expect(r.perdus).toBe(0);
+    expect(r.churnRate).toBe(0);
+    expect(r.variationNetteAbonnements).toBe(1);
+  });
+
   it("retourne null (jamais 0 ni une valeur par défaut) quand la base est vide", () => {
     const r = calculerChurn([{ id: "d", created: apres }], [], debutMois);
     expect(r.churnRate).toBeNull();
