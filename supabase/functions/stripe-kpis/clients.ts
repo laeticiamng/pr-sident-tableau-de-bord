@@ -67,7 +67,7 @@ function domaineReserve(email: string): boolean {
   const domaine = email.split("@")[1]?.toLowerCase() ?? "";
   if (!domaine) return false;
   return DOMAINES_RESERVES.some((d) => domaine === d || domaine.endsWith(`.${d}`)) ||
-    SUFFIXES_RESERVES.some((s) => domaine.endsWith(s));
+    SUFFIXES_RESERVES.some((s) => domaine === s.slice(1) || domaine.endsWith(s)); // revue Codex : « user@localhost » compris
 }
 
 /**

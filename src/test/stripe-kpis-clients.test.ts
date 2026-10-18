@@ -21,6 +21,9 @@ describe("classification des clients Stripe : jamais sur une supposition", () =>
     expect(preuveCompteTest(client("c", { email: "mng.e2e.medmng.20261010@example.com" }))).toMatch(/domaine réservé/);
     expect(preuveCompteTest(client("d", { email: "x@app.test" }))).toMatch(/domaine réservé/);
     expect(preuveCompteTest(client("e", { livemode: false }))).toMatch(/mode test/);
+    // revue Codex : un domaine réservé employé seul est aussi un domaine de test
+    for (const email of ["user@localhost", "a@test", "b@example", "c@invalid"]) expect(preuveCompteTest(client(email, { email })), email).toMatch(/domaine réservé/);
+    expect(preuveCompteTest(client("pas-reserve", { email: "x@latest.ch" }))).toBeNull();
     expect(preuveCompteTest(client("f", { email: "Fondatrice@Exemple.ch" }), { emailCompteStripe: "fondatrice@exemple.ch" })).toMatch(/titulaire/);
   });
 
