@@ -26,7 +26,7 @@ import { CashFlowForecast } from "@/components/hq/finance/CashFlowForecast";
 import { ExecutiveHeader } from "@/components/hq/ExecutiveDataSource";
 import { MethodologyDisclosure } from "@/components/hq/MethodologyDisclosure";
 import { DonneesIndisponibles } from "@/components/hq/DonneesIndisponibles";
-import { DONNEES_INDISPONIBLES, messageIndisponibilite } from "@/lib/stripe-kpis-adapter";
+import { DONNEES_INDISPONIBLES, largeurBarreEncaissement, messageIndisponibilite } from "@/lib/stripe-kpis-adapter";
 
 export default function FinancePage() {
   const { data, isLoading, refetch, isFetching } = useStripeKPIs();
@@ -222,9 +222,7 @@ export default function FinancePage() {
                     <div 
                       className="h-full bg-primary rounded-full transition-all" 
                       style={{ 
-                        width: `${Math.min(100, kpis.revenueLastMonthToDate > 0
-                          ? (kpis.revenueThisMonth / kpis.revenueLastMonthToDate) * 100
-                          : 100)}%` 
+                        width: `${largeurBarreEncaissement(kpis.revenueThisMonth, kpis.revenueLastMonthToDate)}%` 
                       }}
                     />
                   </div>

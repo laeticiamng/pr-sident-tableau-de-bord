@@ -138,3 +138,14 @@ export function parseStripeKpisResponse(data: unknown, error?: unknown): StripeK
   const kpis = normaliserKpis(reponse.kpis as Record<string, unknown>);
   return kpis ? { available: true, kpis } : { available: false, reason: "invalid_response" };
 }
+
+/**
+ * Largeur (0 à 100 %) de la barre « encaissé ce mois » rapportée à la même période du mois précédent.
+ * Revue Codex : l'encaissement net peut être négatif (remboursements, paiements annulés) ; une largeur négative
+ * serait ignorée par le navigateur et la barre s'afficherait pleine. Un net nul ou négatif donne 0 %.
+ */
+export function largeurBarreEncaissement(courant: number, reference: number): number {
+  if (!Number.isFinite(courant) || courant <= 0) return 0;
+  if (!Number.isFinite(reference) || reference <= 0) return 100;
+  return Math.min(100, (courant / reference) * 100);
+}

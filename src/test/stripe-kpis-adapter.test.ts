@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   DONNEES_INDISPONIBLES,
+  largeurBarreEncaissement,
   messageIndisponibilite,
   parseStripeKpisResponse,
 } from "@/lib/stripe-kpis-adapter";
@@ -125,5 +126,18 @@ describe("messages d'indisponibilité", () => {
     expect(DONNEES_INDISPONIBLES).toBe("Données indisponibles");
     expect(messageIndisponibilite("stripe_not_configured")).toMatch(/Stripe/);
     expect(messageIndisponibilite(undefined)).toBe("Aucune source vérifiée n'est connectée.");
+  });
+});
+
+describe("largeurBarreEncaissement (revue Codex)", () => {
+  it("un encaissement net négatif ou nul donne une barre vide, jamais une largeur négative", () => {
+    expect(largeurBarreEncaissement(-200, 1000)).toBe(0);
+    expect(largeurBarreEncaissement(0, 1000)).toBe(0);
+    expect(largeurBarreEncaissement(-50, 0)).toBe(0);
+  });
+  it("rapport borné à 100 % ; référence nulle avec encaissement positif : 100 %", () => {
+    expect(largeurBarreEncaissement(500, 1000)).toBe(50);
+    expect(largeurBarreEncaissement(3000, 1000)).toBe(100);
+    expect(largeurBarreEncaissement(300, 0)).toBe(100);
   });
 });
