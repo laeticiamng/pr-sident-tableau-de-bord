@@ -180,14 +180,14 @@ export default function DataAnalyticsPage() {
       <MethodologyDisclosure
         sources={[
           kpis
-            ? { name: "Stripe API", type: "api", refreshRate: "À chaque chargement", reliability: "verified", description: "MRR, abonnés, churn, nouveaux clients" }
+            ? { name: "Stripe API", type: "api", refreshRate: "À chaque chargement", reliability: "verified", description: "MRR, abonnés, encaissements, nouveaux clients (churn non mesuré)" }
             : { name: "Stripe API", type: "api", reliability: "estimated", description: "Non connectée : aucune donnée affichée" },
         ]}
         calculations={[
           {
             metric: "Taux de churn",
-            formula: "Abonnements annulés ce mois (créés avant le 1er) ÷ abonnements actifs au 1er du mois × 100",
-            limitations: ["Hors essais et impayés", "Indisponible si aucun abonnement au 1er du mois"],
+            formula: "Non mesuré : Stripe ne donne que le statut actuel des abonnements, la base du 1er du mois n'est pas reconstituable",
+            limitations: ["Toujours indisponible tant qu'un historique des statuts n'est pas conservé", "Aucune estimation n'est affichée à la place"],
           },
         ]}
         dataQuality={kpis ? "high" : "low"}

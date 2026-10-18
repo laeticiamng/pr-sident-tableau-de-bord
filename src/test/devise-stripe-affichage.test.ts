@@ -30,3 +30,13 @@ describe("affichage des montants Stripe dans leur devise", () => {
     expect(lire("src/components/hq/growth/GrowthMetricsGrid.tsx")).toMatch(/formatCurrency\(metric\.value, metrics\.currency\)/);
   });
 });
+
+describe("méthodologie du churn (revue Codex)", () => {
+  it("les pages ne présentent plus de formule de churn calculée", () => {
+    for (const f of ["src/pages/hq/FinancePage.tsx", "src/pages/hq/DataAnalyticsPage.tsx"]) {
+      const s = lire(f);
+      expect(s, f).not.toMatch(/Abonnements annulés ce mois \(créés avant le 1er\)/);
+      expect(s, f).toMatch(/Non mesuré : Stripe ne donne que le statut actuel des abonnements/);
+    }
+  });
+});

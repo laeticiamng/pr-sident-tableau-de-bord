@@ -127,6 +127,11 @@ describe("stripe-kpis — devise lue dans Stripe (revue Codex)", () => {
     expect(deviseUnique([], [], "CHF")).toBe("chf");
     expect(() => deviseUnique([], [], null)).toThrow(/Devise Stripe inconnue/);
   });
+  it("revue Codex : un prix à l'usage ou à paliers dans une autre devise (exclu du MRR) ne bloque pas les KPIs", () => {
+    const usageUsd: AbonnementStripe = { id: "sub_usd", items: { data: [{ quantity: 1, price: { currency: "usd", unit_amount: 100, recurring: { interval: "month", usage_type: "metered" } } }] } };
+    const palierUsd: AbonnementStripe = { id: "sub_usd2", items: { data: [{ quantity: 1, price: { currency: "usd", unit_amount: null, recurring: { interval: "month" } } }] } };
+    expect(deviseUnique([abo("eur"), usageUsd, palierUsd], [])).toBe("eur");
+  });
   it("plusieurs devises : erreur (aucun total mélangé), la fonction répond « indisponible »", () => {
     expect(() => deviseUnique([abo("chf"), abo("eur")], [])).toThrow(/Plusieurs devises/);
     expect(() => deviseUnique([abo("eur")], [{ type: "charge", amount: 1, currency: "usd" }])).toThrow(/Plusieurs devises/);

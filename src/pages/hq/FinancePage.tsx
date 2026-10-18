@@ -96,7 +96,7 @@ export default function FinancePage() {
       <ExecutiveHeader
         title="Finance & ROI"
         subtitle={`Vue financière consolidée des ${MANAGED_PLATFORMS.length} plateformes`}
-        context="Indicateurs financiers issus de l'API Stripe : MRR, encaissements, churn. Aucun chiffre n'est affiché sans source vérifiée."
+        context="Indicateurs financiers issus de l'API Stripe : MRR et encaissements (churn non mesuré). Aucun chiffre n'est affiché sans source vérifiée."
         source={kpis ? {
           source: "stripe",
           lastUpdated: kpis.lastUpdated || undefined,
@@ -337,8 +337,8 @@ export default function FinancePage() {
           },
           {
             metric: "Taux de Churn",
-            formula: "Abonnements annulés ce mois (créés avant le 1er) ÷ abonnements actifs au 1er du mois × 100",
-            limitations: ["Hors essais et impayés", "Indisponible si aucun abonnement au 1er du mois"],
+            formula: "Non mesuré : Stripe ne donne que le statut actuel des abonnements, la base du 1er du mois n'est pas reconstituable",
+            limitations: ["Toujours indisponible tant qu'un historique des statuts n'est pas conservé", "Aucune estimation n'est affichée à la place"],
           },
         ]}
         lastUpdated={kpis?.lastUpdated || undefined}

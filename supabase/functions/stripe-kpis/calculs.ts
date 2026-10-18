@@ -111,15 +111,24 @@ const PERIODES_PAR_MOIS: Record<string, number> = {
  * Exclus faute de montant connu d'avance : prix à l'usage (metered) et prix sans
  * unit_amount (paliers). Les remises (coupons) ne sont pas déduites.
  */
+type ElementAbonnement = NonNullable<NonNullable<AbonnementStripe["items"]>["data"]>[number];
+
+/** Élément compté dans le MRR : prix récurrent à montant fixe connu (ni à l'usage, ni à paliers). */
+export function elementCompteDansMrr(item: ElementAbonnement): boolean {
+  const prix = item.price;
+  const recurrence = prix?.recurring;
+  if (!prix || prix.unit_amount == null || !recurrence?.interval) return false;
+  return Boolean(PERIODES_PAR_MOIS[recurrence.interval]) && recurrence.usage_type !== "metered";
+}
+
 export function calculerMrr(abonnements: AbonnementStripe[], devise = "eur"): number {
   let centimesParMois = 0;
   for (const sub of abonnements) {
     for (const item of sub.items?.data || []) {
-      const prix = item.price;
-      const recurrence = prix?.recurring;
-      if (!prix || prix.unit_amount == null || !recurrence?.interval) continue;
-      const parMois = PERIODES_PAR_MOIS[recurrence.interval];
-      if (!parMois || recurrence.usage_type === "metered") continue;
+      if (!elementCompteDansMrr(item)) continue;
+      const prix = item.price!;
+      const recurrence = prix.recurring!;
+      const parMois = PERIODES_PAR_MOIS[recurrence.interval!];
       const intervalCount = recurrence.interval_count && recurrence.interval_count > 0 ? recurrence.interval_count : 1;
       centimesParMois += (prix.unit_amount * (item.quantity ?? 1) * parMois) / intervalCount;
     }
@@ -159,11 +168,14 @@ export function sommeEncaissee(transactions: TransactionSolde[], devise = "eur")
   return mineures / uniteMineure(devise);
 }
 
-/** Devises présentes dans les prix des abonnements actifs et dans les transactions d'encaissement. */
+/**
+ * Devises des montants réellement additionnés : prix comptés dans le MRR (revue Codex : un prix à l'usage ou à
+ * paliers, exclu du MRR, ne rend pas l'indicateur indisponible) et transactions d'encaissement.
+ */
 export function devisesObservees(abonnements: AbonnementStripe[], transactions: TransactionSolde[]): Set<string> {
   const devises = new Set<string>();
   for (const sub of abonnements) for (const item of sub.items?.data || []) {
-    if (item.price?.currency) devises.add(item.price.currency.toLowerCase());
+    if (item.price?.currency && elementCompteDansMrr(item)) devises.add(item.price.currency.toLowerCase());
   }
   for (const t of transactions) if (TYPES_ENCAISSEMENT.has(t.type ?? "") && t.currency) devises.add(t.currency.toLowerCase());
   return devises;
