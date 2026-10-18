@@ -27,7 +27,8 @@ export function CompanyKPIs() {
     (new Date().getTime() - new Date(COMPANY_CONSTANTS.founded).getTime()) / (1000 * 60 * 60 * 24 * 30)
   );
 
-  const totalCustomers = stripeData?.kpis?.totalCustomers;
+  // Clients réels seulement (preuve d'achat conservé ou abonnement actif) : les comptes de test ne sont pas des clients.
+  const totalCustomers = stripeData?.kpis?.clients?.reels;
   // Croissance du chiffre encaissé à date vs même période du mois précédent (pas du MRR).
   const encaisseVariation = stripeData?.kpis?.revenueChangeToDate;
   const agentCount = agents?.length;
@@ -83,7 +84,7 @@ export function CompanyKPIs() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-primary" />
-              <span className="font-medium">Clients Stripe</span>
+              <span className="font-medium">Clients réels (Stripe)</span>
             </div>
             {stripeLoading ? (
               <Skeleton className="h-6 w-16" />

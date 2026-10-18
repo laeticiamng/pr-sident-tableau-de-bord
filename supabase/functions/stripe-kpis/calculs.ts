@@ -1,3 +1,4 @@
+import type { RepartitionClients } from "./clients.ts";
 /**
  * Calculs purs de la fonction Edge stripe-kpis.
  *
@@ -271,7 +272,12 @@ export function calculerEncaissements(transactions: TransactionSolde[], maintena
  */
 
 /** Raisons pour lesquelles les KPIs Stripe ne sont pas fournis. */
-export type RaisonIndisponible = "stripe_not_configured" | "stripe_error";
+/**
+ * - stripe_not_configured : aucune clé ;
+ * - stripe_error : Stripe injoignable ou réponse inexploitable ;
+ * - stripe_test_mode : la clé lit le mode test de Stripe — ses zéros ne sont pas des mesures de l'activité réelle.
+ */
+export type RaisonIndisponible = "stripe_not_configured" | "stripe_error" | "stripe_test_mode";
 
 /**
  * Contrat de réponse de la fonction Edge (toujours HTTP 200 pour que le client lise le corps) :
@@ -287,12 +293,18 @@ export function reponseKpisDisponibles(kpis: StripeKPIs): ReponseKpisStripe {
   return { success: true, available: true, mock: false, kpis };
 }
 
+const MESSAGES_INDISPONIBILITE: Record<RaisonIndisponible, string> = {
+  stripe_not_configured: "Stripe n'est pas configuré.",
+  stripe_error: "Stripe est momentanément injoignable.",
+  stripe_test_mode: "La clé Stripe du Cockpit lit le mode test : aucun chiffre de l'activité réelle.",
+};
+
 export function reponseKpisIndisponibles(reason: RaisonIndisponible): ReponseKpisStripe {
   return {
     success: false,
     available: false,
     reason,
-    error: reason === "stripe_not_configured" ? "Stripe n'est pas configuré." : "Stripe est momentanément injoignable.",
+    error: MESSAGES_INDISPONIBILITE[reason],
     kpis: null,
   };
 }
@@ -329,6 +341,10 @@ export interface StripeKPIs {
   revenueChangeToDate: number | null;
   currency: string;
   lastUpdated: string;
+  /** Répartition vérifiable des clients Stripe (voir clients.ts) : réels, test ou internes, indéterminés. */
+  clients: RepartitionClients;
+  /** Compte Stripe réellement lu par la clé (identifiant public acct_…, null s'il n'a pas pu être lu) ; toujours en mode réel. */
+  compteStripe: { id: string | null; livemode: true };
 }
 
 const arrondi = (valeur: number, decimales: number) => {
@@ -345,6 +361,8 @@ export function assemblerKpis(entrees: {
   maintenant: Date;
   /** Devise par défaut du compte Stripe, utilisée seulement si aucun prix ni aucune transaction ne porte de devise. */
   deviseCompte?: string | null;
+  clients: RepartitionClients;
+  idCompteStripe?: string | null;
 }): StripeKPIs {
   const devise = deviseUnique(entrees.abonnementsActifs, entrees.transactions, entrees.deviseCompte);
   const encaissements = calculerEncaissements(entrees.transactions, entrees.maintenant, devise);
@@ -365,5 +383,7 @@ export function assemblerKpis(entrees: {
       : arrondi(encaissements.revenueChangeToDate, 1),
     currency: devise,
     lastUpdated: entrees.maintenant.toISOString(),
+    clients: entrees.clients,
+    compteStripe: { id: entrees.idCompteStripe ?? null, livemode: true },
   };
 }

@@ -150,7 +150,7 @@ describe("ExecutiveCockpit", () => {
     render(<ExecutiveCockpit />, { wrapper: createWrapper() });
 
     expect(screen.getByText("MRR")).toBeInTheDocument();
-    expect(screen.getByText("Clients Stripe")).toBeInTheDocument();
+    expect(screen.getByText("Clients réels (Stripe)")).toBeInTheDocument();
     expect(screen.getByText("Taux de Churn")).toBeInTheDocument();
     expect(screen.getByText("Temps Réponse")).toBeInTheDocument();
   });
