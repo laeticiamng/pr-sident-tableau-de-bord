@@ -127,9 +127,13 @@ export function calculerMrr(abonnements: AbonnementStripe[], devise = "eur"): nu
   return centimesParMois / uniteMineure(devise);
 }
 
-/** Devises sans décimales chez Stripe (montant déjà en unités), d'après la documentation Stripe « Zero-decimal currencies ». */
+/**
+ * Devises sans décimales chez Stripe (montant API déjà en unités), d'après la documentation Stripe « Zero-decimal
+ * currencies ». UGX et ISK en sont exclues (revue Codex) : Stripe les représente encore en deux décimales
+ * (« Special cases » : 500 = 5 UGX), elles se divisent donc par 100.
+ */
 export const DEVISES_SANS_DECIMALES = new Set([
-  "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "ugx", "vnd", "vuv", "xaf", "xof", "xpf",
+  "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf", "vnd", "vuv", "xaf", "xof", "xpf",
 ]);
 
 /** Nombre d'unités mineures par unité de la devise (100 pour l'euro, 1 pour le yen ou le franc CFA). */

@@ -107,6 +107,9 @@ describe("stripe-kpis — chiffre encaissé net (transactions de solde)", () => 
     expect(uniteMineure("jpy")).toBe(1);
     expect(uniteMineure("XAF")).toBe(1);
     expect(uniteMineure("chf")).toBe(100);
+    // cas particuliers Stripe : UGX et ISK restent représentées en deux décimales (500 = 5 UGX)
+    expect(uniteMineure("ugx")).toBe(100);
+    expect(uniteMineure("isk")).toBe(100);
     expect(sommeEncaissee([tx("charge", 5_000, 0, "jpy")], "jpy")).toBe(5_000);
   });
 });
