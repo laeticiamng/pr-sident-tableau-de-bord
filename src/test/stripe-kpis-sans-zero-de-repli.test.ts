@@ -23,7 +23,11 @@ describe("stripe-kpis : aucun zéro de repli présenté comme une mesure", () =>
     const catches = source.match(/}\s*catch\s*\(/g) ?? [];
     // Deux catch seulement : le gestionnaire global, et la lecture facultative du compte (identifiant public,
     // e-mail du titulaire) dont l'échec ne produit aucun chiffre — `compte` reste vide, rien n'est inventé.
-    expect(catches.length).toBe(2);
+    // Troisième catch (revue Codex, 18.10.2026) : la lecture de l'historique des paiements pour la répartition des
+    // clients ; son échec laisse `repartitionClients` à null (« indisponible »), sans chiffre de repli.
+    expect(catches.length).toBe(3);
+    expect(source).toMatch(/let repartitionClients: RepartitionClients \| null = null;/);
+    expect(source).not.toMatch(/repartitionClients = \{/);
     expect(source).toMatch(/try \{\s*compte = \(await stripeRequest\("account"\)\)/);
     // revue Codex : plus de lecture des abonnements annulés, le churn n'est pas estimé
     expect(source).not.toMatch(/status: "canceled"/);

@@ -341,8 +341,11 @@ export interface StripeKPIs {
   revenueChangeToDate: number | null;
   currency: string;
   lastUpdated: string;
-  /** Répartition vérifiable des clients Stripe (voir clients.ts) : réels, test ou internes, indéterminés. */
-  clients: RepartitionClients;
+  /**
+   * Répartition vérifiable des clients Stripe (voir clients.ts) : réels, test ou internes, indéterminés ;
+   * null si l'historique des paiements n'a pas pu être lu (jamais de zéro de repli).
+   */
+  clients: RepartitionClients | null;
   /** Compte Stripe réellement lu par la clé (identifiant public acct_…, null s'il n'a pas pu être lu) ; toujours en mode réel. */
   compteStripe: { id: string | null; livemode: true };
 }
@@ -361,7 +364,7 @@ export function assemblerKpis(entrees: {
   maintenant: Date;
   /** Devise par défaut du compte Stripe, utilisée seulement si aucun prix ni aucune transaction ne porte de devise. */
   deviseCompte?: string | null;
-  clients: RepartitionClients;
+  clients: RepartitionClients | null;
   idCompteStripe?: string | null;
 }): StripeKPIs {
   const devise = deviseUnique(entrees.abonnementsActifs, entrees.transactions, entrees.deviseCompte);

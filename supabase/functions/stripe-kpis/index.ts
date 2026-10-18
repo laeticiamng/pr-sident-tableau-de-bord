@@ -15,6 +15,7 @@ import {
 import {
   type ClientStripe,
   type PaiementStripe,
+  type RepartitionClients,
   classerClients,
   lireIdentifiantsInternes,
   repartirClients,
@@ -165,13 +166,20 @@ Deno.serve(async (req) => {
     const totalCustomers = clients.length;
     const newCustomersThisMonth = clients.filter((c) => typeof c.created === "number" && c.created >= debutMois).length;
 
-    // 3. Paiements (toutes pages) : seule preuve d'un client réel, avec l'abonnement actif.
-    const paiements = await listerStripe<PaiementStripe>(stripeRequest, "charges");
-    const classement = classerClients(clients, paiements, abonnementsActifs as unknown as { customer?: string; status?: string }[], {
-      emailCompteStripe: compte.email ?? null,
-      identifiantsInternes: lireIdentifiantsInternes(Deno.env.get("STRIPE_IDENTIFIANTS_INTERNES")),
-    });
-    const repartitionClients = repartirClients(clients, classement, debutMois);
+    // 3. Paiements (toutes pages) : seule preuve d'un client réel, avec l'abonnement actif. Revue Codex : l'historique
+    // complet peut dépasser la limite de pagination sur un gros compte ; cet échec ne rend indisponible QUE la
+    // répartition (null, affichée « indisponible »), jamais les autres KPIs, et ne produit aucun chiffre de repli.
+    let repartitionClients: RepartitionClients | null = null;
+    try {
+      const paiements = await listerStripe<PaiementStripe>(stripeRequest, "charges");
+      const classement = classerClients(clients, paiements, abonnementsActifs as unknown as { customer?: string; status?: string }[], {
+        emailCompteStripe: compte.email ?? null,
+        identifiantsInternes: lireIdentifiantsInternes(Deno.env.get("STRIPE_IDENTIFIANTS_INTERNES")),
+      });
+      repartitionClients = repartirClients(clients, classement, debutMois);
+    } catch (_e) {
+      console.log("[Stripe KPIs] Répartition des clients indisponible (historique des paiements illisible)");
+    }
 
     // 4. Churn et variation nette : non calculés (pas d'historique des statuts Stripe, voir calculs.ts).
 
