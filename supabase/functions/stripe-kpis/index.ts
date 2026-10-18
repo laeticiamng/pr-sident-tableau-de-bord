@@ -39,7 +39,9 @@ Deno.serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
-    const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY");
+    // Clé restreinte en lecture seule du mode réel (secret dédié, ajouté par la propriétaire) ; à défaut, l'ancien
+    // secret géré par Lovable. Une clé du mode test est refusée plus bas (stripe_test_mode) : jamais de zéro.
+    const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_KPIS_READ_KEY")?.trim() || Deno.env.get("STRIPE_SECRET_KEY");
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !SUPABASE_ANON_KEY) {
       console.error("[Stripe KPIs] Supabase configuration missing");

@@ -55,7 +55,7 @@ import { formatCurrency } from "@/hooks/useStripeKPIs";
              </p>
              <Badge variant="outline" className="text-[10px] gap-1">
                <Link2 className="h-2.5 w-2.5" />
-               Configurez STRIPE_SECRET_KEY dans les secrets
+               Configurez STRIPE_KPIS_READ_KEY (clé Stripe en lecture seule) dans les secrets
              </Badge>
            </CardContent>
          </Card>

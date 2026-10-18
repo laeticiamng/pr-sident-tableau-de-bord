@@ -34,3 +34,15 @@ describe("stripe-kpis : aucun zéro de repli présenté comme une mesure", () =>
     expect(source).toMatch(/reponseKpisIndisponibles\("stripe_error"\)/);
   });
 });
+
+describe("stripe-kpis : clé restreinte en lecture seule du mode réel", () => {
+  it("le secret dédié STRIPE_KPIS_READ_KEY est prioritaire ; l'ancien secret n'est qu'un repli, jamais journalisé", () => {
+    expect(source).toMatch(/Deno\.env\.get\("STRIPE_KPIS_READ_KEY"\)\?\.trim\(\) \|\| Deno\.env\.get\("STRIPE_SECRET_KEY"\)/);
+    // la valeur de la clé n'apparaît dans aucun journal
+    expect(source).not.toMatch(/console\.(log|error|warn)\([^)]*STRIPE_SECRET_KEY/);
+    const status = readFileSync(join(process.cwd(), "supabase/functions/check-api-status/index.ts"), "utf8");
+    // revue Codex : seule la clé dédiée compte comme connexion Stripe (le repli Lovable est du mode test)
+    expect(status).toMatch(/stripe: !!Deno\.env\.get\("STRIPE_KPIS_READ_KEY"\)\?\.trim\(\),/);
+    expect(status).not.toMatch(/stripe:[^\n]*STRIPE_SECRET_KEY/);
+  });
+});
