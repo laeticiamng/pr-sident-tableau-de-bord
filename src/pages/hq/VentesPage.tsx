@@ -43,7 +43,8 @@ export default function VentesPage() {
       <ExecutiveHeader
         title="Ventes & Commercial"
         subtitle="Données Stripe en temps réel + rapports générés par l'agent CSO IA"
-        source={{ source: "stripe", lastUpdated: new Date(), confidence: "high" }}
+        // revue Codex : la source Stripe (fiabilité, horodatage) n'est annoncée que pour des données réellement reçues
+        source={kpis ? { source: "stripe", lastUpdated: kpis.lastUpdated || undefined, confidence: "high" } : undefined}
         actions={
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>

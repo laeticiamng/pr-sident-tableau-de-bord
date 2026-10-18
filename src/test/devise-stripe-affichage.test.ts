@@ -40,3 +40,13 @@ describe("méthodologie du churn (revue Codex)", () => {
     }
   });
 });
+
+describe("source Stripe annoncée seulement avec des données (revue Codex)", () => {
+  it("aucune page n'annonce une source Stripe fiable et fraîche sans KPIs reçus", () => {
+    for (const f of ["src/pages/hq/VentesPage.tsx", "src/pages/hq/DataAnalyticsPage.tsx"]) {
+      const s = lire(f);
+      expect(s, f).not.toMatch(/source=\{\{ source: "stripe", lastUpdated: new Date\(\)/);
+      expect(s, f).toMatch(/source=\{kpis \? \{ source: "stripe"/);
+    }
+  });
+});
