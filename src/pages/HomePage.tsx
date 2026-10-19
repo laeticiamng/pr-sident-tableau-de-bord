@@ -36,8 +36,8 @@ const PRODUCTS = [
     by: true,
     line: "Ton parcours médical suisse, dans le bon ordre.",
     audience: "Pour les médecins qui arrivent ou se forment en Suisse",
-    href: "https://medcopilote-suisse.vercel.app",
-    host: "medcopilote-suisse.vercel.app",
+    href: "https://www.medcopilote.ch/?ref=mng-portail",
+    host: "medcopilote.ch",
   },
 ] as const;
 
