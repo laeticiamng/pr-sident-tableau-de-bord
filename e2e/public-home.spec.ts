@@ -9,7 +9,7 @@ const PRODUITS = [
   { nom: "Emotions Care", url: "https://emotionscare.com" },
   { nom: "Med MNG", url: "https://medmng.com" },
   { nom: "Memo MNG", url: "https://memomng.com" },
-  { nom: "MedCopilote Suisse", url: "https://medcopilote-suisse.vercel.app" },
+  { nom: "MedCopilote Suisse", url: "https://www.medcopilote.ch/?ref=mng-portail" },
 ] as const;
 
 test.describe("Public — Home", () => {
