@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794514506077,
+      "tag": "0000_harden_client_error_logs_insert_policy",
+      "breakpoints": true
+    }
+  ]
+}
